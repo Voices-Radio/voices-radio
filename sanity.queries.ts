@@ -1,15 +1,12 @@
 import { groq } from "next-sanity";
-import { clientFetch } from "./sanity.client";
+import type { Image } from "sanity";
 
 export const settingsQuery = groq`*[_type == "settings"][0]`;
 
-interface Settings {
+export interface Settings {
   title?: string;
   description?: string;
+  ogImage?: Image;
 }
 
-export const getSettings = () => clientFetch<Settings>(settingsQuery);
-
 export const documentsCountQuery = groq`count(*[])`;
-
-export const getDocumentsCount = () => clientFetch<number>(documentsCountQuery);
