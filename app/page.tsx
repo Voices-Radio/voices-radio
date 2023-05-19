@@ -1,12 +1,12 @@
-import { DocumentsCount, query } from "@/components/DocumentsCount";
-import { clientFetch } from "@/sanity.client";
+import { getSettings } from "@/sanity.queries";
 
 export default async function Home() {
-  const data = await clientFetch(query);
+  const { title, description } = await getSettings();
 
   return (
     <>
-      <DocumentsCount data={data} />
+      <h1>{title}</h1>
+      <p>{description}</p>
     </>
   );
 }
