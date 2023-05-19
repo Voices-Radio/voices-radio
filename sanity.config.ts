@@ -4,17 +4,14 @@ import { deskTool } from "sanity/desk";
 import { pageStructure, singletonPlugin } from "./plugins/settings";
 import { apiVersion, dataset, projectId } from "./sanity.env";
 import settingsType from "./schemas/settings";
-import sponsorType from "./schemas/sponsor";
-
-export const PREVIEWABLE_DOCUMENT_TYPES: string[] = [settingsType.name];
+import partnerType from "./schemas/partner";
 
 export default defineConfig({
   basePath: "/studio",
   projectId,
+  title: "Studio",
   dataset,
-  schema: {
-    types: [settingsType, sponsorType],
-  },
+  schema: { types: [settingsType, partnerType] },
   plugins: [
     deskTool({ structure: pageStructure([settingsType]) }),
     singletonPlugin([settingsType.name]),

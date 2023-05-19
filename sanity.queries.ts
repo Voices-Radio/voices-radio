@@ -8,3 +8,14 @@ export interface Settings {
   description: string;
   ogImage: Image;
 }
+
+export const partnersQuery = groq`*[_type == "partner"]`;
+
+export interface Partner {
+  name: string;
+  logo: Image;
+  /**
+   * PortableText
+   */
+  details: any[];
+}
