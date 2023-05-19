@@ -7,7 +7,7 @@ export default async function PartnersSection() {
   const partners = await getPartners();
 
   return (
-    <section>
+    <section className="p-8">
       <h3>Our Partners</h3>
 
       <div className="flex flex-col gap-8">

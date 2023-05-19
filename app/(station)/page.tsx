@@ -2,6 +2,8 @@ import { getSettings } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import type { Metadata } from "next";
 import PartnersSection from "./partners";
+import { Suspense } from "react";
+import NowPlaying from "@/components/now-playing";
 
 export const runtime = "edge";
 
@@ -33,7 +35,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   return (
     <main>
-      <h1>Hello World</h1>
+      <section>
+        <Suspense fallback={<p>Loading Now Playing...</p>}>
+          {/* @ts-ignore */}
+          <NowPlaying />
+        </Suspense>
+      </section>
 
       {/* @ts-ignore */}
       <PartnersSection />
