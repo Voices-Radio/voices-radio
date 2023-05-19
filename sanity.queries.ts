@@ -4,9 +4,7 @@ import type { Image } from "sanity";
 export const settingsQuery = groq`*[_type == "settings"][0]`;
 
 export interface Settings {
-  title?: string;
-  description?: string;
-  ogImage?: Image;
+  title: string;
+  description: string;
+  ogImage: Image;
 }
-
-export const documentsCountQuery = groq`count(*[])`;

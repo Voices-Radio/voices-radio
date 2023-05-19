@@ -1,16 +1,38 @@
 import { getSettings } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
+import { Metadata } from "next";
 
-export default async function Home() {
+export async function generateMetadata(): Promise<Metadata> {
   const { title, description, ogImage } = await getSettings();
 
+  const imageUrl = urlForImage(ogImage)
+    .width(1200)
+    .height(627)
+    .fit("crop")
+    .url();
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      siteName: title,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 627,
+        },
+      ],
+    },
+  };
+}
+
+export default async function Home() {
   return (
-    <>
-      <h1>{title}</h1>
-      <p>{description}</p>
-      {ogImage && (
-        <img src={urlForImage(ogImage)?.width(100).height(100).url()} alt="" />
-      )}
-    </>
+    <main>
+      <h1>Hello World</h1>
+    </main>
   );
 }
