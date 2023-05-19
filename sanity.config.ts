@@ -5,6 +5,7 @@ import { deskTool } from "sanity/desk";
 import { pageStructure, singletonPlugin } from "./plugins/settings";
 import { apiVersion, dataset, projectId } from "./sanity.env";
 import settingsType from "./schemas/settings";
+import sponsorType from "./schemas/sponsor";
 
 export const PREVIEWABLE_DOCUMENT_TYPES: string[] = [settingsType.name];
 
@@ -13,7 +14,7 @@ export default defineConfig({
   projectId,
   dataset,
   schema: {
-    types: [settingsType],
+    types: [settingsType, sponsorType],
   },
   plugins: [
     deskTool({ structure: pageStructure([settingsType]) }),

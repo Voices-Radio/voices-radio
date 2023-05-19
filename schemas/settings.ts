@@ -30,9 +30,6 @@ export default defineType({
       title: "Open Graph Image",
       type: "image",
       description: "Displayed on social cards and search engine results.",
-      options: {
-        hotspot: true,
-      },
     }),
   ],
 });
