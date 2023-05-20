@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import PartnersSection from "./partners";
 import { Suspense } from "react";
 import NowPlaying from "@/components/now-playing";
+import Schedule from "@/components/schedule";
 
 export const runtime = "edge";
 
@@ -39,6 +40,13 @@ export default async function Home() {
         <Suspense fallback={<p>Loading Now Playing...</p>}>
           {/* @ts-ignore */}
           <NowPlaying />
+        </Suspense>
+      </section>
+
+      <section>
+        <Suspense fallback={<p>Loading Schedule...</p>}>
+          {/* @ts-ignore */}
+          <Schedule />
         </Suspense>
       </section>
 
