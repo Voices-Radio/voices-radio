@@ -5,6 +5,7 @@ import { urlForImage } from "@/sanity.image";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import PartnersSection from "./partners";
+import Link from "next/link";
 
 export const runtime = "edge";
 
@@ -16,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const imageUrl = urlForImage(ogImage).width(1200).height(627).url();
 
   return {
-    title,
+    title: { default: title, template: `%s | ${title}` },
     description,
     openGraph: {
       title,
@@ -36,6 +37,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   return (
     <main>
+      <nav>
+        <Link href="/about">About</Link>
+      </nav>
+
       <section>
         <Suspense fallback={<p>Loading Now Playing...</p>}>
           {/* @ts-ignore */}
