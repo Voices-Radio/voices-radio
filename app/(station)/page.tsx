@@ -8,8 +8,6 @@ import Schedule from "@/components/schedule";
 
 export const runtime = "edge";
 
-export const revalidate = 0;
-
 export async function generateMetadata(): Promise<Metadata> {
   const { title, description, ogImage } = await getSettings();
 

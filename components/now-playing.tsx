@@ -138,17 +138,10 @@ export default async function NowPlaying() {
 
   return (
     <div className="p-8">
-      <p>Now Playing: {data?.shows?.current?.name ?? "Live DJ"}</p>
-
-      <div>
-        <p>Next Up:</p>
-
-        <ol>
-          {data.shows.next.map((show) => (
-            <li key={show.id}>{show.name}</li>
-          ))}
-        </ol>
-      </div>
+      <p>
+        Now Playing: {data?.shows?.current?.name ?? "Live DJ"}, Next Up:{" "}
+        {data.shows.next[0].name}
+      </p>
     </div>
   );
 }

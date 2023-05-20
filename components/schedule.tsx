@@ -1,4 +1,4 @@
-import { format, startOfDay } from "date-fns";
+import { format, isBefore, startOfDay, startOfToday } from "date-fns";
 import { headers } from "next/headers";
 
 export interface WeekInfo {
@@ -52,7 +52,11 @@ export default async function Schedule() {
 
   const schedule: Day[] = Object.values(data).filter(Array.isArray).flat();
 
-  const scheduleByDay = schedule.reduce<{ [key: string]: Day[] }>(
+  const scheduleAfterToday = schedule.filter((day) =>
+    isBefore(startOfToday(), new Date(day.starts))
+  );
+
+  const scheduleByDay = scheduleAfterToday.reduce<{ [key: string]: Day[] }>(
     (prev, current) => {
       const date = format(
         startOfDay(new Date(current.start_timestamp)),
@@ -88,10 +92,8 @@ export default async function Schedule() {
                 <li key={day.id} className="flex gap-2">
                   <p>
                     {`${format(new Date(day.starts), "HH:mm")} - 
-              ${format(new Date(day.ends), "HH:mm")}`}
+              ${format(new Date(day.ends), "HH:mm")} ${day.name}`}
                   </p>
-
-                  <p>{day.name}</p>
                 </li>
               ))}
             </ul>
