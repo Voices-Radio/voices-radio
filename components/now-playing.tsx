@@ -139,13 +139,13 @@ export default async function NowPlaying() {
   const data: LiveInfo = await r.json();
 
   return (
-    <div className="p-8">
+    <div className="flex gap-4">
+      <LivePlayer title={data?.shows?.current?.name ?? "Live DJ"} />
+
       <p>
         Now Playing: {data?.shows?.current?.name ?? "Live DJ"}, Next Up:{" "}
         {data.shows.next[0].name}
       </p>
-
-      <LivePlayer title={data?.shows?.current?.name ?? "Live DJ"} />
     </div>
   );
 }

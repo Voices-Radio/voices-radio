@@ -79,7 +79,7 @@ export default async function Schedule() {
   );
 
   return (
-    <div className="p-8">
+    <section className="p-8">
       <p>Schedule: {timezone ?? "Missing Timezone"}</p>
 
       <ul className="space-y-4">
@@ -100,6 +100,6 @@ export default async function Schedule() {
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }

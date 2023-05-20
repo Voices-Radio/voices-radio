@@ -1,33 +1,15 @@
-import NowPlaying from "@/components/now-playing";
 import Schedule from "@/components/schedule";
-import Link from "next/link";
-import { Suspense } from "react";
 import PartnersSection from "./partners";
 
 export const runtime = "edge";
 
-export const revalidate = 1;
+export const revalidate = 10;
 
 export default async function Home() {
   return (
     <main>
-      <nav>
-        <Link href="/about">About</Link>
-      </nav>
-
-      <section>
-        <Suspense fallback={<p>Loading Now Playing...</p>}>
-          {/* @ts-ignore */}
-          <NowPlaying />
-        </Suspense>
-      </section>
-
-      <section>
-        <Suspense fallback={<p>Loading Schedule...</p>}>
-          {/* @ts-ignore */}
-          <Schedule />
-        </Suspense>
-      </section>
+      {/* @ts-ignore */}
+      <Schedule />
 
       {/* @ts-ignore */}
       <PartnersSection />
