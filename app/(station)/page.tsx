@@ -3,7 +3,6 @@ import Schedule from "@/components/schedule";
 import Link from "next/link";
 import { Suspense } from "react";
 import PartnersSection from "./partners";
-import { ErrorBoundary } from "react-error-boundary";
 
 export const runtime = "edge";
 
@@ -18,10 +17,8 @@ export default async function Home() {
 
       <section>
         <Suspense fallback={<p>Loading Now Playing...</p>}>
-          <ErrorBoundary fallback={<p>Now Playing Broke :/</p>}>
-            {/* @ts-ignore */}
-            <NowPlaying />
-          </ErrorBoundary>
+          {/* @ts-ignore */}
+          <NowPlaying />
         </Suspense>
       </section>
 
