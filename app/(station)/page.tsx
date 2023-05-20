@@ -8,6 +8,8 @@ import PartnersSection from "./partners";
 
 export const runtime = "edge";
 
+export const revalidate = 1;
+
 export async function generateMetadata(): Promise<Metadata> {
   const { title, description, ogImage } = await getSettings();
 
