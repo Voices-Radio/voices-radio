@@ -1,10 +1,10 @@
+import NowPlaying from "@/components/now-playing";
+import Schedule from "@/components/schedule";
 import { getSettings } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import type { Metadata } from "next";
-import PartnersSection from "./partners";
 import { Suspense } from "react";
-import NowPlaying from "@/components/now-playing";
-import Schedule from "@/components/schedule";
+import PartnersSection from "./partners";
 
 export const runtime = "edge";
 

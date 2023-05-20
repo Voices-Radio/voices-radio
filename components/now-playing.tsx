@@ -1,3 +1,5 @@
+import LivePlayer from "./live-player";
+
 export interface LiveInfo {
   station: Station;
   tracks: Tracks;
@@ -142,6 +144,8 @@ export default async function NowPlaying() {
         Now Playing: {data?.shows?.current?.name ?? "Live DJ"}, Next Up:{" "}
         {data.shows.next[0].name}
       </p>
+
+      <LivePlayer title={data?.shows?.current?.name ?? "Live DJ"} />
     </div>
   );
 }
