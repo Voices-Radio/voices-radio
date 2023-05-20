@@ -5,6 +5,7 @@ export const runtime = "edge";
 
 export const metadata: Metadata = {
   title: "About",
+  alternates: { canonical: "/about" },
 };
 
 export default async function AboutPage() {
