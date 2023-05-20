@@ -131,7 +131,7 @@ export interface Metadata {
 
 export default async function NowPlaying() {
   const r = await fetch("https://voicesradio.airtime.pro/api/live-info-v2", {
-    cache: "no-cache",
+    next: { revalidate: 10 },
   });
 
   const data: LiveInfo = await r.json();

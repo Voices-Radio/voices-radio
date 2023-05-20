@@ -36,18 +36,16 @@ export interface Day {
   ends: string;
 }
 
-// export const runtime = "edge";
-
 export default async function Schedule() {
   const headersList = headers();
 
   const timezone = headersList.get("x-vercel-ip-timezone");
 
   const r = await fetch(
-    `https://voicesradio.airtime.pro/api/week-info?timezone=Europe/Berlin`,
-    {
-      cache: "no-cache",
-    }
+    `https://voicesradio.airtime.pro/api/week-info?timezone=${
+      timezone ?? "Europe/London"
+    }`,
+    { next: { revalidate: 60 } }
   );
 
   const data: WeekInfo = await r.json();
