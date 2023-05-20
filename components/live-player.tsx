@@ -16,7 +16,7 @@ export default function LivePlayer({ title }: { title: string }) {
 
   const isMounted = useCallback(() => _isMounted.current, []);
 
-  const { load, stop, play, playing, isReady } = useGlobalAudioPlayer();
+  const { load, stop, play, playing } = useGlobalAudioPlayer();
 
   useEffect(() => {
     if (isMounted()) {
@@ -46,9 +46,7 @@ export default function LivePlayer({ title }: { title: string }) {
       {playing ? (
         <button onClick={() => stop()}>Stop</button>
       ) : (
-        <button onClick={() => play()}>
-          {isReady ? "Play" : "Loading..."}
-        </button>
+        <button onClick={() => play()}>Play</button>
       )}
     </div>
   );
