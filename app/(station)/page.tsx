@@ -1,4 +1,3 @@
-import Schedule from "@/components/schedule";
 import ApplySection from "./apply";
 import PartnersSection from "./partners";
 
@@ -9,9 +8,6 @@ export const revalidate = 10;
 export default async function Home() {
   return (
     <main>
-      {/* @ts-ignore */}
-      <Schedule />
-
       {/* @ts-ignore */}
       <ApplySection />
 

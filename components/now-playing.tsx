@@ -1,5 +1,7 @@
+"use server";
+
+import { format } from "date-fns";
 import LivePlayer from "./live-player";
-import { format, isBefore, startOfDay, startOfToday } from "date-fns";
 
 export interface LiveInfo {
   station: Station;

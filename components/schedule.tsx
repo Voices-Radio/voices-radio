@@ -1,3 +1,5 @@
+"use server";
+
 import { format, isBefore, startOfDay, startOfToday } from "date-fns";
 import { headers } from "next/headers";
 

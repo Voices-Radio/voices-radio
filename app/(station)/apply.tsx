@@ -9,7 +9,9 @@ export default async function ApplySection() {
 
       <p className="text-center">{home.apply_subheading}</p>
 
-      <a href={home.apply_cta_url}>{home.apply_cta_text}</a>
+      <a href={home.apply_cta_url} target="_blank" rel="noopener noreferrer">
+        {home.apply_cta_text}
+      </a>
     </section>
   );
 }
