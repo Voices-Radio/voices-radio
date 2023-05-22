@@ -6,7 +6,7 @@ import NowPlaying from "./now-playing";
 export default function Navigation() {
   return (
     <header className="from-black/30 to-white bg-gradient-to-b pb-10">
-      <nav className="grid grid-template-navigation items-center p-3 backdrop-blur-3xl">
+      <nav className="grid grid-template-navigation items-center p-3 md:backdrop-blur-3xl">
         <div style={{ gridArea: "player" }}>
           {/* @ts-ignore */}
           <NowPlaying />
