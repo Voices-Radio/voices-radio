@@ -19,3 +19,12 @@ export interface Partner {
    */
   details: any[];
 }
+
+export const homeQuery = groq`*[_type == "home"][0]`;
+
+export interface Home {
+  apply_cta_text: string;
+  apply_cta_url: string;
+  apply_heading: string;
+  apply_subheading: string;
+}

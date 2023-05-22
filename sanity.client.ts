@@ -8,6 +8,8 @@ import {
   Settings,
   settingsQuery,
   partnersQuery,
+  Home,
+  homeQuery,
 } from "./sanity.queries";
 
 export const client = createClient({
@@ -23,3 +25,5 @@ export const clientFetch = cache(client.fetch.bind(client));
 export const getSettings = () => clientFetch<Settings>(settingsQuery);
 
 export const getPartners = () => clientFetch<Partner[]>(partnersQuery);
+
+export const getHome = () => clientFetch<Home>(homeQuery);

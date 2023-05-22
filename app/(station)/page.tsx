@@ -1,4 +1,5 @@
 import Schedule from "@/components/schedule";
+import ApplySection from "./apply";
 import PartnersSection from "./partners";
 
 export const runtime = "edge";
@@ -10,6 +11,9 @@ export default async function Home() {
     <main>
       {/* @ts-ignore */}
       <Schedule />
+
+      {/* @ts-ignore */}
+      <ApplySection />
 
       {/* @ts-ignore */}
       <PartnersSection />

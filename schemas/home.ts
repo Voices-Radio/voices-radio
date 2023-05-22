@@ -23,6 +23,7 @@ export default defineType({
       description: "Heading for the Apply section",
       group: "apply",
       type: "string",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "apply_subheading",
@@ -30,6 +31,7 @@ export default defineType({
       description: "Subheading for the Apply section",
       type: "text",
       group: "apply",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "apply_cta_text",
@@ -37,6 +39,7 @@ export default defineType({
       description: "Button text for the Apply section",
       type: "string",
       group: "apply",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "apply_cta_url",
@@ -44,7 +47,7 @@ export default defineType({
       description: "Button link for the Apply section",
       type: "url",
       group: "apply",
-      validation: (rule) => rule.uri({ scheme: ["https"] }),
+      validation: (rule) => rule.required().uri({ scheme: ["https"] }),
     }),
   ],
 });
