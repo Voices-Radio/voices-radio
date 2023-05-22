@@ -24,22 +24,24 @@ export default function LivePlayer({ title }: { title: string }) {
         html5: true,
         format: "mp3",
       });
-
-      if ("mediaSession" in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: title,
-          artist: "Voices Radio",
-          // artwork: [
-          //   {
-          //     src: scheduleData.liveNow.artwork,
-          //     sizes: "1024x1024",
-          //     type: "image/png",
-          //   },
-          // ],
-        });
-      }
     }
   }, [isMounted, load, title]);
+
+  useEffect(() => {
+    if ("mediaSession" in navigator && playing) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: title,
+        artist: "Voices Radio",
+        // artwork: [
+        //   {
+        //     src: scheduleData.liveNow.artwork,
+        //     sizes: "1024x1024",
+        //     type: "image/png",
+        //   },
+        // ],
+      });
+    }
+  }, [title, playing]);
 
   return (
     <div>
