@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Navigation from "@/components/navigation";
 import { getSettings } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
@@ -42,6 +43,9 @@ export default function StationLayout({
       <Navigation />
 
       {children}
+
+      {/* @ts-ignore */}
+      <Footer />
     </div>
   );
 }

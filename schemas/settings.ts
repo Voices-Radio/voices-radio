@@ -1,5 +1,5 @@
 import { CogIcon } from "@sanity/icons";
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
   name: "settings",
@@ -36,6 +36,35 @@ export default defineType({
       title: "Open Graph Image",
       type: "image",
       description: "Displayed on social cards and search engine results.",
+    }),
+    defineField({
+      name: "address",
+      title: "Address",
+      description: "Address of Voices Radio in the footer",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "block",
+          options: { spellCheck: true },
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [],
+            annotations: [],
+          },
+        }),
+      ],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "contact_link",
+      title: "Contact Link",
+      description: "Email link for Contact Us button",
+      type: "url",
+      validation: (rule) =>
+        rule.required().uri({
+          scheme: ["mailto"],
+        }),
     }),
   ],
 });

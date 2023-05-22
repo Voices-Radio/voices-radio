@@ -7,6 +7,8 @@ export interface Settings {
   title: string;
   description: string;
   ogImage: Image;
+  address: any[];
+  contact_link: string;
 }
 
 export const partnersQuery = groq`*[_type == "partner"] | order(name desc)`;
