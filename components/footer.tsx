@@ -9,7 +9,14 @@ export default async function Footer() {
       <div className="mx-auto max-w-6xl">
         <div className="flex gap-8">
           <div className="flex-1">
-            <PortableText value={settings.address} />
+            <PortableText
+              value={settings.address}
+              components={{
+                block: ({ children }) => (
+                  <address className="not-italic">{children}</address>
+                ),
+              }}
+            />
           </div>
 
           <div className="flex-1">Icons</div>
