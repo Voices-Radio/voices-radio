@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.grid-template-navigation {
+  @apply grid-cols-3 gap-2;
+
+  grid-template-areas:
+    "chat logo menu"
+    "player player player";
+}
+
+@screen md {
+  .grid-template-navigation {
+    @apply gap-4;
+
+    grid-template-columns: 1fr min-content 1fr;
+    grid-template-areas: "player logo menu";
+  }
+}

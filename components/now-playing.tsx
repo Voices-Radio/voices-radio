@@ -1,4 +1,5 @@
 import LivePlayer from "./live-player";
+import { format, isBefore, startOfDay, startOfToday } from "date-fns";
 
 export interface LiveInfo {
   station: Station;
@@ -132,20 +133,20 @@ export interface Metadata {
 }
 
 export default async function NowPlaying() {
-  const r = await fetch("https://voicesradio.airtime.pro/api/live-info-v2", {
-    next: { revalidate: 10 },
-  });
+  const r = await fetch("https://voicesradio.airtime.pro/api/live-info-v2", {});
 
   const data: LiveInfo = await r.json();
 
-  return (
-    <div className="flex gap-4">
-      <LivePlayer title={data?.shows?.current?.name ?? "Live DJ"} />
+  const title = data?.shows?.current?.name ?? "Live DJ";
 
-      <p>
-        Now Playing: {data?.shows?.current?.name ?? "Live DJ"}, Next Up:{" "}
-        {data.shows.next[0].name}
-      </p>
+  const timeframe = `${format(new Date(data.shows.current.starts), "HH:mm")} - 
+  ${format(new Date(data.shows.current.ends), "HH:mm")}`;
+
+  return (
+    <div className="flex gap-4 p-2 bg-white rounded">
+      <LivePlayer title={title} />
+      <p>{timeframe}</p>
+      <p>{title}</p>
     </div>
   );
 }
