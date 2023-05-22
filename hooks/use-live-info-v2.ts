@@ -4,7 +4,8 @@ async function fetcher<JSON = any>(
   ...args: [input: RequestInfo, init?: RequestInit]
 ): Promise<JSON> {
   const r = await fetch(...args);
-  return r.json();
+  if (r.ok) return r.json();
+  throw new Error(`${r.status} ${r.statusText}`);
 }
 
 export interface LiveInfoV2 {
@@ -136,6 +137,10 @@ export interface Metadata {
   description: null;
   cloud_file_id: number;
   file_artwork_id: null;
+}
+
+export async function getLiveInfoV2(): Promise<LiveInfoV2> {
+  return fetcher("https://voicesradio.airtime.pro/api/live-info-v2");
 }
 
 export default function useLiveInfoV2() {

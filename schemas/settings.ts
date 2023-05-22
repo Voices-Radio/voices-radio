@@ -41,19 +41,7 @@ export default defineType({
       name: "address",
       title: "Address",
       description: "Address of Voices Radio in the footer",
-      type: "array",
-      of: [
-        defineArrayMember({
-          type: "block",
-          options: { spellCheck: true },
-          styles: [],
-          lists: [],
-          marks: {
-            decorators: [],
-            annotations: [],
-          },
-        }),
-      ],
+      type: "text",
       validation: (rule) => rule.required(),
     }),
     defineField({

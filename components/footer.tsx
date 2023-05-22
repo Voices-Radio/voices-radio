@@ -1,5 +1,4 @@
 import { getSettings } from "@/sanity.client";
-import { PortableText } from "@portabletext/react";
 
 export default async function Footer() {
   const settings = await getSettings();
@@ -9,13 +8,8 @@ export default async function Footer() {
       <div className="mx-auto max-w-6xl">
         <div className="flex gap-8">
           <div className="flex-1">
-            <address className="not-italic">
-              <PortableText
-                value={settings.address}
-                components={{
-                  block: ({ children }) => <>{children}</>,
-                }}
-              />
+            <address className="not-italic whitespace-pre-line">
+              {settings.address}
             </address>
           </div>
 

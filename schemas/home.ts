@@ -18,6 +18,12 @@ export default defineType({
       readOnly: true,
     }),
     defineField({
+      name: "schedule",
+      title: "Schedule",
+      description: "Hours and days when the station is live",
+      type: "text",
+    }),
+    defineField({
       name: "apply_heading",
       title: "Heading",
       description: "Heading for the Apply section",
