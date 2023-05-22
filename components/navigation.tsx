@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import NowPlaying from "./now-playing";
 
 export default function Navigation() {
   return (
@@ -9,7 +8,7 @@ export default function Navigation() {
       <nav className="grid grid-template-navigation items-center p-3 md:backdrop-blur-3xl">
         <div style={{ gridArea: "player" }}>
           {/* @ts-ignore */}
-          <NowPlaying />
+          {/* <NowPlaying /> */}
         </div>
 
         <Link

@@ -1,154 +1,82 @@
-"use server";
+"use client";
 
+import useLiveInfoV2 from "@/hooks/use-live-info-v2";
 import { format } from "date-fns";
-import LivePlayer from "./live-player";
-
-export interface LiveInfo {
-  station: Station;
-  tracks: Tracks;
-  shows: Shows;
-}
-
-export interface Shows {
-  previous: any[];
-  current: NextClass;
-  next: NextClass[];
-}
-
-export interface NextClass {
-  name: string;
-  description: string;
-  genre: string;
-  id: number;
-  instance_id: number;
-  record: number;
-  url: string;
-  image_path: string;
-  image_cloud_file_id: null;
-  auto_dj: boolean;
-  starts: Date;
-  ends: Date;
-}
-
-export interface Station {
-  env: string;
-  schedulerTime: Date;
-  source_enabled: string;
-  timezone: string;
-  AIRTIME_API_VERSION: string;
-}
-
-export interface Tracks {
-  previous: Previous;
-  current: TracksCurrent;
-  next: null;
-}
-
-export interface TracksCurrent {
-  starts: Date;
-  ends: Date;
-  type: string;
-  name: string;
-  media_item_played: boolean;
-  record: string;
-}
-
-export interface Previous {
-  starts: Date;
-  ends: Date;
-  type: string;
-  name: string;
-  metadata: Metadata;
-}
-
-export interface Metadata {
-  id: number;
-  name: string;
-  mime: string;
-  ftype: string;
-  directory: null;
-  filepath: string;
-  import_status: number;
-  currentlyaccessing: number;
-  editedby: null;
-  mtime: Date;
-  utime: Date;
-  lptime: Date;
-  md5: string;
-  track_title: string;
-  artist_name: null;
-  bit_rate: number;
-  sample_rate: number;
-  format: null;
-  length: string;
-  album_title: null;
-  genre: null;
-  comments: string;
-  year: null;
-  track_number: null;
-  channels: number;
-  url: null;
-  bpm: null;
-  rating: null;
-  encoded_by: null;
-  disc_number: null;
-  mood: null;
-  label: null;
-  composer: null;
-  encoder: null;
-  checksum: null;
-  lyrics: null;
-  orchestra: null;
-  conductor: null;
-  lyricist: null;
-  original_lyricist: null;
-  radio_station_name: null;
-  info_url: null;
-  artist_url: null;
-  audio_source_url: null;
-  radio_station_url: null;
-  buy_this_url: null;
-  isrc_number: null;
-  catalog_number: null;
-  original_artist: null;
-  copyright: null;
-  report_datetime: null;
-  report_location: null;
-  report_organization: null;
-  subject: null;
-  contributor: null;
-  language: null;
-  soundcloud_id: null;
-  soundcloud_error_code: null;
-  soundcloud_error_msg: null;
-  soundcloud_link_to_file: null;
-  soundcloud_upload_time: null;
-  replay_gain: string;
-  owner_id: number;
-  cuein: string;
-  cueout: string;
-  hidden: boolean;
-  filesize: number;
-  description: null;
-  cloud_file_id: number;
-  file_artwork_id: null;
-}
+import { useEffect } from "react";
+import { useGlobalAudioPlayer } from "react-use-audio-player";
 
 export default async function NowPlaying() {
-  const r = await fetch("https://voicesradio.airtime.pro/api/live-info-v2", {});
+  const { data } = useLiveInfoV2();
 
-  const data: LiveInfo = await r.json();
+  const { load, stop, play, playing } = useGlobalAudioPlayer();
 
   const title = data?.shows?.current?.name ?? "Live DJ";
 
-  const timeframe = `${format(new Date(data.shows.current.starts), "HH:mm")} - 
-  ${format(new Date(data.shows.current.ends), "HH:mm")}`;
+  useEffect(() => {
+    if ("mediaSession" in navigator && playing && data) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: title,
+        artist: "Voices Radio",
+      });
+    }
+  }, [data, playing]);
 
   return (
     <div className="flex gap-4 p-2 bg-white rounded">
-      <LivePlayer title={title} />
-      <p>{timeframe}</p>
-      <p>{title}</p>
+      <div>
+        {playing ? (
+          <button onClick={() => stop()}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.5 7.5a3 3 0 013-3h9a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="sr-only">Stop</div>
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              load("https://voicesradio.out.airtime.pro/voicesradio_a", {
+                html5: true,
+                format: "mp3",
+              });
+
+              play();
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="sr-only">Play</div>
+          </button>
+        )}
+      </div>
+
+      {data ? (
+        <>
+          <p>{`${format(new Date(data.shows.current.starts), "HH:mm")} - 
+  ${format(new Date(data.shows.current.ends), "HH:mm")}`}</p>
+          <p>{data?.shows?.current?.name ?? "Live DJ"}</p>
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 }
