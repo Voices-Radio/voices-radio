@@ -1,6 +1,5 @@
-"use client";
-
 import Link from "next/link";
+import JoinChat from "./join-chat";
 
 export default function Navigation() {
   return (
@@ -31,12 +30,7 @@ export default function Navigation() {
 
         <div style={{ gridArea: "menu" }}>
           <div className="flex justify-end md:justify-normal md:gap-10">
-            <button
-              className="px-4 bg-white rounded-full py-0.5 leading-6 text-lg hidden md:block whitespace-nowrap"
-              type="button"
-            >
-              Join Chat
-            </button>
+            <JoinChat />
 
             <button
               className="hidden md:block bg-black rounded-full text-lg text-white leading-8 py-1 px-9 ml-auto"
