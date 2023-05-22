@@ -7,9 +7,15 @@ export default defineType({
   type: "document",
   icon: CogIcon,
   preview: {
-    select: { title: "title", subtitle: "description" },
+    select: { title: "internal" },
   },
   fields: [
+    defineField({
+      name: "internal",
+      initialValue: "Settings",
+      type: "string",
+      readOnly: true,
+    }),
     defineField({
       name: "title",
       description:

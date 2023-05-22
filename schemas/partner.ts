@@ -7,7 +7,7 @@ export default defineType({
   type: "document",
   icon: StarIcon,
   preview: {
-    select: { title: "name", subtitle: "headline" },
+    select: { title: "name", subtitle: "details", media: "logo" },
   },
   fields: [
     defineField({
