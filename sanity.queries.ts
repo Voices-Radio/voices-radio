@@ -9,7 +9,7 @@ export interface Settings {
   ogImage: Image;
 }
 
-export const partnersQuery = groq`*[_type == "partner"]`;
+export const partnersQuery = groq`*[_type == "partner"] | order(name desc)`;
 
 export interface Partner {
   name: string;
