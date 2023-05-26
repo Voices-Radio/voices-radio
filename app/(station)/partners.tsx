@@ -14,7 +14,7 @@ export default async function PartnersSection() {
 
       <div className="flex flex-col md:flex-row gap-10 max-w-6xl mx-auto">
         {partners.map((partner) => (
-          <div key={partner.name} className="text-xs flex-1">
+          <div key={partner.name} className="text-inter-text-small flex-1">
             <div className="mb-4">
               <Image
                 width={200}

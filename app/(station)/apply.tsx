@@ -38,7 +38,7 @@ export default async function ApplySection() {
       <div className="absolute inset-0 backdrop-blur-xl" />
 
       <div className="relative text-white flex flex-col gap-8 items-center">
-        <h2 className="font-black text-center font-kinfolk text-kinfolk-headline">
+        <h2 className="font-black text-center font-kinfolk text-kinfolk-headline uppercase">
           {home.apply_heading}
         </h2>
 
