@@ -3,8 +3,8 @@ import JoinChat from "./join-chat";
 
 export default function Navigation() {
   return (
-    <header className="from-black/30 to-white bg-gradient-to-b pb-10">
-      <nav className="grid grid-template-navigation items-center p-3 md:backdrop-blur-3xl">
+    <header className="z-50 absolute inset-x-0 top-0">
+      <nav className="grid grid-template-navigation items-center p-3 md:backdrop-blur-3xl shadow-xl">
         <div style={{ gridArea: "player" }}>
           {/* @ts-ignore */}
           {/* <NowPlaying /> */}
@@ -20,12 +20,10 @@ export default function Navigation() {
 
         <Link
           href="/"
-          className="uppercase text-center text-white font-black text-[1.375rem] md:text-[1.875rem] leading-[1.125rem] md:leading-6 line"
+          className="uppercase font-kinfolk text-center text-white text-5xl leading-none"
           style={{ gridArea: "logo" }}
         >
           Voices
-          <br />
-          Radio
         </Link>
 
         <div style={{ gridArea: "menu" }}>

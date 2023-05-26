@@ -59,6 +59,8 @@ module.exports = {
         voices: {
           beige: "#ebebd2",
           gray: "#d9d9d9",
+          red: "#ed675d",
+          purple: "#5f5cf3",
         },
       },
     },
