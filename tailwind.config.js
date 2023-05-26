@@ -10,7 +10,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        kinfolk: ["var(--font-kinfolk)", ...defaultTheme.fontFamily.serif],
+        sans: ["var(--font-inter", ...defaultTheme.fontFamily.sans],
+        serif: ["var(--font-kinfolk)", ...defaultTheme.fontFamily.serif],
       },
       colors: {
         voices: {
