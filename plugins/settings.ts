@@ -41,16 +41,19 @@ export const pageStructure = (
     // Goes through all of the singletons that were provided and translates them into something the
     // Desktool can understand
     const singletonItems = typeDefArray.map((typeDef) => {
-      return S.listItem()
-        .title(typeDef.title!)
-        .icon(typeDef.icon)
-        .child(
-          S.editor()
-            .id(typeDef.name)
-            .schemaType(typeDef.name)
-            .documentId(typeDef.name)
-            .views([S.view.form()])
-        );
+      return (
+        S.listItem()
+          .title(typeDef.title!)
+          // @ts-ignore
+          .icon(typeDef.icon)
+          .child(
+            S.editor()
+              .id(typeDef.name)
+              .schemaType(typeDef.name)
+              .documentId(typeDef.name)
+              .views([S.view.form()])
+          )
+      );
     });
 
     // The default root list items (except custom ones)
