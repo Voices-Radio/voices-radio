@@ -20,7 +20,13 @@ module.exports = {
             lineHeight: "3.4375rem",
           },
         ],
-        "inter-text-semibold": [
+        "mobile-kinfolk-headline": [
+          "2.5rem",
+          {
+            lineHeight: "3.4375rem",
+          },
+        ],
+        "inter-text": [
           "1.625rem",
           {
             lineHeight: "2.175rem",
@@ -32,6 +38,20 @@ module.exports = {
           {
             fontWeight: "600",
             lineHeight: "1.375rem",
+          },
+        ],
+        "mobile-inter-text": [
+          "1.25rem",
+          {
+            lineHeight: "1.5rem",
+            fontWeight: "600",
+          },
+        ],
+        "mobile-inter-xsmall": [
+          "0.75rem",
+          {
+            fontWeight: "600",
+            lineHeight: "1.05rem",
           },
         ],
       },
