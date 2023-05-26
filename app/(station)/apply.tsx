@@ -42,13 +42,13 @@ export default async function ApplySection() {
           {home.apply_heading}
         </h2>
 
-        <p className="text-center text-inter-text-semibold max-w-xl">
+        <p className="text-center text-inter-text max-w-xl">
           {home.apply_subheading}
         </p>
 
         <a
           href={home.apply_cta_url}
-          className="rounded-full bg-transparent border-4 border-white text-white px-20 pt-[calc(1.125rem-4px)] pb-[calc(1.25rem-4px)] text-inter-text-semibold"
+          className="rounded-full bg-transparent border-4 border-white text-white px-20 pt-[calc(1.125rem-4px)] pb-[calc(1.25rem-4px)] text-inter-text"
         >
           {home.apply_cta_text}
         </a>
