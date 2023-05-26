@@ -9,6 +9,7 @@ const kinfolk = localFont({
 });
 
 const inter = Inter({
+  weight: ["600"],
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
@@ -20,7 +21,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${kinfolk.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`antialiased ${kinfolk.variable} ${inter.variable}`}
+    >
       <body>{children}</body>
     </html>
   );
