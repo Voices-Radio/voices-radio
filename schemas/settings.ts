@@ -6,6 +6,10 @@ export default defineType({
   title: "Settings",
   type: "document",
   icon: CogIcon,
+  groups: [
+    { name: "links", title: "Links" },
+    { name: "seo", title: "SEO" },
+  ],
   preview: {
     select: { title: "internal" },
   },
@@ -21,6 +25,7 @@ export default defineType({
       description:
         "This field is the title of your site, used in <title> tag for SEO.",
       title: "Title",
+      group: "seo",
       type: "string",
       validation: (rule) => rule.required(),
     }),
@@ -28,12 +33,14 @@ export default defineType({
       name: "description",
       description: "Used for the <meta> description tag for SEO",
       title: "Description",
+      group: "seo",
       type: "string",
       validation: (rule) => rule.max(155).required(),
     }),
     defineField({
       name: "ogImage",
       title: "Open Graph Image",
+      group: "seo",
       type: "image",
       description: "Displayed on social cards and search engine results.",
     }),
@@ -49,9 +56,50 @@ export default defineType({
       title: "Contact Link",
       description: "Email link for Contact Us button",
       type: "url",
+      group: "links",
       validation: (rule) =>
         rule.required().uri({
           scheme: ["mailto"],
+        }),
+    }),
+    defineField({
+      name: "twitter_link",
+      title: "Twitter Link",
+      type: "url",
+      group: "links",
+      validation: (rule) =>
+        rule.required().uri({
+          scheme: ["https"],
+        }),
+    }),
+    defineField({
+      name: "instagram_link",
+      title: "Instagram Link",
+      type: "url",
+      group: "links",
+      validation: (rule) =>
+        rule.required().uri({
+          scheme: ["https"],
+        }),
+    }),
+    defineField({
+      name: "facebook_link",
+      title: "Facebook Link",
+      type: "url",
+      group: "links",
+      validation: (rule) =>
+        rule.required().uri({
+          scheme: ["https"],
+        }),
+    }),
+    defineField({
+      name: "mixcloud_link",
+      title: "Mixcloud Link",
+      type: "url",
+      group: "links",
+      validation: (rule) =>
+        rule.required().uri({
+          scheme: ["https"],
         }),
     }),
   ],

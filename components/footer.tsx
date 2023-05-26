@@ -1,5 +1,6 @@
 import { getSettings } from "@/sanity.client";
 import Image from "next/image";
+import SocialLink from "./social-link";
 
 export default async function Footer() {
   const settings = await getSettings();
@@ -15,10 +16,13 @@ export default async function Footer() {
           </div>
 
           <div className="flex-1 flex justify-center gap-8">
-            <div className="h-6 w-6 bg-white rounded" />
-            <div className="h-6 w-6 bg-white rounded" />
-            <div className="h-6 w-6 bg-white rounded" />
-            <div className="h-6 w-6 bg-white rounded" />
+            <SocialLink type="twitter" url={settings.twitter_link} />
+
+            <SocialLink type="instagram" url={settings.instagram_link} />
+
+            <SocialLink type="facebook" url={settings.facebook_link} />
+
+            <SocialLink type="mixcloud" url={settings.mixcloud_link} />
           </div>
 
           <div className="flex-1 flex justify-center md:justify-end">
