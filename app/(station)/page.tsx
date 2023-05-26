@@ -1,6 +1,8 @@
 import { getHome } from "@/sanity.client";
 import ApplySection from "./apply";
 import PartnersSection from "./partners";
+import Image from "next/image";
+import Badge from "@/components/badge";
 
 export const runtime = "edge";
 
@@ -14,10 +16,26 @@ export default async function Home() {
       <section>
         <div>
           <div>Video Here</div>
-          <div>
-            <p>Play Button Here</p>
 
-            <p className="whitespace-pre-line text-center">{home.schedule}</p>
+          <div>
+            <Image
+              alt="Voices Logo"
+              className="invert"
+              height={462}
+              src="/voices.svg"
+              width={430}
+              priority
+            />
+
+            <div className="flex gap-2.5 justify-center">
+              <Badge>Community</Badge>
+              <Badge>Radio</Badge>
+              <Badge>London</Badge>
+            </div>
+
+            <p className="whitespace-pre-line text-center text-inter-text">
+              {home.schedule}
+            </p>
           </div>
         </div>
       </section>

@@ -48,7 +48,7 @@ export default async function ApplySection() {
 
         <a
           href={home.apply_cta_url}
-          className="rounded-full bg-transparent border-4 border-white text-white px-20 pt-[calc(1.125rem-4px)] pb-[calc(1.25rem-4px)] text-inter-text"
+          className="rounded-full bg-transparent ring-4 ring-inset ring-white text-white px-20 py-[1.125rem] text-inter-text"
         >
           {home.apply_cta_text}
         </a>
