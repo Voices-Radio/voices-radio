@@ -43,4 +43,15 @@
     margin-top: -0.1194em;
     display: table;
   }
+
+  .md\:text-kinfolk-artist::before {
+    content: "";
+    margin-bottom: 0.0559em;
+    display: table;
+  }
+  .md\:text-kinfolk-artist::after {
+    content: "";
+    margin-top: -0.0901em;
+    display: table;
+  }
 }

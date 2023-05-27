@@ -1,107 +1,23 @@
-"use server";
+"use client";
 
-import { format, isBefore, startOfDay, startOfToday } from "date-fns";
-import { headers } from "next/headers";
+import * as Dialog from "@radix-ui/react-dialog";
 
-export interface WeekInfo {
-  monday: Day[];
-  tuesday: Day[];
-  wednesday: Day[];
-  thursday: Day[];
-  friday: Day[];
-  saturday: Day[];
-  sunday: Day[];
-  nextmonday: Day[];
-  nexttuesday: Day[];
-  nextwednesday: Day[];
-  nextthursday: Day[];
-  nextfriday: Day[];
-  nextsaturday: Day[];
-  nextsunday: Day[];
-  AIRTIME_API_VERSION: string;
-}
-
-export interface Day {
-  start_timestamp: string;
-  end_timestamp: string;
-  name: string;
-  description: string;
-  id: number;
-  instance_id: number;
-  instance_description: string;
-  record: number;
-  url: string;
-  image_path: string;
-  image_cloud_file_id: null;
-  auto_dj: boolean;
-  starts: string;
-  ends: string;
-}
-
-export default async function Schedule() {
-  const headersList = headers();
-
-  const timezone = headersList.get("x-vercel-ip-timezone");
-
-  const r = await fetch(
-    `https://voicesradio.airtime.pro/api/week-info?timezone=${
-      timezone ?? "Europe/London"
-    }`,
-    { next: { revalidate: 60 } }
-  );
-
-  const data: WeekInfo = await r.json();
-
-  const schedule: Day[] = Object.values(data).filter(Array.isArray).flat();
-
-  const scheduleAfterToday = schedule.filter((day) =>
-    isBefore(startOfToday(), new Date(day.starts))
-  );
-
-  const scheduleByDay = scheduleAfterToday.reduce<{ [key: string]: Day[] }>(
-    (prev, current) => {
-      const date = format(
-        startOfDay(new Date(current.start_timestamp)),
-        "yyyy-MM-dd"
-      );
-
-      if (prev[date]) {
-        return {
-          ...prev,
-          [date]: [...prev[date], current],
-        };
-      }
-
-      return {
-        ...prev,
-        [date]: [current],
-      };
-    },
-    {}
-  );
-
+export default function Schedule({ children }: { children: React.ReactNode }) {
   return (
-    <section className="p-8">
-      <p>Schedule: {timezone ?? "Missing Timezone"}</p>
+    <Dialog.Root>
+      <Dialog.Trigger asChild>
+        <button className="hidden md:block bg-black rounded-full text-lg text-white leading-8 py-1 px-9 ml-auto focus:outline-none">
+          Schedule
+        </button>
+      </Dialog.Trigger>
 
-      <ul className="space-y-4">
-        {Object.entries(scheduleByDay).map(([date, shows]) => (
-          <li key={date}>
-            <p>{format(new Date(date), "E dd")}</p>
+      <Dialog.Portal>
+        <Dialog.Overlay className="bg-black/20 backdrop-blur-xl fixed inset-0" />
 
-            <ul>
-              {shows.map((day) => (
-                <li key={day.id} className="flex gap-2">
-                  <p>
-                    {`${format(new Date(day.starts), "HH:mm")} - 
-              ${format(new Date(day.ends), "HH:mm")} ${day.name}`}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </section>
+        <Dialog.Content className="fixed inset-0 focus:outline-none overflow-y-scroll">
+          <div className="max-w-5xl mx-auto p-10 mt-[4.5rem] ">{children}</div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

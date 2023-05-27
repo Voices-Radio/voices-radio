@@ -1,6 +1,8 @@
 import Link from "next/link";
 import JoinChat from "./join-chat";
 import NowPlaying from "./now-playing";
+import Schedule from "./schedule";
+import ScheduleContent from "./schedule-content";
 
 export default function Navigation() {
   return (
@@ -30,12 +32,10 @@ export default function Navigation() {
           <div className="flex justify-end md:justify-normal md:gap-10">
             <JoinChat />
 
-            <button
-              className="hidden md:block bg-black rounded-full text-lg text-white leading-8 py-1 px-9 ml-auto"
-              type="button"
-            >
-              Schedule
-            </button>
+            <Schedule>
+              {/* @ts-expect-error Async Server Components */}
+              <ScheduleContent />
+            </Schedule>
 
             <button
               className="flex bg-black rounded-lg text-white p-2"
