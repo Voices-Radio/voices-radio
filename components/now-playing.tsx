@@ -1,7 +1,11 @@
 "use client";
 
 import useLiveInfoV2, { Show } from "@/hooks/use-live-info-v2";
+import Play from "@/icons/play";
+import Spinner from "@/icons/spinner";
+import Stop from "@/icons/stop";
 import { format } from "date-fns";
+import { useState } from "react";
 import { useGlobalAudioPlayer } from "react-use-audio-player";
 
 function renderTimetable(show: Show) {
@@ -12,64 +16,45 @@ ${format(new Date(show.ends), "HH:mm")}`;
 export default function NowPlaying() {
   const { data } = useLiveInfoV2();
 
-  const { load, stop, play, playing } = useGlobalAudioPlayer();
+  const [loading, loadingSet] = useState(false);
 
-  // const title = data?.shows?.current?.name ?? "Live DJ";
+  const { load, stop, playing } = useGlobalAudioPlayer();
 
-  // useEffect(() => {
-  //   if ("mediaSession" in navigator && playing && data) {
-  //     navigator.mediaSession.metadata = new MediaMetadata({
-  //       title: title,
-  //       artist: "Voices Radio",
-  //     });
-  //   }
-  // }, [data, playing]);
+  function play() {
+    loadingSet(true);
+
+    load("https://voicesradio.out.airtime.pro/voicesradio_a", {
+      html5: true,
+      format: "mp3",
+      autoplay: true,
+      onplay() {
+        loadingSet(false);
+
+        if ("mediaSession" in navigator && data) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: data?.shows?.current?.name ?? "Live DJ",
+            artist: "Voices Radio",
+          });
+        }
+      },
+    });
+  }
 
   return (
     <div className="relative h-12 flex gap-4 p-2 bg-white rounded-lg mr-10">
       <div>
         {playing ? (
-          <button onClick={() => stop()}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-8 h-8"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 7.5a3 3 0 013-3h9a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <button onClick={stop}>
+            <Stop />
             <div className="sr-only">Stop</div>
           </button>
+        ) : loading ? (
+          <div className="p-1">
+            <Spinner />
+          </div>
         ) : (
-          <button
-            onClick={() => {
-              load("https://voicesradio.out.airtime.pro/voicesradio_a", {
-                html5: true,
-                format: "mp3",
-                onplay() {
-                  console.log("play");
-                },
-              });
-
-              play();
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-8 h-8"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <button onClick={play}>
+            <Play />
             <div className="sr-only">Play</div>
           </button>
         )}
