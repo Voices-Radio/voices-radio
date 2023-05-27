@@ -12,7 +12,7 @@ export default function JoinChat() {
   return (
     <button
       onClick={joinChat}
-      className="px-4 bg-white rounded-full py-0.5 leading-6 text-lg hidden md:block whitespace-nowrap"
+      className="px-6 bg-white rounded-full py-1.5 text-inter-text-small hidden md:block whitespace-nowrap"
       type="button"
     >
       Join Chat

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import JoinChat from "./join-chat";
+import NowPlaying from "./now-playing";
 
 export default function Navigation() {
   return (
     <header className="z-50 absolute inset-x-0 top-0">
       <nav className="grid grid-template-navigation items-center p-3 md:backdrop-blur-3xl shadow-xl">
         <div style={{ gridArea: "player" }}>
-          {/* @ts-ignore */}
-          {/* <NowPlaying /> */}
+          <NowPlaying />
         </div>
 
         <Link

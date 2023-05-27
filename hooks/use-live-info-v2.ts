@@ -3,7 +3,7 @@ import useSWR from "swr";
 async function fetcher<JSON = any>(
   ...args: [input: RequestInfo, init?: RequestInit]
 ): Promise<JSON> {
-  const r = await fetch(...args);
+  const r = await fetch(args[0], { ...args[1], cache: "no-cache" });
   if (r.ok) return r.json();
   throw new Error(`${r.status} ${r.statusText}`);
 }
@@ -16,11 +16,11 @@ export interface LiveInfoV2 {
 
 export interface Shows {
   previous: any[];
-  current: NextClass;
-  next: NextClass[];
+  current: Show;
+  next: Show[];
 }
 
-export interface NextClass {
+export interface Show {
   name: string;
   description: string;
   genre: string;
@@ -140,15 +140,19 @@ export interface Metadata {
 }
 
 export async function getLiveInfoV2(): Promise<LiveInfoV2> {
-  return fetcher("https://voicesradio.airtime.pro/api/live-info-v2");
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return fetcher(
+    `https://voicesradio.airtime.pro/api/live-info-v2?timezone=${timeZone}`
+  );
 }
 
 export default function useLiveInfoV2() {
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   return useSWR<LiveInfoV2>(
-    "https://voicesradio.airtime.pro/api/live-info-v2",
+    `https://voicesradio.airtime.pro/api/live-info-v2?timezone=${timeZone}`,
     fetcher,
-    {
-      revalidateIfStale: false,
-    }
+    { refreshInterval: 1000 * 60 }
   );
 }

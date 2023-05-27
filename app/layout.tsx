@@ -9,7 +9,7 @@ const kinfolk = localFont({
 });
 
 const inter = Inter({
-  weight: ["600"],
+  weight: ["600", "900"],
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",

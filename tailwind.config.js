@@ -33,6 +33,13 @@ module.exports = {
             fontWeight: "600",
           },
         ],
+        "inter-text-black": [
+          "1.75rem",
+          {
+            fontWeight: "900",
+            lineHeight: "2.175rem",
+          },
+        ],
         "inter-text-small": [
           "1.125rem",
           {
