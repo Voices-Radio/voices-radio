@@ -38,7 +38,7 @@ export interface Day {
   ends: string;
 }
 
-export default async function ScheduleContent() {
+async function getScheduleData(): Promise<WeekInfo> {
   const headersList = headers();
 
   const timezone =
@@ -50,7 +50,11 @@ export default async function ScheduleContent() {
     { next: { revalidate: 60 } }
   );
 
-  const data: WeekInfo = await r.json();
+  return r.json();
+}
+
+export default async function ScheduleContent() {
+  const data = await getScheduleData();
 
   const schedule: Day[] = Object.values(data).filter(Array.isArray).flat();
 
