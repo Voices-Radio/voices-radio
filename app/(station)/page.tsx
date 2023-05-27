@@ -5,6 +5,7 @@ import { getHome } from "@/sanity.client";
 import Image from "next/image";
 import ApplySection from "./apply";
 import PartnersSection from "./partners";
+import CommunitySection from "./community";
 
 export const runtime = "edge";
 
@@ -58,22 +59,13 @@ export default async function Home() {
         <ScrollAfforance target="#community" />
       </section>
 
-      <section
-        className="px-8 py-40 relative overflow-hidden bg-voices-beige"
-        id="community"
-      >
-        <p>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit,
-          accusamus. Fugit culpa earum officiis enim pariatur obcaecati nostrum
-          minus? Quibusdam quae obcaecati, tempora fuga quasi facilis quo atque
-          impedit optio?
-        </p>
-      </section>
+      {/* @ts-expect-error Async Server Components */}
+      <CommunitySection />
 
-      {/* @ts-ignore */}
+      {/* @ts-expect-error Async Server Components */}
       <ApplySection />
 
-      {/* @ts-ignore */}
+      {/* @ts-expect-error Async Server Components */}
       <PartnersSection />
     </main>
   );

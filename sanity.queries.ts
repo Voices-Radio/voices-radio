@@ -30,8 +30,14 @@ export const homeQuery = groq`*[_type == "home"][0]`;
 
 export interface Home {
   schedule: string;
-  apply_cta_text: string;
-  apply_cta_url: string;
+
+  community_heading: string;
+  community_subheading: string;
+  community_cta_text: string;
+  community_cta_url: string;
+
   apply_heading: string;
   apply_subheading: string;
+  apply_cta_text: string;
+  apply_cta_url: string;
 }
