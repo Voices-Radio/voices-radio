@@ -1,6 +1,5 @@
 import { getHome } from "@/sanity.client";
 import Image from "next/image";
-import background from "./apply_background.jpg";
 
 export default async function ApplySection() {
   const home = await getHome();
@@ -33,7 +32,13 @@ export default async function ApplySection() {
         </svg>
       </div>
 
-      <Image src={background} className="object-cover" alt="" fill priority />
+      <Image
+        src="/apply_background.jpg"
+        className="object-cover"
+        alt=""
+        fill
+        priority
+      />
 
       <div className="absolute inset-0 backdrop-blur-xl" />
 
