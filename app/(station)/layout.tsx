@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       url: new URL("https://voicesradio.co.uk"),
-      title,
+      title: { default: title, template: `%s | ${title}` },
       description,
       siteName: title,
       images: [
@@ -29,6 +29,12 @@ export async function generateMetadata(): Promise<Metadata> {
           height: 627,
         },
       ],
+    },
+    twitter: {
+      title: { default: title, template: `%s | ${title}` },
+      description,
+      images: [{ url: imageUrl, width: 1200, height: 627 }],
+      card: "summary_large_image",
     },
   };
 }
