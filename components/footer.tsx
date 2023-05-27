@@ -36,7 +36,13 @@ export default async function Footer() {
         </div>
 
         <div className="flex justify-center mt-12 md:mt-0">
-          <Image src="/voices.svg" width={310} height={333} alt="Voices Logo" />
+          <Image
+            src="/voices.svg"
+            className="w-64 md:w-auto"
+            width={310}
+            height={333}
+            alt="Voices Logo"
+          />
         </div>
       </div>
     </div>

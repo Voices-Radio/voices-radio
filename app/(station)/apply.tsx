@@ -53,18 +53,18 @@ export default async function ApplySection() {
 
       <div className="absolute inset-0 backdrop-blur-xl" />
 
-      <div className="relative text-white flex flex-col gap-8 items-center">
-        <h2 className="font-black text-center font-kinfolk text-kinfolk-headline uppercase">
+      <div className="relative text-white flex flex-col gap-8 items-center px-6">
+        <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline md:text-kinfolk-headline uppercase">
           {home.apply_heading}
         </h2>
 
-        <p className="text-center text-inter-text max-w-xl">
+        <p className="text-center text-mobile-inter-text md:text-inter-text max-w-xl">
           {home.apply_subheading}
         </p>
 
         <a
           href={home.apply_cta_url}
-          className="rounded-full bg-transparent ring-4 ring-inset ring-white text-white px-20 py-[1.125rem] text-inter-text"
+          className="rounded-full bg-transparent ring-4 ring-inset ring-white text-white px-20 py-[1.125rem] text-mobile-inter-text md:text-inter-text"
         >
           {home.apply_cta_text}
         </a>

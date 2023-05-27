@@ -7,7 +7,7 @@ export default async function PartnersSection() {
   const partners = await getPartners();
 
   return (
-    <section className="bg-voices-gray p-5 md:p-12 pb-10">
+    <section className="bg-voices-gray px-5 py-10 md:p-12 pb-10">
       <div className="mb-6 md:hidden">
         <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase text-center">
           Our Partners

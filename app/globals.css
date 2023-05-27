@@ -18,3 +18,29 @@
     grid-template-areas: "player logo menu";
   }
 }
+
+/* Capsize Augments */
+
+.text-mobile-kinfolk-headline::before {
+  content: "";
+  margin-bottom: -0.268em;
+  display: table;
+}
+.text-mobile-kinfolk-headline::after {
+  content: "";
+  margin-top: -0.414em;
+  display: table;
+}
+
+@screen md {
+  .md\:text-kinfolk-headline::before {
+    content: "";
+    margin-bottom: 0.0266em;
+    display: table;
+  }
+  .md\:text-kinfolk-headline::after {
+    content: "";
+    margin-top: -0.1194em;
+    display: table;
+  }
+}

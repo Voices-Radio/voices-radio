@@ -6,13 +6,17 @@ export default async function CommunitySection() {
 
   return (
     <section
-      className="px-8 py-28 relative overflow-hidden bg-voices-beige"
+      className="px-6 md:px-8 pt-6 pb-12 md:py-28 relative overflow-hidden bg-voices-beige"
       id="community"
     >
-      <div className="flex flex-col md:flex-row-reverse gap-10">
-        <div className="flex-1">IMAGE CAROUSEL HERE</div>
+      <div className="flex flex-col md:flex-row-reverse gap-8">
+        <div className="flex-1">
+          <div className="aspect-video flex items-center justify-center bg-white">
+            IMAGE CAROUSEL HERE
+          </div>
+        </div>
 
-        <div className="flex-1 flex flex-col items-center gap-10">
+        <div className="flex-1 flex flex-col items-center gap-8 md:gap-10">
           <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline md:text-kinfolk-headline uppercase">
             {home.community_heading}
           </h2>
