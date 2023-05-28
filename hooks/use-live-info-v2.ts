@@ -16,7 +16,7 @@ export interface LiveInfoV2 {
 
 export interface Shows {
   previous: any[];
-  current: Show;
+  current: Show | null;
   next: Show[];
 }
 

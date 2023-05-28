@@ -98,8 +98,8 @@ export default async function ScheduleContent() {
                   ${format(new Date(day.ends), "HH:mm")}`;
 
               const isLive =
-                isBefore(new Date(day.starts), Date.now()) &&
-                isAfter(new Date(day.ends), Date.now());
+                isBefore(new Date(day.starts), new Date()) &&
+                isAfter(new Date(day.ends), new Date());
 
               return (
                 <li

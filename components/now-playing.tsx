@@ -32,7 +32,7 @@ export default function NowPlaying() {
 
         if ("mediaSession" in navigator && data) {
           navigator.mediaSession.metadata = new MediaMetadata({
-            title: data?.shows?.current?.name ?? "Live DJ",
+            title: data.shows.current ? data.shows.current.name : "Live DJ",
             artist: "Voices Radio",
           });
         }
@@ -61,13 +61,17 @@ export default function NowPlaying() {
       </div>
 
       {data ? (
-        <p className="text-inter-text-black whitespace-nowrap">
-          <span className="font-semibold tabular-nums">
-            {renderTimetable(data.shows.current)}
-          </span>
-          <span> </span>
-          <span>{data?.shows?.current?.name ?? "Live DJ"}</span>
-        </p>
+        data.shows.current ? (
+          <p className="text-inter-text-black whitespace-nowrap">
+            <span className="font-semibold tabular-nums">
+              {renderTimetable(data.shows.current)}
+            </span>
+            <span> </span>
+            <span>{data?.shows?.current?.name ?? "Live DJ"}</span>
+          </p>
+        ) : (
+          <p className="text-inter-text-black whitespace-nowrap">Offline</p>
+        )
       ) : (
         <p className="text-inter-text-black uppercase">Loading...</p>
       )}
