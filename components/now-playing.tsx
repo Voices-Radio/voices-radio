@@ -41,48 +41,49 @@ export default function NowPlaying() {
   }
 
   return (
-    <div className="relative h-12 flex gap-4 p-2 bg-white rounded-lg md:mr-10 overflow-hidden">
-      {playing ? (
-        <button onClick={stop}>
-          <Stop />
-          <div className="sr-only">Stop</div>
-        </button>
-      ) : loading ? (
-        <div className="p-1">
-          <Spinner />
-        </div>
-      ) : (
-        <button onClick={play}>
-          <Play />
-          <div className="sr-only">Play</div>
-        </button>
-      )}
-
-      {data ? (
-        data.shows.current ? (
-          <p className="text-inter-text-black whitespace-nowrap">
-            <span className="font-semibold tabular-nums">
-              {renderTimetable(data.shows.current)}
-            </span>
-            <span> </span>
-            <span>{data?.shows?.current?.name ?? "Live DJ"}</span>
-          </p>
+    <div className="relative h-12 p-2 bg-white rounded-lg md:mr-10">
+      <div className="flex items-center gap-4 overflow-hidden">
+        {playing ? (
+          <button onClick={stop}>
+            <Stop />
+            <div className="sr-only">Stop</div>
+          </button>
+        ) : loading || !data ? (
+          <div className="p-1">
+            <Spinner />
+          </div>
         ) : (
-          <p className="text-inter-text-black uppercase  whitespace-nowrap">
-            Offline
-          </p>
-        )
-      ) : (
-        <p className="text-inter-text-black uppercase">Loading...</p>
-      )}
+          <button onClick={play}>
+            <Play />
+            <div className="sr-only">Play</div>
+          </button>
+        )}
+
+        {data ? (
+          data.shows.current ? (
+            <p className="text-inter-text-black whitespace-nowrap">
+              <span className="font-semibold tabular-nums">
+                {renderTimetable(data.shows.current)}
+              </span>
+              <span> </span>
+              <span>{data?.shows?.current?.name ?? "Live DJ"}</span>
+            </p>
+          ) : (
+            <p className="text-inter-text-black uppercase  whitespace-nowrap">
+              Station Offline
+            </p>
+          )
+        ) : (
+          <p className="text-inter-text-black uppercase">Loading Station...</p>
+        )}
+      </div>
 
       {/* Tail */}
       <svg
-        className="absolute -right-11 top-1/2 -translate-y-1/2 hidden md:block"
+        className="absolute -right-11 top-1/2 -translate-y-1/2 hidden md:inline"
         width="44"
         height="17"
         viewBox="0 0 44 17"
-        fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path

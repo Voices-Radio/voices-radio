@@ -50,7 +50,7 @@ module.exports = {
           "1.75rem",
           {
             fontWeight: "900",
-            lineHeight: "2.175rem",
+            lineHeight: "2.125rem",
           },
         ],
         "inter-text-small": [
