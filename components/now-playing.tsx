@@ -41,24 +41,22 @@ export default function NowPlaying() {
   }
 
   return (
-    <div className="relative h-12 flex gap-4 p-2 bg-white rounded-lg mr-10">
-      <div>
-        {playing ? (
-          <button onClick={stop}>
-            <Stop />
-            <div className="sr-only">Stop</div>
-          </button>
-        ) : loading ? (
-          <div className="p-1">
-            <Spinner />
-          </div>
-        ) : (
-          <button onClick={play}>
-            <Play />
-            <div className="sr-only">Play</div>
-          </button>
-        )}
-      </div>
+    <div className="relative h-12 flex gap-4 p-2 bg-white rounded-lg md:mr-10 overflow-hidden">
+      {playing ? (
+        <button onClick={stop}>
+          <Stop />
+          <div className="sr-only">Stop</div>
+        </button>
+      ) : loading ? (
+        <div className="p-1">
+          <Spinner />
+        </div>
+      ) : (
+        <button onClick={play}>
+          <Play />
+          <div className="sr-only">Play</div>
+        </button>
+      )}
 
       {data ? (
         data.shows.current ? (
@@ -70,14 +68,17 @@ export default function NowPlaying() {
             <span>{data?.shows?.current?.name ?? "Live DJ"}</span>
           </p>
         ) : (
-          <p className="text-inter-text-black whitespace-nowrap">Offline</p>
+          <p className="text-inter-text-black uppercase  whitespace-nowrap">
+            Offline
+          </p>
         )
       ) : (
         <p className="text-inter-text-black uppercase">Loading...</p>
       )}
 
+      {/* Tail */}
       <svg
-        className="absolute -right-11 top-1/2 -translate-y-1/2"
+        className="absolute -right-11 top-1/2 -translate-y-1/2 hidden md:block"
         width="44"
         height="17"
         viewBox="0 0 44 17"

@@ -14,7 +14,7 @@
   .grid-template-navigation {
     @apply gap-4;
 
-    grid-template-columns: 1fr min-content 1fr;
+    grid-template-columns: minmax(0, 1fr) min-content minmax(0, 1fr);
     grid-template-areas: "player logo menu";
   }
 }
