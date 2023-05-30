@@ -6,6 +6,8 @@ import Image from "next/image";
 import ApplySection from "./apply";
 import PartnersSection from "./partners";
 import CommunitySection from "./community";
+import Schedule from "@/components/schedule";
+import ScheduleContent from "@/components/schedule-content";
 
 export const runtime = "edge";
 
@@ -17,8 +19,8 @@ export default async function Home() {
   return (
     <main>
       <section className="relative">
-        <div className="grid grid-cols-2">
-          <div className="relative">
+        <div className="grid md:grid-cols-2">
+          <div className="relative aspect-square md:aspect-auto">
             <Image
               alt=""
               className="object-cover object-center"
@@ -43,7 +45,7 @@ export default async function Home() {
                 draggable={false}
               />
 
-              <div className="flex gap-2.5 justify-center">
+              <div className="hidden md:flex gap-2.5 justify-center">
                 <Badge>Community</Badge>
                 <Badge>Radio</Badge>
                 <Badge>London</Badge>
@@ -52,6 +54,13 @@ export default async function Home() {
               <p className="whitespace-pre-line text-center text-inter-text">
                 {home.schedule}
               </p>
+
+              <div className="md:hidden flex justify-center">
+                <Schedule classNames="text-mobile-inter-text py-3 px-12">
+                  {/* @ts-expect-error Async Server Components */}
+                  <ScheduleContent />
+                </Schedule>
+              </div>
             </div>
           </div>
         </div>

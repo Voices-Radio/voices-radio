@@ -32,7 +32,7 @@ export default function Navigation() {
           <div className="flex justify-end md:justify-normal md:gap-10">
             <JoinChat />
 
-            <Schedule>
+            <Schedule classNames="hidden md:block text-inter-text-small leading-8 py-1 px-9 ml-auto">
               {/* @ts-expect-error Async Server Components */}
               <ScheduleContent />
             </Schedule>

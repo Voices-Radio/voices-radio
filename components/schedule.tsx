@@ -2,11 +2,19 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 
-export default function Schedule({ children }: { children: React.ReactNode }) {
+export default function Schedule({
+  children,
+  classNames = "",
+}: {
+  children: React.ReactNode;
+  classNames?: string;
+}) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="hidden md:block bg-black rounded-full text-lg text-white leading-8 py-1 px-9 ml-auto focus:outline-none">
+        <button
+          className={`${classNames} bg-black rounded-full text-white focus:outline-none`}
+        >
           Schedule
         </button>
       </Dialog.Trigger>
