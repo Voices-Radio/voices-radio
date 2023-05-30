@@ -7,6 +7,7 @@ import Stop from "@/icons/stop";
 import { format } from "date-fns";
 import { useState } from "react";
 import { useGlobalAudioPlayer } from "react-use-audio-player";
+import Marquee from "react-fast-marquee";
 
 function renderTimetable(show: Show) {
   return `${format(new Date(show.starts), "HH:mm")} - 
@@ -59,23 +60,40 @@ export default function NowPlaying() {
           </button>
         )}
 
-        {data ? (
-          data.shows.current ? (
-            <p className="text-inter-text-black whitespace-nowrap">
-              <span className="font-semibold tabular-nums">
-                {renderTimetable(data.shows.current)}
-              </span>
-              <span> </span>
-              <span>{data?.shows?.current?.name ?? "Live DJ"}</span>
-            </p>
+        <div className="flex-1 min-w-0">
+          {data ? (
+            data.shows.current ? (
+              <Marquee
+                autoFill
+                gradient
+                gradientColor={[255, 255, 255]}
+                gradientWidth={40}
+              >
+                <div className="inline-flex gap-5 mr-14 text-inter-text-black whitespace-nowrap">
+                  <p className="font-semibold tabular-nums">
+                    {renderTimetable(data.shows.current)}
+                  </p>
+                  <p>{data?.shows?.current?.name ?? "Live DJ"}</p>
+                </div>
+              </Marquee>
+            ) : (
+              <Marquee
+                autoFill
+                gradient
+                gradientColor={[255, 255, 255]}
+                gradientWidth={40}
+              >
+                <p className="text-inter-text-black uppercase whitespace-nowrap mr-10">
+                  Station Offline
+                </p>
+              </Marquee>
+            )
           ) : (
-            <p className="text-inter-text-black uppercase  whitespace-nowrap">
-              Station Offline
+            <p className="text-inter-text-black uppercase">
+              Loading Station...
             </p>
-          )
-        ) : (
-          <p className="text-inter-text-black uppercase">Loading Station...</p>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Tail */}
