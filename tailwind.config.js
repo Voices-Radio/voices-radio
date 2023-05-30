@@ -67,6 +67,13 @@ module.exports = {
             fontWeight: "600",
           },
         ],
+        "mobile-inter-small": [
+          "0.875rem",
+          {
+            lineHeight: "1rem",
+            fontWeight: "600",
+          },
+        ],
         "mobile-inter-xsmall": [
           "0.75rem",
           {

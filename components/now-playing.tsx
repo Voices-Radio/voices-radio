@@ -42,9 +42,9 @@ export default function NowPlaying() {
 
   return (
     <div className="relative h-12 p-2 bg-white rounded-lg md:mr-10">
-      <div className="flex items-center gap-4 overflow-hidden">
+      <div className="flex gap-4 overflow-hidden">
         {playing ? (
-          <button onClick={stop}>
+          <button className="h-8 w-8" onClick={stop}>
             <Stop />
             <div className="sr-only">Stop</div>
           </button>
@@ -53,7 +53,7 @@ export default function NowPlaying() {
             <Spinner />
           </div>
         ) : (
-          <button onClick={play}>
+          <button className="h-8 w-8" onClick={play}>
             <Play />
             <div className="sr-only">Play</div>
           </button>

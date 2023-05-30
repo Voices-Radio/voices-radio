@@ -20,9 +20,9 @@ export default function Schedule({
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="bg-black/20 backdrop-blur-xl fixed inset-0 overflow-y-auto">
+        <Dialog.Overlay className="bg-black/20 backdrop-blur-xl fixed inset-0 top-[4.5rem] overflow-y-auto">
           <Dialog.Content className="focus:outline-none">
-            <div className="max-w-5xl mx-auto p-10 mt-[4.5rem]">{children}</div>
+            <div className="max-w-5xl mx-auto p-10">{children}</div>
           </Dialog.Content>
 
           <Dialog.Close asChild>

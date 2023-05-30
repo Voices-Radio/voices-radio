@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 .grid-template-navigation {
-  @apply grid-cols-3 gap-2;
+  @apply gap-2;
 
+  grid-template-columns: minmax(0, 1fr) min-content minmax(0, 1fr);
   grid-template-areas:
     "chat logo menu"
     "player player player";
@@ -33,6 +34,21 @@
 .text-mobile-kinfolk-headline::after {
   content: "";
   margin-top: -0.414em;
+  display: table;
+}
+
+.text-kinfolk-logo {
+  font-size: 55px;
+  line-height: 38.115px;
+}
+.text-kinfolk-logo::before {
+  content: "";
+  margin-bottom: 0.073em;
+  display: table;
+}
+.text-kinfolk-logo::after {
+  content: "";
+  margin-top: -0.073em;
   display: table;
 }
 
