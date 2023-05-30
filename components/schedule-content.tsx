@@ -1,6 +1,7 @@
 "use server";
 
-import { format, isAfter, isBefore, startOfDay, startOfToday } from "date-fns";
+import { format, isAfter, isBefore, startOfDay } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 import { headers } from "next/headers";
 
 export interface WeekInfo {
@@ -38,7 +39,7 @@ export interface Day {
   ends: string;
 }
 
-async function getScheduleData(): Promise<WeekInfo> {
+async function getScheduleData() {
   const headersList = headers();
 
   const timezone =
@@ -50,16 +51,14 @@ async function getScheduleData(): Promise<WeekInfo> {
     { next: { revalidate: 60 } }
   );
 
-  return r.json();
-}
-
-export default async function ScheduleContent() {
-  const data = await getScheduleData();
+  const data: WeekInfo = await r.json();
 
   const schedule: Day[] = Object.values(data).filter(Array.isArray).flat();
 
+  const date = utcToZonedTime(new Date().getUTCDate(), timezone);
+
   const scheduleAfterToday = schedule.filter((day) =>
-    isBefore(startOfToday(), new Date(day.starts))
+    isBefore(startOfDay(date), new Date(day.starts))
   );
 
   const scheduleByDay = scheduleAfterToday.reduce<{ [key: string]: Day[] }>(
@@ -83,6 +82,12 @@ export default async function ScheduleContent() {
     },
     {}
   );
+
+  return scheduleByDay;
+}
+
+export default async function ScheduleContent() {
+  const scheduleByDay = await getScheduleData();
 
   return (
     <ul>
