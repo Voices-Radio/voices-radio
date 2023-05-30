@@ -6,7 +6,7 @@ export default async function Footer() {
   const settings = await getSettings();
 
   return (
-    <div className="bg-black text-white p-10 pb-20">
+    <footer className="bg-black text-white p-10 pb-20">
       <div className="mx-auto max-w-6xl">
         <div className="flex md:flex-row flex-col gap-8">
           <div className="flex-1 hidden md:block">
@@ -45,6 +45,6 @@ export default async function Footer() {
           />
         </div>
       </div>
-    </div>
+    </footer>
   );
 }

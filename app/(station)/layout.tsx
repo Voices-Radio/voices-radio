@@ -45,13 +45,13 @@ export default function StationLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <>
       <Navigation />
 
       {children}
 
       {/* @ts-ignore */}
       <Footer />
-    </div>
+    </>
   );
 }
