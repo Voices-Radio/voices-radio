@@ -13,13 +13,13 @@ export default async function CommunitySection() {
     >
       <div className="flex flex-col lg:flex-row-reverse gap-8 mb-16 items-center">
         <div className="flex-1">
-          <div className="mx-auto flex h-full max-w-7xl flex-col justify-center">
+          <div className="mx-auto flex h-full max-w-xl flex-col justify-center">
             <div className="relative overflow-hidden">
               <div className="flex">
                 {home.community_carousel.map((image, idx) => (
                   <Image
                     key={idx}
-                    src={urlForImage(image).width(650).height(440).url()}
+                    src={urlForImage(image).url()}
                     width={650}
                     height={440}
                     alt=""
@@ -51,13 +51,13 @@ export default async function CommunitySection() {
 
       <div className="flex flex-col lg:flex-row gap-8 items-center">
         <div className="flex-1">
-          <div className="mx-auto flex h-full max-w-7xl flex-col justify-center">
+          <div className="mx-auto flex h-full max-w-xl flex-col justify-center">
             <div className="relative overflow-hidden">
               <div className="flex">
                 {home.community_carousel.map((image, idx) => (
                   <Image
                     key={idx}
-                    src={urlForImage(image).width(650).height(440).url()}
+                    src={urlForImage(image).url()}
                     width={650}
                     height={440}
                     alt=""
