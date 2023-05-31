@@ -4,6 +4,8 @@ import NowPlaying from "./now-playing";
 import Schedule from "./schedule";
 import ScheduleContent from "./schedule-content";
 import ChatLink from "./chat-link";
+import MenuButton from "./menu/button";
+import MenuDialog from "./menu/dialog";
 
 export default function Navigation() {
   return (
@@ -32,26 +34,10 @@ export default function Navigation() {
             <ScheduleContent />
           </Schedule>
 
-          <button
-            className="flex bg-black rounded-lg text-white p-2"
-            type="button"
-          >
-            <span className="sr-only">Menu</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            </svg>
-          </button>
+          <MenuButton>
+            {/* @ts-expect-error Async Server Components */}
+            <MenuDialog />
+          </MenuButton>
         </div>
       </nav>
     </header>
