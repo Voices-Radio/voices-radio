@@ -46,7 +46,7 @@ export default function Carousel({ images }: { images: SanityImage[] }) {
 
   return (
     <LazyMotion features={loadFeatures} strict>
-      <div className="mx-auto flex h-full max-w-xl flex-col justify-center">
+      <div className="mask-blob mx-auto flex h-full max-w-xl flex-col justify-center">
         <div className="relative overflow-hidden">
           <m.div
             className="flex"
