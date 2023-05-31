@@ -1730,6 +1730,11 @@
     "@typescript-eslint/types" "5.59.6"
     eslint-visitor-keys "^3.3.0"
 
+"@uidotdev/usehooks@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@uidotdev/usehooks/-/usehooks-2.0.0.tgz#b787e5ec682b89b56b4ac5be39b6dce95a36adf8"
+  integrity sha512-vDBN16ktTUcmhJlo7uOYxMD7Mg99czuwFyfVZHiySMlS8kAEU8HF34RYW6dxwOVjZ71ilaJ9/MHqPz7YDyCJBw==
+
 "@uiw/codemirror-extensions-basic-setup@4.20.2":
   version "4.20.2"
   resolved "https://registry.yarnpkg.com/@uiw/codemirror-extensions-basic-setup/-/codemirror-extensions-basic-setup-4.20.2.tgz#25c098c9984403955498d996435c43941507a039"
@@ -3530,6 +3535,15 @@ framer-motion@^10.0.0:
   version "10.12.12"
   resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.12.12.tgz#24c3620520f225e446972c42cad1c94d6ce70bbc"
   integrity sha512-DDCqp60U6hR7aUrXj/BXc/t0Sd/U4ep6w/NZQkw898K+u7s+Vv/P8yxq4WTNA86kU9QCsqOgn1Qhz2DpYK0Oag==
+  dependencies:
+    tslib "^2.4.0"
+  optionalDependencies:
+    "@emotion/is-prop-valid" "^0.8.2"
+
+framer-motion@^10.12.16:
+  version "10.12.16"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.12.16.tgz#ccba11d216ac370c6bc65fcd9953a61deb54f071"
+  integrity sha512-w/SfWEIWJkYSgRHYBmln7EhcNo31ao8Xexol8lGXf1pR/tlnBtf1HcxoUmEiEh6pacB4/geku5ami53AAQWHMQ==
   dependencies:
     tslib "^2.4.0"
   optionalDependencies:

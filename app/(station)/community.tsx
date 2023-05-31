@@ -1,3 +1,4 @@
+import Carousel from "@/components/carousel";
 import { getHome } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import Image from "next/image";
@@ -13,22 +14,7 @@ export default async function CommunitySection() {
     >
       <div className="flex flex-col lg:flex-row-reverse gap-8 mb-16 items-center">
         <div className="flex-1">
-          <div className="mx-auto flex h-full max-w-xl flex-col justify-center">
-            <div className="relative overflow-hidden">
-              <div className="flex">
-                {home.community_carousel.map((image, idx) => (
-                  <Image
-                    key={idx}
-                    src={urlForImage(image).url()}
-                    width={650}
-                    height={440}
-                    alt=""
-                    className="object-cover aspect-[3/2]"
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <Carousel images={home.community_carousel} />
         </div>
 
         <div className="flex-1 flex flex-col items-center gap-8 md:gap-10">
@@ -51,22 +37,7 @@ export default async function CommunitySection() {
 
       <div className="flex flex-col lg:flex-row gap-8 items-center">
         <div className="flex-1">
-          <div className="mx-auto flex h-full max-w-xl flex-col justify-center">
-            <div className="relative overflow-hidden">
-              <div className="flex">
-                {home.community_carousel.map((image, idx) => (
-                  <Image
-                    key={idx}
-                    src={urlForImage(image).url()}
-                    width={650}
-                    height={440}
-                    alt=""
-                    className="object-cover aspect-[3/2]"
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <Carousel images={home.community_carousel} />
         </div>
 
         <div className="flex-1 flex flex-col items-center gap-8 md:gap-10">
