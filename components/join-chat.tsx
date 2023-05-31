@@ -6,7 +6,7 @@ export default function JoinChat() {
       onClick={() => {
         window.open("/chat", "voiceschatwindow", "width=480,height=520");
       }}
-      className="px-6 bg-white rounded-full py-1.5 text-inter-text-small hidden relative md:block whitespace-nowrap ml-8"
+      className="px-6 bg-white rounded-full py-1.5 text-inter-text-small hidden relative lg:block whitespace-nowrap ml-8"
     >
       <span>Join Chat</span>
 

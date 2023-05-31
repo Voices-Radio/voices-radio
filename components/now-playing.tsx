@@ -5,7 +5,7 @@ import Play from "@/icons/play";
 import Spinner from "@/icons/spinner";
 import Stop from "@/icons/stop";
 import { format } from "date-fns";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 import { useGlobalAudioPlayer } from "react-use-audio-player";
 import Marquee from "react-fast-marquee";
 
@@ -14,7 +14,7 @@ function renderTimetable(show: Show) {
 ${format(new Date(show.ends), "HH:mm")}`;
 }
 
-export default function NowPlaying() {
+export default function NowPlaying({ style }: { style: CSSProperties }) {
   const { data } = useLiveInfoV2();
 
   const [loading, loadingSet] = useState(false);
@@ -42,7 +42,10 @@ export default function NowPlaying() {
   }
 
   return (
-    <div className="relative h-12 p-2 bg-white rounded-lg md:mr-10">
+    <div
+      className="relative h-12 p-2 bg-white rounded-lg lg:mr-10"
+      style={style}
+    >
       <div className="flex gap-4 overflow-hidden">
         {playing ? (
           <button className="h-8 w-8" onClick={stop}>
@@ -98,7 +101,7 @@ export default function NowPlaying() {
 
       {/* Tail */}
       <svg
-        className="absolute -right-11 top-1/2 -translate-y-1/2 hidden md:inline"
+        className="absolute -right-11 top-1/2 -translate-y-1/2 hidden lg:inline"
         width="44"
         height="17"
         viewBox="0 0 44 17"
