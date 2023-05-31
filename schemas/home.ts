@@ -59,7 +59,15 @@ export default defineType({
       description: "Button link for the Community section",
       type: "url",
       group: "apply",
-      validation: (rule) => rule.required().uri({ relativeOnly: true }),
+      validation: (rule) => rule.required().uri({ allowRelative: true }),
+    }),
+    defineField({
+      name: "community_carousel",
+      title: "Communtiy Section - Carousel",
+      group: "community",
+      type: "array",
+      of: [{ type: "image", validation: (rule) => rule.required() }],
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "apply_heading",

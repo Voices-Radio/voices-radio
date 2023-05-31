@@ -1,4 +1,6 @@
 import { getHome } from "@/sanity.client";
+import { urlForImage } from "@/sanity.image";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function CommunitySection() {
@@ -11,9 +13,20 @@ export default async function CommunitySection() {
     >
       <div className="flex flex-col lg:flex-row-reverse gap-8 mb-16 items-center">
         <div className="flex-1">
-          <div className="flex items-center justify-center">
-            <div className="aspect-video w-[450px] bg-white flex items-center justify-center">
-              IMAGE CAROUSEL HERE
+          <div className="mx-auto flex h-full max-w-7xl flex-col justify-center">
+            <div className="relative overflow-hidden">
+              <div className="flex">
+                {home.community_carousel.map((image, idx) => (
+                  <Image
+                    key={idx}
+                    src={urlForImage(image).width(650).height(440).url()}
+                    width={650}
+                    height={440}
+                    alt=""
+                    className="object-cover aspect-[3/2]"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -38,9 +51,20 @@ export default async function CommunitySection() {
 
       <div className="flex flex-col lg:flex-row gap-8 items-center">
         <div className="flex-1">
-          <div className="flex items-center justify-center">
-            <div className="aspect-[9/16] h-[450px] bg-white flex items-center justify-center">
-              IMAGE CAROUSEL HERE
+          <div className="mx-auto flex h-full max-w-7xl flex-col justify-center">
+            <div className="relative overflow-hidden">
+              <div className="flex">
+                {home.community_carousel.map((image, idx) => (
+                  <Image
+                    key={idx}
+                    src={urlForImage(image).width(650).height(440).url()}
+                    width={650}
+                    height={440}
+                    alt=""
+                    className="object-cover aspect-[3/2]"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

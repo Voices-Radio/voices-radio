@@ -35,6 +35,7 @@ export interface Home {
   community_subheading: string;
   community_cta_text: string;
   community_cta_url: string;
+  community_carousel: Image[];
 
   apply_heading: string;
   apply_subheading: string;
