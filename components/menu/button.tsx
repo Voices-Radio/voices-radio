@@ -24,7 +24,7 @@ export default function MenuButton({
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button className="flex bg-black rounded-lg text-white p-2">
+        <button className="flex rounded-lg bg-black p-2 text-white">
           <span className="sr-only">Menu</span>
 
           <svg
@@ -33,7 +33,7 @@ export default function MenuButton({
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="h-6 w-6"
           >
             <path
               strokeLinecap="round"
@@ -45,16 +45,16 @@ export default function MenuButton({
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="bg-black fixed inset-0 md:top-[4.5rem] overflow-y-auto z-50">
+        <Dialog.Overlay className="fixed inset-0 z-50 overflow-y-auto bg-black md:top-[4.5rem]">
           <Dialog.Content className="focus:outline-none">
-            <nav className="grid grid-template-navigation items-center p-3">
+            <nav className="grid-template-navigation grid items-center p-3">
               <NowPlaying style={{ gridArea: "player" }} />
 
               <ChatLink style={{ gridArea: "chat" }} />
 
               <Link
                 href="/"
-                className="uppercase font-kinfolk text-center text-white text-kinfolk-logo"
+                className="text-kinfolk-logo text-center font-kinfolk uppercase text-white"
                 style={{ gridArea: "logo" }}
               >
                 Voices
@@ -67,7 +67,7 @@ export default function MenuButton({
                 <JoinChat />
 
                 <Dialog.Close asChild>
-                  <button className="rounded-full p-1 h-10 w-10 bg-white text-black ml-auto">
+                  <button className="ml-auto h-10 w-10 rounded-full bg-white p-1 text-black">
                     <span className="sr-only">Close</span>
 
                     <svg
@@ -76,7 +76,7 @@ export default function MenuButton({
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="w-8 h-8"
+                      className="h-8 w-8"
                     >
                       <path
                         strokeLinecap="round"

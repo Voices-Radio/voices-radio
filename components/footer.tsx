@@ -6,16 +6,16 @@ export default async function Footer() {
   const settings = await getSettings();
 
   return (
-    <footer className="bg-black text-white p-10 pb-20">
+    <footer className="bg-black p-10 pb-20 text-white">
       <div className="mx-auto max-w-6xl">
-        <div className="flex md:flex-row flex-col gap-8">
-          <div className="flex-1 hidden md:block">
-            <address className="text-inter-text-small not-italic whitespace-pre-line">
+        <div className="flex flex-col gap-8 md:flex-row">
+          <div className="hidden flex-1 md:block">
+            <address className="whitespace-pre-line text-inter-text-small not-italic">
               {settings.address}
             </address>
           </div>
 
-          <div className="flex-1 flex justify-center gap-8">
+          <div className="flex flex-1 justify-center gap-8">
             <SocialLink type="twitter" url={settings.twitter_link} />
 
             <SocialLink type="instagram" url={settings.instagram_link} />
@@ -25,7 +25,7 @@ export default async function Footer() {
             <SocialLink type="mixcloud" url={settings.mixcloud_link} />
           </div>
 
-          <div className="flex-1 flex justify-center md:justify-end">
+          <div className="flex flex-1 justify-center md:justify-end">
             <a
               className="text-center text-mobile-inter-text md:text-right md:text-inter-text"
               href={settings.contact_link}
@@ -35,7 +35,7 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="flex justify-center mt-12 md:mt-0">
+        <div className="mt-12 flex justify-center md:mt-0">
           <Image
             src="/voices.svg"
             className="w-64 md:w-auto"

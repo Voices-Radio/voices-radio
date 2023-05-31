@@ -13,20 +13,20 @@ export default function ScheduleButton({
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button
-          className={`${classNames} bg-black rounded-full text-white focus:outline-none`}
+          className={`${classNames} rounded-full bg-black text-white focus:outline-none`}
         >
           Schedule
         </button>
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="bg-black/20 backdrop-blur-xl fixed inset-0 md:top-[4.5rem] overflow-y-auto">
+        <Dialog.Overlay className="fixed inset-0 overflow-y-auto bg-black/20 backdrop-blur-xl md:top-[4.5rem]">
           <Dialog.Content className="focus:outline-none">
             {children}
           </Dialog.Content>
 
           <Dialog.Close asChild>
-            <button className="sticky bottom-8 left-1/2 -translate-x-1/2 text-inter-mobile-text bg-black rounded-full px-20 py-4 text-white focus:outline-none">
+            <button className="text-inter-mobile-text sticky bottom-8 left-1/2 -translate-x-1/2 rounded-full bg-black px-20 py-4 text-white focus:outline-none">
               Close
             </button>
           </Dialog.Close>

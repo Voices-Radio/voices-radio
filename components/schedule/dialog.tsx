@@ -90,10 +90,10 @@ export default async function ScheduleDialog() {
   const scheduleByDay = await getScheduleData();
 
   return (
-    <ul className="max-w-5xl mx-auto md:p-10">
+    <ul className="mx-auto max-w-5xl md:p-10">
       {Object.entries(scheduleByDay).map(([date, shows]) => (
         <li key={date} className="">
-          <p className="text-inter-text text-center text-white">
+          <p className="text-center text-inter-text text-white">
             {format(new Date(date), "EEEE dd/MM")}
           </p>
 
@@ -109,18 +109,18 @@ export default async function ScheduleDialog() {
               return (
                 <li
                   key={day.id}
-                  className={`p-5 md:pt-5 md:px-6 ${
+                  className={`p-5 md:px-6 md:pt-5 ${
                     isLive
-                      ? "bg-white text-black rounded-xl -mt-px"
+                      ? "-mt-px rounded-xl bg-white text-black"
                       : "text-white"
                   }`}
                 >
                   <div className="flex items-center gap-8">
-                    <p className="whitespace-nowrap text-inter-small tabular-nums">
+                    <p className="text-inter-small whitespace-nowrap tabular-nums">
                       {timetable}
                     </p>
 
-                    <p className="font-kinfolk text-mobile-kinfolk-artist uppercase md:text-kinfolk-artist flex-1">
+                    <p className="flex-1 font-kinfolk text-mobile-kinfolk-artist uppercase md:text-kinfolk-artist">
                       {day.name}
                     </p>
 
@@ -128,14 +128,14 @@ export default async function ScheduleDialog() {
                       <div className="flex items-center gap-2">
                         <p className="text-mobile-inter-xsmall">Live</p>
 
-                        <div className="rounded-full h-4 w-4 bg-[#FF0000] animate-pulse" />
+                        <div className="h-4 w-4 animate-pulse rounded-full bg-[#FF0000]" />
                       </div>
                     )}
                   </div>
 
-                  <div className="hidden md:block h-5" />
+                  <div className="hidden h-5 md:block" />
 
-                  <div className="hidden md:block h-px w-full bg-white" />
+                  <div className="hidden h-px w-full bg-white md:block" />
                 </li>
               );
             })}

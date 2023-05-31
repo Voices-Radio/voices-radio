@@ -6,13 +6,13 @@ export default function JoinChat() {
       onClick={() => {
         window.open("/chat", "voiceschatwindow", "width=480,height=520");
       }}
-      className="px-6 bg-white rounded-full py-1.5 text-inter-text-small hidden relative lg:block whitespace-nowrap ml-8"
+      className="relative ml-8 hidden whitespace-nowrap rounded-full bg-white px-6 py-1.5 text-inter-text-small lg:block"
     >
       <span>Join Chat</span>
 
       {/* Tail */}
       <svg
-        className="absolute -left-9 top-1/2 -translate-y-1/2 hidden md:inline"
+        className="absolute -left-9 top-1/2 hidden -translate-y-1/2 md:inline"
         width="40"
         height="16"
         viewBox="0 0 40 16"

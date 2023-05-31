@@ -7,25 +7,25 @@ export default async function CommunitySection() {
 
   return (
     <section
-      className="px-6 md:px-8 pt-6 pb-12 md:py-28 relative overflow-hidden bg-voices-beige"
+      className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28"
       id="community"
     >
-      <div className="flex flex-col lg:flex-row-reverse gap-8 mb-16 items-center">
+      <div className="mb-16 flex flex-col items-center gap-8 lg:flex-row-reverse">
         <div className="flex-1">
           <Carousel images={home.community_carousel} />
         </div>
 
-        <div className="flex-1 flex flex-col items-center gap-8 md:gap-10">
-          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline md:text-kinfolk-headline uppercase">
+        <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
+          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
             {home.community_heading}
           </h2>
 
-          <p className="text-mobile-inter-text md:text-inter-text text-center max-w-lg">
+          <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
             {home.community_subheading}
           </p>
 
           <Link
-            className="rounded-full bg-transparent ring-4 ring-inset ring-black text-black px-20 py-[1.125rem] text-mobile-inter-text md:text-inter-text"
+            className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
             href={home.community_cta_url}
           >
             {home.community_cta_text}
@@ -33,22 +33,22 @@ export default async function CommunitySection() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-center">
+      <div className="flex flex-col items-center gap-8 lg:flex-row">
         <div className="flex-1">
           <Carousel images={home.community_carousel} />
         </div>
 
-        <div className="flex-1 flex flex-col items-center gap-8 md:gap-10">
-          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline md:text-kinfolk-headline uppercase">
+        <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
+          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
             {home.community_heading}
           </h2>
 
-          <p className="text-mobile-inter-text md:text-inter-text text-center max-w-lg">
+          <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
             {home.community_subheading}
           </p>
 
           <Link
-            className="rounded-full bg-transparent ring-4 ring-inset ring-black text-black px-20 py-[1.125rem] text-mobile-inter-text md:text-inter-text"
+            className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
             href={home.community_cta_url}
           >
             {home.community_cta_text}

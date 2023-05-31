@@ -5,7 +5,7 @@ export default function ChatLink({ style = {} }: { style?: CSSProperties }) {
   return (
     <Link
       href="/chat"
-      className="inline-flex text-mobile-inter-small px-4 bg-white rounded-full py-1.5 justify-self-start lg:hidden relative mr-7"
+      className="relative mr-7 inline-flex justify-self-start rounded-full bg-white px-4 py-1.5 text-mobile-inter-small lg:hidden"
       style={style}
     >
       <span>Chat</span>

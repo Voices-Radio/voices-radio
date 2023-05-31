@@ -31,10 +31,10 @@ export default async function Home() {
             />
           </div>
 
-          <div className="p-16 md:pt-36 relative">
+          <div className="relative p-16 md:pt-36">
             <VoicesBackground />
 
-            <div className="relative flex flex-col gap-4 items-center">
+            <div className="relative flex flex-col items-center gap-4">
               <Image
                 alt="Voices Logo"
                 className="invert"
@@ -45,7 +45,7 @@ export default async function Home() {
                 draggable={false}
               />
 
-              <div className="hidden md:flex gap-2.5 justify-center">
+              <div className="hidden justify-center gap-2.5 md:flex">
                 <Badge>Community</Badge>
                 <Badge>Radio</Badge>
                 <Badge>London</Badge>
@@ -55,7 +55,7 @@ export default async function Home() {
                 {home.schedule}
               </p>
 
-              <div className="md:hidden flex justify-center">
+              <div className="flex justify-center md:hidden">
                 <ScheduleButton classNames="text-mobile-inter-text py-3 px-12">
                   {/* @ts-expect-error Async Server Components */}
                   <ScheduleDialog />

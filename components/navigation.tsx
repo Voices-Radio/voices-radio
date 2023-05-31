@@ -9,15 +9,15 @@ import ScheduleDialog from "./schedule/dialog";
 
 export default function Navigation() {
   return (
-    <header className="z-10 absolute inset-x-0 top-0">
-      <nav className="grid grid-template-navigation items-center p-3 lg:backdrop-blur-3xl lg:bg-none bg-gradient-to-b from-black to-transparent lg:shadow-xl w-full">
+    <header className="absolute inset-x-0 top-0 z-10">
+      <nav className="grid-template-navigation grid w-full items-center bg-gradient-to-b from-black to-transparent p-3 lg:bg-none lg:shadow-xl lg:backdrop-blur-3xl">
         <NowPlaying style={{ gridArea: "player" }} />
 
         <ChatLink style={{ gridArea: "chat" }} />
 
         <Link
           href="/"
-          className="uppercase font-kinfolk text-center text-white text-kinfolk-logo"
+          className="text-kinfolk-logo text-center font-kinfolk uppercase text-white"
           style={{ gridArea: "logo" }}
         >
           Voices

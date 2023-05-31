@@ -43,7 +43,7 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
 
   return (
     <div
-      className="relative h-12 p-2 bg-white rounded-lg lg:mr-10"
+      className="relative h-12 rounded-lg bg-white p-2 lg:mr-10"
       style={style}
     >
       <div className="flex gap-4 overflow-hidden">
@@ -63,7 +63,7 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
           </button>
         )}
 
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {data ? (
             data.shows.current ? (
               <Marquee
@@ -72,7 +72,7 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
                 gradientColor={[255, 255, 255]}
                 gradientWidth={40}
               >
-                <div className="inline-flex gap-5 mr-14 text-inter-text-black whitespace-nowrap">
+                <div className="mr-14 inline-flex gap-5 whitespace-nowrap text-inter-text-black">
                   <p className="font-semibold tabular-nums">
                     {renderTimetable(data.shows.current)}
                   </p>
@@ -86,7 +86,7 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
                 gradientColor={[255, 255, 255]}
                 gradientWidth={40}
               >
-                <p className="text-inter-text-black uppercase whitespace-nowrap mr-10">
+                <p className="mr-10 whitespace-nowrap text-inter-text-black uppercase">
                   Station Offline
                 </p>
               </Marquee>
@@ -101,7 +101,7 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
 
       {/* Tail */}
       <svg
-        className="absolute -right-11 top-1/2 -translate-y-1/2 hidden lg:inline"
+        className="absolute -right-11 top-1/2 hidden -translate-y-1/2 lg:inline"
         width="44"
         height="17"
         viewBox="0 0 44 17"

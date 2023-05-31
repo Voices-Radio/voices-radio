@@ -12,35 +12,35 @@ export default async function MenuDialog() {
     <div className="mt-16 space-y-14">
       <nav className="flex flex-col items-center gap-6">
         <Link
-          className="text-white font-kinfolk text-center text-kinfolk-logo"
+          className="text-kinfolk-logo text-center font-kinfolk text-white"
           href="/about"
         >
           About
         </Link>
 
         <a
-          className="text-white font-kinfolk text-center text-kinfolk-logo"
+          className="text-kinfolk-logo text-center font-kinfolk text-white"
           href={settings.mixcloud_link}
         >
           Archive
         </a>
 
         <a
-          className="text-white font-kinfolk text-center text-kinfolk-logo"
+          className="text-kinfolk-logo text-center font-kinfolk text-white"
           href="#!"
         >
           Store
         </a>
 
         <a
-          className="text-white font-kinfolk text-center text-kinfolk-logo"
+          className="text-kinfolk-logo text-center font-kinfolk text-white"
           href={home.apply_cta_url}
         >
           Apply!
         </a>
 
         <a
-          className="text-white font-kinfolk text-center text-kinfolk-logo"
+          className="text-kinfolk-logo text-center font-kinfolk text-white"
           href={settings.contact_link}
         >
           Contact
@@ -60,7 +60,7 @@ export default async function MenuDialog() {
         />
       </svg>
 
-      <div className="flex-1 flex justify-center gap-8">
+      <div className="flex flex-1 justify-center gap-8">
         <SocialLink type="twitter" url={settings.twitter_link} />
 
         <SocialLink type="instagram" url={settings.instagram_link} />

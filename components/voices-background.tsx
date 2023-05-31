@@ -7,7 +7,7 @@ export default function VoicesBackground() {
       <div className="absolute inset-0 bg-gradient-to-br from-[#632DFF] to-[#ED675D]" />
 
       <svg
-        className="absolute -top-32 -right-48"
+        className="absolute -right-48 -top-32"
         width="523"
         height="828"
         viewBox="0 0 523 828"

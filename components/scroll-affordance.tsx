@@ -11,7 +11,7 @@ export default function ScrollAfforance({ target }: { target: `#${string}` }) {
   return (
     <button
       onClick={scrollIntoView}
-      className="hidden md:block absolute left-1/2 -translate-x-1/2 bottom-5 p-2.5 h-11 w-11 rounded-full text-white bg-black"
+      className="absolute bottom-5 left-1/2 hidden h-11 w-11 -translate-x-1/2 rounded-full bg-black p-2.5 text-white md:block"
     >
       <ArrowDown />
     </button>

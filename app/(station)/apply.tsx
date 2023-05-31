@@ -5,7 +5,7 @@ export default async function ApplySection() {
   const home = await getHome();
 
   return (
-    <section className="px-8 py-40 relative overflow-hidden">
+    <section className="relative overflow-hidden px-8 py-40">
       <svg
         className="sr-only"
         aria-hidden="true"
@@ -20,7 +20,7 @@ export default async function ApplySection() {
         </defs>
       </svg>
 
-      <div className="absolute -bottom-0.5 left-0 right-0 z-[1] pointer-events-none max-w-none">
+      <div className="pointer-events-none absolute -bottom-0.5 left-0 right-0 z-[1] max-w-none">
         <svg
           className="text-voices-gray"
           viewBox="0 0 1440 150"
@@ -31,9 +31,9 @@ export default async function ApplySection() {
         </svg>
       </div>
 
-      <div className="absolute -top-0.5 left-0 right-0 z-[1] pointer-events-none max-w-none">
+      <div className="pointer-events-none absolute -top-0.5 left-0 right-0 z-[1] max-w-none">
         <svg
-          className="text-voices-beige rotate-180"
+          className="rotate-180 text-voices-beige"
           viewBox="0 0 1440 150"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
@@ -52,18 +52,18 @@ export default async function ApplySection() {
 
       <div className="absolute inset-0 backdrop-blur-xl" />
 
-      <div className="relative text-white flex flex-col gap-8 items-center px-6">
-        <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline md:text-kinfolk-headline uppercase">
+      <div className="relative flex flex-col items-center gap-8 px-6 text-white">
+        <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
           {home.apply_heading}
         </h2>
 
-        <p className="text-center text-mobile-inter-text md:text-inter-text max-w-xl">
+        <p className="max-w-xl text-center text-mobile-inter-text md:text-inter-text">
           {home.apply_subheading}
         </p>
 
         <a
           href={home.apply_cta_url}
-          className="rounded-full bg-transparent ring-4 ring-inset ring-white text-white px-20 py-[1.125rem] text-mobile-inter-text md:text-inter-text"
+          className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-white ring-4 ring-inset ring-white md:text-inter-text"
         >
           {home.apply_cta_text}
         </a>

@@ -59,7 +59,7 @@ export default function Carousel({ images }: { images: SanityImage[] }) {
                 src={urlForImage(image).url()}
                 width={650}
                 height={440}
-                className="object-cover aspect-[3/2]"
+                className="aspect-[3/2] object-cover"
                 alt=""
               />
             ))}

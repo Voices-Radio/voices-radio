@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write \"**/*.{tsx,ts,js,jsx,css}\""
   },
   "dependencies": {
     "@portabletext/react": "^3.0.0",
@@ -45,6 +46,8 @@
     "typescript": "^5.0.4"
   },
   "devDependencies": {
-    "install-peerdeps": "^3.0.3"
+    "install-peerdeps": "^3.0.3",
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.3.0"
   }
 }
