@@ -97,7 +97,7 @@ export default async function ScheduleContent() {
             {format(new Date(date), "EEEE dd/MM")}
           </p>
 
-          <ul className="">
+          <ul className="divide-y divide-white md:divide-none">
             {shows.map((day) => {
               const timetable = `${format(new Date(day.starts), "HH:mm")} - 
                   ${format(new Date(day.ends), "HH:mm")}`;
@@ -109,7 +109,7 @@ export default async function ScheduleContent() {
               return (
                 <li
                   key={day.id}
-                  className={`pt-5 px-6 ${
+                  className={`p-5 md:pt-5 md:px-6 ${
                     isLive
                       ? "bg-white text-black rounded-xl -mt-px"
                       : "text-white"
@@ -120,7 +120,7 @@ export default async function ScheduleContent() {
                       {timetable}
                     </p>
 
-                    <p className="font-kinfolk text-mobile-kinfolk-artist leading-7 md:leading-10 uppercase md:text-kinfolk-artist flex-1">
+                    <p className="font-kinfolk text-mobile-kinfolk-artist uppercase md:text-kinfolk-artist flex-1">
                       {day.name}
                     </p>
 
@@ -133,9 +133,9 @@ export default async function ScheduleContent() {
                     )}
                   </div>
 
-                  <div className="h-5" />
+                  <div className="hidden md:block h-5" />
 
-                  <div className="h-px w-full bg-white" />
+                  <div className="hidden md:block h-px w-full bg-white" />
                 </li>
               );
             })}
