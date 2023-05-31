@@ -1,7 +1,7 @@
 "use client";
 
 import { urlForImage } from "@/sanity.image";
-import { LazyMotion, domAnimation, m } from "framer-motion";
+import { LazyMotion, m } from "framer-motion";
 import Image from "next/image";
 import {
   useEffect,
