@@ -44,6 +44,40 @@ export default async function Footer() {
             alt="Voices Logo"
           />
         </div>
+
+        <p className="mt-12 text-center text-mobile-inter-xsmall">
+          Designed by{" "}
+          <a
+            className="underline"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://www.studiopanorama.de/?lang=en"
+          >
+            <span className="tracking-widest">panorama</span>
+          </a>
+          . Built by{" "}
+          <a
+            className="underline"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://reiner.design"
+          >
+            mirshko
+          </a>
+          . <br className="sm:hidden" />
+          Powered by{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://vercel.com/?utm_source=voicesradio&utm_campaign=oss"
+          >
+            <img
+              className="inline h-3 w-auto"
+              src="/vercel-logotype-light.svg"
+              alt="Vercel"
+            />
+          </a>
+        </p>
       </div>
     </footer>
   );
