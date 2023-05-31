@@ -1,13 +1,13 @@
 import Badge from "@/components/badge";
+import ScheduleButton from "@/components/schedule/button";
+import ScheduleDialog from "@/components/schedule/dialog";
 import ScrollAfforance from "@/components/scroll-affordance";
 import VoicesBackground from "@/components/voices-background";
 import { getHome } from "@/sanity.client";
 import Image from "next/image";
 import ApplySection from "./apply";
-import PartnersSection from "./partners";
 import CommunitySection from "./community";
-import Schedule from "@/components/schedule";
-import ScheduleContent from "@/components/schedule-content";
+import PartnersSection from "./partners";
 
 export const runtime = "edge";
 
@@ -56,10 +56,10 @@ export default async function Home() {
               </p>
 
               <div className="md:hidden flex justify-center">
-                <Schedule classNames="text-mobile-inter-text py-3 px-12">
+                <ScheduleButton classNames="text-mobile-inter-text py-3 px-12">
                   {/* @ts-expect-error Async Server Components */}
-                  <ScheduleContent />
-                </Schedule>
+                  <ScheduleDialog />
+                </ScheduleButton>
               </div>
             </div>
           </div>

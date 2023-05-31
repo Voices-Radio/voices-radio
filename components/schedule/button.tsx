@@ -2,7 +2,7 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 
-export default function Schedule({
+export default function ScheduleButton({
   children,
   classNames = "",
 }: {

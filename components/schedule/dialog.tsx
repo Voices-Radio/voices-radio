@@ -86,7 +86,7 @@ async function getScheduleData() {
   return scheduleByDay;
 }
 
-export default async function ScheduleContent() {
+export default async function ScheduleDialog() {
   const scheduleByDay = await getScheduleData();
 
   return (
