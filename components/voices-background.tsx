@@ -38,7 +38,13 @@ export default function VoicesBackground() {
       <div className="absolute inset-0 backdrop-blur-xl" />
 
       {/* Grain */}
-      <Image alt="" src="/grain.png" priority fill />
+      <Image
+        alt=""
+        src="/grain.png"
+        priority
+        fill
+        sizes="(min-width: 768px) 50vw, 100vw"
+      />
     </div>
   );
 }

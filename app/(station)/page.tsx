@@ -28,6 +28,7 @@ export default async function Home() {
               fill
               priority
               src="/brutalism.jpeg"
+              sizes="(min-width: 768px) 50vw, 100vw"
             />
           </div>
 
