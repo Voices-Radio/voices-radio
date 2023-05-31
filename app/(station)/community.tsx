@@ -1,7 +1,5 @@
 import Carousel from "@/components/carousel";
 import { getHome } from "@/sanity.client";
-import { urlForImage } from "@/sanity.image";
-import Image from "next/image";
 import Link from "next/link";
 
 export default async function CommunitySection() {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CSSProperties } from "react";
 
-export default function ChatLink({ style }: { style: CSSProperties }) {
+export default function ChatLink({ style = {} }: { style?: CSSProperties }) {
   return (
     <Link
       href="/chat"

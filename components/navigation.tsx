@@ -9,7 +9,7 @@ import ScheduleDialog from "./schedule/dialog";
 
 export default function Navigation() {
   return (
-    <header className="z-50 absolute inset-x-0 top-0">
+    <header className="z-10 absolute inset-x-0 top-0">
       <nav className="grid grid-template-navigation items-center p-3 lg:backdrop-blur-3xl lg:bg-none bg-gradient-to-b from-black to-transparent lg:shadow-xl w-full">
         <NowPlaying style={{ gridArea: "player" }} />
 
