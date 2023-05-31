@@ -9,7 +9,6 @@ export default async function ApplySection() {
       <svg
         className="sr-only"
         aria-hidden="true"
-        viewBox="0 0 1440 150"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
       >
