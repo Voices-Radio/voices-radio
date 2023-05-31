@@ -6,8 +6,8 @@ import Spinner from "@/icons/spinner";
 import Stop from "@/icons/stop";
 import { format } from "date-fns";
 import { CSSProperties, useState } from "react";
-import { useGlobalAudioPlayer } from "react-use-audio-player";
 import Marquee from "react-fast-marquee";
+import { useGlobalAudioPlayer } from "react-use-audio-player";
 
 function renderTimetable(show: Show) {
   return `${format(new Date(show.starts), "HH:mm")} - 
