@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ChatLink from "../chat-link";
+import NowPlaying from "../now-playing";
+import JoinChat from "../join-chat";
 
 export default function MenuButton({
   children,
@@ -45,19 +47,27 @@ export default function MenuButton({
       <Dialog.Portal>
         <Dialog.Overlay className="bg-black fixed inset-0 md:top-[4.5rem] overflow-y-auto z-50">
           <Dialog.Content className="focus:outline-none">
-            <div className="p-3 grid grid-cols-[minmax(0,1fr)_min-content_minmax(0,1fr)] items-center">
-              <ChatLink />
+            <nav className="grid grid-template-navigation items-center p-3">
+              <NowPlaying style={{ gridArea: "player" }} />
+
+              <ChatLink style={{ gridArea: "chat" }} />
 
               <Link
                 href="/"
                 className="uppercase font-kinfolk text-center text-white text-kinfolk-logo"
+                style={{ gridArea: "logo" }}
               >
                 Voices
               </Link>
 
-              <div className="flex justify-end lg:justify-normal lg:gap-10">
+              <div
+                className="flex justify-end lg:justify-normal lg:gap-10"
+                style={{ gridArea: "menu" }}
+              >
+                <JoinChat />
+
                 <Dialog.Close asChild>
-                  <button className="rounded-full p-1 h-10 w-10 bg-white text-black">
+                  <button className="rounded-full p-1 h-10 w-10 bg-white text-black ml-auto">
                     <span className="sr-only">Close</span>
 
                     <svg
@@ -77,7 +87,7 @@ export default function MenuButton({
                   </button>
                 </Dialog.Close>
               </div>
-            </div>
+            </nav>
 
             {children}
           </Dialog.Content>

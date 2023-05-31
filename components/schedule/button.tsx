@@ -22,7 +22,7 @@ export default function ScheduleButton({
       <Dialog.Portal>
         <Dialog.Overlay className="bg-black/20 backdrop-blur-xl fixed inset-0 md:top-[4.5rem] overflow-y-auto">
           <Dialog.Content className="focus:outline-none">
-            <div className="max-w-5xl mx-auto md:p-10">{children}</div>
+            {children}
           </Dialog.Content>
 
           <Dialog.Close asChild>

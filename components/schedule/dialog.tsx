@@ -90,7 +90,7 @@ export default async function ScheduleDialog() {
   const scheduleByDay = await getScheduleData();
 
   return (
-    <ul>
+    <ul className="max-w-5xl mx-auto md:p-10">
       {Object.entries(scheduleByDay).map(([date, shows]) => (
         <li key={date} className="">
           <p className="text-inter-text text-center text-white">
