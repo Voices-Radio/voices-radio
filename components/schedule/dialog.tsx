@@ -109,7 +109,7 @@ export default async function ScheduleDialog() {
               return (
                 <li
                   key={day.id}
-                  className={`p-5 md:px-6 md:pt-5 ${
+                  className={`p-5 md:px-6 md:pb-0 md:pt-5 ${
                     isLive
                       ? "-mt-px rounded-xl bg-white text-black"
                       : "text-white"
