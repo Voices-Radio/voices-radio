@@ -28,8 +28,8 @@ export default async function ChatPage() {
             p: "10",
             q: "000000",
             r: 100,
-            fwtickm: 1,
             showx: 0,
+            surl: 0,
           },
         }),
       }}
