@@ -31,7 +31,13 @@ function useInterval(cb: () => void, ms: number) {
 const loadFeatures = () =>
   import("../lib/load-features").then((res) => res.default);
 
-export default function Carousel({ images }: { images: SanityImage[] }) {
+export default function Carousel({
+  images,
+  classNames = "",
+}: {
+  images: SanityImage[];
+  classNames?: string;
+}) {
   let [index, setIndex] = useState(0);
 
   useInterval(() => {
@@ -46,7 +52,9 @@ export default function Carousel({ images }: { images: SanityImage[] }) {
 
   return (
     <LazyMotion features={loadFeatures} strict>
-      <div className="mask-blob mx-auto flex h-full max-w-xl flex-col justify-center">
+      <div
+        className={`${classNames} mask-blob mx-auto flex h-full max-w-xl flex-col justify-center`}
+      >
         <div className="relative overflow-hidden">
           <m.div
             className="flex"

@@ -8,7 +8,7 @@ import ScheduleButton from "./schedule/button";
 
 export default function Navigation() {
   return (
-    <header className="absolute inset-x-0 top-0 z-10">
+    <header className="fixed inset-x-0 top-0 z-10 flex">
       <nav className="grid-template-navigation grid w-full items-center bg-gradient-to-b from-black to-transparent p-3 lg:bg-none lg:shadow-xl lg:backdrop-blur-3xl">
         <NowPlaying style={{ gridArea: "player" }} />
 
