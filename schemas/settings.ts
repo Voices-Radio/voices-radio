@@ -19,6 +19,7 @@ export default defineType({
       initialValue: "Settings",
       type: "string",
       readOnly: true,
+      hidden: true,
     }),
     defineField({
       name: "title",

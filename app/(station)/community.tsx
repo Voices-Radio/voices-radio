@@ -35,23 +35,23 @@ export default async function CommunitySection() {
 
       <div className="flex flex-col items-center gap-8 lg:flex-row">
         <div className="flex-1">
-          <Carousel images={home.community_carousel} />
+          <Carousel images={home.community_carousel_secondary} />
         </div>
 
         <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
           <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
-            {home.community_heading}
+            {home.community_heading_secondary}
           </h2>
 
           <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
-            {home.community_subheading}
+            {home.community_subheading_secondary}
           </p>
 
           <Link
             className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
-            href={home.community_cta_url}
+            href={home.community_cta_url_secondary}
           >
-            {home.community_cta_text}
+            {home.community_cta_text_secondary}
           </Link>
         </div>
       </div>

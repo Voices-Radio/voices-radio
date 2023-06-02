@@ -1,4 +1,5 @@
 import { getHome } from "@/sanity.client";
+import { urlForImage } from "@/sanity.image";
 import Image from "next/image";
 
 export default async function ApplySection() {
@@ -43,11 +44,12 @@ export default async function ApplySection() {
       </div>
 
       <Image
-        src="/apply_background.jpg"
+        src={urlForImage(home.apply_background).url()}
         className="object-cover"
+        sizes="100vw"
+        quality={25}
         alt=""
         fill
-        priority
       />
 
       <div className="absolute inset-0 backdrop-blur-xl" />
