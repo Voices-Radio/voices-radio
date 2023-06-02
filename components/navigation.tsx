@@ -5,7 +5,6 @@ import MenuButton from "./menu/button";
 import MenuDialog from "./menu/dialog";
 import NowPlaying from "./now-playing";
 import ScheduleButton from "./schedule/button";
-import ScheduleDialog from "./schedule/dialog";
 
 export default function Navigation() {
   return (
@@ -29,10 +28,7 @@ export default function Navigation() {
         >
           <JoinChat />
 
-          <ScheduleButton classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto">
-            {/* @ts-expect-error Async Server Components */}
-            <ScheduleDialog />
-          </ScheduleButton>
+          <ScheduleButton classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto" />
 
           <MenuButton>
             {/* @ts-expect-error Async Server Components */}
