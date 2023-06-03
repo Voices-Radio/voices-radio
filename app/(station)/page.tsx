@@ -54,10 +54,10 @@ export default async function Home() {
               <p className="whitespace-pre-line text-center text-inter-text">
                 {home.schedule}
               </p>
+            </div>
 
-              <div className="flex justify-center md:hidden">
-                <ScheduleButton classNames="text-mobile-inter-text py-3 px-12" />
-              </div>
+            <div className="relative mt-4 flex justify-center md:hidden">
+              <ScheduleButton classNames="text-mobile-inter-text py-3 px-12" />
             </div>
           </div>
         </div>
