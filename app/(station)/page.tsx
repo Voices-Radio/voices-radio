@@ -1,6 +1,5 @@
 import Badge from "@/components/badge";
 import ScheduleButton from "@/components/schedule/button";
-import ScheduleDialog from "@/components/schedule/dialog";
 import ScrollAfforance from "@/components/scroll-affordance";
 import VoicesBackground from "@/components/voices-background";
 import { getHome } from "@/sanity.client";
@@ -57,10 +56,7 @@ export default async function Home() {
               </p>
 
               <div className="flex justify-center md:hidden">
-                <ScheduleButton classNames="text-mobile-inter-text py-3 px-12">
-                  {/* @ts-expect-error Async Server Components */}
-                  <ScheduleDialog />
-                </ScheduleButton>
+                <ScheduleButton classNames="text-mobile-inter-text py-3 px-12" />
               </div>
             </div>
           </div>

@@ -1,11 +1,11 @@
-import { isBefore, startOfDay } from "date-fns";
+import { format, isAfter, isBefore, startOfDay } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import useSWR from "swr";
 
 async function fetcher<JSON = any>(
   ...args: [input: RequestInfo, init?: RequestInit]
 ): Promise<JSON> {
-  const r = await fetch(args[0], { ...args[1] });
+  const r = await fetch(...args);
   if (r.ok) return r.json();
   throw new Error(`${r.status} ${r.statusText}`);
 }
@@ -60,7 +60,30 @@ export async function getWeekInfo() {
       value.every((day) => isBefore(startOfDay(date), new Date(day.starts)))
     );
 
-  return data;
+  const processed: [
+    string,
+    {
+      id: number;
+      name: string;
+      show_start_hour: string;
+      show_end_hour: string;
+      is_live: boolean;
+    }[]
+  ][] = data.map(([dayOfWeek, days]) => {
+    const formattedDays = days.map((day) => ({
+      id: day.id,
+      name: day.name,
+      show_start_hour: format(new Date(day.starts), "HH:mm"),
+      show_end_hour: format(new Date(day.ends), "HH:mm"),
+      is_live:
+        isBefore(new Date(day.starts), new Date()) &&
+        isAfter(new Date(day.ends), new Date()),
+    }));
+
+    return [dayOfWeek, formattedDays];
+  });
+
+  return processed;
 }
 
 export default function useWeekInfo() {

@@ -1,13 +1,12 @@
 "use client";
 
 import useWeekInfo from "@/hooks/use-week-info";
-import { format, isAfter, isBefore } from "date-fns";
 import { useState } from "react";
 
 export default function ScheduleDialog() {
-  const { data } = useWeekInfo();
-
   const [index, indexSet] = useState(0);
+
+  const { data } = useWeekInfo();
 
   if (data) {
     const [date, shows] = data[index];
@@ -42,32 +41,25 @@ export default function ScheduleDialog() {
         {shows.length > 0 ? (
           <ul className="divide-y divide-white md:divide-none">
             {shows.map((day) => {
-              const timetable = `${format(new Date(day.starts), "HH:mm")} - 
-                  ${format(new Date(day.ends), "HH:mm")}`;
-
-              const isLive =
-                isBefore(new Date(day.starts), new Date()) &&
-                isAfter(new Date(day.ends), new Date());
-
               return (
                 <li
                   key={day.id}
                   className={`p-5 md:px-6 md:pb-0 md:pt-5 ${
-                    isLive
+                    day.is_live
                       ? "-mt-px bg-white text-black md:rounded-xl"
                       : "text-white"
                   }`}
                 >
                   <div className="flex items-center gap-8">
                     <p className="text-inter-small whitespace-nowrap tabular-nums">
-                      {timetable}
+                      {`${day.show_start_hour} - ${day.show_end_hour}`}
                     </p>
 
                     <p className="flex-1 font-kinfolk text-mobile-kinfolk-artist uppercase md:text-kinfolk-artist">
                       {day.name}
                     </p>
 
-                    {isLive && (
+                    {day.is_live && (
                       <div className="flex items-center gap-2">
                         <p className="text-mobile-inter-xsmall">Live</p>
 
@@ -95,8 +87,8 @@ export default function ScheduleDialog() {
   }
 
   return (
-    <div className="p-5">
-      <p className="flex-1 text-center font-kinfolk text-mobile-kinfolk-artist uppercase text-white md:text-kinfolk-artist">
+    <div className="flex flex-1 items-center justify-center p-5">
+      <p className="text-center font-kinfolk text-mobile-kinfolk-artist uppercase text-white md:text-kinfolk-artist">
         Loading Schedule
       </p>
     </div>

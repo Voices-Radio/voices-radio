@@ -20,14 +20,16 @@ export default function ScheduleButton({
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 overflow-y-auto bg-black/20 backdrop-blur-xl md:top-[4.5rem]">
-          <Dialog.Content className="relative h-full focus:outline-none">
+          <Dialog.Content className="relative flex h-full flex-col focus:outline-none">
             <ScheduleDialog />
 
-            <Dialog.Close asChild>
-              <button className="text-inter-mobile-text sticky bottom-8 left-1/2 -translate-x-1/2 rounded-full bg-black px-20 py-4 text-white focus:outline-none">
-                Close
-              </button>
-            </Dialog.Close>
+            <div className="sticky bottom-8 flex justify-center">
+              <Dialog.Close asChild>
+                <button className="text-inter-mobile-text rounded-full bg-black px-20 py-4 text-white focus:outline-none">
+                  Close
+                </button>
+              </Dialog.Close>
+            </div>
           </Dialog.Content>
         </Dialog.Overlay>
       </Dialog.Portal>
