@@ -34,7 +34,7 @@ export default async function Home() {
           <div className="relative p-16 md:pt-36">
             <VoicesBackground />
 
-            <div className="relative flex flex-col items-center gap-4">
+            <div className="relative flex flex-col items-center gap-4 text-white mix-blend-exclusion">
               <Image
                 alt="Voices Logo"
                 className="invert"
