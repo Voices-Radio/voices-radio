@@ -129,7 +129,6 @@ export default function VoicesBackground() {
         priority
         fill
         sizes="(min-width: 768px) 50vw, 100vw"
-        quality={25}
       />
     </div>
   );
