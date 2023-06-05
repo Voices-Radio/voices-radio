@@ -5,6 +5,7 @@ export default defineType({
   name: "partner",
   title: "Partner",
   type: "document",
+  // @ts-ignore
   icon: StarIcon,
   preview: {
     select: { title: "name", subtitle: "details", media: "logo" },
@@ -45,6 +46,7 @@ export default defineType({
               {
                 title: "Underline",
                 value: "u",
+                // @ts-ignore
                 icon: UnderlineIcon,
               },
             ],

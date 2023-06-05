@@ -5,6 +5,7 @@ export default defineType({
   name: "home",
   title: "Home",
   type: "document",
+  // @ts-ignore
   icon: HomeIcon,
   groups: [
     { name: "hero", title: "Hero Section" },

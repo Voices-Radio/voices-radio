@@ -5,6 +5,7 @@ export default defineType({
   name: "settings",
   title: "Settings",
   type: "document",
+  // @ts-ignore
   icon: CogIcon,
   groups: [
     { name: "links", title: "Links" },
