@@ -37,16 +37,19 @@
   display: table;
 }
 
-.text-kinfolk-logo {
+.text-kinfolk-logo,
+.text-kinfolk-navigation {
   font-size: 55px;
   line-height: 38.115px;
 }
-.text-kinfolk-logo::before {
+.text-kinfolk-logo::before,
+.text-kinfolk-navigation::before {
   content: "";
   margin-bottom: 0.073em;
   display: table;
 }
-.text-kinfolk-logo::after {
+.text-kinfolk-logo::after,
+.text-kinfolk-navigation::after {
   content: "";
   margin-top: -0.073em;
   display: table;
@@ -72,6 +75,21 @@
   .md\:text-kinfolk-artist::after {
     content: "";
     margin-top: -0.0901em;
+    display: table;
+  }
+
+  .text-kinfolk-navigation {
+    font-size: 90.9091px;
+    line-height: normal;
+  }
+  .text-kinfolk-navigation::before {
+    content: "";
+    margin-bottom: -0.074em;
+    display: table;
+  }
+  .text-kinfolk-navigation::after {
+    content: "";
+    margin-top: -0.22em;
     display: table;
   }
 }

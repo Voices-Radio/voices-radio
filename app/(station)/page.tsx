@@ -65,13 +65,10 @@ export default async function Home() {
         <ScrollAfforance target="#community" />
       </section>
 
-      {/* @ts-expect-error Async Server Components */}
       <CommunitySection />
 
-      {/* @ts-expect-error Async Server Components */}
       <ApplySection />
 
-      {/* @ts-expect-error Async Server Components */}
       <PartnersSection />
     </main>
   );

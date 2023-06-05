@@ -27,13 +27,10 @@ export default async function AboutPage() {
         />
       </section>
 
-      {/* @ts-expect-error Async Server Components */}
       <CommunitySection />
 
-      {/* @ts-expect-error Async Server Components */}
       <ApplySection />
 
-      {/* @ts-expect-error Async Server Components */}
       <PartnersSection />
     </main>
   );

@@ -31,7 +31,6 @@ export default function Navigation() {
           <ScheduleButton classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto" />
 
           <MenuButton>
-            {/* @ts-expect-error Async Server Components */}
             <MenuDialog />
           </MenuButton>
         </div>

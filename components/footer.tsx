@@ -71,8 +71,10 @@ export default async function Footer() {
             rel="noopener noreferrer"
             href="https://vercel.com/?utm_source=voicesradio&utm_campaign=oss"
           >
-            <img
+            <Image
               className="inline h-3 w-auto"
+              width={53}
+              height={12}
               src="/vercel-logotype-light.svg"
               alt="Vercel"
             />

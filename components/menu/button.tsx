@@ -45,48 +45,38 @@ export default function MenuButton({
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 overflow-y-auto bg-black md:top-[4.5rem]">
-          <Dialog.Content className="focus:outline-none">
-            <nav className="grid-template-navigation grid items-center p-3">
-              <NowPlaying style={{ gridArea: "player" }} />
-
-              <ChatLink style={{ gridArea: "chat" }} />
+        <Dialog.Overlay className="fixed inset-0 z-50 overflow-y-auto bg-black">
+          <Dialog.Content className="h-full focus:outline-none">
+            <nav className="grid grid-cols-3 items-center p-3">
+              <div className="h-12 w-12" />
 
               <Link
                 href="/"
                 className="text-kinfolk-logo text-center font-kinfolk uppercase text-white"
-                style={{ gridArea: "logo" }}
               >
                 Voices
               </Link>
 
-              <div
-                className="flex justify-end lg:justify-normal lg:gap-10"
-                style={{ gridArea: "menu" }}
-              >
-                <JoinChat />
+              <Dialog.Close asChild>
+                <button className="ml-auto h-10 w-10 rounded-full bg-white p-1 text-black">
+                  <span className="sr-only">Close</span>
 
-                <Dialog.Close asChild>
-                  <button className="ml-auto h-10 w-10 rounded-full bg-white p-1 text-black">
-                    <span className="sr-only">Close</span>
-
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="h-8 w-8"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </Dialog.Close>
-              </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-8 w-8"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </Dialog.Close>
             </nav>
 
             {children}

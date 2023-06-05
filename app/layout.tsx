@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -14,6 +15,10 @@ const inter = Inter({
   display: "swap",
   variable: "--font-inter",
 });
+
+export const metadata: Metadata = {
+  themeColor: "#000000",
+};
 
 export default function RootLayout({
   children,
