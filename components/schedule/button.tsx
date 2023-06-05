@@ -2,7 +2,7 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import clsx from "clsx";
-import ScheduleDialog from "./dialog";
+import ScheduleList from "./list";
 
 export default function ScheduleButton({
   classNames = "",
@@ -25,7 +25,7 @@ export default function ScheduleButton({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 overflow-y-auto bg-black/20 backdrop-blur-xl">
           <Dialog.Content className="relative flex h-full flex-col focus:outline-none">
-            <ScheduleDialog />
+            <ScheduleList />
 
             <div className="sticky bottom-8 flex justify-center">
               <Dialog.Close asChild>

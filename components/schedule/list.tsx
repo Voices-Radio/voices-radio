@@ -4,7 +4,7 @@ import useWeekInfo from "@/hooks/use-week-info";
 import { useState } from "react";
 import Show from "./show";
 
-export default function ScheduleDialog() {
+export default function ScheduleList() {
   const [index, indexSet] = useState(0);
 
   const { data } = useWeekInfo();
