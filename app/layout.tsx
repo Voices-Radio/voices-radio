@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`antialiased ${kinfolk.variable} ${inter.variable}`}
+      className={`bg-black antialiased ${kinfolk.variable} ${inter.variable}`}
     >
       <body>{children}</body>
     </html>
