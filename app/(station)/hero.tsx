@@ -20,8 +20,8 @@ export default async function HeroSection() {
             playsInline
             preload="none"
           >
-            <source src="/video-2.mp4" type="video/mp4" />
             <source src="/video-2.webm" type="video/webm" />
+            <source src="/video-2.mp4" type="video/mp4" />
           </video>
         </div>
 
