@@ -116,7 +116,7 @@ export default defineType({
     }),
     defineField({
       name: "community_carousel_secondary",
-      title: "Communtiy Section - Carousel Secondary",
+      title: "Community Section - Carousel Secondary",
       group: "community",
       type: "array",
       of: [{ type: "image", validation: (rule) => rule.required() }],
