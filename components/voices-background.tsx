@@ -48,7 +48,7 @@ export default function VoicesBackground() {
             id="background"
             gradientTransform="rotate(90 0.5 0.5)"
           >
-            <stop offset="0" stop-color="#E29BA9">
+            <stop offset="0" stopColor="#E29BA9">
               <animate
                 attributeName="stop-color"
                 values="#E29BA9; #E29BA9; #ED675D; #ED675D; #E29BA9"
@@ -56,7 +56,7 @@ export default function VoicesBackground() {
                 dur={DURATION}
               />
             </stop>
-            <stop offset="1" stop-color="#ED675D">
+            <stop offset="1" stopColor="#ED675D">
               <animate
                 attributeName="stop-color"
                 values="#ED675D; #ED675D; #632DFF; #632DFF; #ED675D"

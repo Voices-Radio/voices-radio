@@ -2,11 +2,8 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import ChatLink from "../chat-link";
-import NowPlaying from "../now-playing";
-import JoinChat from "../join-chat";
 
 export default function MenuButton({
   children,

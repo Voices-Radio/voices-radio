@@ -1,3 +1,4 @@
+import { unescapeString } from "@/lib/unescape";
 import { format, isAfter, isBefore, startOfDay } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import useSWR from "swr";
@@ -72,7 +73,7 @@ export async function getWeekInfo() {
   ][] = data.map(([dayOfWeek, days]) => {
     const formattedDays = days.map((day) => ({
       id: day.id,
-      name: day.name,
+      name: unescapeString(day.name),
       show_start_hour: format(new Date(day.starts), "HH:mm"),
       show_end_hour: format(new Date(day.ends), "HH:mm"),
       is_live:

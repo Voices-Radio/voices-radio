@@ -4,6 +4,7 @@ import useLiveInfoV2, { Show } from "@/hooks/use-live-info-v2";
 import Play from "@/icons/play";
 import Spinner from "@/icons/spinner";
 import Stop from "@/icons/stop";
+import { unescapeString } from "@/lib/unescape";
 import { format } from "date-fns";
 import { CSSProperties, useState } from "react";
 import Marquee from "react-fast-marquee";
@@ -33,7 +34,9 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
 
         if ("mediaSession" in navigator && data) {
           navigator.mediaSession.metadata = new MediaMetadata({
-            title: data.shows.current ? data.shows.current.name : "Live DJ",
+            title: data.shows.current
+              ? unescapeString(data.shows.current.name)
+              : "Live DJ",
             artist: "Voices Radio",
           });
         }
@@ -76,7 +79,11 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
                   <p className="font-semibold tabular-nums">
                     {renderTimetable(data.shows.current)}
                   </p>
-                  <p>{data?.shows?.current?.name ?? "Live DJ"}</p>
+                  <p>
+                    {data.shows.current
+                      ? unescapeString(data.shows.current.name)
+                      : "Live DJ"}
+                  </p>
                 </div>
               </Marquee>
             ) : (

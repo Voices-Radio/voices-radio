@@ -12,7 +12,7 @@ export default function ScheduleDialog() {
     const [date, shows] = data[index];
 
     return (
-      <div className="mx-auto max-w-5xl md:p-10">
+      <div className="mx-auto w-full max-w-5xl md:p-10">
         <div className="mb-4 flex items-center justify-center gap-16">
           <div className="flex-1">
             <button
