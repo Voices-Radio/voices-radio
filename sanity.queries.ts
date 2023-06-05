@@ -49,3 +49,19 @@ export interface Home {
   apply_cta_text: string;
   apply_cta_url: string;
 }
+
+export const aboutQuery = groq`*[_type == "about"][0]`;
+
+export interface About {
+  heading: string;
+  subheading: string;
+  cta_text?: string;
+  cta_url?: string;
+  carousel: Image[];
+
+  heading_secondary: string;
+  subheading_secondary: string;
+  cta_text_secondary?: string;
+  cta_url_secondary?: string;
+  carousel_secondary: Image[];
+}

@@ -4,9 +4,11 @@ import { createClient } from "next-sanity";
 import { cache } from "react";
 import { env } from "./env";
 import {
+  About,
   Home,
   Partner,
   Settings,
+  aboutQuery,
   homeQuery,
   partnersQuery,
   settingsQuery,
@@ -30,3 +32,5 @@ export const getSettings = () => clientFetch<Settings>(settingsQuery);
 export const getPartners = () => clientFetch<Partner[]>(partnersQuery);
 
 export const getHome = () => clientFetch<Home>(homeQuery);
+
+export const getAbout = () => clientFetch<About>(aboutQuery);
