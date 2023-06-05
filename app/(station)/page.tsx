@@ -20,15 +20,25 @@ export default async function Home() {
       <section className="relative">
         <div className="grid md:grid-cols-2">
           <div className="relative aspect-square md:aspect-auto">
-            <Image
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              src="/video-2.mp4"
+              poster="/poster-2.jpg"
+              autoPlay
+              muted
+              preload="none"
+              loop
+            />
+
+            {/* <Image
               alt=""
               className="object-cover object-center"
               draggable={false}
               fill
               priority
-              src="/brutalism.jpeg"
+              src="/poster.jpg"
               sizes="(min-width: 768px) 50vw, 100vw"
-            />
+            /> */}
           </div>
 
           <div className="relative p-16 md:pt-36">

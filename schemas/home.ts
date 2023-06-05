@@ -24,6 +24,17 @@ export default defineType({
       hidden: true,
     }),
     defineField({
+      name: "video",
+      title: "Hero Section - Video",
+      group: "hero",
+      description: "Background video for the top of the page",
+      type: "file",
+      validation: (rule) => rule.required(),
+      options: {
+        accept: "video/mp4",
+      },
+    }),
+    defineField({
       name: "schedule",
       title: "Hero Section - Schedule",
       group: "hero",
