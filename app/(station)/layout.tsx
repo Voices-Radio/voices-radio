@@ -50,7 +50,6 @@ export default function StationLayout({
 
       {children}
 
-      {/* @ts-ignore */}
       <Footer />
     </>
   );
