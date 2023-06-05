@@ -1,32 +1,11 @@
 "use client";
 
+import useTimer from "@/hooks/use-timer";
 import { urlForImage } from "@/sanity.image";
 import { LazyMotion, m } from "framer-motion";
 import Image from "next/image";
-import {
-  useEffect,
-  experimental_useEffectEvent as useEffectEvent,
-  useRef,
-  useState,
-} from "react";
+import { useState } from "react";
 import { Image as SanityImage } from "sanity";
-
-function useInterval(cb: () => void, ms: number) {
-  const id = useRef<any>(null);
-
-  const onInterval = useEffectEvent(cb);
-
-  const handleClearInterval = () => {
-    window.clearInterval(id.current);
-  };
-
-  useEffect(() => {
-    id.current = window.setInterval(onInterval, ms);
-    return handleClearInterval;
-  }, [ms]);
-
-  return handleClearInterval;
-}
 
 const loadFeatures = () =>
   import("../lib/load-features").then((res) => res.default);
@@ -40,7 +19,7 @@ export default function Carousel({
 }) {
   let [index, setIndex] = useState(0);
 
-  useInterval(() => {
+  useTimer(() => {
     setIndex((_index) => {
       const newIndex = _index + 1;
 
@@ -63,13 +42,13 @@ export default function Carousel({
           >
             {images.map((image, idx) => (
               <Image
+                alt=""
+                className="aspect-[3/2] select-none object-cover"
+                draggable={false}
+                height={440}
                 key={idx}
                 src={urlForImage(image).url()}
                 width={650}
-                height={440}
-                className="aspect-[3/2] select-none object-cover"
-                draggable={false}
-                alt=""
               />
             ))}
           </m.div>
