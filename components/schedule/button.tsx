@@ -1,6 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
+import clsx from "clsx";
 import ScheduleDialog from "./dialog";
 
 export default function ScheduleButton({
@@ -12,14 +13,17 @@ export default function ScheduleButton({
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button
-          className={`${classNames} rounded-full bg-black text-white focus:outline-none`}
+          className={clsx(
+            classNames,
+            "rounded-full bg-black text-white focus:outline-none"
+          )}
         >
           Schedule
         </button>
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 overflow-y-auto bg-black/20 backdrop-blur-xl md:top-[4.5rem]">
+        <Dialog.Overlay className="fixed inset-0 z-50 overflow-y-auto bg-black/20 backdrop-blur-xl">
           <Dialog.Content className="relative flex h-full flex-col focus:outline-none">
             <ScheduleDialog />
 
