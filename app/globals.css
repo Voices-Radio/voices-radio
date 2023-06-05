@@ -77,7 +77,9 @@
     margin-top: -0.0901em;
     display: table;
   }
+}
 
+@screen lg {
   .text-kinfolk-navigation {
     font-size: 90.9091px;
     line-height: normal;

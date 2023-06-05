@@ -29,7 +29,7 @@ export default async function MenuDialog() {
         className="absolute right-16 top-1/2 hidden -translate-y-1/2 lg:block xl:right-24"
       />
 
-      <nav className="flex flex-col items-center gap-6 md:gap-10">
+      <nav className="flex flex-col items-center gap-6 lg:gap-10">
         <Link
           className="text-kinfolk-navigation text-center font-kinfolk text-white"
           href="/about"
@@ -72,7 +72,7 @@ export default async function MenuDialog() {
         height={157}
         alt=""
         priority
-        className="mx-auto md:hidden"
+        className="mx-auto lg:hidden"
       />
 
       <div className="mt-14 flex flex-1 justify-center gap-8">
