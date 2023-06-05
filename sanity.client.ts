@@ -2,21 +2,24 @@ import "server-only";
 
 import { createClient } from "next-sanity";
 import { cache } from "react";
-import { apiVersion, dataset, projectId, useCdn } from "./sanity.env";
+import { env } from "./env";
 import {
+  Home,
   Partner,
   Settings,
-  settingsQuery,
-  partnersQuery,
-  Home,
   homeQuery,
+  partnersQuery,
+  settingsQuery,
 } from "./sanity.queries";
 
 export const client = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  useCdn,
+  projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: env.NEXT_PUBLIC_SANITY_DATASET,
+  apiVersion: env.NEXT_PUBLIC_SANITY_API_VERSION,
+  /**
+   * @note If you set this to true the client will fetch content from our cache delivery network. In this case, however, we will not generate a whole lot of API traffic, and we want updates to be instantly available, so set this to false
+   */
+  useCdn: false,
   studioUrl: "/",
 });
 
