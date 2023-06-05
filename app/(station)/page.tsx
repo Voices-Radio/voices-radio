@@ -28,6 +28,7 @@ export default async function Home() {
               muted
               preload="none"
               loop
+              playsInline
             />
 
             {/* <Image
