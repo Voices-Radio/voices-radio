@@ -11,21 +11,30 @@ import {
   startOfDay,
 } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const runtime = "edge";
 
-export const revalidate = 60;
+export const revalidate = 60 * 60;
 
-export async function GET() {
-  const headersList = headers();
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
 
-  const tz = headersList.get("X-Vercel-IP-Timezone") ?? "Europe/London";
+  const tz = searchParams.get("tz");
 
-  const res = await fetch(`https://voicesradio.airtime.pro/api/week-info`, {
-    headers: { "Content-Type": "application/json" },
-  });
+  if (!tz) {
+    return NextResponse.json(
+      { message: "Param 'tz' is missing or invalid" },
+      { status: 500 }
+    );
+  }
+
+  const res = await fetch(
+    `https://voicesradio.airtime.pro/api/week-info?timezone=${tz}`,
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 
   if (!res.ok) {
     return NextResponse.json(
