@@ -38,7 +38,7 @@ export default async function AboutPage() {
         className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28"
         id="about-us"
       >
-        <div className="mb-16 flex flex-col items-center gap-8 lg:flex-row-reverse">
+        <div className="mx-auto mb-16 flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row-reverse">
           <div className="flex-1">
             <Carousel images={about.carousel} />
           </div>
@@ -63,7 +63,7 @@ export default async function AboutPage() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-8 lg:flex-row">
+        <div className="mx-auto flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row">
           <div className="flex-1">
             <Carousel
               images={about.carousel_secondary}

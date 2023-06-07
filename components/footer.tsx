@@ -7,7 +7,7 @@ export default async function Footer() {
 
   return (
     <footer className="bg-black p-10 pb-20 text-white">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-[90rem]">
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="hidden flex-1 md:block">
             <address className="whitespace-pre-line text-inter-text-small not-italic">

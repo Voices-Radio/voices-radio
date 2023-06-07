@@ -14,7 +14,7 @@ export default async function PartnersSection() {
         </h2>
       </div>
 
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 md:flex-row">
+      <div className="mx-auto flex max-w-[90rem] flex-col gap-10 md:flex-row">
         {partners.map((partner) => (
           <div
             key={partner.name}
