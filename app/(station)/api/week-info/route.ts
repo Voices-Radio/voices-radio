@@ -1,9 +1,9 @@
-import { Day, WeekInfo } from "@/hooks/use-week-info";
+import { Day, ProcessedDay, WeekInfo } from "@/hooks/use-week-info";
 import { unescapeString } from "@/lib/unescape";
 import { format, isAfter, isBefore, startOfDay } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
-import { NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { NextResponse } from "next/server";
 
 export const runtime = "edge";
 
@@ -40,30 +40,23 @@ export async function GET(request: Request) {
       value.every((day) => isBefore(startOfDay(date), new Date(day.starts)))
     );
 
-  const processed: [
-    string,
-    {
-      id: number;
-      name: string;
-      show_start_hour: string;
-      show_end_hour: string;
-      is_live: boolean;
-    }[]
-  ][] = data.map(([dayOfWeek, days]) => {
-    const formattedDays = days.map((day) => ({
-      id: day.id,
-      name: unescapeString(day.name),
-      start_timestamp: day.start_timestamp,
-      end_timestamp: day.end_timestamp,
-      show_start_hour: format(new Date(day.starts), "HH:mm"),
-      show_end_hour: format(new Date(day.ends), "HH:mm"),
-      is_live:
-        isBefore(new Date(day.starts), new Date()) &&
-        isAfter(new Date(day.ends), new Date()),
-    }));
+  const processed: [string, ProcessedDay[]][] = data.map(
+    ([dayOfWeek, days]) => {
+      const formattedDays = days.map((day) => ({
+        id: day.id,
+        name: unescapeString(day.name),
+        start_timestamp: day.start_timestamp,
+        end_timestamp: day.end_timestamp,
+        show_start_hour: format(new Date(day.starts), "HH:mm"),
+        show_end_hour: format(new Date(day.ends), "HH:mm"),
+        is_live:
+          isBefore(new Date(day.starts), new Date()) &&
+          isAfter(new Date(day.ends), new Date()),
+      }));
 
-    return [dayOfWeek, formattedDays];
-  });
+      return [dayOfWeek, formattedDays];
+    }
+  );
 
   return NextResponse.json(processed);
 }
