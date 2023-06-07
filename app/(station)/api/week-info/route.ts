@@ -1,23 +1,22 @@
 import { Day, ProcessedDay, WeekInfo } from "@/hooks/use-week-info";
 import { unescapeString } from "@/lib/unescape";
 import { format, isAfter, isBefore, startOfDay } from "date-fns";
-import { utcToZonedTime } from "date-fns-tz";
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const runtime = "edge";
 
-export const revalidate = 60 * 60;
+export const revalidate = 60;
 
 export async function GET() {
   const headersList = headers();
 
   const tz = headersList.get("X-Vercel-IP-Timezone") ?? "Europe/London";
 
-  const res = await fetch(
-    `https://voicesradio.airtime.pro/api/week-info?timezone=${tz}`,
-    { headers: { "Content-Type": "application/json" } }
-  );
+  const res = await fetch(`https://voicesradio.airtime.pro/api/week-info`, {
+    headers: { "Content-Type": "application/json" },
+  });
 
   if (!res.ok) {
     return NextResponse.json(
@@ -28,12 +27,15 @@ export async function GET() {
 
   const weekInfo: WeekInfo = await res.json();
 
-  const date = utcToZonedTime(new Date(), tz);
-
   const data: [string, Day[]][] = Object.entries(weekInfo)
     .filter(([, value]: [string, Day[] | string]) => Array.isArray(value))
     .filter(([, value]: [string, Day[]]) =>
-      value.every((day) => isBefore(startOfDay(date), new Date(day.starts)))
+      value.every((day) =>
+        isBefore(
+          startOfDay(new Date()),
+          zonedTimeToUtc(new Date(day.starts), tz)
+        )
+      )
     );
 
   const processed: [string, ProcessedDay[]][] = data.map(
@@ -43,11 +45,14 @@ export async function GET() {
         name: unescapeString(day.name),
         start_timestamp: day.start_timestamp,
         end_timestamp: day.end_timestamp,
-        show_start_hour: format(new Date(day.starts), "HH:mm"),
-        show_end_hour: format(new Date(day.ends), "HH:mm"),
+        show_start_hour: format(
+          zonedTimeToUtc(new Date(day.starts), tz),
+          "HH:mm"
+        ),
+        show_end_hour: format(zonedTimeToUtc(new Date(day.ends), tz), "HH:mm"),
         is_live:
-          isBefore(new Date(day.starts), new Date()) &&
-          isAfter(new Date(day.ends), new Date()),
+          isBefore(zonedTimeToUtc(new Date(day.starts), tz), new Date()) &&
+          isAfter(zonedTimeToUtc(new Date(day.ends), tz), new Date()),
       }));
 
       return [dayOfWeek, formattedDays];
