@@ -1,16 +1,16 @@
 "use client";
 
+import { env } from "@/env";
 import { load, trackPageview } from "fathom-client";
-import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useEffect } from "react";
 
 function TrackPageView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   useEffect(() => {
     load("FGKAKOXS", {
-      // @todo fix later
-      // includedDomains: ["yourwebsite.com"],
+      includedDomains: [env.NEXT_PUBLIC_FATHOM_URL],
       auto: false,
     });
   }, []);
