@@ -5,6 +5,7 @@ import ApplySection from "../apply";
 import PartnersSection from "../partners";
 import Carousel from "@/components/carousel";
 import Link from "next/link";
+import ScrollAfforance from "@/components/scroll-affordance";
 
 export const runtime = "edge";
 
@@ -20,7 +21,7 @@ export default async function AboutPage() {
 
   return (
     <main>
-      <section className="relative aspect-[16/8]">
+      <section className="relative aspect-[4/3] md:aspect-[16/8]">
         <Image
           alt=""
           className="object-cover"
@@ -29,11 +30,13 @@ export default async function AboutPage() {
           priority
           src="/brutalism.jpeg"
         />
+
+        <ScrollAfforance target="#about-us" />
       </section>
 
       <section
         className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28"
-        id="community"
+        id="about-us"
       >
         <div className="mb-16 flex flex-col items-center gap-8 lg:flex-row-reverse">
           <div className="flex-1">
