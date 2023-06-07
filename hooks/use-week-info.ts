@@ -1,6 +1,3 @@
-import { unescapeString } from "@/lib/unescape";
-import { format, isAfter, isBefore, startOfDay } from "date-fns";
-import { utcToZonedTime } from "date-fns-tz";
 import useSWR from "swr";
 
 async function fetcher<JSON = any>(
@@ -8,7 +5,7 @@ async function fetcher<JSON = any>(
 ): Promise<JSON> {
   const r = await fetch(...args);
   if (r.ok) return r.json();
-  throw new Error(`${r.status} ${r.statusText}`);
+  throw new Error((await r.json()).message);
 }
 
 export interface WeekInfo {
@@ -46,47 +43,21 @@ export interface Day {
   ends: string;
 }
 
-export async function getWeekInfo() {
+export default function useWeekInfo() {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const json = await fetcher<WeekInfo>(
-    `https://voicesradio.airtime.pro/api/week-info?timezone=${tz}`
-  );
-
-  const date = utcToZonedTime(new Date(), tz);
-
-  const data: [string, Day[]][] = Object.entries(json)
-    .filter(([, value]: [string, Day[] | string]) => Array.isArray(value))
-    .filter(([, value]: [string, Day[]]) =>
-      value.every((day) => isBefore(startOfDay(date), new Date(day.starts)))
-    );
-
-  const processed: [
-    string,
-    {
-      id: number;
-      name: string;
-      show_start_hour: string;
-      show_end_hour: string;
-      is_live: boolean;
-    }[]
-  ][] = data.map(([dayOfWeek, days]) => {
-    const formattedDays = days.map((day) => ({
-      id: day.id,
-      name: unescapeString(day.name),
-      show_start_hour: format(new Date(day.starts), "HH:mm"),
-      show_end_hour: format(new Date(day.ends), "HH:mm"),
-      is_live:
-        isBefore(new Date(day.starts), new Date()) &&
-        isAfter(new Date(day.ends), new Date()),
-    }));
-
-    return [dayOfWeek, formattedDays];
-  });
-
-  return processed;
-}
-
-export default function useWeekInfo() {
-  return useSWR("week-info", getWeekInfo);
+  return useSWR<
+    [
+      string,
+      {
+        id: number;
+        name: string;
+        start_timestamp: string;
+        end_timestamp: string;
+        show_start_hour: string;
+        show_end_hour: string;
+        is_live: boolean;
+      }[]
+    ][]
+  >(`/api/week-info?tz=${tz}`, fetcher);
 }

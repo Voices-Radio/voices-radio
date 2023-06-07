@@ -10,8 +10,8 @@ export default async function HeroSection() {
 
   return (
     <section className="relative">
-      <div className="grid md:grid-cols-2">
-        <div className="relative aspect-square md:aspect-auto">
+      <div className="grid lg:grid-cols-2">
+        <div className="relative aspect-square lg:aspect-auto">
           <video
             autoPlay
             className="absolute inset-0 h-full w-full object-cover"
@@ -25,7 +25,7 @@ export default async function HeroSection() {
           </video>
         </div>
 
-        <div className="relative p-16 md:pt-36">
+        <div className="relative p-16 lg:pt-36">
           <VoicesBackground />
 
           <div className="relative flex flex-col items-center gap-4 text-white mix-blend-exclusion">
@@ -39,7 +39,7 @@ export default async function HeroSection() {
               draggable={false}
             />
 
-            <div className="hidden justify-center gap-2.5 md:flex">
+            <div className="hidden justify-center gap-2.5 lg:flex">
               <Badge>Community</Badge>
               <Badge>Radio</Badge>
               <Badge>London</Badge>
@@ -50,7 +50,7 @@ export default async function HeroSection() {
             </p>
           </div>
 
-          <div className="relative mt-4 flex justify-center md:hidden">
+          <div className="relative mt-4 flex justify-center lg:hidden">
             <ScheduleButton classNames="text-mobile-inter-text py-3 px-12" />
           </div>
         </div>
