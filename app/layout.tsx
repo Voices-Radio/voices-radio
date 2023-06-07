@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import Fathom from "@/components/fathom";
 
 const kinfolk = localFont({
   src: "./subset-BNKinfolkRounded.woff2",
@@ -30,7 +31,10 @@ export default function RootLayout({
       lang="en"
       className={`bg-black antialiased ${kinfolk.variable} ${inter.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Fathom />
+      </body>
     </html>
   );
 }
