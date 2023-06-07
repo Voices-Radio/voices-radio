@@ -46,7 +46,7 @@ export default async function MenuDialog() {
 
         <a
           className="text-kinfolk-navigation text-center font-kinfolk text-white"
-          href="#!"
+          href={settings.store_link}
         >
           Store
         </a>

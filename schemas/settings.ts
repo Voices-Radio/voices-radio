@@ -104,5 +104,15 @@ export default defineType({
           scheme: ["https"],
         }),
     }),
+    defineField({
+      name: "store_link",
+      title: "Store Link",
+      type: "url",
+      group: "links",
+      validation: (rule) =>
+        rule.required().uri({
+          scheme: ["https"],
+        }),
+    }),
   ],
 });

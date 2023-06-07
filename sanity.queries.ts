@@ -13,6 +13,7 @@ export interface Settings {
   instagram_link: string;
   facebook_link: string;
   mixcloud_link: string;
+  store_link: string;
 }
 
 export const partnersQuery = groq`*[_type == "partner"] | order(name desc)`;
