@@ -9,14 +9,10 @@ export const runtime = "edge";
 
 export const revalidate = 60 * 60;
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
+export async function GET() {
   const headersList = headers();
 
-  const tz =
-    headersList.get("X-Vercel-IP-Timezone") ??
-    searchParams.get("tz") ??
-    "Europe/London";
+  const tz = headersList.get("X-Vercel-IP-Timezone") ?? "Europe/London";
 
   const res = await fetch(
     `https://voicesradio.airtime.pro/api/week-info?timezone=${tz}`,

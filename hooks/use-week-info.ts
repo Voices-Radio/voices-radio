@@ -47,10 +47,5 @@ export interface ProcessedDay {
 }
 
 export default function useWeekInfo() {
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  return useSWRImmutable<[string, ProcessedDay[]][]>(
-    `/api/week-info?tz=${tz}`,
-    fetcher
-  );
+  return useSWRImmutable<[string, ProcessedDay[]][]>(`/api/week-info`, fetcher);
 }

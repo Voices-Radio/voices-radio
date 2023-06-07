@@ -6,15 +6,13 @@ import clsx from "clsx";
 import { preload } from "swr";
 import ScheduleList from "./list";
 
+preload("/api/week-info", fetcher);
+
 export default function ScheduleButton({
   classNames = "",
 }: {
   classNames?: string;
 }) {
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  preload(`/api/week-info?tz=${tz}`, fetcher);
-
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
