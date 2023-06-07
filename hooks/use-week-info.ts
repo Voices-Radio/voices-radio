@@ -47,5 +47,8 @@ export interface ProcessedDay {
 }
 
 export default function useWeekInfo() {
-  return useSWRImmutable<[string, ProcessedDay[]][]>(`/api/week-info`, fetcher);
+  return useSWRImmutable<{ [key: string]: ProcessedDay[] }>(
+    `/api/week-info`,
+    fetcher
+  );
 }

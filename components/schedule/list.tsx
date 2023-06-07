@@ -3,6 +3,7 @@
 import useWeekInfo from "@/hooks/use-week-info";
 import { useState } from "react";
 import Show from "./show";
+import { format } from "date-fns";
 
 export default function ScheduleList() {
   const [index, indexSet] = useState(0);
@@ -10,7 +11,7 @@ export default function ScheduleList() {
   const { data } = useWeekInfo();
 
   if (data) {
-    const [date, shows] = data[index];
+    const [date, shows] = Object.entries(data)[index];
 
     return (
       <div className="mx-auto w-full max-w-5xl pt-10 md:p-10">
@@ -24,13 +25,13 @@ export default function ScheduleList() {
           </button>
 
           <p className="justify-self-center text-center text-inter-text capitalize text-white">
-            {date}
+            {format(new Date(date), "eeee dd/MM")}
           </p>
 
           <button
             className="inline-flex h-8 w-8 items-center justify-center justify-self-start text-inter-text text-white focus:outline-none disabled:text-white/50"
             onClick={() => indexSet(index + 1)}
-            disabled={index >= data.length - 1}
+            disabled={index >= Object.entries(data).length - 1}
           >
             <span role="img" aria-label="Right">{`->`}</span>
           </button>
