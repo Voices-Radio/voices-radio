@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 
 export const runtime = "edge";
 
-// export const revalidate = 60 * 60;
+export const revalidate = 60 * 60;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

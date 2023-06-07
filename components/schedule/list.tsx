@@ -23,7 +23,7 @@ export default function ScheduleList() {
             <span role="img" aria-label="Left">{`<-`}</span>
           </button>
 
-          <p className="justify-self-center text-center text-inter-text text-white">
+          <p className="justify-self-center text-center text-inter-text capitalize text-white">
             {date}
           </p>
 

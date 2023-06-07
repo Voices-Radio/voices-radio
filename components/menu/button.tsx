@@ -44,7 +44,7 @@ export default function MenuButton({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 overflow-y-auto bg-black">
           <Dialog.Content className="h-full focus:outline-none">
-            <nav className="grid grid-cols-3 items-center p-3">
+            <nav className="grid grid-cols-[minmax(0,1fr)_min-content_minmax(0,1fr)] items-center p-3">
               <div className="h-10 w-10 lg:h-12 lg:w-12" />
 
               <Link
