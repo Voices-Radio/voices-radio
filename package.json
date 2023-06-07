@@ -10,13 +10,13 @@
     "format": "prettier --write \"**/*.{tsx,ts,js,jsx,css}\""
   },
   "dependencies": {
-    "@portabletext/react": "^3.0.0",
+    "@portabletext/react": "^3.0.2",
     "@radix-ui/react-dialog": "^1.0.4",
     "@sanity/icons": "^2.0.0",
     "@sanity/image-url": "^1.0.2",
-    "@sanity/types": "^3.11.5",
+    "@sanity/types": "^3.12.0",
     "@sanity/ui": "^1.0.0",
-    "@sanity/vision": "^3.11.5",
+    "@sanity/vision": "^3.12.0",
     "@sindresorhus/is": "^5.4.1",
     "@t3-oss/env-nextjs": "^0.4.0",
     "clsx": "^1.2.1",
@@ -31,7 +31,7 @@
     "react-dom": "18.2.0",
     "react-fast-marquee": "^1.6.0",
     "react-use-audio-player": "^2.0.0-alpha.0",
-    "sanity": "^3.11.5",
+    "sanity": "^3.12.0",
     "sharp": "^0.32.1",
     "swr": "^2.1.5",
     "zod": "^3.21.4"
