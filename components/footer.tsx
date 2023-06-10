@@ -1,6 +1,7 @@
 import { getSettings } from "@/sanity.client";
 import Image from "next/image";
 import SocialLink from "./social-link";
+import { PortableText } from "@portabletext/react";
 
 export default async function Footer() {
   const settings = await getSettings();
@@ -11,7 +12,7 @@ export default async function Footer() {
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="hidden flex-1 md:block">
             <address className="whitespace-pre-line text-inter-text-small not-italic">
-              {settings.address}
+              <PortableText value={settings.address} />
             </address>
           </div>
 

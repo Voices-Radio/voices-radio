@@ -1,5 +1,5 @@
 import { CogIcon } from "@sanity/icons";
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
   name: "settings",
@@ -50,7 +50,32 @@ export default defineType({
       name: "address",
       title: "Address",
       description: "Address of Voices Radio in the footer",
-      type: "text",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "block",
+          options: { spellCheck: true },
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [],
+            annotations: [
+              defineField({
+                type: "object",
+                name: "link",
+                fields: [
+                  {
+                    type: "string",
+                    name: "href",
+                    title: "URL",
+                    validation: (rule) => rule.required(),
+                  },
+                ],
+              }),
+            ],
+          },
+        }),
+      ],
       validation: (rule) => rule.required(),
     }),
     defineField({

@@ -7,7 +7,10 @@ export interface Settings {
   title: string;
   description: string;
   ogImage: Image;
-  address: string;
+  /**
+   * PortableText
+   */
+  address: any[];
   contact_link: string;
   twitter_link: string;
   instagram_link: string;
