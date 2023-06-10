@@ -9,9 +9,9 @@ export default async function HeroSection() {
   const home = await getHome();
 
   return (
-    <section className="relative">
-      <div className="grid lg:grid-cols-2">
-        <div className="relative aspect-square lg:aspect-auto">
+    <section className="relative flex lg:min-h-screen">
+      <div className="grid flex-1 lg:grid-cols-2">
+        <div className="relative order-2 aspect-square h-full w-full lg:order-[unset] lg:aspect-auto">
           <video
             autoPlay
             className="absolute inset-0 h-full w-full object-cover"
@@ -25,7 +25,7 @@ export default async function HeroSection() {
           </video>
         </div>
 
-        <div className="relative p-16 lg:pt-36">
+        <div className="relative flex flex-col items-center justify-center p-12 pt-[calc(3rem+120px)] lg:p-16 lg:pt-[calc(4rem+72px)]">
           <VoicesBackground />
 
           <div className="relative flex flex-col items-center gap-4 text-white mix-blend-exclusion">
