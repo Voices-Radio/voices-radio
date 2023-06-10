@@ -1,14 +1,10 @@
 "use client";
 
-import { fetcher } from "@/lib/fetcher";
 import * as Dialog from "@radix-ui/react-dialog";
 import clsx from "clsx";
-import { preload } from "swr";
 import ScheduleList from "./list";
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-preload(`/api/week-info?tz=${tz}`, fetcher);
 
 export default function ScheduleButton({
   classNames = "",
