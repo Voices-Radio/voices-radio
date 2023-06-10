@@ -12,6 +12,7 @@ export interface Settings {
   twitter_link: string;
   instagram_link: string;
   facebook_link: string;
+  linkedin_link: string;
   mixcloud_link: string;
   store_link: string;
 }

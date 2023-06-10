@@ -40,6 +40,8 @@ export default async function MenuDialog() {
         <a
           className="text-kinfolk-navigation text-center font-kinfolk text-white"
           href={settings.mixcloud_link}
+          target="_blank"
+          rel="noopener"
         >
           Archive
         </a>
@@ -47,6 +49,8 @@ export default async function MenuDialog() {
         <a
           className="text-kinfolk-navigation text-center font-kinfolk text-white"
           href={settings.store_link}
+          target="_blank"
+          rel="noopener"
         >
           Store
         </a>
@@ -54,6 +58,8 @@ export default async function MenuDialog() {
         <a
           className="text-kinfolk-navigation text-center font-kinfolk text-white"
           href={home.apply_cta_url}
+          target="_blank"
+          rel="noopener"
         >
           Apply!
         </a>
@@ -81,6 +87,8 @@ export default async function MenuDialog() {
         <SocialLink type="instagram" url={settings.instagram_link} />
 
         <SocialLink type="facebook" url={settings.facebook_link} />
+
+        <SocialLink type="linkedin" url={settings.linkedin_link} />
 
         <SocialLink type="mixcloud" url={settings.mixcloud_link} />
       </div>

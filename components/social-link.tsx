@@ -5,7 +5,8 @@ type SocialLinkType =
   | "instagram"
   | "facebook"
   | "mixcloud"
-  | "tiktok";
+  | "tiktok"
+  | "linkedin";
 
 export default function SocialLink({
   url,
@@ -15,7 +16,7 @@ export default function SocialLink({
   type: SocialLinkType;
 }) {
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer">
+    <a href={url} target="_blank" rel="noopener">
       <Image
         src={`/${type}.svg`}
         alt={`${type} Logo`}

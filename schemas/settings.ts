@@ -95,6 +95,16 @@ export default defineType({
         }),
     }),
     defineField({
+      name: "linkedin_link",
+      title: "LinkedIn Link",
+      type: "url",
+      group: "links",
+      validation: (rule) =>
+        rule.required().uri({
+          scheme: ["https"],
+        }),
+    }),
+    defineField({
       name: "mixcloud_link",
       title: "Mixcloud Link",
       type: "url",

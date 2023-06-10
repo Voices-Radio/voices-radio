@@ -22,6 +22,8 @@ export default async function Footer() {
 
             <SocialLink type="facebook" url={settings.facebook_link} />
 
+            <SocialLink type="linkedin" url={settings.linkedin_link} />
+
             <SocialLink type="mixcloud" url={settings.mixcloud_link} />
           </div>
 
@@ -50,7 +52,7 @@ export default async function Footer() {
           <a
             className="underline"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
             href="https://www.studiopanorama.de/?lang=en"
           >
             <span className="tracking-widest">panorama</span>
@@ -59,7 +61,7 @@ export default async function Footer() {
           <a
             className="underline"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
             href="https://reiner.design"
           >
             mirshko
@@ -68,7 +70,7 @@ export default async function Footer() {
           Powered by{" "}
           <a
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
             href="https://vercel.com/?utm_source=voicesradio&utm_campaign=oss"
           >
             <Image
