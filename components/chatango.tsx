@@ -6,7 +6,7 @@ import { useRef } from "react";
 export default function Chatango() {
   const ref = useRef<HTMLDivElement>(null);
 
-  const status = useScript("https://st.chatango.com/js/gz/emb.js", {
+  useScript("https://st.chatango.com/js/gz/emb.js", {
     removeOnUnmount: true,
     id: "cid0020000285987468774",
     ref: ref,
