@@ -29,9 +29,10 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
       html5: true,
       format: "mp3",
       autoplay: true,
-      onplay() {
+      onload() {
         loadingSet(false);
-
+      },
+      onplay() {
         if ("mediaSession" in navigator && data) {
           navigator.mediaSession.metadata = new MediaMetadata({
             title: data.shows.current
