@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useEffect, useRef } from "react";
 
 export default function Show({
   day,
@@ -11,8 +12,21 @@ export default function Show({
     is_live: boolean;
   };
 }) {
+  const ref = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    if (day.is_live) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [day]);
+
   return (
     <li
+      ref={ref}
       className={clsx(
         "p-5 md:px-6 md:pb-0 md:pt-5",
         day.is_live ? "-mt-px bg-white text-black md:rounded-xl" : "text-white"
