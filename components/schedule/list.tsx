@@ -45,7 +45,7 @@ export default function ScheduleList() {
           </ul>
         ) : (
           <div className="p-5">
-            <p className="flex-1 text-center font-kinfolk text-mobile-kinfolk-artist uppercase text-white md:text-kinfolk-artist">
+            <p className="flex-1 text-center text-3xl font-black uppercase leading-none text-white md:text-6xl">
               No Shows Scheduled For Today
             </p>
           </div>
@@ -56,7 +56,7 @@ export default function ScheduleList() {
 
   return (
     <div className="flex flex-1 items-center justify-center p-5">
-      <p className="text-center font-kinfolk text-mobile-kinfolk-artist uppercase text-white md:text-kinfolk-artist">
+      <p className="text-center font-kinfolk text-3xl font-black uppercase leading-none text-white md:text-6xl">
         Loading Schedule
       </p>
     </div>

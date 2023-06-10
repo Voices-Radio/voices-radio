@@ -37,7 +37,7 @@ export default function Show({
           {`${day.show_start_hour} - ${day.show_end_hour}`}
         </p>
 
-        <p className="flex-1 font-kinfolk text-mobile-kinfolk-artist uppercase md:text-kinfolk-artist">
+        <p className="flex-1 text-3xl font-black uppercase leading-none md:text-6xl">
           {day.name}
         </p>
 
