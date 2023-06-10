@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function VoicesBackground() {
   const easeInOutSine = "0.37 0 0.63 1";
   const DURATION = 32;
@@ -121,15 +119,6 @@ export default function VoicesBackground() {
 
       {/* Blur */}
       <div className="absolute inset-0 backdrop-blur-xl" />
-
-      {/* Grain */}
-      <Image
-        alt=""
-        src="/grain.png"
-        priority
-        fill
-        sizes="(min-width: 768px) 50vw, 100vw"
-      />
     </div>
   );
 }
