@@ -15,22 +15,10 @@ module.exports = {
         kinfolk: ["var(--font-kinfolk)", ...defaultTheme.fontFamily.serif],
       },
       fontSize: {
-        "kinfolk-artist": [
-          "3.4375rem",
-          {
-            lineHeight: "2.5rem",
-          },
-        ],
         "kinfolk-headline": [
           "4.375rem",
           {
             lineHeight: "3.4375rem",
-          },
-        ],
-        "mobile-kinfolk-artist": [
-          "1.875rem",
-          {
-            lineHeight: "1.625rem",
           },
         ],
         "mobile-kinfolk-headline": [

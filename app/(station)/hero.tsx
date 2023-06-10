@@ -11,7 +11,7 @@ export default async function HeroSection() {
   return (
     <section className="relative flex lg:min-h-screen">
       <div className="grid flex-1 lg:grid-cols-2">
-        <div className="relative order-2 aspect-square h-full w-full lg:order-[unset] lg:aspect-auto">
+        <div className="relative order-2 aspect-square lg:order-[unset] lg:aspect-auto">
           <video
             autoPlay
             className="absolute inset-0 h-full w-full object-cover"
