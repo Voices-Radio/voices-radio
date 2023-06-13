@@ -1,5 +1,5 @@
 import { fetcher } from "@/lib/fetcher";
-import useSWRImmutable from "swr/immutable";
+import useSWR from "swr";
 
 export interface WeekInfo {
   monday: Day[];
@@ -49,8 +49,11 @@ export interface ProcessedDay {
 export default function useWeekInfo() {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  return useSWRImmutable<{ [key: string]: ProcessedDay[] }>(
+  return useSWR<{ [key: string]: ProcessedDay[] }>(
     `/api/week-info?tz=${tz}`,
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 1000 * 60 * 10,
+    }
   );
 }
