@@ -73,12 +73,12 @@ export default async function MenuDialog() {
       </nav>
 
       <Image
-        src="/voices-element-left.svg"
-        width={96}
-        height={157}
+        src="/voices.svg"
+        width={310 * 0.6}
+        height={333 * 0.6}
         alt=""
         priority
-        className="mx-auto lg:hidden"
+        className="mx-auto object-contain invert lg:hidden"
       />
 
       <div className="mt-14 flex flex-1 justify-center gap-8">
