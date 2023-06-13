@@ -78,6 +78,22 @@ module.exports = {
           purple: "#5f5cf3",
         },
       },
+      animation: {
+        "color-shift": "color-shift 4500ms ease-out 800ms infinite",
+      },
+      keyframes: {
+        "color-shift": {
+          "0%, 100%": {
+            "background-color": "#000000",
+          },
+          "33.33%": {
+            "background-color": "#5f5cf3",
+          },
+          "66.66%": {
+            "background-color": "#ed675d",
+          },
+        },
+      },
     },
   },
   plugins: [],

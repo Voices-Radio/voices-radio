@@ -28,7 +28,7 @@ export default function Navigation() {
         >
           <JoinChat />
 
-          <ScheduleButton classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto" />
+          <ScheduleButton classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto animate-color-shift delay-[800ms]" />
 
           <MenuButton>
             <MenuDialog />
