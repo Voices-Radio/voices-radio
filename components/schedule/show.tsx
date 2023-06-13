@@ -20,7 +20,11 @@ export default function Show({
     }
 
     if (day.is_live) {
-      ref.current.scrollIntoView({ behavior: "smooth" });
+      ref.current.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "center",
+      });
     }
   }, [day]);
 
