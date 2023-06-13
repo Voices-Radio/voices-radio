@@ -10,9 +10,8 @@ import { CSSProperties, useState } from "react";
 import Marquee from "react-fast-marquee";
 import { useGlobalAudioPlayer } from "react-use-audio-player";
 
-function renderTimetable(show: Show) {
-  return `${format(new Date(show.starts), "HH:mm")} - 
-${format(new Date(show.ends), "HH:mm")}`;
+function formatDateToHour(date: Date | string) {
+  return format(new Date(date), "HH:mm");
 }
 
 export default function NowPlaying({ style }: { style: CSSProperties }) {
@@ -78,7 +77,8 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
               >
                 <div className="mr-14 inline-flex gap-5 whitespace-nowrap text-inter-text-black">
                   <p className="font-semibold tabular-nums">
-                    {renderTimetable(data.shows.current)}
+                    {formatDateToHour(data.shows.current.starts)} &ndash;{" "}
+                    {formatDateToHour(data.shows.current.ends)}
                   </p>
                   <p>
                     {data.shows.current

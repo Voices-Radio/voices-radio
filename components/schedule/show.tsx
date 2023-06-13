@@ -38,7 +38,7 @@ export default function Show({
     >
       <div className="flex items-center gap-8">
         <p className="text-inter-small whitespace-nowrap tabular-nums">
-          {`${day.show_start_hour} - ${day.show_end_hour}`}
+          {day.show_start_hour} &ndash; {day.show_end_hour}
         </p>
 
         <p className="flex-1 text-3xl font-black uppercase leading-none md:text-6xl">
