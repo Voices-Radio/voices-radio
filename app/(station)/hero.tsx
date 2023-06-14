@@ -9,7 +9,7 @@ export default async function HeroSection() {
   const home = await getHome();
 
   return (
-    <section className="relative flex lg:min-h-screen">
+    <section className="relative flex lg:h-screen lg:max-h-[90rem]">
       <div className="grid flex-1 lg:grid-cols-2">
         <div className="relative order-2 aspect-square lg:order-[unset] lg:aspect-auto">
           <video
