@@ -10,26 +10,8 @@ export default async function MenuDialog() {
   const home = await getHome();
 
   return (
-    <div className="relative mt-16 space-y-14">
-      <Image
-        src="/voices-element-left.svg"
-        width={201}
-        height={330}
-        alt=""
-        priority
-        className="absolute left-16 top-1/2 hidden -translate-y-1/2 lg:block xl:left-24"
-      />
-
-      <Image
-        src="/voices-element-right.svg"
-        width={293}
-        height={216}
-        alt=""
-        priority
-        className="absolute right-16 top-1/2 hidden -translate-y-1/2 lg:block xl:right-24"
-      />
-
-      <nav className="flex flex-col items-center gap-6 lg:gap-10">
+    <div className="flex flex-1 flex-col items-center justify-center">
+      <div className="flex flex-col items-center gap-6 lg:gap-10">
         <Link
           className="text-kinfolk-navigation text-center font-kinfolk text-white"
           href="/about"
@@ -70,7 +52,7 @@ export default async function MenuDialog() {
         >
           Contact
         </a>
-      </nav>
+      </div>
 
       <Image
         src="/voices.svg"
@@ -78,10 +60,10 @@ export default async function MenuDialog() {
         height={333 * 0.6}
         alt=""
         priority
-        className="mx-auto object-contain invert lg:hidden"
+        className="mx-auto mt-14 object-contain invert lg:hidden"
       />
 
-      <div className="mt-14 flex flex-1 justify-center gap-8">
+      <div className="mt-14 flex justify-center gap-8">
         <SocialLink type="twitter" url={settings.twitter_link} />
 
         <SocialLink type="instagram" url={settings.instagram_link} />
