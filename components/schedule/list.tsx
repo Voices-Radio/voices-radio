@@ -56,7 +56,7 @@ export default function ScheduleList() {
 
   return (
     <div className="flex flex-1 items-center justify-center p-5">
-      <p className="text-center font-kinfolk text-3xl font-black uppercase leading-none text-white md:text-6xl">
+      <p className="text-center text-3xl font-black uppercase leading-none text-white md:text-6xl">
         Loading Schedule
       </p>
     </div>

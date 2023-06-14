@@ -66,12 +66,14 @@ export default function MenuButton({
             <nav className="grid grid-cols-[minmax(0,1fr)_min-content_minmax(0,1fr)] items-center p-3">
               <div className="h-10 w-10 lg:h-12 lg:w-12" />
 
-              <Link
-                href="/"
-                className="text-kinfolk-logo text-center font-kinfolk uppercase text-white"
-              >
-                Voices
-              </Link>
+              <Dialog.Close asChild>
+                <Link
+                  href="/"
+                  className="text-kinfolk-logo text-center font-kinfolk uppercase text-white"
+                >
+                  Voices
+                </Link>
+              </Dialog.Close>
 
               <Dialog.Close asChild>
                 <button className="ml-auto h-10 w-10 rounded-full bg-white p-1 text-black">
