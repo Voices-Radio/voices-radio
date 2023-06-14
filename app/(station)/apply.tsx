@@ -56,8 +56,9 @@ export default async function ApplySection() {
 
       <div className="pointer-events-none absolute -bottom-0.5 left-0 right-0 max-w-none">
         <svg
-          className="text-voices-gray"
+          className="text-voices-gray xl:h-[9.375rem] xl:w-full"
           viewBox="0 0 1440 150"
+          preserveAspectRatio="none"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -67,8 +68,9 @@ export default async function ApplySection() {
 
       <div className="pointer-events-none absolute -top-0.5 left-0 right-0 max-w-none">
         <svg
-          className="rotate-180 text-voices-beige"
+          className="rotate-180 text-voices-beige xl:h-[9.375rem] xl:w-full"
           viewBox="0 0 1440 150"
+          preserveAspectRatio="none"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
         >
