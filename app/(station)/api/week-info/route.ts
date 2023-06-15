@@ -10,13 +10,12 @@ import {
   isSameDay,
   startOfDay,
 } from "date-fns";
+import { zonedTimeToUtc } from "date-fns-tz";
 import { NextResponse } from "next/server";
 
 export const runtime = "edge";
 
-export const revalidate = 0;
-
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -56,17 +55,25 @@ export async function GET(request: Request) {
     (prev, current) => ({
       ...prev,
       [current.toISOString()]: shows
-        .filter((show) => isSameDay(current, new Date(show.starts)))
+        .filter((show) =>
+          isSameDay(current, zonedTimeToUtc(new Date(show.starts), tz))
+        )
         .map((day) => ({
           id: day.id,
           name: unescapeString(day.name),
           start_timestamp: day.start_timestamp,
           end_timestamp: day.end_timestamp,
-          show_start_hour: format(new Date(day.starts), "HH:mm"),
-          show_end_hour: format(new Date(day.ends), "HH:mm"),
+          show_start_hour: format(
+            zonedTimeToUtc(new Date(day.starts), tz),
+            "HH:mm"
+          ),
+          show_end_hour: format(
+            zonedTimeToUtc(new Date(day.ends), tz),
+            "HH:mm"
+          ),
           is_live:
-            isBefore(new Date(day.starts), new Date()) &&
-            isAfter(new Date(day.ends), new Date()),
+            isBefore(zonedTimeToUtc(new Date(day.starts), tz), new Date()) &&
+            isAfter(zonedTimeToUtc(new Date(day.ends), tz), new Date()),
         })),
     }),
     {}
