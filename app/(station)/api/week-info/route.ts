@@ -4,13 +4,12 @@ import is from "@sindresorhus/is";
 import {
   addWeeks,
   eachDayOfInterval,
-  format,
   isAfter,
   isBefore,
   isSameDay,
   startOfDay,
 } from "date-fns";
-import { zonedTimeToUtc } from "date-fns-tz";
+import { zonedTimeToUtc, format } from "date-fns-tz";
 import { NextResponse } from "next/server";
 
 export const runtime = "edge";
@@ -65,11 +64,17 @@ export async function GET(request: Request) {
           end_timestamp: day.end_timestamp,
           show_start_hour: format(
             zonedTimeToUtc(new Date(day.starts), tz),
-            "HH:mm"
+            "HH:mm",
+            {
+              timeZone: tz,
+            }
           ),
           show_end_hour: format(
             zonedTimeToUtc(new Date(day.ends), tz),
-            "HH:mm"
+            "HH:mm",
+            {
+              timeZone: tz,
+            }
           ),
           is_live:
             isBefore(zonedTimeToUtc(new Date(day.starts), tz), new Date()) &&
