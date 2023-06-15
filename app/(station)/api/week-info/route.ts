@@ -9,7 +9,7 @@ import {
   isSameDay,
   startOfDay,
 } from "date-fns";
-import { zonedTimeToUtc, format } from "date-fns-tz";
+import { formatInTimeZone, zonedTimeToUtc } from "date-fns-tz";
 import { NextResponse } from "next/server";
 
 export const runtime = "edge";
@@ -47,6 +47,10 @@ export async function GET(request: Request) {
 
   const shows = weekInfoValues.filter(is.object);
 
+  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  console.log(systemTimeZone);
+
   const weekDays = eachDayOfInterval({
     start: startOfDay(new Date()),
     end: addWeeks(startOfDay(new Date()), 1),
@@ -54,31 +58,17 @@ export async function GET(request: Request) {
     (prev, current) => ({
       ...prev,
       [current.toISOString()]: shows
-        .filter((show) =>
-          isSameDay(current, zonedTimeToUtc(new Date(show.starts), tz))
-        )
+        .filter((show) => isSameDay(current, zonedTimeToUtc(show.starts, tz)))
         .map((day) => ({
           id: day.id,
           name: unescapeString(day.name),
           start_timestamp: day.start_timestamp,
           end_timestamp: day.end_timestamp,
-          show_start_hour: format(
-            zonedTimeToUtc(new Date(day.starts), tz),
-            "HH:mm",
-            {
-              timeZone: tz,
-            }
-          ),
-          show_end_hour: format(
-            zonedTimeToUtc(new Date(day.ends), tz),
-            "HH:mm",
-            {
-              timeZone: tz,
-            }
-          ),
+          show_start_hour: formatInTimeZone(day.starts, tz, "HH:mm"),
+          show_end_hour: formatInTimeZone(day.ends, tz, "HH:mm"),
           is_live:
-            isBefore(zonedTimeToUtc(new Date(day.starts), tz), new Date()) &&
-            isAfter(zonedTimeToUtc(new Date(day.ends), tz), new Date()),
+            isBefore(zonedTimeToUtc(day.starts, tz), new Date()) &&
+            isAfter(zonedTimeToUtc(day.ends, tz), new Date()),
         })),
     }),
     {}
