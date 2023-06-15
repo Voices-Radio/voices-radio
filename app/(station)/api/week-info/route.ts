@@ -47,10 +47,6 @@ export async function GET(request: Request) {
 
   const shows = weekInfoValues.filter(is.object);
 
-  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  console.log(systemTimeZone);
-
   const weekDays = eachDayOfInterval({
     start: startOfDay(new Date()),
     end: addWeeks(startOfDay(new Date()), 1),
@@ -64,8 +60,16 @@ export async function GET(request: Request) {
           name: unescapeString(day.name),
           start_timestamp: day.start_timestamp,
           end_timestamp: day.end_timestamp,
-          show_start_hour: formatInTimeZone(day.starts, tz, "HH:mm"),
-          show_end_hour: formatInTimeZone(day.ends, tz, "HH:mm"),
+          show_start_hour: formatInTimeZone(
+            zonedTimeToUtc(day.starts, tz),
+            tz,
+            "HH:mm"
+          ),
+          show_end_hour: formatInTimeZone(
+            zonedTimeToUtc(day.ends, tz),
+            tz,
+            "HH:mm"
+          ),
           is_live:
             isBefore(zonedTimeToUtc(day.starts, tz), new Date()) &&
             isAfter(zonedTimeToUtc(day.ends, tz), new Date()),
