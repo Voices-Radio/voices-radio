@@ -1,20 +1,22 @@
-import {
-  useEffect,
-  experimental_useEffectEvent as useEffectEvent,
-} from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
-export default function useTimer(callback: () => void, delay: number) {
-  const onTick = useEffectEvent(() => {
-    callback();
-  });
+export const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+export function useInterval(callback: () => void, delay: number | null) {
+  const savedCallback = useRef(callback);
+
+  useIsomorphicLayoutEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      onTick(); // ✅ Good: Only called locally inside an Effect
-    }, delay);
+    if (!delay && delay !== 0) {
+      return;
+    }
 
-    return () => {
-      clearInterval(id);
-    };
-  }, [delay]); // No need to specify "onTick" (an Effect Event) as a dependency
+    const id = setInterval(() => savedCallback.current(), delay);
+
+    return () => clearInterval(id);
+  }, [delay]);
 }

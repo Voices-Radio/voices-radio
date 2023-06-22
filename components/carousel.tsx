@@ -1,6 +1,6 @@
 "use client";
 
-import useTimer from "@/hooks/use-timer";
+import { useInterval } from "@/hooks/use-timer";
 import { urlForImage } from "@/sanity.image";
 import { LazyMotion, m } from "framer-motion";
 import Image from "next/image";
@@ -19,7 +19,7 @@ export default function Carousel({
 }) {
   let [index, setIndex] = useState(0);
 
-  useTimer(() => {
+  useInterval(() => {
     setIndex((_index) => {
       const newIndex = _index + 1;
 
