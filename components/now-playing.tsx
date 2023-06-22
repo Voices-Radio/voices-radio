@@ -1,14 +1,13 @@
 "use client";
 
-import useLiveInfoV2, { Show } from "@/hooks/use-live-info-v2";
+import useLiveInfoV2 from "@/hooks/use-live-info-v2";
 import Play from "@/icons/play";
 import Spinner from "@/icons/spinner";
 import Stop from "@/icons/stop";
 import { unescapeString } from "@/lib/unescape";
 import { format } from "date-fns";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import Marquee from "react-fast-marquee";
-import { useGlobalAudioPlayer } from "react-use-audio-player";
 
 function formatDateToHour(date: Date | string) {
   return format(new Date(date), "HH:mm");
@@ -17,38 +16,57 @@ function formatDateToHour(date: Date | string) {
 export default function NowPlaying({ style }: { style: CSSProperties }) {
   const { data } = useLiveInfoV2();
 
+  const ref = useRef<HTMLAudioElement>(null);
+
   const [loading, loadingSet] = useState(false);
+  const [playing, playingSet] = useState(false);
 
-  const { load, stop, playing } = useGlobalAudioPlayer();
+  const play = async () => {
+    const el = ref.current;
+    if (!el) {
+      return;
+    }
 
-  function play() {
     loadingSet(true);
 
-    load("https://voicesradio.out.airtime.pro/voicesradio_a", {
-      html5: true,
-      format: "mp3",
-      autoplay: true,
-      onload() {
-        loadingSet(false);
-      },
-      onplay() {
-        if ("mediaSession" in navigator && data) {
-          navigator.mediaSession.metadata = new MediaMetadata({
-            title: data.shows.current
-              ? unescapeString(data.shows.current.name)
-              : "Live DJ",
-            artist: "Voices Radio",
-          });
-        }
-      },
-    });
-  }
+    el.src = "https://voicesradio.out.airtime.pro/voicesradio_a";
+
+    await el.play();
+
+    loadingSet(false);
+
+    playingSet(true);
+  };
+
+  const stop = () => {
+    const el = ref.current;
+    if (!el) {
+      return;
+    }
+
+    el.src = "";
+
+    playingSet(false);
+  };
+
+  useEffect(() => {
+    if ("mediaSession" in navigator && data) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: data.shows.current
+          ? unescapeString(data.shows.current.name)
+          : "Live DJ",
+        artist: "Voices Radio",
+      });
+    }
+  }, [playing, data]);
 
   return (
     <div
       className="relative h-12 rounded-lg bg-white p-2 lg:mr-10"
       style={style}
     >
+      <audio ref={ref} controls={false} hidden />
+
       <div className="flex gap-4 overflow-hidden">
         {playing ? (
           <button className="h-8 w-8" onClick={stop}>
@@ -86,6 +104,18 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
                       : "Live DJ"}
                   </p>
                 </div>
+              </Marquee>
+            ) : data.shows.current === null &&
+              data.tracks.current.type === "livestream" ? (
+              <Marquee
+                autoFill
+                gradient
+                gradientColor={[255, 255, 255]}
+                gradientWidth={40}
+              >
+                <p className="mr-10 whitespace-nowrap text-inter-text-black uppercase">
+                  Live DJ
+                </p>
               </Marquee>
             ) : (
               <Marquee
