@@ -43,6 +43,7 @@ export interface ProcessedDay {
   end_timestamp: string;
   show_start_hour: string;
   show_end_hour: string;
+  is_past: boolean;
   is_live: boolean;
 }
 

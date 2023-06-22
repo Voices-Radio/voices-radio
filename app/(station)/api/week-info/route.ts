@@ -70,6 +70,7 @@ export async function GET(request: Request) {
             tz,
             "HH:mm"
           ),
+          is_past: isBefore(zonedTimeToUtc(day.ends, tz), new Date()),
           is_live:
             isBefore(zonedTimeToUtc(day.starts, tz), new Date()) &&
             isAfter(zonedTimeToUtc(day.ends, tz), new Date()),

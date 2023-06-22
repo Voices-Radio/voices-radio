@@ -1,17 +1,8 @@
+import { ProcessedDay } from "@/hooks/use-week-info";
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 
-export default function Show({
-  day,
-}: {
-  day: {
-    id: number;
-    name: string;
-    show_start_hour: string;
-    show_end_hour: string;
-    is_live: boolean;
-  };
-}) {
+export default function Show({ day }: { day: ProcessedDay }) {
   const ref = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
@@ -33,7 +24,8 @@ export default function Show({
       ref={ref}
       className={clsx(
         "p-5 md:px-6 md:pb-0 md:pt-5",
-        day.is_live ? "-mt-px bg-white text-black md:rounded-xl" : "text-white"
+        day.is_live ? "-mt-px bg-white text-black md:rounded-xl" : "text-white",
+        day.is_past ? "opacity-50" : ""
       )}
     >
       <div className="flex items-center gap-8">
