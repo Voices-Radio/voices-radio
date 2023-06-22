@@ -1,5 +1,3 @@
-"use server";
-
 import { getHome, getSettings } from "@/sanity.client";
 import SocialLink from "../social-link";
 import Link from "next/link";
