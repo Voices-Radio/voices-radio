@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "~18.16.1",
-    "yarn": "~1.22.19"
+    "node": "^18.X",
+    "yarn": "^1.X"
   },
   "scripts": {
     "dev": "next dev",
