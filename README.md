@@ -35,5 +35,5 @@ To learn more about Next.js, take a look at the following resources:
 
 | Project             | Version  |
 | ------------------- | -------- |
-| nodejs.org          | ^20.3.1  |
+| nodejs.org          | ^18.16.1 |
 | classic.yarnpkg.com | ^1.22.19 |
