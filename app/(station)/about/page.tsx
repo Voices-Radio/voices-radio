@@ -9,7 +9,7 @@ import ScrollAfforance from "@/components/scroll-affordance";
 
 export const runtime = "edge";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "About",

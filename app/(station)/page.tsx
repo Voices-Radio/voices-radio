@@ -5,7 +5,7 @@ import PartnersSection from "./partners";
 
 export const runtime = "edge";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 export default function Home() {
   return (
