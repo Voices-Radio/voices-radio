@@ -13,6 +13,8 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "About",
+  openGraph: { title: "About" },
+  twitter: { title: "About" },
   alternates: { canonical: "/about" },
 };
 
