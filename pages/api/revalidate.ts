@@ -1,7 +1,6 @@
 import { env } from "@/env";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { parseBody } from "next-sanity/webhook";
-import { revalidatePath } from "next/cache";
 
 export { config } from "next-sanity/webhook";
 
@@ -23,13 +22,19 @@ export default async function revalidate(
       return res.status(401).json({ message });
     }
 
-    console.log(body);
+    let staleRoute: string[] = [];
 
-    const staleRoute = `/`;
+    if (body.type === "about") {
+      staleRoute = [...staleRoute, "/about"];
+    } else if (body.type === "home") {
+      staleRoute = [...staleRoute, "/"];
+    } else {
+      staleRoute = [...staleRoute, "/about", "/"];
+    }
 
-    revalidatePath(staleRoute);
+    await Promise.all(staleRoute.map(async (page) => res.revalidate(page)));
 
-    const message = `Updated route: ${staleRoute}`;
+    const message = `Updated route(s): ${staleRoute.join(", ")}`;
 
     console.log(message);
 
