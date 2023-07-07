@@ -55,7 +55,10 @@ export async function POST(req: Request) {
       revalidatePath(tag);
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      revalidated: [...Array.from(pathsToInvalidate)],
+    });
   } catch (err) {
     return NextResponse.json({
       success: false,
