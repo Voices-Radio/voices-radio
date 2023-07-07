@@ -45,7 +45,7 @@ export interface Tracks {
 export interface TracksCurrent {
   starts: Date;
   ends: Date;
-  type: string;
+  type?: string;
   name: string;
   media_item_played: boolean;
   record: string;
