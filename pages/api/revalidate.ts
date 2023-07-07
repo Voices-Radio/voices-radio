@@ -1,15 +1,17 @@
 import { env } from "@/env";
-import { NextApiRequest } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { parseBody } from "next-sanity/webhook";
 import { revalidatePath } from "next/cache";
-import { NextRequest, NextResponse } from "next/server";
 
 export { config } from "next-sanity/webhook";
 
-export async function POST(req: NextRequest, res: Response) {
+export default async function revalidate(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     const { isValidSignature, body } = await parseBody(
-      req as unknown as NextApiRequest,
+      req,
       env.SANITY_REVALIDATE_SECRET
     );
 
@@ -18,7 +20,7 @@ export async function POST(req: NextRequest, res: Response) {
 
       console.warn(message);
 
-      return NextResponse.json({ message }, { status: 401 });
+      return res.status(401).json({ message });
     }
 
     console.log(body);
@@ -31,13 +33,12 @@ export async function POST(req: NextRequest, res: Response) {
 
     console.log(message);
 
-    return NextResponse.json({ message });
+    return res.status(200).json({ message });
   } catch (err) {
     console.error(err);
 
-    return NextResponse.json(
-      { message: (err as Error).message },
-      { status: 500 }
-    );
+    return res.status(500).json({
+      message: (err as Error).message,
+    });
   }
 }
