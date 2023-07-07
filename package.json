@@ -2,10 +2,6 @@
   "name": "voices-radio",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": "^18.X",
-    "yarn": "^1.X"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
