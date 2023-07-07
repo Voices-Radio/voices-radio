@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { NextApiRequest } from "next";
 import { parseBody } from "next-sanity/webhook";
 import { revalidatePath } from "next/cache";
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest, res: Response) {
   try {
     const { isValidSignature, body } = await parseBody(
       req as unknown as NextApiRequest,
-      process.env.SANITY_REVALIDATE_SECRET
+      env.SANITY_REVALIDATE_SECRET
     );
 
     if (!isValidSignature) {
