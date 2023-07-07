@@ -37,6 +37,7 @@ export async function POST(req: Request) {
 
     switch (_type) {
       case "home":
+      case "partner":
         pathsToInvalidate.add("/");
 
         break;
