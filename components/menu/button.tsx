@@ -51,7 +51,7 @@ export default function MenuButton({
               height={330}
               alt=""
               priority
-              className="absolute left-0 top-1/2 hidden -translate-y-1/2 lg:block"
+              className="absolute left-4 top-1/2 hidden -translate-y-1/2 lg:block"
             />
 
             <Image
@@ -60,7 +60,7 @@ export default function MenuButton({
               height={216}
               alt=""
               priority
-              className="absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block"
+              className="absolute right-4 top-1/2 hidden -translate-y-1/2 lg:block"
             />
 
             <nav className="grid grid-cols-[minmax(0,1fr)_min-content_minmax(0,1fr)] items-center p-3">
