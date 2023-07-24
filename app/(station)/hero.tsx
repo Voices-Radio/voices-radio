@@ -2,6 +2,7 @@ import Badge from "@/components/badge";
 import ScheduleButton from "@/components/schedule/button";
 import ScrollAfforance from "@/components/scroll-affordance";
 import VoicesBackground from "@/components/voices-background";
+import poster from "@/public/VIDEO_MED_BITRATE.jpg";
 import { getHome } from "@/sanity.client";
 import Image from "next/image";
 
@@ -14,15 +15,22 @@ export default async function HeroSection() {
         <div className="relative order-2 aspect-square lg:order-[unset] lg:aspect-auto">
           <video
             autoPlay
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover hidden motion-safe:block"
             loop
             muted
             playsInline
             preload="none"
           >
-            <source src="/video-2.webm" type="video/webm" />
-            <source src="/video-2.mp4" type="video/mp4" />
+            <source src="/VIDEO_MED_BITRATE.webm" type="video/webm" />
+            <source src="/VIDEO_MED_BITRATE.mp4" type="video/mp4" />
           </video>
+
+          <Image
+            src={poster}
+            className="object-cover motion-safe:hidden"
+            fill
+            alt=""
+          />
         </div>
 
         <div className="relative flex flex-col items-center justify-center p-12 pt-[calc(3rem+120px)] lg:p-16 lg:pt-[calc(4rem+72px)]">
