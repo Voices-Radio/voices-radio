@@ -28,6 +28,7 @@ export default async function HeroSection() {
           <Image
             src={poster}
             className="object-cover motion-safe:hidden"
+            placeholder="blur"
             fill
             alt=""
           />
