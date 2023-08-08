@@ -2,7 +2,7 @@ import Badge from "@/components/badge";
 import ScheduleButton from "@/components/schedule/button";
 import ScrollAfforance from "@/components/scroll-affordance";
 import VoicesBackground from "@/components/voices-background";
-import poster from "@/public/VIDEO_MED_BITRATE.jpg";
+import poster from "@/public/VIDEO.jpg";
 import { getHome } from "@/sanity.client";
 import Image from "next/image";
 
@@ -21,8 +21,8 @@ export default async function HeroSection() {
             playsInline
             preload="none"
           >
-            <source src="/VIDEO_MED_BITRATE.webm" type="video/webm" />
-            <source src="/VIDEO_MED_BITRATE.mp4" type="video/mp4" />
+            <source src="/VIDEO.webm" type="video/webm" />
+            <source src="/VIDEO.mp4" type="video/mp4" />
           </video>
 
           <Image
