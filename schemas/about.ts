@@ -18,6 +18,9 @@ export default defineType({
       readOnly: true,
       hidden: true,
     }),
+    /**
+     * First Section
+     */
     defineField({
       name: "heading",
       type: "string",
@@ -52,36 +55,76 @@ export default defineType({
       of: [{ type: "image", validation: (rule) => rule.required() }],
       validation: (rule) => rule.required(),
     }),
+    /**
+     * Second Section
+     */
     defineField({
-      name: "heading_secondary",
+      name: "heading_2",
       type: "string",
-      title: "Heading Secondary",
+      title: "Heading #2",
       description: "Heading",
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "subheading_secondary",
+      name: "subheading_2",
       type: "text",
-      title: "Subheading Secondary",
+      title: "Subheading #2",
       description: "Subheading",
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "cta_text_secondary",
-      title: "Button Text Secondary",
+      name: "cta_text_2",
+      title: "Button Text #2",
       description: "Button text",
       type: "string",
     }),
     defineField({
-      name: "cta_url_secondary",
-      title: "Button Link Secondary",
+      name: "cta_url_2",
+      title: "Button Link #2",
       description: "Button link",
       type: "url",
       validation: (rule) => rule.uri({ allowRelative: true }),
     }),
     defineField({
-      name: "carousel_secondary",
-      title: "Carousel Secondary",
+      name: "carousel_2",
+      title: "Carousel #2",
+      type: "array",
+      of: [{ type: "image", validation: (rule) => rule.required() }],
+      validation: (rule) => rule.required(),
+    }),
+    /**
+     * Third Section
+     */
+    defineField({
+      name: "heading_3",
+      type: "string",
+      title: "Heading #3",
+      description: "Heading",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "subheading_3",
+      type: "text",
+      title: "Subheading #3",
+      description: "Subheading",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "cta_text_3",
+      title: "Button Text #3",
+      description: "Button text",
+      type: "string",
+    }),
+    defineField({
+      name: "cta_url_3",
+      title: "Button Link #3",
+      description: "Button link",
+      type: "url",
+      validation: (rule) => rule.uri({ allowRelative: true }),
+    }),
+    defineField({
+      name: "carousel_3",
+      title: "Carousel #3",
       type: "array",
       of: [{ type: "image", validation: (rule) => rule.required() }],
       validation: (rule) => rule.required(),

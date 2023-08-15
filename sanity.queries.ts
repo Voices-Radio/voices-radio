@@ -64,9 +64,15 @@ export interface About {
   cta_url?: string;
   carousel: Image[];
 
-  heading_secondary: string;
-  subheading_secondary: string;
-  cta_text_secondary?: string;
-  cta_url_secondary?: string;
-  carousel_secondary: Image[];
+  heading_2: string;
+  subheading_2: string;
+  cta_text_2?: string;
+  cta_url_2?: string;
+  carousel_2: Image[];
+
+  heading_3: string;
+  subheading_3: string;
+  cta_text_3?: string;
+  cta_url_3?: string;
+  carousel_3: Image[];
 }

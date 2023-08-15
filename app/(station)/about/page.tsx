@@ -67,27 +67,49 @@ export default async function AboutPage() {
 
         <div className="mx-auto flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row">
           <div className="flex-1">
-            <Carousel
-              images={about.carousel_secondary}
-              classNames="-scale-x-100"
-            />
+            <Carousel images={about.carousel_2} classNames="-scale-x-100" />
           </div>
 
           <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
             <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
-              {about.heading_secondary}
+              {about.heading_2}
             </h2>
 
             <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
-              {about.subheading_secondary}
+              {about.subheading_2}
             </p>
 
-            {about.cta_url_secondary && about.cta_text_secondary && (
+            {about.cta_url_2 && about.cta_text_2 && (
               <Link
                 className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
-                href={about.cta_url_secondary}
+                href={about.cta_url_2}
               >
-                {about.cta_text_secondary}
+                {about.cta_text_2}
+              </Link>
+            )}
+          </div>
+        </div>
+
+        <div className="mx-auto mb-16 flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row-reverse">
+          <div className="flex-1">
+            <Carousel images={about.carousel_3} />
+          </div>
+
+          <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
+            <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+              {about.heading_3}
+            </h2>
+
+            <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
+              {about.subheading_3}
+            </p>
+
+            {about.cta_url_3 && about.cta_text_3 && (
+              <Link
+                className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
+                href={about.cta_url_3}
+              >
+                {about.cta_text_3}
               </Link>
             )}
           </div>
