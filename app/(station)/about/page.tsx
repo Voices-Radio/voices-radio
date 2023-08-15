@@ -6,6 +6,7 @@ import PartnersSection from "../partners";
 import Carousel from "@/components/carousel";
 import Link from "next/link";
 import ScrollAfforance from "@/components/scroll-affordance";
+import { urlForImage } from "@/sanity.image";
 
 export const runtime = "edge";
 
@@ -40,17 +41,22 @@ export default async function AboutPage() {
         className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28"
         id="about-us"
       >
-        <div className="mx-auto mb-16 flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row-reverse">
-          <div className="flex-1">
-            <Carousel images={about.carousel} />
-          </div>
+        <div className="mx-auto mb-16 flex max-w-7xl flex-col gap-8 md:gap-12 lg:flex-row-reverse">
+          <Image
+            src={urlForImage(about.carousel[0]).url()}
+            alt=""
+            className="select-none object-cover relative overflow-hidden"
+            draggable={false}
+            height={600}
+            width={400}
+          />
 
-          <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
-            <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+          <div className="flex-1 space-y-8 md:space-y-10">
+            <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
               {about.heading}
             </h2>
 
-            <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
+            <p className="text-mobile-inter-text md:text-inter-text">
               {about.subheading}
             </p>
 
@@ -65,17 +71,22 @@ export default async function AboutPage() {
           </div>
         </div>
 
-        <div className="mx-auto flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row">
-          <div className="flex-1">
-            <Carousel images={about.carousel_2} classNames="-scale-x-100" />
-          </div>
+        <div className="mx-auto mb-16 flex max-w-7xl flex-col gap-8 md:gap-12 lg:flex-row">
+          <Image
+            src={urlForImage(about.carousel_2[0]).url()}
+            alt=""
+            className="select-none object-cover relative overflow-hidden"
+            draggable={false}
+            height={600}
+            width={400}
+          />
 
-          <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
-            <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+          <div className="flex-1 space-y-8 md:space-y-10">
+            <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
               {about.heading_2}
             </h2>
 
-            <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
+            <p className="text-mobile-inter-text md:text-inter-text">
               {about.subheading_2}
             </p>
 
@@ -90,17 +101,15 @@ export default async function AboutPage() {
           </div>
         </div>
 
-        <div className="mx-auto mb-16 flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row-reverse">
-          <div className="flex-1">
-            <Carousel images={about.carousel_3} />
-          </div>
+        <div className="mx-auto flex flex-col items-center max-w-7xl gap-8 md:gap-12">
+          <Carousel images={about.carousel_3} />
 
-          <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
+          <div className="max-w-5xl space-y-8 md:space-y-10">
             <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
               {about.heading_3}
             </h2>
 
-            <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
+            <p className="text-center text-mobile-inter-text md:text-inter-text">
               {about.subheading_3}
             </p>
 
