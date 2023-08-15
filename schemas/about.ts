@@ -1,5 +1,5 @@
 import { DocumentIcon } from "@sanity/icons";
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
   name: "about",
@@ -128,6 +128,19 @@ export default defineType({
       type: "array",
       of: [{ type: "image", validation: (rule) => rule.required() }],
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "pageBuilder",
+      type: "array",
+      title: "Page builder",
+      of: [
+        defineArrayMember({
+          name: "page-section",
+          title: "Page Section",
+          type: "reference",
+          to: [{ type: "page-section" }],
+        }),
+      ],
     }),
   ],
 });
