@@ -27,11 +27,13 @@ export default async function AboutPage() {
       <section className="relative aspect-[4/3] md:aspect-[16/8]">
         <Image
           alt=""
-          className="object-cover"
+          className="object-cover object-bottom"
           draggable={false}
           fill
+          sizes="100vw"
           priority
-          src="/brutalism.jpeg"
+          src={urlForImage(about.hero_image).url()}
+          quality={85}
         />
 
         <ScrollAfforance target="#about-us" />

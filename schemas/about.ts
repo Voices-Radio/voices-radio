@@ -19,6 +19,15 @@ export default defineType({
       hidden: true,
     }),
     /**
+     * Hero Image
+     */
+    defineField({
+      name: "hero_image",
+      title: "Hero Image",
+      type: "image",
+      validation: (rule) => rule.required(),
+    }),
+    /**
      * First Section
      */
     defineField({

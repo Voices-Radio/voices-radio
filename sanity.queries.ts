@@ -58,6 +58,8 @@ export interface Home {
 export const aboutQuery = groq`*[_type == "about"][0]`;
 
 export interface About {
+  hero_image: Image;
+
   heading: string;
   subheading: string;
   cta_text?: string;
