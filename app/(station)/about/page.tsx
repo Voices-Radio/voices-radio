@@ -1,7 +1,6 @@
 import { getAbout } from "@/sanity.client";
 import { Metadata } from "next";
 import Image from "next/image";
-import PartnersSection from "../partners";
 import Carousel from "@/components/carousel";
 import Link from "next/link";
 import ScrollAfforance from "@/components/scroll-affordance";
@@ -125,8 +124,6 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
-
-      <PartnersSection />
     </main>
   );
 }
