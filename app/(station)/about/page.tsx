@@ -1,7 +1,6 @@
 import { getAbout } from "@/sanity.client";
 import { Metadata } from "next";
 import Image from "next/image";
-import ApplySection from "../apply";
 import PartnersSection from "../partners";
 import Carousel from "@/components/carousel";
 import Link from "next/link";
@@ -126,8 +125,6 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
-
-      <ApplySection />
 
       <PartnersSection />
     </main>
