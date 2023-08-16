@@ -38,14 +38,14 @@ export interface Home {
 
   community_heading: string;
   community_subheading: string;
-  community_cta_text: string;
-  community_cta_url: string;
+  community_cta_text?: string;
+  community_cta_url?: string;
   community_carousel: Image[];
 
   community_heading_secondary: string;
   community_subheading_secondary: string;
-  community_cta_text_secondary: string;
-  community_cta_url_secondary: string;
+  community_cta_text_secondary?: string;
+  community_cta_url_secondary?: string;
   community_carousel_secondary: Image[];
 
   apply_background: Image;

@@ -53,7 +53,6 @@ export default defineType({
       description: "Button text for the Community section",
       type: "string",
       group: "community",
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "community_cta_url",
@@ -61,7 +60,7 @@ export default defineType({
       description: "Button link for the Community section",
       type: "url",
       group: "apply",
-      validation: (rule) => rule.required().uri({ allowRelative: true }),
+      validation: (rule) => rule.uri({ allowRelative: true }),
     }),
     defineField({
       name: "community_carousel",
@@ -93,7 +92,6 @@ export default defineType({
       description: "Button text for the Community section",
       type: "string",
       group: "community",
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "community_cta_url_secondary",
@@ -101,7 +99,7 @@ export default defineType({
       description: "Button link for the Community section",
       type: "url",
       group: "apply",
-      validation: (rule) => rule.required().uri({ allowRelative: true }),
+      validation: (rule) => rule.uri({ allowRelative: true }),
     }),
     defineField({
       name: "community_carousel_secondary",

@@ -24,12 +24,14 @@ export default async function CommunitySection() {
             {home.community_subheading}
           </p>
 
-          <Link
-            className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
-            href={home.community_cta_url}
-          >
-            {home.community_cta_text}
-          </Link>
+          {home.community_cta_text && home.community_cta_url && (
+            <Link
+              className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
+              href={home.community_cta_url}
+            >
+              {home.community_cta_text}
+            </Link>
+          )}
         </div>
       </div>
 
@@ -50,12 +52,15 @@ export default async function CommunitySection() {
             {home.community_subheading_secondary}
           </p>
 
-          <Link
-            className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
-            href={home.community_cta_url_secondary}
-          >
-            {home.community_cta_text_secondary}
-          </Link>
+          {home.community_cta_url_secondary &&
+            home.community_cta_text_secondary && (
+              <Link
+                className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
+                href={home.community_cta_url_secondary}
+              >
+                {home.community_cta_text_secondary}
+              </Link>
+            )}
         </div>
       </div>
     </section>
