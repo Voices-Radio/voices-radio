@@ -1,6 +1,7 @@
 "use client";
 
 import { useInterval } from "@/hooks/use-timer";
+import { cn } from "@/lib/utils";
 import { urlForImage } from "@/sanity.image";
 import { LazyMotion, m } from "framer-motion";
 import Image from "next/image";
@@ -12,10 +13,12 @@ const loadFeatures = () =>
 
 export default function Carousel({
   images,
-  classNames = "",
+  delay = 4,
+  flipped,
 }: {
+  delay?: number;
   images: SanityImage[];
-  classNames?: string;
+  flipped?: boolean;
 }) {
   let [index, setIndex] = useState(0);
 
@@ -27,12 +30,15 @@ export default function Carousel({
         ? newIndex % images.length
         : images.length + (newIndex % images.length);
     });
-  }, 2 * 1_000);
+  }, delay * 1_000);
 
   return (
     <LazyMotion features={loadFeatures} strict>
       <div
-        className={`${classNames} mask-blob mx-auto flex h-full max-w-xl flex-col justify-center`}
+        className={cn(
+          "relative mx-auto flex h-full max-w-xl flex-col justify-center",
+          flipped ? "mask-blob-flipped" : "mask-blob",
+        )}
       >
         <div className="relative overflow-hidden">
           <m.div

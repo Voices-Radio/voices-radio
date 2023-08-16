@@ -37,10 +37,7 @@ export default async function CommunitySection() {
 
       <div className="mx-auto flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row">
         <div className="flex-1">
-          <Carousel
-            images={home.community_carousel_secondary}
-            classNames="-scale-x-100"
-          />
+          <Carousel images={home.community_carousel_secondary} flipped />
         </div>
 
         <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">

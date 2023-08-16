@@ -23,6 +23,7 @@ export default function SocialLink({
         width={24}
         height={24}
         className="invert"
+        priority
       />
     </a>
   );

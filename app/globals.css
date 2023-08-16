@@ -97,8 +97,8 @@ iframe {
   mask-position: center;
 }
 
-.mask-blob-90 {
-  mask-image: url("/mask-blob-90.svg");
+.mask-blob-flipped {
+  mask-image: url("/mask_blob_flipped.svg");
   mask-size: contain;
   mask-repeat: no-repeat;
   mask-position: center;
