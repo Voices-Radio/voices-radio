@@ -1,5 +1,6 @@
 import { defineConfig } from "sanity";
 import { deskTool } from "sanity/desk";
+import { visionTool } from "@sanity/vision";
 import { env } from "./env";
 import { pageStructure, singletonPlugin } from "./plugins/settings";
 import aboutType from "./schemas/about";
@@ -26,6 +27,7 @@ export default defineConfig({
     deskTool({
       structure: pageStructure([settingsType, homeType, aboutType]),
     }),
+    visionTool({}),
     singletonPlugin([settingsType.name, homeType.name, aboutType.name]),
   ],
 });

@@ -8,12 +8,15 @@ export default async function ApplySection() {
   return (
     <section className="relative z-auto overflow-hidden px-8 py-40">
       <Image
-        src={urlForImage(home.apply_background).url()}
-        className="object-cover"
-        sizes="100vw"
-        quality={25}
         alt=""
+        blurDataURL={home.apply_background.lqip}
+        className="object-cover"
+        draggable={false}
         fill
+        placeholder="blur"
+        quality={1}
+        sizes="100vw"
+        src={urlForImage(home.apply_background).url()}
       />
 
       <div className="absolute inset-0 backdrop-blur-xl" />

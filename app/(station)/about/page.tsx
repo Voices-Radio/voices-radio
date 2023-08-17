@@ -1,10 +1,10 @@
+import Carousel from "@/components/carousel";
+import ScrollAfforance from "@/components/scroll-affordance";
 import { getAbout } from "@/sanity.client";
+import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
 import Image from "next/image";
-import Carousel from "@/components/carousel";
 import Link from "next/link";
-import ScrollAfforance from "@/components/scroll-affordance";
-import { urlForImage } from "@/sanity.image";
 
 export const runtime = "edge";
 
@@ -25,13 +25,15 @@ export default async function AboutPage() {
       <section className="relative aspect-[4/3] md:aspect-[16/8]">
         <Image
           alt=""
+          blurDataURL={about.hero_image.lqip}
           className="object-cover object-bottom"
           draggable={false}
           fill
-          sizes="100vw"
+          placeholder="blur"
           priority
-          src={urlForImage(about.hero_image).url()}
           quality={85}
+          sizes="100vw"
+          src={urlForImage(about.hero_image).url()}
         />
 
         <ScrollAfforance target="#about-us" />

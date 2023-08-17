@@ -31,7 +31,14 @@ export interface Partner {
   details: any[];
 }
 
-export const homeQuery = groq`*[_type == "home"][0]`;
+export const homeQuery = groq`*[_type == "home"][0] {
+  ...,
+  apply_background {
+    ...,
+    "lqip": asset->metadata.lqip
+  }
+}
+`;
 
 export interface Home {
   schedule: string;
@@ -48,17 +55,25 @@ export interface Home {
   community_cta_url_secondary?: string;
   community_carousel_secondary: Image[];
 
-  apply_background: Image;
+  apply_background: Image & { lqip: string };
   apply_heading: string;
   apply_subheading: string;
   apply_cta_text: string;
   apply_cta_url: string;
 }
 
-export const aboutQuery = groq`*[_type == "about"][0]`;
+export const aboutQuery = groq`*[_type == "about"][0] {
+  ...,
+  hero_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  }
+}`;
 
 export interface About {
-  hero_image: Image;
+  hero_image: Image & {
+    lqip: string;
+  };
 
   heading: string;
   subheading: string;
