@@ -26,7 +26,7 @@ export default async function ApplySection() {
           {home.apply_heading}
         </h2>
 
-        <p className="max-w-xl text-center text-mobile-inter-text md:text-inter-text">
+        <p className="max-w-2xl text-center text-mobile-inter-text md:text-inter-text">
           {home.apply_subheading}
         </p>
 
