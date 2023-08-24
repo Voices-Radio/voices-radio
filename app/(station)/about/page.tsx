@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export const runtime = "edge";
 
-export const revalidate = 0;
+export const revalidate = false;
 
 export const metadata: Metadata = {
   title: "About",
