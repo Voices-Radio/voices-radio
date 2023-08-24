@@ -74,6 +74,13 @@ export default defineType({
     }),
 
     defineField({
+      name: "bookings_image",
+      title: "Bookings Image",
+      type: "image",
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
       name: "bookings_heading",
       type: "string",
       title: "Bookings - Heading",

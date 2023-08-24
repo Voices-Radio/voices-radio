@@ -71,22 +71,23 @@ export const aboutQuery = groq`*[_type == "about"][0] {
   community_image {
     ...,
     "lqip": asset->metadata.lqip
+  },
+  bookings_image {
+    ...,
+    "lqip": asset->metadata.lqip
   }
 }`;
 
 export interface About {
-  hero_image: Image & {
-    lqip: string;
-  };
+  hero_image: Image & { lqip: string };
   got_here_heading: string;
   got_here: PortableTextBlock[];
+  bookings_image: Image & { lqip: string };
   bookings_heading: string;
   bookings: string[];
   our_values_heading: string;
   our_values: PortableTextBlock[];
-  community_image: Image & {
-    lqip: string;
-  };
+  community_image: Image & { lqip: string };
   community_heading: string;
   community: PortableTextBlock[];
 }

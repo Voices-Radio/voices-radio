@@ -41,7 +41,7 @@ export default async function AboutPage() {
       </section>
 
       <section
-        className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28"
+        className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20"
         id="how-we-got-here"
       >
         <div className="max-w-5xl mx-auto space-y-8 md:space-y-10">
@@ -55,7 +55,19 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="z-auto relative overflow-hidden bg-voices-purple text-white px-8 py-40 pb-28">
+      <section className="z-auto relative overflow-hidden bg-voices-purple text-white px-8 py-20 md:py-40 ,md:pb-28">
+        <Image
+          alt=""
+          blurDataURL={about.bookings_image.lqip}
+          className="object-cover"
+          draggable={false}
+          fill
+          placeholder="blur"
+          quality={1}
+          sizes="100vw"
+          src={urlForImage(about.bookings_image).url()}
+        />
+
         <div className="absolute inset-0 backdrop-blur-xl" />
 
         <div className="relative max-w-5xl mx-auto space-y-8 md:space-y-10">
@@ -63,10 +75,10 @@ export default async function AboutPage() {
             {about.bookings_heading}
           </h2>
 
-          <div className="text-mobile-inter-text flex gap-4 justify-center flex-wrap">
+          <div className="text-mobile-inter-small md:text-mobile-inter-text flex gap-1.5 md:gap-2.5 justify-center flex-wrap">
             {about.bookings.map((booking) => (
               <span
-                className="border-2 px-4 py-2 rounded-full border-current inline-block whitespace-nowrap"
+                className="border md:border-2 px-2 md:px-4 py-0.5 md:py-1.5 rounded-full border-current inline-block whitespace-nowrap"
                 key={booking}
               >
                 {booking}
