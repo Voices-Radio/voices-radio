@@ -1,11 +1,9 @@
-import Carousel from "@/components/carousel";
 import ScrollAfforance from "@/components/scroll-affordance";
 import { getAbout } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import { PortableText } from "@portabletext/react";
 import { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 
 export const runtime = "edge";
 

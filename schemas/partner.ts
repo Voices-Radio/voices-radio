@@ -3,7 +3,7 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
   name: "partner",
-  title: "Partner",
+  title: "Partners",
   type: "document",
   // @ts-ignore
   icon: StarIcon,

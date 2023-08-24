@@ -59,7 +59,7 @@ export default defineType({
       title: "Community Section - Button Link",
       description: "Button link for the Community section",
       type: "url",
-      group: "apply",
+      group: "community",
       validation: (rule) => rule.uri({ allowRelative: true }),
     }),
     defineField({
@@ -98,7 +98,7 @@ export default defineType({
       title: "Community Section - Button Link Secondary",
       description: "Button link for the Community section",
       type: "url",
-      group: "apply",
+      group: "community",
       validation: (rule) => rule.uri({ allowRelative: true }),
     }),
     defineField({
@@ -112,6 +112,7 @@ export default defineType({
     defineField({
       name: "apply_background",
       title: "Apply Section - Background Image",
+      group: "apply",
       type: "image",
       description: "Background image for the Apply section",
       validation: (rule) => rule.required(),
