@@ -23,7 +23,7 @@ export default async function AboutPage() {
 
   return (
     <main>
-      <section className="relative aspect-[4/3] md:aspect-[16/8]">
+      <section className="relative aspect-[4/3] md:aspect-[4/2]">
         <Image
           alt=""
           blurDataURL={about.hero_image.lqip}
@@ -100,7 +100,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28">
+      <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
         <div className="max-w-5xl mx-auto space-y-8 md:space-y-10">
           <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline text-center">
             {about.our_values_heading}
@@ -112,7 +112,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="relative aspect-[4/3] md:aspect-[16/8]">
+      <section className="relative aspect-[4/3] md:aspect-[4/2]">
         <Image
           alt=""
           blurDataURL={about.community_image.lqip}
@@ -139,7 +139,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28">
+      <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
         <div className="max-w-5xl mx-auto space-y-8 md:space-y-10">
           <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline text-center">
             {about.community_heading}
