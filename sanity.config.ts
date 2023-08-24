@@ -1,21 +1,14 @@
+import { visionTool } from "@sanity/vision";
 import { defineConfig } from "sanity";
 import { deskTool } from "sanity/desk";
-import { visionTool } from "@sanity/vision";
 import { env } from "./env";
 import { pageStructure, singletonPlugin } from "./plugins/settings";
 import aboutType from "./schemas/about";
 import homeType from "./schemas/home";
 import partnerType from "./schemas/partner";
 import settingsType from "./schemas/settings";
-import pageSectionType from "./schemas/page-section";
 
-const schemaTypes = [
-  settingsType,
-  partnerType,
-  homeType,
-  aboutType,
-  pageSectionType,
-];
+const schemaTypes = [settingsType, partnerType, homeType, aboutType];
 
 export default defineConfig({
   basePath: "/studio",

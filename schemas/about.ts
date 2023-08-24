@@ -1,4 +1,4 @@
-import { DocumentIcon } from "@sanity/icons";
+import { DocumentIcon, UnderlineIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
@@ -31,13 +31,166 @@ export default defineType({
      * First Section
      */
     defineField({
+      hidden: true,
       name: "heading",
       type: "string",
       title: "Heading",
       description: "Heading",
       validation: (rule) => rule.required(),
     }),
+
     defineField({
+      name: "got_here_heading",
+      type: "string",
+      title: "How We Got Here - Heading",
+      description: "Heading",
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "got_here",
+      title: "How We Got Here - Content",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "block",
+          options: { spellCheck: true },
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: "Strong", value: "strong" },
+              {
+                title: "Underline",
+                value: "u",
+                // @ts-ignore
+                icon: UnderlineIcon,
+              },
+            ],
+            annotations: [
+              defineField({
+                type: "object",
+                name: "link",
+                fields: [
+                  {
+                    type: "string",
+                    name: "href",
+                    title: "URL",
+                    validation: (rule) => rule.required(),
+                  },
+                ],
+              }),
+            ],
+          },
+        }),
+      ],
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "our_values_heading",
+      type: "string",
+      title: "Our Values - Heading",
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "our_values",
+      title: "Our Values - Content",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "block",
+          options: { spellCheck: true },
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: "Strong", value: "strong" },
+              {
+                title: "Underline",
+                value: "u",
+                // @ts-ignore
+                icon: UnderlineIcon,
+              },
+            ],
+            annotations: [
+              defineField({
+                type: "object",
+                name: "link",
+                fields: [
+                  {
+                    type: "string",
+                    name: "href",
+                    title: "URL",
+                    validation: (rule) => rule.required(),
+                  },
+                ],
+              }),
+            ],
+          },
+        }),
+      ],
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "community_image",
+      title: "Community Image",
+      type: "image",
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "community_heading",
+      type: "string",
+      title: "Our Community - Heading",
+      description: "Heading",
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "community",
+      title: "Our Community - Content",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "block",
+          options: { spellCheck: true },
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: "Strong", value: "strong" },
+              {
+                title: "Underline",
+                value: "u",
+                // @ts-ignore
+                icon: UnderlineIcon,
+              },
+            ],
+            annotations: [
+              defineField({
+                type: "object",
+                name: "link",
+                fields: [
+                  {
+                    type: "string",
+                    name: "href",
+                    title: "URL",
+                    validation: (rule) => rule.required(),
+                  },
+                ],
+              }),
+            ],
+          },
+        }),
+      ],
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      hidden: true,
       name: "subheading",
       type: "text",
       title: "Subheading",
@@ -45,12 +198,14 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      hidden: true,
       name: "cta_text",
       title: "Button Text",
       description: "Button text",
       type: "string",
     }),
     defineField({
+      hidden: true,
       name: "cta_url",
       title: "Button Link",
       description: "Button link",
@@ -58,6 +213,7 @@ export default defineType({
       validation: (rule) => rule.uri({ allowRelative: true }),
     }),
     defineField({
+      hidden: true,
       name: "carousel",
       title: "Carousel",
       type: "array",
@@ -68,6 +224,7 @@ export default defineType({
      * Second Section
      */
     defineField({
+      hidden: true,
       name: "heading_2",
       type: "string",
       title: "Heading #2",
@@ -75,6 +232,7 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      hidden: true,
       name: "subheading_2",
       type: "text",
       title: "Subheading #2",
@@ -82,12 +240,14 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      hidden: true,
       name: "cta_text_2",
       title: "Button Text #2",
       description: "Button text",
       type: "string",
     }),
     defineField({
+      hidden: true,
       name: "cta_url_2",
       title: "Button Link #2",
       description: "Button link",
@@ -95,6 +255,7 @@ export default defineType({
       validation: (rule) => rule.uri({ allowRelative: true }),
     }),
     defineField({
+      hidden: true,
       name: "carousel_2",
       title: "Carousel #2",
       type: "array",
@@ -105,6 +266,7 @@ export default defineType({
      * Third Section
      */
     defineField({
+      hidden: true,
       name: "heading_3",
       type: "string",
       title: "Heading #3",
@@ -112,6 +274,7 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      hidden: true,
       name: "subheading_3",
       type: "text",
       title: "Subheading #3",
@@ -119,12 +282,14 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      hidden: true,
       name: "cta_text_3",
       title: "Button Text #3",
       description: "Button text",
       type: "string",
     }),
     defineField({
+      hidden: true,
       name: "cta_url_3",
       title: "Button Link #3",
       description: "Button link",
@@ -132,24 +297,12 @@ export default defineType({
       validation: (rule) => rule.uri({ allowRelative: true }),
     }),
     defineField({
+      hidden: true,
       name: "carousel_3",
       title: "Carousel #3",
       type: "array",
       of: [{ type: "image", validation: (rule) => rule.required() }],
       validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "pageBuilder",
-      type: "array",
-      title: "Page builder",
-      of: [
-        defineArrayMember({
-          name: "page-section",
-          title: "Page Section",
-          type: "reference",
-          to: [{ type: "page-section" }],
-        }),
-      ],
     }),
   ],
 });

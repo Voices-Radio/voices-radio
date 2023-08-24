@@ -1,5 +1,5 @@
 import { groq } from "next-sanity";
-import type { Image } from "sanity";
+import type { Image, PortableTextBlock } from "sanity";
 
 export const settingsQuery = groq`*[_type == "settings"][0]`;
 
@@ -10,7 +10,7 @@ export interface Settings {
   /**
    * PortableText
    */
-  address: any[];
+  address: PortableTextBlock[];
   contact_link: string;
   twitter_link: string;
   instagram_link: string;
@@ -28,7 +28,7 @@ export interface Partner {
   /**
    * PortableText
    */
-  details: any[];
+  details: PortableTextBlock[];
 }
 
 export const homeQuery = groq`*[_type == "home"][0] {
@@ -67,6 +67,10 @@ export const aboutQuery = groq`*[_type == "about"][0] {
   hero_image {
     ...,
     "lqip": asset->metadata.lqip
+  },
+  community_image {
+    ...,
+    "lqip": asset->metadata.lqip
   }
 }`;
 
@@ -74,22 +78,13 @@ export interface About {
   hero_image: Image & {
     lqip: string;
   };
-
-  heading: string;
-  subheading: string;
-  cta_text?: string;
-  cta_url?: string;
-  carousel: Image[];
-
-  heading_2: string;
-  subheading_2: string;
-  cta_text_2?: string;
-  cta_url_2?: string;
-  carousel_2: Image[];
-
-  heading_3: string;
-  subheading_3: string;
-  cta_text_3?: string;
-  cta_url_3?: string;
-  carousel_3: Image[];
+  got_here_heading: string;
+  got_here: PortableTextBlock[];
+  our_values_heading: string;
+  our_values: PortableTextBlock[];
+  community_image: Image & {
+    lqip: string;
+  };
+  community_heading: string;
+  community: PortableTextBlock[];
 }
