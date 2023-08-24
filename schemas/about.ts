@@ -18,24 +18,11 @@ export default defineType({
       readOnly: true,
       hidden: true,
     }),
-    /**
-     * Hero Image
-     */
+
     defineField({
       name: "hero_image",
       title: "Hero Image",
       type: "image",
-      validation: (rule) => rule.required(),
-    }),
-    /**
-     * First Section
-     */
-    defineField({
-      hidden: true,
-      name: "heading",
-      type: "string",
-      title: "Heading",
-      description: "Heading",
       validation: (rule) => rule.required(),
     }),
 
@@ -43,7 +30,6 @@ export default defineType({
       name: "got_here_heading",
       type: "string",
       title: "How We Got Here - Heading",
-      description: "Heading",
       validation: (rule) => rule.required(),
     }),
 
@@ -82,6 +68,26 @@ export default defineType({
               }),
             ],
           },
+        }),
+      ],
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "bookings_heading",
+      type: "string",
+      title: "Bookings - Heading",
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "bookings",
+      title: "Bookings",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "string",
+          title: "Booking",
         }),
       ],
       validation: (rule) => rule.required(),
@@ -145,7 +151,6 @@ export default defineType({
       name: "community_heading",
       type: "string",
       title: "Our Community - Heading",
-      description: "Heading",
       validation: (rule) => rule.required(),
     }),
 
@@ -186,122 +191,6 @@ export default defineType({
           },
         }),
       ],
-      validation: (rule) => rule.required(),
-    }),
-
-    defineField({
-      hidden: true,
-      name: "subheading",
-      type: "text",
-      title: "Subheading",
-      description: "Subheading",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      hidden: true,
-      name: "cta_text",
-      title: "Button Text",
-      description: "Button text",
-      type: "string",
-    }),
-    defineField({
-      hidden: true,
-      name: "cta_url",
-      title: "Button Link",
-      description: "Button link",
-      type: "url",
-      validation: (rule) => rule.uri({ allowRelative: true }),
-    }),
-    defineField({
-      hidden: true,
-      name: "carousel",
-      title: "Carousel",
-      type: "array",
-      of: [{ type: "image", validation: (rule) => rule.required() }],
-      validation: (rule) => rule.required(),
-    }),
-    /**
-     * Second Section
-     */
-    defineField({
-      hidden: true,
-      name: "heading_2",
-      type: "string",
-      title: "Heading #2",
-      description: "Heading",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      hidden: true,
-      name: "subheading_2",
-      type: "text",
-      title: "Subheading #2",
-      description: "Subheading",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      hidden: true,
-      name: "cta_text_2",
-      title: "Button Text #2",
-      description: "Button text",
-      type: "string",
-    }),
-    defineField({
-      hidden: true,
-      name: "cta_url_2",
-      title: "Button Link #2",
-      description: "Button link",
-      type: "url",
-      validation: (rule) => rule.uri({ allowRelative: true }),
-    }),
-    defineField({
-      hidden: true,
-      name: "carousel_2",
-      title: "Carousel #2",
-      type: "array",
-      of: [{ type: "image", validation: (rule) => rule.required() }],
-      validation: (rule) => rule.required(),
-    }),
-    /**
-     * Third Section
-     */
-    defineField({
-      hidden: true,
-      name: "heading_3",
-      type: "string",
-      title: "Heading #3",
-      description: "Heading",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      hidden: true,
-      name: "subheading_3",
-      type: "text",
-      title: "Subheading #3",
-      description: "Subheading",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      hidden: true,
-      name: "cta_text_3",
-      title: "Button Text #3",
-      description: "Button text",
-      type: "string",
-    }),
-    defineField({
-      hidden: true,
-      name: "cta_url_3",
-      title: "Button Link #3",
-      description: "Button link",
-      type: "url",
-      validation: (rule) => rule.uri({ allowRelative: true }),
-    }),
-    defineField({
-      hidden: true,
-      name: "carousel_3",
-      title: "Carousel #3",
-      type: "array",
-      of: [{ type: "image", validation: (rule) => rule.required() }],
       validation: (rule) => rule.required(),
     }),
   ],

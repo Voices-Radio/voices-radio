@@ -55,18 +55,23 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="relative aspect-[4/3] md:aspect-[16/8]">
-        <Image
-          alt=""
-          blurDataURL={about.community_image.lqip}
-          className="object-cover object-bottom"
-          draggable={false}
-          fill
-          placeholder="blur"
-          quality={85}
-          sizes="100vw"
-          src={urlForImage(about.community_image).url()}
-        />
+      <section className="relative overflow-hidden bg-voices-purple text-white px-6 pb-12 pt-6 md:px-8 md:py-28">
+        <div className="max-w-5xl mx-auto space-y-8 md:space-y-10">
+          <h2 className="text-mobile-inter-text text-center">
+            {about.bookings_heading}
+          </h2>
+
+          <div className="text-mobile-inter-text flex gap-4 justify-center flex-wrap">
+            {about.bookings.map((booking) => (
+              <span
+                className="border-2 px-4 py-2 rounded-full border-current inline-block whitespace-nowrap"
+                key={booking}
+              >
+                {booking}
+              </span>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28">

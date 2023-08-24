@@ -80,6 +80,8 @@ export interface About {
   };
   got_here_heading: string;
   got_here: PortableTextBlock[];
+  bookings_heading: string;
+  bookings: string[];
   our_values_heading: string;
   our_values: PortableTextBlock[];
   community_image: Image & {
