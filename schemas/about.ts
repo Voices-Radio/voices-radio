@@ -85,8 +85,14 @@ export default defineType({
       type: "array",
       of: [
         defineArrayMember({
-          type: "string",
-          title: "Booking",
+          type: "block",
+          options: { spellCheck: true },
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [],
+            annotations: [],
+          },
         }),
       ],
       validation: (rule) => rule.required(),

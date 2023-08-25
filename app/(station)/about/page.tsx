@@ -2,8 +2,11 @@ import ScrollAfforance from "@/components/scroll-affordance";
 import { getAbout } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import { PortableText } from "@portabletext/react";
+import is from "@sindresorhus/is";
 import { Metadata } from "next";
 import Image from "next/image";
+import { PortableTextSpan, isPortableTextSpan } from "sanity";
+import { text } from "stream/consumers";
 
 export const runtime = "edge";
 
@@ -18,6 +21,12 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   const about = await getAbout();
+
+  const bookings = about.bookings
+    .flatMap((block) => block.children)
+    .map((span) => (isPortableTextSpan(span) ? span.text : null))
+    .filter(is.nonEmptyString)
+    .sort();
 
   return (
     <main>
@@ -74,7 +83,7 @@ export default async function AboutPage() {
           </h2>
 
           <div className="text-mobile-inter-small md:text-mobile-inter-text flex gap-1.5 md:gap-2.5 justify-center flex-wrap">
-            {about.bookings.sort().map((booking) => (
+            {bookings.map((booking) => (
               <span
                 className="border md:border-2 px-2 md:px-4 py-0.5 md:py-1.5 rounded-full border-current inline-block whitespace-nowrap"
                 key={booking}
@@ -153,7 +162,7 @@ export default async function AboutPage() {
         <Image
           alt=""
           blurDataURL={about.community_image.lqip}
-          className="object-cover object-center"
+          className="object-cover object-top"
           draggable={false}
           fill
           placeholder="blur"

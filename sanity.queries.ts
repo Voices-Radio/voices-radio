@@ -94,7 +94,7 @@ export interface About {
   got_here: PortableTextBlock[];
 
   bookings_heading: string;
-  bookings: string[];
+  bookings: PortableTextBlock[];
   bookings_image: Image & { lqip: string };
 
   our_values_heading: string;
