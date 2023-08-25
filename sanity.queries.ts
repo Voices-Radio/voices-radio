@@ -18,6 +18,7 @@ export interface Settings {
   linkedin_link: string;
   mixcloud_link: string;
   store_link: string;
+  apply_link: string;
 }
 
 export const partnersQuery = groq`*[_type == "partner"] | order(name desc)`;
@@ -72,6 +73,10 @@ export const aboutQuery = groq`*[_type == "about"][0] {
     ...,
     "lqip": asset->metadata.lqip
   },
+  our_values_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
   community_image {
     ...,
     "lqip": asset->metadata.lqip
@@ -84,14 +89,19 @@ export const aboutQuery = groq`*[_type == "about"][0] {
 
 export interface About {
   hero_image: Image & { lqip: string };
+
   got_here_heading: string;
   got_here: PortableTextBlock[];
-  bookings_image: Image & { lqip: string };
+
   bookings_heading: string;
   bookings: string[];
+  bookings_image: Image & { lqip: string };
+
   our_values_heading: string;
   our_values: PortableTextBlock[];
-  community_image: Image & { lqip: string };
+  our_values_image: Image & { lqip: string };
+
   community_heading: string;
   community: PortableTextBlock[];
+  community_image: Image & { lqip: string };
 }

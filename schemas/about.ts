@@ -132,8 +132,8 @@ export default defineType({
     }),
 
     defineField({
-      name: "community_image",
-      title: "Community Image",
+      name: "our_values_image",
+      title: "Our Values - Image",
       type: "image",
       validation: (rule) => rule.required(),
     }),
@@ -174,6 +174,13 @@ export default defineType({
           },
         }),
       ],
+      validation: (rule) => rule.required(),
+    }),
+
+    defineField({
+      name: "community_image",
+      title: "Community Image",
+      type: "image",
       validation: (rule) => rule.required(),
     }),
   ],

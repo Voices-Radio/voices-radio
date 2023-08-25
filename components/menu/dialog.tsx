@@ -1,11 +1,10 @@
-import { getHome, getSettings } from "@/sanity.client";
-import SocialLink from "../social-link";
-import Link from "next/link";
+import { getSettings } from "@/sanity.client";
 import Image from "next/image";
+import Link from "next/link";
+import SocialLink from "../social-link";
 
 export default async function MenuDialog() {
   const settings = await getSettings();
-  const home = await getHome();
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
@@ -37,7 +36,7 @@ export default async function MenuDialog() {
 
         <a
           className="text-kinfolk-navigation text-center font-kinfolk text-white"
-          href={home.apply_cta_url}
+          href={settings.apply_link}
           target="_blank"
           rel="noopener"
         >

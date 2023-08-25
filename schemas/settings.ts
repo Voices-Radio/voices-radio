@@ -149,5 +149,15 @@ export default defineType({
           scheme: ["https"],
         }),
     }),
+    defineField({
+      name: "apply_link",
+      title: "Apply Link",
+      type: "url",
+      group: "links",
+      validation: (rule) =>
+        rule.required().uri({
+          scheme: ["https"],
+        }),
+    }),
   ],
 });

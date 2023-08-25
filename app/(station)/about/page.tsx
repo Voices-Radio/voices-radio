@@ -113,7 +113,7 @@ export default async function AboutPage() {
       <section className="relative aspect-[4/3] md:aspect-[4/2]">
         <Image
           alt=""
-          blurDataURL={about.community_image.lqip}
+          blurDataURL={about.our_values_image.lqip}
           className="object-cover object-center"
           draggable={false}
           fill
@@ -121,7 +121,7 @@ export default async function AboutPage() {
           priority
           quality={85}
           sizes="100vw"
-          src={urlForImage(about.community_image).url()}
+          src={urlForImage(about.our_values_image).url()}
         />
 
         <div className="pointer-events-none absolute -top-0.5 left-0 right-0 max-w-none">
@@ -146,6 +146,33 @@ export default async function AboutPage() {
           <div className="space-y-4 text-mobile-inter-text md:text-inter-text">
             <PortableText value={about.community} />
           </div>
+        </div>
+      </section>
+
+      <section className="relative aspect-[4/3] md:aspect-[4/2]">
+        <Image
+          alt=""
+          blurDataURL={about.community_image.lqip}
+          className="object-cover object-center"
+          draggable={false}
+          fill
+          placeholder="blur"
+          priority
+          quality={85}
+          sizes="100vw"
+          src={urlForImage(about.community_image).url()}
+        />
+
+        <div className="pointer-events-none absolute -top-0.5 left-0 right-0 max-w-none">
+          <svg
+            className="rotate-180 text-voices-beige xl:h-[9.375rem] xl:w-full"
+            viewBox="0 0 1440 150"
+            preserveAspectRatio="none"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <use href="#wave-bottom" fill="currentColor" />
+          </svg>
         </div>
       </section>
     </main>
