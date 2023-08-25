@@ -7,9 +7,9 @@ export function useScript(
     ref?: RefObject<HTMLDivElement>;
     data?: string;
     id?: string;
-  } = {}
+  } = {},
 ) {
-  const [status, setStatus] = useState(() => {
+  const [status, setStatus] = useState<string>(() => {
     if (!src) {
       return "idle";
     }
@@ -31,12 +31,12 @@ export function useScript(
     }
 
     let script: HTMLScriptElement | null = document.querySelector(
-      `script[src="${src}"]`
+      `script[src="${src}"]`,
     );
 
     if (script) {
       setStatus(
-        script.getAttribute("data-status") ?? cachedScriptStatus ?? "loading"
+        script.getAttribute("data-status") ?? cachedScriptStatus ?? "loading",
       );
     } else {
       script = document.createElement("script");

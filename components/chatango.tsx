@@ -6,7 +6,7 @@ import { useRef } from "react";
 export default function Chatango() {
   const ref = useRef<HTMLDivElement>(null);
 
-  useScript("https://st.chatango.com/js/gz/emb.js", {
+  const status = useScript("https://st.chatango.com/js/gz/emb.js", {
     removeOnUnmount: true,
     id: "cid0020000285987468774",
     ref: ref,
@@ -31,5 +31,15 @@ export default function Chatango() {
     }),
   });
 
-  return <div className="absolute inset-0" ref={ref}></div>;
+  return (
+    <div className="relative min-h-screen supports-[min-height:100dvh]:min-h-[100dvh] grid place-items-center">
+      {status === "loading" ? (
+        <div className="font-kinfolk text-white text-mobile-kinfolk-headline">
+          Loading Chat
+        </div>
+      ) : null}
+
+      <div className="absolute inset-0" ref={ref}></div>
+    </div>
+  );
 }
