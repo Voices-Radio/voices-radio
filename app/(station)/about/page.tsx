@@ -7,10 +7,6 @@ import { Metadata } from "next";
 import Image from "next/image";
 import type { PortableTextSpan } from "sanity";
 
-export const runtime = "edge";
-
-export const revalidate = false;
-
 export const metadata: Metadata = {
   title: "About",
   openGraph: { title: "About" },
