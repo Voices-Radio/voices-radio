@@ -1,5 +1,6 @@
 import Carousel from "@/components/carousel";
 import { getHome } from "@/sanity.client";
+import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 
 export default async function CommunitySection() {
@@ -20,9 +21,9 @@ export default async function CommunitySection() {
             {home.community_heading}
           </h2>
 
-          <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
-            {home.community_subheading}
-          </p>
+          <div className="max-w-lg text-center text-mobile-inter-text md:text-inter-text space-y-4">
+            <PortableText value={home.community_subheading} />
+          </div>
 
           {home.community_cta_text && home.community_cta_url && (
             <Link
@@ -45,9 +46,9 @@ export default async function CommunitySection() {
             {home.community_heading_secondary}
           </h2>
 
-          <p className="max-w-lg text-center text-mobile-inter-text md:text-inter-text">
-            {home.community_subheading_secondary}
-          </p>
+          <div className="max-w-lg text-center text-mobile-inter-text md:text-inter-text space-y-4">
+            <PortableText value={home.community_subheading_secondary} />
+          </div>
 
           {home.community_cta_url_secondary &&
             home.community_cta_text_secondary && (
