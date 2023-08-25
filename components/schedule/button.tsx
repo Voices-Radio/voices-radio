@@ -1,10 +1,8 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import clsx from "clsx";
 import ScheduleList from "./list";
-
-const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+import { cn } from "@/lib/utils";
 
 export default function ScheduleButton({
   classNames = "",
@@ -15,9 +13,9 @@ export default function ScheduleButton({
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button
-          className={clsx(
+          className={cn(
             classNames,
-            "rounded-full bg-black text-white focus:outline-none"
+            "rounded-full bg-black text-white focus:outline-none",
           )}
         >
           Schedule

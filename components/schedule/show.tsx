@@ -1,5 +1,5 @@
 import { ProcessedDay } from "@/hooks/use-week-info";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
 export default function Show({ day }: { day: ProcessedDay }) {
@@ -22,10 +22,10 @@ export default function Show({ day }: { day: ProcessedDay }) {
   return (
     <li
       ref={ref}
-      className={clsx(
+      className={cn(
         "p-5 md:px-6 md:pb-0 md:pt-5",
         day.is_live ? "-mt-px bg-white text-black md:rounded-xl" : "text-white",
-        day.is_past ? "opacity-50" : ""
+        day.is_past ? "opacity-50" : "",
       )}
     >
       <div className="flex items-center gap-8">
