@@ -5,8 +5,7 @@ import { PortableText } from "@portabletext/react";
 import is from "@sindresorhus/is";
 import { Metadata } from "next";
 import Image from "next/image";
-import { PortableTextSpan, isPortableTextSpan } from "sanity";
-import { text } from "stream/consumers";
+import type { PortableTextSpan } from "sanity";
 
 export const runtime = "edge";
 
@@ -24,8 +23,8 @@ export default async function AboutPage() {
 
   const bookings = about.bookings
     .flatMap((block) => block.children)
-    .map((span) => (isPortableTextSpan(span) ? span.text : null))
-    .filter(is.nonEmptyString)
+    .map((span) => (span as PortableTextSpan)?.text)
+    .filter(is.string)
     .sort();
 
   return (
