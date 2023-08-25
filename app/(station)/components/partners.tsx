@@ -32,7 +32,14 @@ export default async function PartnersSection() {
             <PortableText
               value={partner.details}
               components={{
-                marks: { u: ({ children }) => <u>{children}</u> },
+                marks: {
+                  link: ({ children, value }) => (
+                    <a className="underline" href={value.href}>
+                      {children}
+                    </a>
+                  ),
+                  u: ({ children }) => <u>{children}</u>,
+                },
               }}
             />
           </div>
