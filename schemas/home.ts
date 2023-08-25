@@ -1,4 +1,4 @@
-import { HomeIcon, UnderlineIcon } from "@sanity/icons";
+import { HomeIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({

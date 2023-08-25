@@ -49,12 +49,18 @@ export default function Carousel({
             {images.map((image, idx) => (
               <Image
                 alt=""
-                className="aspect-[3/2] select-none object-cover"
+                className="select-none aspect-[3/2] object-cover"
                 draggable={false}
-                height={440}
+                height={384}
                 key={idx}
-                src={urlForImage(image).url()}
-                width={650}
+                src={urlForImage(image)
+                  .width(576)
+                  .height(384)
+                  .dpr(2)
+                  .quality(75)
+                  .url()}
+                width={576}
+                unoptimized
               />
             ))}
           </m.div>
