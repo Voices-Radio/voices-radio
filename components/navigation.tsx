@@ -1,13 +1,15 @@
+import { getSettings } from "@/sanity.client";
 import Link from "next/link";
+import { ErrorBoundary } from "react-error-boundary";
 import ChatLink from "./chat-link";
 import JoinChat from "./join-chat";
 import MenuButton from "./menu/button";
-import MenuDialog from "./menu/dialog";
 import NowPlaying, { NowPlayingFallback } from "./now-playing";
 import ScheduleButton from "./schedule/button";
-import { ErrorBoundary } from "react-error-boundary";
 
-export default function Navigation() {
+export default async function Navigation() {
+  const settings = await getSettings();
+
   return (
     <header className="fixed inset-x-0 top-0 z-10 flex bg-gradient-to-b from-black to-transparent lg:bg-none lg:shadow-xl lg:backdrop-blur-3xl">
       <nav className="grid-template-navigation mx-auto grid w-full max-w-[90rem] items-center p-3">
@@ -33,9 +35,7 @@ export default function Navigation() {
 
           <ScheduleButton classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto animate-color-shift delay-[800ms]" />
 
-          <MenuButton>
-            <MenuDialog />
-          </MenuButton>
+          <MenuButton settings={settings} />
         </div>
       </nav>
     </header>
