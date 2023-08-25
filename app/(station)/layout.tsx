@@ -1,8 +1,8 @@
 import { getSettings } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
-import Footer from "../components/footer";
 import Navigation from "../components/navigation";
+import Footer from "../components/navigation/footer";
 import SpriteSheet from "../components/sprite-sheet";
 
 export async function generateMetadata(): Promise<Metadata> {

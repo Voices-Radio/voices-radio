@@ -156,10 +156,7 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
   );
 }
 
-export function NowPlayingFallback({
-  error,
-  resetErrorBoundary,
-}: FallbackProps) {
+export function NowPlayingFallback({ resetErrorBoundary }: FallbackProps) {
   return (
     <div
       className="relative h-12 rounded-lg bg-white p-2 lg:mr-10"

@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import SocialLink from "../social-link";
 
-export default function MenuButton({ settings }: { settings: Settings }) {
+export default function NavigationDialog({ settings }: { settings: Settings }) {
   const [open, setOpen] = useState(false);
 
   const pathname = usePathname();

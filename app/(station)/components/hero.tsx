@@ -1,10 +1,10 @@
 import { getHome } from "@/sanity.client";
 import Image from "next/image";
-import Badge from "../../components/badge";
 import ScheduleButton from "../../components/schedule/button";
 import ScrollAfforance from "../../components/scroll-affordance";
 import VoicesBackground from "../../components/voices-background";
 import VoicesVideo from "../../components/voices-video";
+import Badge from "./badge";
 
 export default async function HeroSection() {
   const home = await getHome();

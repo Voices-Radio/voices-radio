@@ -1,11 +1,11 @@
 import { getSettings } from "@/sanity.client";
 import Link from "next/link";
 import { ErrorBoundary } from "react-error-boundary";
+import ScheduleButton from "../schedule/button";
 import ChatLink from "./chat-link";
+import NavigationDialog from "./dialog";
 import JoinChat from "./join-chat";
-import MenuButton from "./menu/button";
 import NowPlaying, { NowPlayingFallback } from "./now-playing";
-import ScheduleButton from "./schedule/button";
 
 export default async function Navigation() {
   const settings = await getSettings();
@@ -35,7 +35,7 @@ export default async function Navigation() {
 
           <ScheduleButton classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto animate-color-shift delay-[800ms]" />
 
-          <MenuButton settings={settings} />
+          <NavigationDialog settings={settings} />
         </div>
       </nav>
     </header>
