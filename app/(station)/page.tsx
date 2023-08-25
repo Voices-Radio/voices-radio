@@ -1,7 +1,7 @@
-import ApplySection from "./apply";
-import CommunitySection from "./community";
-import HeroSection from "./hero";
-import PartnersSection from "./partners";
+import ApplySection from "./components/apply";
+import CommunitySection from "./components/community";
+import HeroSection from "./components/hero";
+import PartnersSection from "./components/partners";
 
 export default function Home() {
   return (

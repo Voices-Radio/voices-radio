@@ -24,7 +24,7 @@ export async function GET(request: Request) {
   if (!tz) {
     return NextResponse.json(
       { message: "Param 'tz' is missing or invalid" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -32,13 +32,13 @@ export async function GET(request: Request) {
     `https://voicesradio.airtime.pro/api/week-info?timezone=${tz}`,
     {
       headers: { "Content-Type": "application/json" },
-    }
+    },
   );
 
   if (!res.ok) {
     return NextResponse.json(
       { message: `${res.status} ${res.statusText}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -63,12 +63,12 @@ export async function GET(request: Request) {
           show_start_hour: formatInTimeZone(
             zonedTimeToUtc(day.starts, tz),
             tz,
-            "HH:mm"
+            "HH:mm",
           ),
           show_end_hour: formatInTimeZone(
             zonedTimeToUtc(day.ends, tz),
             tz,
-            "HH:mm"
+            "HH:mm",
           ),
           is_past: isBefore(zonedTimeToUtc(day.ends, tz), new Date()),
           is_live:
@@ -76,7 +76,7 @@ export async function GET(request: Request) {
             isAfter(zonedTimeToUtc(day.ends, tz), new Date()),
         })),
     }),
-    {}
+    {},
   );
 
   return NextResponse.json(weekDays);
