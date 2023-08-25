@@ -74,7 +74,7 @@ export default async function AboutPage() {
           </h2>
 
           <div className="text-mobile-inter-small md:text-mobile-inter-text flex gap-1.5 md:gap-2.5 justify-center flex-wrap">
-            {about.bookings.map((booking) => (
+            {about.bookings.sort().map((booking) => (
               <span
                 className="border md:border-2 px-2 md:px-4 py-0.5 md:py-1.5 rounded-full border-current inline-block whitespace-nowrap"
                 key={booking}
