@@ -1,10 +1,10 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import * as Dialog from "@radix-ui/react-dialog";
 import ScheduleList from "./list";
-import { cn } from "@/lib/utils";
 
-export default function ScheduleButton({
+export default function ScheduleDialog({
   classNames = "",
 }: {
   classNames?: string;

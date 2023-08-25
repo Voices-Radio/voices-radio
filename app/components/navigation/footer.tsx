@@ -1,6 +1,6 @@
 import { getSettings } from "@/sanity.client";
 import Image from "next/image";
-import SocialLink from "../social-link";
+import SocialLink from "./social-link";
 import { PortableText } from "@portabletext/react";
 
 export default async function Footer() {

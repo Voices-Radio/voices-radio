@@ -1,7 +1,7 @@
 import { getSettings } from "@/sanity.client";
 import Link from "next/link";
 import { ErrorBoundary } from "react-error-boundary";
-import ScheduleButton from "../schedule/button";
+import ScheduleDialog from "../schedule/dialog";
 import ChatLink from "./chat-link";
 import NavigationDialog from "./dialog";
 import JoinChat from "./join-chat";
@@ -33,7 +33,7 @@ export default async function Navigation() {
         >
           <JoinChat />
 
-          <ScheduleButton classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto animate-color-shift delay-[800ms]" />
+          <ScheduleDialog classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto animate-color-shift delay-[800ms]" />
 
           <NavigationDialog settings={settings} />
         </div>

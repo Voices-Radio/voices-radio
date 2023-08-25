@@ -1,10 +1,10 @@
 import { getHome } from "@/sanity.client";
 import Image from "next/image";
-import ScheduleButton from "../../components/schedule/button";
+import ScheduleDialog from "../../components/schedule/dialog";
 import ScrollAfforance from "../../components/scroll-affordance";
-import VoicesBackground from "../../components/voices-background";
-import VoicesVideo from "../../components/voices-video";
 import Badge from "./badge";
+import VoicesBackground from "./voices-background";
+import VoicesVideo from "./voices-video";
 
 export default async function HeroSection() {
   const home = await getHome();
@@ -40,7 +40,7 @@ export default async function HeroSection() {
           </div>
 
           <div className="relative mt-4 flex justify-center lg:hidden">
-            <ScheduleButton classNames="text-mobile-inter-text py-3 px-12" />
+            <ScheduleDialog classNames="text-mobile-inter-text py-3 px-12" />
           </div>
         </div>
       </div>

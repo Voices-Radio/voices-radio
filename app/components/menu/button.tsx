@@ -6,9 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import SocialLink from "./social-link";
+import SocialLink from "../navigation/social-link";
 
-export default function NavigationDialog({ settings }: { settings: Settings }) {
+export default function MenuButton({ settings }: { settings: Settings }) {
   const [open, setOpen] = useState(false);
 
   const pathname = usePathname();
