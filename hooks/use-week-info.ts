@@ -55,6 +55,6 @@ export default function useWeekInfo() {
     fetcher,
     {
       refreshInterval: 1000 * 60 * 10,
-    }
+    },
   );
 }

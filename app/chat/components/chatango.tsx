@@ -32,9 +32,9 @@ export default function Chatango() {
   });
 
   return (
-    <div className="relative min-h-screen supports-[min-height:100dvh]:min-h-[100dvh] grid place-items-center">
+    <div className="relative grid min-h-screen place-items-center supports-[min-height:100dvh]:min-h-[100dvh]">
       {status === "loading" ? (
-        <div className="font-kinfolk text-white text-mobile-kinfolk-headline">
+        <div className="font-kinfolk text-mobile-kinfolk-headline text-white">
           Loading Chat
         </div>
       ) : null}

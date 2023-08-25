@@ -46,8 +46,8 @@ export default async function AboutPage() {
         className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20"
         id="how-we-got-here"
       >
-        <div className="max-w-5xl mx-auto space-y-8 md:space-y-10">
-          <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline text-center">
+        <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">
+          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
             {about.got_here_heading}
           </h2>
 
@@ -57,7 +57,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="z-auto relative overflow-hidden bg-voices-purple text-white px-8 py-20 md:py-40 ,md:pb-28">
+      <section className=",md:pb-28 relative z-auto overflow-hidden bg-voices-purple px-8 py-20 text-white md:py-40">
         <Image
           alt=""
           blurDataURL={about.bookings_image.lqip}
@@ -72,15 +72,15 @@ export default async function AboutPage() {
 
         <div className="absolute inset-0 backdrop-blur-xl" />
 
-        <div className="relative max-w-5xl mx-auto space-y-8 md:space-y-10">
-          <h2 className="text-mobile-inter-text text-center">
+        <div className="relative mx-auto max-w-5xl space-y-8 md:space-y-10">
+          <h2 className="text-center text-mobile-inter-text">
             {about.bookings_heading}
           </h2>
 
-          <div className="text-mobile-inter-small md:text-mobile-inter-text flex gap-1.5 md:gap-2.5 justify-center flex-wrap">
+          <div className="flex flex-wrap justify-center gap-1.5 text-mobile-inter-small md:gap-2.5 md:text-mobile-inter-text">
             {bookings.map((booking) => (
               <span
-                className="border md:border-2 px-2 md:px-4 py-0.5 md:py-1.5 rounded-full border-current inline-block whitespace-nowrap"
+                className="inline-block whitespace-nowrap rounded-full border border-current px-2 py-0.5 md:border-2 md:px-4 md:py-1.5"
                 key={booking}
               >
                 {booking}
@@ -103,8 +103,8 @@ export default async function AboutPage() {
       </section>
 
       <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
-        <div className="max-w-5xl mx-auto space-y-8 md:space-y-10">
-          <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline text-center">
+        <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">
+          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
             {about.our_values_heading}
           </h2>
 
@@ -142,8 +142,8 @@ export default async function AboutPage() {
       </section>
 
       <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
-        <div className="max-w-5xl mx-auto space-y-8 md:space-y-10">
-          <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline text-center">
+        <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">
+          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
             {about.community_heading}
           </h2>
 

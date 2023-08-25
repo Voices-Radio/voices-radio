@@ -21,7 +21,7 @@ export default async function CommunitySection() {
             {home.community_heading}
           </h2>
 
-          <div className="max-w-lg text-center text-mobile-inter-text md:text-inter-text space-y-4">
+          <div className="max-w-lg space-y-4 text-center text-mobile-inter-text md:text-inter-text">
             <PortableText value={home.community_subheading} />
           </div>
 
@@ -46,7 +46,7 @@ export default async function CommunitySection() {
             {home.community_heading_secondary}
           </h2>
 
-          <div className="max-w-lg text-center text-mobile-inter-text md:text-inter-text space-y-4">
+          <div className="max-w-lg space-y-4 text-center text-mobile-inter-text md:text-inter-text">
             <PortableText value={home.community_subheading_secondary} />
           </div>
 

@@ -33,7 +33,7 @@ export default function VoicesVideo({ className }: { className?: string }) {
   return (
     <div className={cn("relative aspect-square lg:aspect-auto", className)}>
       <button
-        className="absolute bottom-4 left-4 hidden motion-safe:block z-[1] text-white"
+        className="absolute bottom-4 left-4 z-[1] hidden text-white motion-safe:block"
         onClick={toggleVideo}
       >
         {playing ? (
@@ -52,7 +52,7 @@ export default function VoicesVideo({ className }: { className?: string }) {
       <video
         ref={ref}
         autoPlay
-        className="absolute inset-0 h-full w-full object-cover hidden motion-safe:block"
+        className="absolute inset-0 hidden h-full w-full object-cover motion-safe:block"
         loop
         muted
         playsInline

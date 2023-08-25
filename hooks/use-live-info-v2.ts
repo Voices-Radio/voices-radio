@@ -138,6 +138,6 @@ export default function useLiveInfoV2() {
   return useSWR<LiveInfoV2>(
     `https://voicesradio.airtime.pro/api/live-info-v2?timezone=${timeZone}`,
     fetcher,
-    { refreshInterval: 1000 * 60 }
+    { refreshInterval: 1000 * 60 },
   );
 }
