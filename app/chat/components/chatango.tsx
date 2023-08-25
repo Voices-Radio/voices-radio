@@ -1,6 +1,8 @@
 "use client";
 
+import NowPlaying from "@/app/components/navigation/now-playing";
 import { useScript } from "@/hooks/use-script";
+import Link from "next/link";
 import { useRef } from "react";
 
 export default function Chatango() {
@@ -32,14 +34,26 @@ export default function Chatango() {
   });
 
   return (
-    <div className="relative grid min-h-screen place-items-center supports-[min-height:100dvh]:min-h-[100dvh]">
+    <main className="relative grid min-h-screen supports-[min-height:100dvh]:min-h-[100dvh]">
+      <nav className="grid-template-navigation mx-auto grid w-full max-w-[90rem] items-center self-start p-3">
+        <NowPlaying style={{ gridArea: "player" }} withPlayer={false} />
+
+        <Link
+          href="/"
+          className="text-kinfolk-logo text-center font-kinfolk uppercase text-white"
+          style={{ gridArea: "logo" }}
+        >
+          Voices
+        </Link>
+      </nav>
+
       {status === "loading" ? (
         <div className="font-kinfolk text-mobile-kinfolk-headline text-white">
           Loading Chat
         </div>
       ) : null}
 
-      <div className="absolute inset-0" ref={ref}></div>
-    </div>
+      <div className="absolute inset-0 mt-[120px] lg:mt-[72px]" ref={ref} />
+    </main>
   );
 }

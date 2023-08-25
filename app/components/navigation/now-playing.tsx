@@ -14,7 +14,13 @@ function formatDateToHour(date: Date | string) {
   return format(new Date(date), "HH:mm");
 }
 
-export default function NowPlaying({ style }: { style: CSSProperties }) {
+export default function NowPlaying({
+  style,
+  withPlayer = true,
+}: {
+  style: CSSProperties;
+  withPlayer?: boolean;
+}) {
   const { data } = useLiveInfoV2();
 
   const ref = useRef<HTMLAudioElement>(null);
@@ -66,24 +72,26 @@ export default function NowPlaying({ style }: { style: CSSProperties }) {
       className="relative h-12 rounded-lg bg-white p-2 lg:mr-10"
       style={style}
     >
-      <audio ref={ref} controls={false} hidden />
+      {withPlayer ? <audio ref={ref} controls={false} hidden /> : null}
 
       <div className="flex gap-4 overflow-hidden">
-        {playing ? (
-          <button className="h-8 w-8" onClick={stop}>
-            <Stop />
-            <div className="sr-only">Stop</div>
-          </button>
-        ) : loading || !data ? (
-          <div className="p-1">
-            <Spinner />
-          </div>
-        ) : (
-          <button className="h-8 w-8" onClick={play}>
-            <Play />
-            <div className="sr-only">Play</div>
-          </button>
-        )}
+        {withPlayer ? (
+          playing ? (
+            <button className="h-8 w-8" onClick={stop}>
+              <Stop />
+              <div className="sr-only">Stop</div>
+            </button>
+          ) : loading || !data ? (
+            <div className="p-1">
+              <Spinner />
+            </div>
+          ) : (
+            <button className="h-8 w-8" onClick={play}>
+              <Play />
+              <div className="sr-only">Play</div>
+            </button>
+          )
+        ) : null}
 
         <div className="min-w-0 flex-1">
           {data ? (
