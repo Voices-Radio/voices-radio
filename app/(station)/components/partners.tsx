@@ -18,9 +18,9 @@ export default async function PartnersSection() {
         {partners.map((partner) => (
           <div
             key={partner.name}
-            className="flex-1 text-mobile-inter-xsmall md:text-inter-text-small"
+            className="flex-1 space-y-4 text-mobile-inter-xsmall md:text-inter-text-small"
           >
-            <div className="mb-4 flex h-16 items-center justify-center md:h-24">
+            <div className="flex h-16 items-center justify-center md:h-24">
               <Image
                 width={200}
                 height={60}
