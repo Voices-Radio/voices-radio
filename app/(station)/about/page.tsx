@@ -1,4 +1,3 @@
-import ScrollAfforance from "@/components/scroll-affordance";
 import { getAbout } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import { PortableText } from "@portabletext/react";
@@ -6,6 +5,7 @@ import is from "@sindresorhus/is";
 import { Metadata } from "next";
 import Image from "next/image";
 import type { PortableTextSpan } from "sanity";
+import ScrollAfforance from "../../components/scroll-affordance";
 
 export const metadata: Metadata = {
   title: "About",

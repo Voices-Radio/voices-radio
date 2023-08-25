@@ -1,9 +1,9 @@
-import Footer from "@/components/footer";
-import Navigation from "@/components/navigation";
-import SpriteSheet from "@/components/sprite-sheet";
 import { getSettings } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
+import Footer from "../components/footer";
+import Navigation from "../components/navigation";
+import SpriteSheet from "../components/sprite-sheet";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { title, description, ogImage } = await getSettings();

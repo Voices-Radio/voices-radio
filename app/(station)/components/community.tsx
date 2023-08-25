@@ -1,7 +1,7 @@
-import Carousel from "@/components/carousel";
 import { getHome } from "@/sanity.client";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
+import Carousel from "../../components/carousel";
 
 export default async function CommunitySection() {
   const home = await getHome();

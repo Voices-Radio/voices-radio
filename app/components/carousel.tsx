@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Image as SanityImage } from "sanity";
 
 const loadFeatures = () =>
-  import("../lib/load-features").then((res) => res.default);
+  import("../../lib/load-features").then((res) => res.default);
 
 export default function Carousel({
   images,

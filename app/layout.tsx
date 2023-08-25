@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
+import Fathom from "./components/fathom";
 import "./globals.css";
-import Fathom from "@/components/fathom";
 
 const kinfolk = localFont({
   src: "./subset-BNKinfolkRounded.woff2",
