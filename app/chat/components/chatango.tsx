@@ -2,6 +2,7 @@
 
 import NowPlaying from "@/app/components/navigation/now-playing";
 import { useScript } from "@/hooks/use-script";
+import Spinner from "@/icons/spinner";
 import Link from "next/link";
 import { useRef } from "react";
 
@@ -34,7 +35,7 @@ export default function Chatango() {
   });
 
   return (
-    <main className="relative grid min-h-screen supports-[min-height:100dvh]:min-h-[100dvh]">
+    <main className="relative min-h-screen supports-[min-height:100dvh]:min-h-[100dvh]">
       <nav className="grid-template-navigation mx-auto grid w-full max-w-[90rem] items-center self-start p-3">
         <NowPlaying style={{ gridArea: "player" }} withPlayer={false} />
 
@@ -48,8 +49,8 @@ export default function Chatango() {
       </nav>
 
       {status === "loading" ? (
-        <div className="font-kinfolk text-mobile-kinfolk-headline text-white">
-          Loading Chat
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <Spinner className="text-white" />
         </div>
       ) : null}
 
