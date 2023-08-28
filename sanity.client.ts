@@ -1,7 +1,4 @@
-import "server-only";
-
 import { createClient } from "next-sanity";
-import { cache } from "react";
 import { env } from "./env";
 import {
   About,
@@ -23,14 +20,13 @@ export const client = createClient({
    */
   useCdn: false,
   studioUrl: "/",
+  fetch: { next: { revalidate: 0 } },
 });
 
-export const clientFetch = cache(client.fetch.bind(client));
+export const getSettings = () => client.fetch<Settings>(settingsQuery);
 
-export const getSettings = () => clientFetch<Settings>(settingsQuery);
+export const getPartners = () => client.fetch<Partner[]>(partnersQuery);
 
-export const getPartners = () => clientFetch<Partner[]>(partnersQuery);
+export const getHome = () => client.fetch<Home>(homeQuery);
 
-export const getHome = () => clientFetch<Home>(homeQuery);
-
-export const getAbout = () => clientFetch<About>(aboutQuery);
+export const getAbout = () => client.fetch<About>(aboutQuery);
