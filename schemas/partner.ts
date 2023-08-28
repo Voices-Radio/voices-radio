@@ -1,4 +1,4 @@
-import { StarIcon, UnderlineIcon } from "@sanity/icons";
+import { StarIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
@@ -41,15 +41,7 @@ export default defineType({
           styles: [],
           lists: [],
           marks: {
-            decorators: [
-              { title: "Strong", value: "strong" },
-              {
-                title: "Underline",
-                value: "u",
-                // @ts-ignore
-                icon: UnderlineIcon,
-              },
-            ],
+            decorators: [{ title: "Strong", value: "strong" }],
             annotations: [
               defineField({
                 type: "object",

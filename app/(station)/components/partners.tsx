@@ -43,7 +43,6 @@ export default async function PartnersSection() {
                       {children}
                     </a>
                   ),
-                  u: ({ children }) => <u>{children}</u>,
                 },
               }}
             />
