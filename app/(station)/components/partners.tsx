@@ -34,7 +34,12 @@ export default async function PartnersSection() {
               components={{
                 marks: {
                   link: ({ children, value }) => (
-                    <a className="underline" href={value.href}>
+                    <a
+                      className="underline"
+                      target="_blank"
+                      rel="noopener"
+                      href={value.href}
+                    >
                       {children}
                     </a>
                   ),

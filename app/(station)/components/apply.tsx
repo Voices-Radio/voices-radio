@@ -33,6 +33,8 @@ export default async function ApplySection() {
         <a
           href={home.apply_cta_url}
           className="whitespace-nowrap rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-white ring-4 ring-inset ring-white md:text-inter-text"
+          target="_blank"
+          rel="noopener"
         >
           {home.apply_cta_text}
         </a>
