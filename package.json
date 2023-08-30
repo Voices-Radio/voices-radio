@@ -17,6 +17,7 @@
     "@sanity/types": "^3.15.1",
     "@sanity/ui": "^1.7.11",
     "@sanity/vision": "^3.15.1",
+    "@sanity/webhook": "^3.0.1",
     "@sindresorhus/is": "^6.0.0",
     "@t3-oss/env-nextjs": "^0.6.1",
     "clsx": "^2.0.0",
