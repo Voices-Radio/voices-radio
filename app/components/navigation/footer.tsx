@@ -63,7 +63,7 @@ export default async function Footer() {
             className="underline"
             target="_blank"
             rel="noopener"
-            href="https://reiner.design"
+            href="https://reiner.systems"
           >
             mirshko
           </a>
