@@ -8,9 +8,9 @@ import { Suspense, useEffect } from "react";
 function TrackPageView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
   useEffect(() => {
     load(env.NEXT_PUBLIC_FATHOM_SITE_ID, {
-      includedDomains: [env.NEXT_PUBLIC_FATHOM_URL],
       auto: false,
     });
   }, []);
