@@ -10,11 +10,18 @@ function TrackPageView() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    load(env.NEXT_PUBLIC_FATHOM_SITE_ID);
+    load(env.NEXT_PUBLIC_FATHOM_SITE_ID, { auto: false });
   }, []);
 
   useEffect(() => {
-    trackPageview();
+    if (!pathname) {
+      return;
+    }
+
+    trackPageview({
+      url: pathname + searchParams.toString(),
+      referrer: document.referrer,
+    });
   }, [pathname, searchParams]);
 
   return null;
