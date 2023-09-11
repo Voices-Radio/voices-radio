@@ -95,7 +95,7 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
               </Dialog.Close>
             </nav>
 
-            <div className="flex flex-1 flex-col items-center justify-center gap-14 lg:gap-0">
+            <div className="flex flex-1 flex-col items-center justify-center gap-14">
               <div className="mt-7 flex flex-col items-center gap-6 lg:mt-0 lg:gap-10">
                 <Dialog.Close asChild>
                   <Link
