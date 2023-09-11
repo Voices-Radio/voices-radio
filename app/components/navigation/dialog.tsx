@@ -95,8 +95,8 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
               </Dialog.Close>
             </nav>
 
-            <div className="flex flex-1 flex-col items-center justify-center">
-              <div className="flex flex-col items-center gap-6 lg:gap-10">
+            <div className="flex flex-1 flex-col items-center justify-center gap-14 lg:gap-0">
+              <div className="mt-7 flex flex-col items-center gap-6 lg:mt-0 lg:gap-10">
                 <Dialog.Close asChild>
                   <Link
                     className="text-kinfolk-navigation text-center font-kinfolk text-white"
@@ -143,14 +143,14 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
 
               <Image
                 src="/voices.svg"
-                width={310 * 0.6}
-                height={333 * 0.6}
+                width={310}
+                height={333}
                 alt=""
                 priority
-                className="mx-auto mt-14 object-contain invert lg:hidden"
+                className="mx-auto h-36 object-contain invert lg:hidden"
               />
 
-              <div className="mt-14 flex justify-center gap-8">
+              <div className="mb-14 flex justify-center gap-8 lg:mb-0">
                 <SocialLink type="twitter" url={settings.twitter_link} />
 
                 <SocialLink type="instagram" url={settings.instagram_link} />
