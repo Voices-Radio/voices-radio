@@ -5,11 +5,13 @@ export default function ChatLink({ style = {} }: { style?: CSSProperties }) {
   return (
     <Link
       href="/chat"
+      target="_blank"
       className="relative mr-7 inline-flex justify-self-start rounded-full bg-white px-4 py-1.5 text-mobile-inter-small lg:hidden"
       style={style}
     >
       <span>Chat</span>
 
+      {/* Tail */}
       <svg
         className="absolute -right-7 top-1/2 -translate-y-1/2"
         width="32"
