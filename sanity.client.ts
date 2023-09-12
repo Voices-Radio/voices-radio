@@ -14,7 +14,7 @@ import {
 export const client = createClient({
   projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: env.NEXT_PUBLIC_SANITY_DATASET,
-  apiVersion: env.NEXT_PUBLIC_SANITY_API_VERSION,
+  apiVersion: "2023-06-21",
   /**
    * @note If you set this to true the client will fetch content from our cache delivery network. In this case, however, we will not generate a whole lot of API traffic, and we want updates to be instantly available, so set this to false
    */
