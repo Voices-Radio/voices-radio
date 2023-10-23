@@ -99,7 +99,7 @@ export default function NowPlaying({
               <Marquee
                 autoFill
                 gradient
-                gradientColor={[255, 255, 255]}
+                gradientColor="#ffffff"
                 gradientWidth={40}
               >
                 <div className="mr-14 inline-flex gap-5 whitespace-nowrap text-inter-text-black">
@@ -120,7 +120,7 @@ export default function NowPlaying({
               <Marquee
                 autoFill
                 gradient
-                gradientColor={[255, 255, 255]}
+                gradientColor="#ffffff"
                 gradientWidth={40}
               >
                 <p className="mr-10 whitespace-nowrap text-inter-text-black uppercase">
@@ -131,7 +131,7 @@ export default function NowPlaying({
               <Marquee
                 autoFill
                 gradient
-                gradientColor={[255, 255, 255]}
+                gradientColor="#ffffff"
                 gradientWidth={40}
               >
                 <p className="mr-10 whitespace-nowrap text-inter-text-black uppercase">
