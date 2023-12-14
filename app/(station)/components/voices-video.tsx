@@ -58,8 +58,8 @@ export default function VoicesVideo({ className }: { className?: string }) {
         playsInline
         preload="none"
       >
-        <source src="/VIDEO.webm" type="video/webm" />
-        <source src="/VIDEO.mp4" type="video/mp4" />
+        <source src="https://voicesradio.b-cdn.net/VIDEO.webm" type="video/webm" />
+        <source src="https://voicesradio.b-cdn.net/VIDEO.mp4" type="video/mp4" />
       </video>
 
       <Image
