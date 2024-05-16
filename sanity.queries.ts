@@ -18,6 +18,7 @@ export interface Settings {
   linkedin_link: string;
   mixcloud_link: string;
   store_link: string;
+  podcast_link: string;
   apply_link: string;
 }
 
