@@ -133,14 +133,14 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
                   Apply!
                 </a>
 
-                <a
-                  className="text-kinfolk-navigation text-center font-kinfolk text-white"
-                  href={settings.podcast_link}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Podcast Studio
-                </a>
+                <Dialog.Close asChild>
+                  <Link
+                    className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                    href="/podcast"
+                  >
+                    Podcast Studio
+                  </Link>
+                </Dialog.Close>
 
                 <a
                   className="text-kinfolk-navigation text-center font-kinfolk text-white"

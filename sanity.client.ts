@@ -3,10 +3,12 @@ import { env } from "./env";
 import {
   About,
   Home,
+  Podcast,
   Partner,
   Settings,
   aboutQuery,
   homeQuery,
+  podcastQuery,
   partnersQuery,
   settingsQuery,
 } from "./sanity.queries";
@@ -30,3 +32,5 @@ export const getPartners = () => client.fetch<Partner[]>(partnersQuery);
 export const getHome = () => client.fetch<Home>(homeQuery);
 
 export const getAbout = () => client.fetch<About>(aboutQuery);
+
+export const getPodcast = () => client.fetch<Podcast>(podcastQuery);

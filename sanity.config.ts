@@ -7,8 +7,9 @@ import aboutType from "./schemas/about";
 import homeType from "./schemas/home";
 import partnerType from "./schemas/partner";
 import settingsType from "./schemas/settings";
+import podcastType from "./schemas/podcast";
 
-const schemaTypes = [settingsType, partnerType, homeType, aboutType];
+const schemaTypes = [settingsType, partnerType, homeType, aboutType, podcastType];
 
 export default defineConfig({
   basePath: "/studio",
@@ -18,9 +19,9 @@ export default defineConfig({
   schema: { types: schemaTypes },
   plugins: [
     deskTool({
-      structure: pageStructure([settingsType, homeType, aboutType]),
+      structure: pageStructure([settingsType, homeType, aboutType, podcastType]),
     }),
     visionTool({}),
-    singletonPlugin([settingsType.name, homeType.name, aboutType.name]),
+    singletonPlugin([settingsType.name, homeType.name, aboutType.name, podcastType.name]),
   ],
 });

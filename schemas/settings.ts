@@ -149,7 +149,7 @@ export default defineType({
           scheme: ["https"],
         }),
     }),
-    defineField({
+    /*defineField({
       name: "podcast_link",
       title: "Podcast Link",
       type: "url",
@@ -158,7 +158,7 @@ export default defineType({
         rule.required().uri({
           scheme: ["https"],
         }),
-    }),
+    }),*/
     defineField({
       name: "apply_link",
       title: "Apply Link",

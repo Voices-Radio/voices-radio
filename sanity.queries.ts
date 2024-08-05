@@ -106,3 +106,34 @@ export interface About {
   community: PortableTextBlock[];
   community_image: Image & { lqip: string };
 }
+
+export const podcastQuery = groq`*[_type == "podcast"][0] {
+  ...,
+  hero_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+  podcast_main_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+  podcast_final_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  }
+}`;
+
+export interface Podcast {
+  hero_image: Image & { lqip: string };
+
+  heading_podcast_intro: string;
+  podcast_intro_content: PortableTextBlock[];
+
+  podcast_main_heading: string;
+  podcast_main: PortableTextBlock[];
+  podcast_main_image: Image & { lqip: string };
+
+  podcast_final_heading: string;
+  podcast_final: PortableTextBlock[];
+  podcast_final_image: Image & { lqip: string };
+}
