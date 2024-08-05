@@ -138,7 +138,7 @@ export default function MenuButton({ settings }: { settings: Settings }) {
                     className="text-kinfolk-navigation text-center font-kinfolk text-white"
                     href="/podcast"
                   >
-                    Podcast Studi
+                    Podcast Studio
                   </Link>
                 </Dialog.Close>
 
