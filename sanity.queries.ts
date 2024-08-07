@@ -127,6 +127,8 @@ export interface Podcast {
   hero_image: Image & { lqip: string };
 
   heading_podcast_intro: string;
+  podcast_cta_text?: string;
+  podcast_cta_url?: string;
   podcast_intro_content: PortableTextBlock[];
 
   podcast_main_heading: string;

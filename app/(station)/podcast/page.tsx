@@ -5,6 +5,7 @@ import is from "@sindresorhus/is";
 import { Metadata } from "next";
 import Image from "next/image";
 import type { PortableTextSpan } from "sanity";
+import Link from "next/link";
 import ScrollAfforance from "../../components/scroll-affordance";
 
 export const metadata: Metadata = {
@@ -45,11 +46,35 @@ export default async function PodcastPage() {
             {podcast.heading_podcast_intro}
           </h2>
 
+          <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
+          {podcast.podcast_cta_text && podcast.podcast_cta_url && (
+            <Link
+              className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-red ring-4 ring-inset ring-red md:text-inter-text"
+              href={podcast.podcast_cta_url}
+            >
+              {podcast.podcast_cta_text}
+            </Link>
+          )}
+        </div>
+
           <div className="space-y-4 text-mobile-inter-text md:text-inter-text">
             <PortableText value={podcast.podcast_intro_content} />
           </div>
+
+          <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
+          {podcast.podcast_cta_text && podcast.podcast_cta_url && (
+            <Link
+              className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-blue ring-4 ring-inset ring-blue md:text-inter-text"
+              href={podcast.podcast_cta_url}
+            >
+              {podcast.podcast_cta_text}
+            </Link>
+          )}
+        </div>
         </div>
       </section>
+
+      
 
       <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
         <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">

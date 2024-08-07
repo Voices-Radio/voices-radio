@@ -32,6 +32,17 @@ export default defineType({
       title: "Podcast Intro",
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "podcast_cta_text",
+      title: "Podcast Section - Button Text",
+      type: "string",
+    }),
+    defineField({
+      name: "podcast_cta_url",
+      title: "Podcast Section - Button Link",
+      type: "url",
+      validation: (rule) => rule.uri({ allowRelative: true }),
+    }),
 
     defineField({
       name: "podcast_intro_content",
