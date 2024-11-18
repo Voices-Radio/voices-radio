@@ -139,3 +139,58 @@ export interface Podcast {
   podcast_final: PortableTextBlock[];
   podcast_final_image: Image & { lqip: string };
 }
+
+export const servicesQuery = groq`*[_type == "services"][0] {
+  ...,
+  hero_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+  services_main1_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+    services_main2_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+    services_main3_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+    services_main4_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+  services_final_image {
+    ...,
+    "lqip": asset->metadata.lqip
+  }
+}`;
+
+export interface Services {
+  hero_image: Image & { lqip: string };
+
+  services_heading: string;
+  services_main: PortableTextBlock[];
+
+
+  services_heading1 : string;
+  services_main1: PortableTextBlock[];
+  services_main1_image: Image & { lqip: string };
+
+  services_heading2 : string;
+  services_main2: PortableTextBlock[];
+  services_main2_image: Image & { lqip: string };
+
+  services_heading3 : string;
+  services_main3: PortableTextBlock[];
+  services_main3_image: Image & { lqip: string };
+
+  services_heading4 : string;
+  services_main4: PortableTextBlock[];
+  services_main4_image: Image & { lqip: string };
+
+  services_final: PortableTextBlock[];
+  services_final_image: Image & { lqip: string };
+}

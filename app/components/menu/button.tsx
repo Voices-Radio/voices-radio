@@ -142,6 +142,15 @@ export default function MenuButton({ settings }: { settings: Settings }) {
                   </Link>
                 </Dialog.Close>
 
+                <Dialog.Close asChild>
+                  <Link
+                    className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                    href="/services"
+                  >
+                    Our Services
+                  </Link>
+                </Dialog.Close>
+
                 <a
                   className="text-kinfolk-navigation text-center font-kinfolk text-white"
                   href={settings.contact_link}

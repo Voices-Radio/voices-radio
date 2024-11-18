@@ -6,7 +6,9 @@ import {
   Podcast,
   Partner,
   Settings,
+  Services,
   aboutQuery,
+  servicesQuery,
   homeQuery,
   podcastQuery,
   partnersQuery,
@@ -34,3 +36,5 @@ export const getHome = () => client.fetch<Home>(homeQuery);
 export const getAbout = () => client.fetch<About>(aboutQuery);
 
 export const getPodcast = () => client.fetch<Podcast>(podcastQuery);
+
+export const getServices = () => client.fetch<Services>(servicesQuery);

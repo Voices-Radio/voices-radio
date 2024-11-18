@@ -47,18 +47,24 @@ export default async function PodcastPage() {
           </h2>
 
           <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
-          {podcast.podcast_cta_text && podcast.podcast_cta_url && (
-            <Link
-              className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-red ring-4 ring-inset ring-red md:text-inter-text"
-              href={podcast.podcast_cta_url}
-            >
-              {podcast.podcast_cta_text}
-            </Link>
-          )}
+            <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+              {podcast.podcast_cta_text && podcast.podcast_cta_url && (
+              <Link
+                className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-red ring-4 ring-inset ring-redc md:text-inter-text"
+                href={podcast.podcast_cta_url}
+              >
+                {podcast.podcast_cta_text}
+              </Link>
+              )}
+            </h2>
+          
         </div>
 
           <div className="space-y-4 text-mobile-inter-text md:text-inter-text">
+            <h3>
             <PortableText value={podcast.podcast_intro_content} />
+            </h3> 
+            
           </div>
 
           <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">

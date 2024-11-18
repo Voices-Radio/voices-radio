@@ -103,3 +103,11 @@ iframe {
   mask-repeat: no-repeat;
   mask-position: center;
 }
+
+.text-mobile-inter-text ul,
+.text-inter-text ul {
+  list-style-type: disc; /* Adds bullets */
+  padding-left: 20px; /* Adds left padding for indentation */
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
