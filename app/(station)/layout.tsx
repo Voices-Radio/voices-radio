@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import Navigation from "../components/navigation";
 import Footer from "../components/navigation/footer";
 import SpriteSheet from "../components/sprite-sheet";
+import ChatbotWidget from "./podcast/chatbot-widget";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { title, description, ogImage } = await getSettings();
@@ -54,6 +55,9 @@ export default function StationLayout({
       <Footer />
 
       <SpriteSheet />
+      
+      {/* Global chatbot management */}
+      <ChatbotWidget />
     </>
   );
 }
