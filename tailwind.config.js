@@ -77,6 +77,7 @@ module.exports = {
           red: "#ed675d",
           purple: "#5f5cf3",
         },
+        accent: "#ed675d", // Same as voices.red for consistency
       },
       animation: {
         "color-shift": "color-shift 4500ms ease-out 800ms infinite",

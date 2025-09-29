@@ -137,6 +137,8 @@ export default function MenuButton({ settings }: { settings: Settings }) {
                   <Link
                     className="text-kinfolk-navigation text-center font-kinfolk text-white"
                     href="/podcast"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     Podcast Studio
                   </Link>

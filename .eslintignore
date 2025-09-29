@@ -1,0 +1,4 @@
+# Exclude bolt folder from ESLint
+/bolt/
+node_modules/
+.next/
