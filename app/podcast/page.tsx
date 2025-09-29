@@ -161,7 +161,7 @@ const PodcastPage = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               <Image 
-                src="/voices.svg" 
+                src="/VOICESLOGO_LIGHTBOX.svg" 
                 alt="Voices Studio Logo" 
                 width={32}
                 height={32}
