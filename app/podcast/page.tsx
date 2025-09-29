@@ -159,7 +159,7 @@ const PodcastPage = () => {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 ml-2">
               <Image 
                 src="/VOICESLOGO_LIGHTBOX.png" 
                 alt="Voices Studio Logo" 
@@ -174,7 +174,7 @@ const PodcastPage = () => {
             </div>
             
             <div className="hidden md:block">
-              <div className="flex items-center space-x-8">
+              <div className="flex items-center space-x-6 mr-2">
                 {['home', 'about', 'studio', 'services', 'equipment', 'pricing', 'contact'].map((item) => (
                   <button
                     key={item}
