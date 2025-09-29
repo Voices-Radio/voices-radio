@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ArrowRight, ArrowDown, Play, Mic, Video, Edit, Users, TrendingUp, Calculator, Headphones, Camera, Monitor, Lightbulb, Thermometer, MapPin, Facebook, Twitter, Instagram, Linkedin, Youtube, Menu, X } from 'lucide-react';
 
 const PodcastPage = () => {
@@ -159,10 +160,13 @@ const PodcastPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <img 
+              <Image 
                 src="/voices.svg" 
                 alt="Voices Studio Logo" 
+                width={32}
+                height={32}
                 className="h-8 w-auto"
+                priority
               />
               <span className={`text-xl font-bold ${isScrolled ? 'text-slate-800' : 'text-white'}`}>
                 Voices Studio
@@ -305,10 +309,13 @@ const PodcastPage = () => {
           {/* Featured Studio Image */}
           <div className="mb-16">
             <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
-              <img 
+              <Image 
                 src="/studio-2.jpg"
                 alt="Professional podcast studio overview"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
               <div className="absolute bottom-8 left-8 text-white">
@@ -325,10 +332,13 @@ const PodcastPage = () => {
                 key={index}
                 className="group relative h-64 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
               >
-                <img 
+                <Image 
                   src={image.url}
                   alt={image.alt}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
