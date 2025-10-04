@@ -220,13 +220,24 @@ const PodcastPage = () => {
 
       {/* Hero Section */}
       <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url(/studio-1.jpg)'
-          }}
-        >
+        {/* Background Video */}
+        <div className="absolute inset-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src="/Voices Studio Hero Video.mp4" type="video/mp4" />
+            {/* Fallback image for browsers that don't support video */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: 'url(/studio-1.jpg)'
+              }}
+            />
+          </video>
           <div className="absolute inset-0 bg-slate-900/70"></div>
         </div>
 
