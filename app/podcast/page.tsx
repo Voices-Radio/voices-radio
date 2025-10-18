@@ -229,7 +229,7 @@ const PodcastPage = () => {
             playsInline
             className="absolute inset-0 w-full h-full object-cover"
           >
-            <source src="/Voices Studio Hero Video.mp4" type="video/mp4" />
+            <source src="/Voices Studio_Hero Video v3.mp4" type="video/mp4" />
             {/* Fallback image for browsers that don't support video */}
             <div 
               className="absolute inset-0 bg-cover bg-center bg-no-repeat"
