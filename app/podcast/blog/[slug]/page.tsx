@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   const title = post.metaTitle || post.title;
   const description = post.metaDescription || post.excerpt;
-  const image = post.ogImage?.asset?.url || post.featuredImage.asset.url;
+  const image = post.ogImage?.asset?.url || post.featuredImage?.asset?.url || "/studio-1.jpg";
 
   return {
     title: `${title} | Voices Studio Blog`,
@@ -179,7 +179,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Featured Image */}
         <div className="relative h-96 mb-12 rounded-2xl overflow-hidden shadow-xl">
           <Image
-            src={post.featuredImage.asset.url}
+            src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
             alt={post.title}
             fill
             className="object-cover"
@@ -203,7 +203,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   image: ({ value }) => (
                     <div className="my-8">
                       <Image
-                        src={value.asset.url}
+                        src={value.asset?.url || "/studio-1.jpg"}
                         alt={value.alt || ""}
                         width={800}
                         height={400}
@@ -313,7 +313,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 >
                   <div className="relative h-48">
                     <Image
-                      src={relatedPost.featuredImage.asset.url}
+                      src={relatedPost.featuredImage?.asset?.url || "/studio-1.jpg"}
                       alt={relatedPost.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"

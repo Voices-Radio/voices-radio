@@ -96,7 +96,7 @@ export default async function BlogPage() {
                         >
                           <div className="relative h-64">
                             <Image
-                              src={post.featuredImage.asset.url}
+                              src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
                               alt={post.title}
                               fill
                               className="object-cover"
@@ -164,7 +164,7 @@ export default async function BlogPage() {
                     >
                       <div className="relative h-48">
                         <Image
-                          src={post.featuredImage.asset.url}
+                          src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
                           alt={post.title}
                           fill
                           className="object-cover"

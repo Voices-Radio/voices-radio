@@ -7,9 +7,14 @@ import SpriteSheet from "../components/sprite-sheet";
 import ChatbotWidget from "../podcast/chatbot-widget";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { title, description, ogImage } = await getSettings();
+  const settings = await getSettings();
 
-  const imageUrl = urlForImage(ogImage).width(1200).height(627).url();
+  // Fallback values when settings are not available
+  const title = settings?.title || "Voices Radio";
+  const description = settings?.description || "Community Radio in London";
+  const ogImage = settings?.ogImage;
+
+  const imageUrl = ogImage ? urlForImage(ogImage).width(1200).height(627).url() : "/voices.svg";
 
   return {
     metadataBase: new URL("https://voicesradio.co.uk"),

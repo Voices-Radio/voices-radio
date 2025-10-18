@@ -35,7 +35,7 @@ export default async function Navigation() {
 
           <ScheduleDialog classNames="hidden lg:block text-inter-text-small leading-8 py-1 px-9 ml-auto animate-color-shift delay-[800ms]" />
 
-          <NavigationDialog settings={settings} />
+          {settings && <NavigationDialog settings={settings} />}
         </div>
       </nav>
     </header>

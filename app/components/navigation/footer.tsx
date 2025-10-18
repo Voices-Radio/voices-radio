@@ -12,26 +12,26 @@ export default async function Footer() {
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="hidden flex-1 md:block">
             <address className="whitespace-pre-line text-inter-text-small not-italic">
-              <PortableText value={settings.address} />
+              <PortableText value={settings?.address || []} />
             </address>
           </div>
 
           <div className="flex flex-1 justify-center gap-8">
-            <SocialLink type="twitter" url={settings.twitter_link} />
+            {settings?.twitter_link && <SocialLink type="twitter" url={settings.twitter_link} />}
 
-            <SocialLink type="instagram" url={settings.instagram_link} />
+            {settings?.instagram_link && <SocialLink type="instagram" url={settings.instagram_link} />}
 
-            <SocialLink type="facebook" url={settings.facebook_link} />
+            {settings?.facebook_link && <SocialLink type="facebook" url={settings.facebook_link} />}
 
-            <SocialLink type="linkedin" url={settings.linkedin_link} />
+            {settings?.linkedin_link && <SocialLink type="linkedin" url={settings.linkedin_link} />}
 
-            <SocialLink type="mixcloud" url={settings.mixcloud_link} />
+            {settings?.mixcloud_link && <SocialLink type="mixcloud" url={settings.mixcloud_link} />}
           </div>
 
           <div className="flex flex-1 justify-center md:justify-end">
             <a
               className="text-center text-mobile-inter-text md:text-right md:text-inter-text"
-              href={settings.contact_link}
+              href={settings?.contact_link || "mailto:info@voicesradio.co.uk"}
             >
               Contact Us
             </a>

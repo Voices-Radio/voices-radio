@@ -203,7 +203,12 @@ export const blogPostsQuery = groq`*[_type == "blog" && status == "published"] |
   excerpt,
   featuredImage {
     ...,
-    "lqip": asset->metadata.lqip
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
   },
   author,
   categories,
@@ -222,7 +227,12 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
   excerpt,
   featuredImage {
     ...,
-    "lqip": asset->metadata.lqip
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
   },
   content,
   author,
@@ -235,7 +245,12 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
   keywords,
   ogImage {
     ...,
-    "lqip": asset->metadata.lqip
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
   }
 }`;
 
@@ -246,7 +261,12 @@ export const featuredBlogPostsQuery = groq`*[_type == "blog" && status == "publi
   excerpt,
   featuredImage {
     ...,
-    "lqip": asset->metadata.lqip
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
   },
   author,
   categories,
@@ -258,7 +278,14 @@ export interface BlogPost {
   title: string;
   slug: { current: string };
   excerpt: string;
-  featuredImage: Image & { lqip: string };
+  featuredImage?: {
+    asset?: {
+      url: string;
+      metadata: {
+        lqip: string;
+      };
+    };
+  };
   content?: PortableTextBlock[];
   author: string;
   categories?: string[];
@@ -268,5 +295,12 @@ export interface BlogPost {
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string[];
-  ogImage?: Image & { lqip: string };
+  ogImage?: {
+    asset?: {
+      url: string;
+      metadata: {
+        lqip: string;
+      };
+    };
+  };
 }
