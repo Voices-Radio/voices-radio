@@ -196,7 +196,7 @@ export interface Services {
 }
 
 // Blog Queries
-export const blogPostsQuery = groq`*[_type == "blog" && status == "published"] | order(publishedAt desc) {
+export const blogPostsQuery = groq`*[_type == "blog"] | order(publishedAt desc) {
   _id,
   title,
   slug,
@@ -254,7 +254,7 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
   }
 }`;
 
-export const featuredBlogPostsQuery = groq`*[_type == "blog" && status == "published" && featured == true] | order(publishedAt desc)[0...3] {
+export const featuredBlogPostsQuery = groq`*[_type == "blog" && featured == true] | order(publishedAt desc)[0...3] {
   _id,
   title,
   slug,
