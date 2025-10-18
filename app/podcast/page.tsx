@@ -175,10 +175,16 @@ const PodcastPage = () => {
             
             <div className="hidden md:block">
               <div className="flex items-center space-x-6 mr-2">
-                {['home', 'about', 'studio', 'services', 'equipment', 'pricing', 'contact'].map((item) => (
+                {['home', 'about', 'studio', 'services', 'equipment', 'blog', 'pricing', 'contact'].map((item) => (
                   <button
                     key={item}
-                    onClick={() => scrollToSection(item === 'equipment' ? 'technology' : item)}
+                    onClick={() => {
+                      if (item === 'blog') {
+                        window.location.href = '/podcast/blog';
+                      } else {
+                        scrollToSection(item === 'equipment' ? 'technology' : item);
+                      }
+                    }}
                     className={`capitalize font-medium transition-colors duration-200 hover:text-accent ${
                       isScrolled ? 'text-slate-600' : 'text-white'
                     }`}
@@ -204,10 +210,16 @@ const PodcastPage = () => {
         {isNavOpen && (
           <div className="md:hidden bg-white shadow-lg">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              {['home', 'about', 'studio', 'services', 'equipment', 'pricing', 'contact'].map((item) => (
+              {['home', 'about', 'studio', 'services', 'equipment', 'blog', 'pricing', 'contact'].map((item) => (
                 <button
                   key={item}
-                  onClick={() => scrollToSection(item === 'equipment' ? 'technology' : item)}
+                  onClick={() => {
+                    if (item === 'blog') {
+                      window.location.href = '/podcast/blog';
+                    } else {
+                      scrollToSection(item === 'equipment' ? 'technology' : item);
+                    }
+                  }}
                   className="block px-3 py-2 text-slate-600 hover:text-accent capitalize font-medium w-full text-left"
                 >
                   {item === 'equipment' ? 'Equipment' : item === 'pricing' ? 'Pricing' : item}
@@ -471,6 +483,90 @@ const PodcastPage = () => {
                 We offer comprehensive editing packages for your podcast. Drop us an email at <a href="mailto:podcast@voicesradio.co.uk" className="text-accent hover:text-red-700 font-semibold underline">podcast@voicesradio.co.uk</a> and we can build you a bespoke quote!
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Blog Posts Section */}
+      <section id="blog" className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+              Latest Insights
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Discover expert tips, industry news, and studio updates to help you create better podcasts.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {/* Placeholder for featured blog posts - will be populated when blog posts are created */}
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">Coming Soon</h3>
+              <p className="text-slate-600 text-sm mb-4">
+                We're preparing amazing content about podcast recording, equipment reviews, and industry insights.
+              </p>
+              <a 
+                href="/podcast/blog"
+                className="inline-flex items-center text-accent hover:text-orange-700 font-semibold text-sm"
+              >
+                View Blog
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </a>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">Expert Tips</h3>
+              <p className="text-slate-600 text-sm mb-4">
+                Learn professional recording techniques and equipment recommendations from our experienced team.
+              </p>
+              <a 
+                href="/podcast/blog"
+                className="inline-flex items-center text-accent hover:text-orange-700 font-semibold text-sm"
+              >
+                Read More
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </a>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">Industry News</h3>
+              <p className="text-slate-600 text-sm mb-4">
+                Stay updated with the latest podcast industry trends, technology updates, and market insights.
+              </p>
+              <a 
+                href="/podcast/blog"
+                className="inline-flex items-center text-accent hover:text-orange-700 font-semibold text-sm"
+              >
+                Explore
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </a>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <a 
+              href="/podcast/blog"
+              className="inline-flex items-center bg-accent hover:bg-orange-700 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
+            >
+              <span>View All Posts</span>
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </a>
           </div>
         </div>
       </section>

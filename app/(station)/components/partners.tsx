@@ -15,7 +15,7 @@ export default async function PartnersSection() {
       </div>
 
       <div className="mx-auto grid max-w-[90rem] gap-10 md:grid-cols-3">
-        {partners.map((partner) => (
+        {partners?.map((partner) => (
           <div
             key={partner.name}
             className="flex-1 space-y-4 text-mobile-inter-xsmall md:text-inter-text-small"

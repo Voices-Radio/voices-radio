@@ -35,7 +35,7 @@ export default async function HeroSection() {
             </div>
 
             <p className="whitespace-pre-line text-center text-inter-text">
-              {home.schedule}
+              {home?.schedule || "Live Radio • Community • London"}
             </p>
           </div>
 

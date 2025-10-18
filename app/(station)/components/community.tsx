@@ -6,6 +6,24 @@ import Carousel from "../../components/carousel";
 export default async function CommunitySection() {
   const home = await getHome();
 
+  if (!home) {
+    return (
+      <section
+        className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28"
+        id="community"
+      >
+        <div className="mx-auto flex max-w-[90rem] flex-col items-center gap-8">
+          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+            Community
+          </h2>
+          <p className="text-center text-mobile-inter-text md:text-inter-text">
+            Content loading...
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       className="relative overflow-hidden bg-voices-beige px-6 pb-12 pt-6 md:px-8 md:py-28"
@@ -13,16 +31,16 @@ export default async function CommunitySection() {
     >
       <div className="mx-auto mb-16 flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row-reverse">
         <div className="flex-1">
-          <Carousel images={home.community_carousel} />
+          <Carousel images={home.community_carousel || []} />
         </div>
 
         <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
           <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
-            {home.community_heading}
+            {home.community_heading || "Community"}
           </h2>
 
           <div className="max-w-lg space-y-4 text-center text-mobile-inter-text md:text-inter-text">
-            <PortableText value={home.community_subheading} />
+            <PortableText value={home.community_subheading || []} />
           </div>
 
           {home.community_cta_text && home.community_cta_url && (
@@ -38,16 +56,16 @@ export default async function CommunitySection() {
 
       <div className="mx-auto flex max-w-[90rem] flex-col items-center gap-8 lg:flex-row">
         <div className="flex-1">
-          <Carousel images={home.community_carousel_secondary} flipped />
+          <Carousel images={home.community_carousel_secondary || []} flipped />
         </div>
 
         <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
           <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
-            {home.community_heading_secondary}
+            {home.community_heading_secondary || "Community"}
           </h2>
 
           <div className="max-w-lg space-y-4 text-center text-mobile-inter-text md:text-inter-text">
-            <PortableText value={home.community_subheading_secondary} />
+            <PortableText value={home.community_subheading_secondary || []} />
           </div>
 
           {home.community_cta_url_secondary &&

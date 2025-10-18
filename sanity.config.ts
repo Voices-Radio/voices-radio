@@ -4,13 +4,14 @@ import { deskTool } from "sanity/desk";
 import { env } from "./env";
 import { pageStructure, singletonPlugin } from "./plugins/settings";
 import aboutType from "./schemas/about";
+import blogType from "./schemas/blog";
 import homeType from "./schemas/home";
 import partnerType from "./schemas/partner";
 import settingsType from "./schemas/settings";
 import podcastType from "./schemas/podcast";
 import servicesType from "./schemas/services";
 
-const schemaTypes = [settingsType, partnerType, homeType, aboutType, podcastType, servicesType];
+const schemaTypes = [settingsType, partnerType, homeType, aboutType, podcastType, servicesType, blogType];
 
 export default defineConfig({
   basePath: "/studio",

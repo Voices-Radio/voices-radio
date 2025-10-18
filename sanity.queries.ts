@@ -194,3 +194,79 @@ export interface Services {
   services_final: PortableTextBlock[];
   services_final_image: Image & { lqip: string };
 }
+
+// Blog Queries
+export const blogPostsQuery = groq`*[_type == "blog" && status == "published"] | order(publishedAt desc) {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+  author,
+  categories,
+  tags,
+  publishedAt,
+  featured,
+  metaTitle,
+  metaDescription,
+  keywords
+}`;
+
+export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+  content,
+  author,
+  categories,
+  tags,
+  publishedAt,
+  featured,
+  metaTitle,
+  metaDescription,
+  keywords,
+  ogImage {
+    ...,
+    "lqip": asset->metadata.lqip
+  }
+}`;
+
+export const featuredBlogPostsQuery = groq`*[_type == "blog" && status == "published" && featured == true] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    "lqip": asset->metadata.lqip
+  },
+  author,
+  categories,
+  publishedAt
+}`;
+
+export interface BlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  featuredImage: Image & { lqip: string };
+  content?: PortableTextBlock[];
+  author: string;
+  categories?: string[];
+  tags?: string[];
+  publishedAt: string;
+  featured?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string[];
+  ogImage?: Image & { lqip: string };
+}

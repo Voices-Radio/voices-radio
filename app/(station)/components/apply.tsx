@@ -5,39 +5,58 @@ import Image from "next/image";
 export default async function ApplySection() {
   const home = await getHome();
 
+  if (!home) {
+    return (
+      <section className="relative z-auto overflow-hidden px-8 py-40 bg-slate-800">
+        <div className="relative flex flex-col items-center gap-8 px-6 text-white">
+          <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+            Apply
+          </h2>
+          <p className="max-w-2xl text-center text-mobile-inter-text md:text-inter-text">
+            Content loading...
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative z-auto overflow-hidden px-8 py-40">
-      <Image
-        alt=""
-        blurDataURL={home.apply_background.lqip}
-        className="object-cover"
-        draggable={false}
-        fill
-        placeholder="blur"
-        quality={1}
-        sizes="100vw"
-        src={urlForImage(home.apply_background).url()}
-      />
+      {home.apply_background && (
+        <Image
+          alt=""
+          blurDataURL={home.apply_background.lqip}
+          className="object-cover"
+          draggable={false}
+          fill
+          placeholder="blur"
+          quality={1}
+          sizes="100vw"
+          src={urlForImage(home.apply_background).url()}
+        />
+      )}
 
       <div className="absolute inset-0 backdrop-blur-xl" />
 
       <div className="relative flex flex-col items-center gap-8 px-6 text-white">
         <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
-          {home.apply_heading}
+          {home.apply_heading || "Apply"}
         </h2>
 
         <p className="max-w-2xl text-center text-mobile-inter-text md:text-inter-text">
-          {home.apply_subheading}
+          {home.apply_subheading || "Join our community"}
         </p>
 
-        <a
-          href={home.apply_cta_url}
-          className="whitespace-nowrap rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-white ring-4 ring-inset ring-white md:text-inter-text"
-          target="_blank"
-          rel="noopener"
-        >
-          {home.apply_cta_text}
-        </a>
+        {home.apply_cta_url && home.apply_cta_text && (
+          <a
+            href={home.apply_cta_url}
+            className="whitespace-nowrap rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-white ring-4 ring-inset ring-white md:text-inter-text"
+            target="_blank"
+            rel="noopener"
+          >
+            {home.apply_cta_text}
+          </a>
+        )}
       </div>
 
       <div className="pointer-events-none absolute -bottom-0.5 left-0 right-0 max-w-none">

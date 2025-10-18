@@ -17,11 +17,24 @@ export const metadata: Metadata = {
 export default async function AboutPage() {
   const about = await getAbout();
 
+  if (!about) {
+    return (
+      <main>
+        <section className="relative aspect-[4/3] md:aspect-[4/2] bg-slate-800 flex items-center justify-center">
+          <div className="text-white text-center">
+            <h1 className="text-2xl font-bold mb-4">About Voices Radio</h1>
+            <p>Content loading...</p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   const bookings = about.bookings
-    .flatMap((block) => block.children)
+    ?.flatMap((block) => block.children)
     .map((span) => (span as PortableTextSpan)?.text)
     .filter(is.string)
-    .sort();
+    .sort() || [];
 
   return (
     <main>

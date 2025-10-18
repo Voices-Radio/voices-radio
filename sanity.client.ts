@@ -7,12 +7,16 @@ import {
   Partner,
   Settings,
   Services,
+  BlogPost,
   aboutQuery,
   servicesQuery,
   homeQuery,
   podcastQuery,
   partnersQuery,
   settingsQuery,
+  blogPostsQuery,
+  blogPostQuery,
+  featuredBlogPostsQuery,
 } from "./sanity.queries";
 
 export const client = createClient({
@@ -27,14 +31,31 @@ export const client = createClient({
   fetch: { next: { revalidate: 0 } },
 });
 
-export const getSettings = () => client.fetch<Settings>(settingsQuery);
+// Helper function to handle Sanity fetch errors
+const safeFetch = async <T>(query: string, params?: any): Promise<T | null> => {
+  try {
+    return await client.fetch<T>(query, params);
+  } catch (error) {
+    console.error('Sanity fetch error:', error);
+    return null;
+  }
+};
 
-export const getPartners = () => client.fetch<Partner[]>(partnersQuery);
+export const getSettings = () => safeFetch<Settings>(settingsQuery);
 
-export const getHome = () => client.fetch<Home>(homeQuery);
+export const getPartners = () => safeFetch<Partner[]>(partnersQuery);
 
-export const getAbout = () => client.fetch<About>(aboutQuery);
+export const getHome = () => safeFetch<Home>(homeQuery);
 
-export const getPodcast = () => client.fetch<Podcast>(podcastQuery);
+export const getAbout = () => safeFetch<About>(aboutQuery);
 
-export const getServices = () => client.fetch<Services>(servicesQuery);
+export const getPodcast = () => safeFetch<Podcast>(podcastQuery);
+
+export const getServices = () => safeFetch<Services>(servicesQuery);
+
+// Blog functions
+export const getBlogPosts = () => safeFetch<BlogPost[]>(blogPostsQuery);
+
+export const getBlogPost = (slug: string) => safeFetch<BlogPost>(blogPostQuery, { slug });
+
+export const getFeaturedBlogPosts = () => safeFetch<BlogPost[]>(featuredBlogPostsQuery);
