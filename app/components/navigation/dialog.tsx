@@ -95,11 +95,11 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
               </Dialog.Close>
             </nav>
 
-            <div className="flex flex-1 flex-col items-center justify-center gap-14">
-              <div className="mt-7 flex flex-col items-center gap-6 lg:mt-0 lg:gap-10">
+            <div className="flex flex-1 flex-col items-center justify-center gap-8 lg:gap-14">
+              <div className="mt-4 flex flex-col items-center gap-3 lg:mt-0 lg:gap-6">
                 <Dialog.Close asChild>
                   <Link
-                    className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                    className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
                     href="/about"
                   >
                     About
@@ -107,7 +107,7 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
                 </Dialog.Close>
 
                 <a
-                  className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                  className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
                   href={settings.mixcloud_link}
                   target="_blank"
                   rel="noopener"
@@ -116,7 +116,7 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
                 </a>
 
                 <a
-                  className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                  className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
                   href={settings.store_link}
                   target="_blank"
                   rel="noopener"
@@ -125,7 +125,7 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
                 </a>
 
                 <a
-                  className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                  className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
                   href={settings.apply_link}
                   target="_blank"
                   rel="noopener"
@@ -135,7 +135,7 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
 
                 <Dialog.Close asChild>
                   <Link
-                    className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                    className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
                     href="/podcast"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -146,7 +146,7 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
 
                 <Dialog.Close asChild>
                   <Link
-                    className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                    className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
                     href="/services"
                   >
                     Our Services
@@ -154,11 +154,20 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
                 </Dialog.Close>
 
                 <a
-                  className="text-kinfolk-navigation text-center font-kinfolk text-white"
+                  className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
                   href={settings.contact_link}
                 >
                   Contact
                 </a>
+
+                <Dialog.Close asChild>
+                  <Link
+                    className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
+                    href="/blog"
+                  >
+                    Blog
+                  </Link>
+                </Dialog.Close>
               </div>
 
               <Image

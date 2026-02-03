@@ -55,6 +55,22 @@
   display: table;
 }
 
+/* Smaller navigation text for mobile to fit all menu items */
+.text-kinfolk-navigation-sm {
+  font-size: 32px;
+  line-height: 28px;
+}
+.text-kinfolk-navigation-sm::before {
+  content: "";
+  margin-bottom: 0.073em;
+  display: table;
+}
+.text-kinfolk-navigation-sm::after {
+  content: "";
+  margin-top: -0.073em;
+  display: table;
+}
+
 @screen md {
   .md\:text-kinfolk-headline::before {
     content: "";
@@ -79,6 +95,21 @@
     display: table;
   }
   .text-kinfolk-navigation::after {
+    content: "";
+    margin-top: -0.22em;
+    display: table;
+  }
+
+  .text-kinfolk-navigation-sm {
+    font-size: 55px;
+    line-height: normal;
+  }
+  .text-kinfolk-navigation-sm::before {
+    content: "";
+    margin-bottom: -0.074em;
+    display: table;
+  }
+  .text-kinfolk-navigation-sm::after {
     content: "";
     margin-top: -0.22em;
     display: table;

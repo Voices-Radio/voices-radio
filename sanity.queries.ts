@@ -304,3 +304,113 @@ export interface BlogPost {
     };
   };
 }
+
+// Main Website Blog Queries
+export const mainBlogPostsQuery = groq`*[_type == "mainBlog" && status == "published"] | order(publishedAt desc) {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  author,
+  categories,
+  tags,
+  publishedAt,
+  featured,
+  metaTitle,
+  metaDescription,
+  keywords
+}`;
+
+export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $slug][0] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  content,
+  author,
+  categories,
+  tags,
+  publishedAt,
+  featured,
+  metaTitle,
+  metaDescription,
+  keywords,
+  ogImage {
+    ...,
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
+}`;
+
+export const featuredMainBlogPostsQuery = groq`*[_type == "mainBlog" && featured == true && status == "published"] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  author,
+  categories,
+  publishedAt
+}`;
+
+export interface MainBlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  featuredImage?: {
+    asset?: {
+      url: string;
+      metadata: {
+        lqip: string;
+      };
+    };
+  };
+  content?: PortableTextBlock[];
+  author: string;
+  categories?: string[];
+  tags?: string[];
+  publishedAt: string;
+  featured?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string[];
+  ogImage?: {
+    asset?: {
+      url: string;
+      metadata: {
+        lqip: string;
+      };
+    };
+  };
+}

@@ -5,13 +5,14 @@ import { env } from "./env";
 import { pageStructure, singletonPlugin } from "./plugins/settings";
 import aboutType from "./schemas/about";
 import blogType from "./schemas/blog";
+import mainBlogType from "./schemas/mainBlog";
 import homeType from "./schemas/home";
 import partnerType from "./schemas/partner";
 import settingsType from "./schemas/settings";
 import podcastType from "./schemas/podcast";
 import servicesType from "./schemas/services";
 
-const schemaTypes = [settingsType, partnerType, homeType, aboutType, podcastType, servicesType, blogType];
+const schemaTypes = [settingsType, partnerType, homeType, aboutType, podcastType, servicesType, blogType, mainBlogType];
 
 export default defineConfig({
   basePath: "/studio",
