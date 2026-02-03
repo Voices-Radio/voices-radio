@@ -46,7 +46,7 @@ export default async function BlogPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-black to-slate-800 py-20">
+      <section className="bg-gradient-to-br from-black to-slate-800 pt-32 pb-16 lg:pt-28 lg:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
