@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Fathom from "./components/fathom";
@@ -17,7 +17,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-export const metadata: Metadata = {
+export const viewport: Viewport = {
   themeColor: "#000000",
 };
 

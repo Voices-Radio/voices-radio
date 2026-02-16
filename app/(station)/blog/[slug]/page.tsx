@@ -13,6 +13,8 @@ interface BlogPostPageProps {
   };
 }
 
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   const posts = await client.fetch(mainBlogPostsQuery);
   return posts.map((post: MainBlogPost) => ({
