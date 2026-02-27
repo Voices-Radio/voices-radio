@@ -134,19 +134,14 @@ export default defineType({
     }),
     defineField({
       name: "categories",
-      title: "Categories",
+      title: "Categories / Topics",
       type: "array",
       group: "content",
       of: [{ type: "string" }],
       options: {
-        list: [
-          { title: "Podcast Tips", value: "podcast-tips" },
-          { title: "Studio Updates", value: "studio-updates" },
-          { title: "Industry News", value: "industry-news" },
-          { title: "Equipment Reviews", value: "equipment-reviews" },
-          { title: "Guest Interviews", value: "guest-interviews" },
-        ],
+        layout: "tags",
       },
+      description: "Add your own categories or topics. Type and press Enter to add.",
     }),
     defineField({
       name: "tags",
@@ -157,6 +152,7 @@ export default defineType({
       options: {
         layout: "tags",
       },
+      description: "Add your own tags. Type and press Enter to add.",
     }),
     defineField({
       name: "publishedAt",
