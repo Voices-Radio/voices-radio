@@ -174,20 +174,19 @@ export interface Services {
   services_heading: string;
   services_main: PortableTextBlock[];
 
-
-  services_heading1 : string;
+  services_heading1: string;
   services_main1: PortableTextBlock[];
   services_main1_image: Image & { lqip: string };
 
-  services_heading2 : string;
+  services_heading2: string;
   services_main2: PortableTextBlock[];
   services_main2_image: Image & { lqip: string };
 
-  services_heading3 : string;
+  services_heading3: string;
   services_main3: PortableTextBlock[];
   services_main3_image: Image & { lqip: string };
 
-  services_heading4 : string;
+  services_heading4: string;
   services_main4: PortableTextBlock[];
   services_main4_image: Image & { lqip: string };
 
@@ -328,6 +327,18 @@ export const mainBlogPostsQuery = groq`*[_type == "mainBlog" && status == "publi
   metaTitle,
   metaDescription,
   keywords
+}`;
+
+/** Slugs + dates for sitemap (published main site blog posts only) */
+export const mainBlogSitemapQuery = groq`*[_type == "mainBlog" && status == "published"] {
+  "slug": slug.current,
+  "lastModified": coalesce(publishedAt, _updatedAt)
+}`;
+
+/** Slugs + dates for sitemap (published podcast blog posts only) */
+export const podcastBlogSitemapQuery = groq`*[_type == "blog" && status == "published"] {
+  "slug": slug.current,
+  "lastModified": coalesce(publishedAt, _updatedAt)
 }`;
 
 export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $slug][0] {
