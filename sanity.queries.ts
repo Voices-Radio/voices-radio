@@ -1,5 +1,6 @@
 import { groq } from "next-sanity";
 import type { Image, PortableTextBlock } from "sanity";
+import type { BlogSanityImage } from "./sanity.image";
 
 export const settingsQuery = groq`*[_type == "settings"][0]`;
 
@@ -200,7 +201,7 @@ const portableTextContentProjection = groq`content[]{
   _type == "image" => {
     ...,
     asset->{
-      _id,
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -218,6 +219,7 @@ export const blogPostsQuery = groq`*[_type == "blog"] | order(publishedAt desc) 
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -242,6 +244,7 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -260,6 +263,7 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
   ogImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -276,6 +280,7 @@ export const featuredBlogPostsQuery = groq`*[_type == "blog" && featured == true
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -292,14 +297,7 @@ export interface BlogPost {
   title: string;
   slug: { current: string };
   excerpt: string;
-  featuredImage?: {
-    asset?: {
-      url: string;
-      metadata: {
-        lqip: string;
-      };
-    };
-  };
+  featuredImage?: BlogSanityImage;
   content?: PortableTextBlock[];
   author: string;
   categories?: string[];
@@ -309,14 +307,7 @@ export interface BlogPost {
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string[];
-  ogImage?: {
-    asset?: {
-      url: string;
-      metadata: {
-        lqip: string;
-      };
-    };
-  };
+  ogImage?: BlogSanityImage;
 }
 
 // Main Website Blog Queries
@@ -328,6 +319,7 @@ export const mainBlogPostsQuery = groq`*[_type == "mainBlog" && status == "publi
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -364,6 +356,7 @@ export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -382,6 +375,7 @@ export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $
   ogImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -398,6 +392,7 @@ export const featuredMainBlogPostsQuery = groq`*[_type == "mainBlog" && featured
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -414,14 +409,7 @@ export interface MainBlogPost {
   title: string;
   slug: { current: string };
   excerpt: string;
-  featuredImage?: {
-    asset?: {
-      url: string;
-      metadata: {
-        lqip: string;
-      };
-    };
-  };
+  featuredImage?: BlogSanityImage;
   content?: PortableTextBlock[];
   author: string;
   categories?: string[];
@@ -431,12 +419,5 @@ export interface MainBlogPost {
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string[];
-  ogImage?: {
-    asset?: {
-      url: string;
-      metadata: {
-        lqip: string;
-      };
-    };
-  };
+  ogImage?: BlogSanityImage;
 }

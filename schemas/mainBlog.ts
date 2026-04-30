@@ -1,5 +1,6 @@
 import { DocumentIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { blogImageHotspotForSchema } from "./blogImageHotspot";
 
 export default defineType({
   name: "mainBlog",
@@ -45,7 +46,7 @@ export default defineType({
       type: "image",
       group: "content",
       options: {
-        hotspot: true,
+        hotspot: blogImageHotspotForSchema,
       },
       fields: [
         {
@@ -107,7 +108,7 @@ export default defineType({
         }),
         defineArrayMember({
           type: "image",
-          options: { hotspot: true },
+          options: { hotspot: blogImageHotspotForSchema },
           fields: [
             {
               name: "alt",
@@ -217,7 +218,7 @@ export default defineType({
       group: "seo",
       description: "Image for social media sharing (1200x630px recommended)",
       options: {
-        hotspot: true,
+        hotspot: blogImageHotspotForSchema,
       },
     }),
   ],
