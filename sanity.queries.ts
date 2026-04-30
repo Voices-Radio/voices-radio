@@ -194,6 +194,21 @@ export interface Services {
   services_final_image: Image & { lqip: string };
 }
 
+/** Resolves image asset refs inside Portable Text `content` so `asset.url` exists at render time. */
+const portableTextContentProjection = groq`content[]{
+  ...,
+  _type == "image" => {
+    ...,
+    asset->{
+      _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
+}`;
+
 // Blog Queries
 export const blogPostsQuery = groq`*[_type == "blog"] | order(publishedAt desc) {
   _id,
@@ -233,7 +248,7 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
       }
     }
   },
-  content,
+  ${portableTextContentProjection},
   author,
   categories,
   tags,
@@ -355,7 +370,7 @@ export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $
       }
     }
   },
-  content,
+  ${portableTextContentProjection},
   author,
   categories,
   tags,
