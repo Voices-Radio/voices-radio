@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { client } from "@/sanity.client";
 import { blogPostsQuery, type BlogPost } from "@/sanity.queries";
+import { urlForBlogImageSafe } from "@/sanity.image";
 import { Calendar, User, ArrowRight, Search } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 
@@ -68,7 +69,7 @@ export default async function BlogPage() {
               <div className="bg-white rounded-2xl p-12 shadow-lg">
                 <h2 className="text-2xl font-bold text-slate-800 mb-4">No Blog Posts Yet</h2>
                 <p className="text-slate-600 mb-6">
-                  We're working on creating amazing content for you. Check back soon!
+                  We&apos;re working on creating amazing content for you. Check back soon!
                 </p>
                 <Link 
                   href="/podcast"
@@ -96,7 +97,7 @@ export default async function BlogPage() {
                         >
                           <div className="relative h-64">
                             <Image
-                              src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
+                              src={urlForBlogImageSafe(post.featuredImage, 960, 540)}
                               alt={post.title}
                               fill
                               className="object-cover"
@@ -164,7 +165,7 @@ export default async function BlogPage() {
                     >
                       <div className="relative h-48">
                         <Image
-                          src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
+                          src={urlForBlogImageSafe(post.featuredImage, 720, 405)}
                           alt={post.title}
                           fill
                           className="object-cover"

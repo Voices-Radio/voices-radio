@@ -305,10 +305,10 @@ const PodcastPage = () => {
                   <strong>Voices Studio</strong> is a dedicated Podcasting studio in <strong>Kings Cross, within Mare St Market</strong>.
                 </p>
                 <p>
-                  Situated a stone's throw from the radio station, the studio is <strong>kitted out with everything you need</strong> to record high-quality audio and video podcasts, with the added bonus of having everything <strong>Mare St Market & Coal Drops Yard</strong> has to offer right outside our door!
+                  Situated a stone&apos;s throw from the radio station, the studio is <strong>kitted out with everything you need</strong> to record high-quality audio and video podcasts, with the added bonus of having everything <strong>Mare St Market & Coal Drops Yard</strong> has to offer right outside our door!
                 </p>
                 <p>
-                  Drop into the <strong>mezzanine bar</strong> for a quick aperitif before your podcast, or venture down to the restaurant with your guests for some of the <strong>best grub that KX has to offer</strong>. We're very proud to be part of such a vibrant new space and are very happy to recommend things to do in the area during your visit.
+                  Drop into the <strong>mezzanine bar</strong> for a quick aperitif before your podcast, or venture down to the restaurant with your guests for some of the <strong>best grub that KX has to offer</strong>. We&apos;re very proud to be part of such a vibrant new space and are very happy to recommend things to do in the area during your visit.
                 </p>
               </div>
             </div>
@@ -509,7 +509,7 @@ const PodcastPage = () => {
               </div>
               <h3 className="text-lg font-semibold text-slate-800 mb-2">Coming Soon</h3>
               <p className="text-slate-600 text-sm mb-4">
-                We're preparing amazing content about podcast recording, equipment reviews, and industry insights.
+                We&apos;re preparing amazing content about podcast recording, equipment reviews, and industry insights.
               </p>
               <a 
                 href="/podcast/blog"
@@ -651,7 +651,7 @@ const PodcastPage = () => {
               <div className="bg-white rounded-2xl p-8 shadow-lg">
                 <h4 className="text-xl font-bold text-slate-800 mb-6">Address & Transport</h4>
                 <div className="space-y-4 text-slate-600">
-                  <p className="font-semibold text-slate-800">Lewis Cubitt Walk, N1C 4DY, King's Cross</p>
+                  <p className="font-semibold text-slate-800">Lewis Cubitt Walk, N1C 4DY, King&apos;s Cross</p>
                   <div className="space-y-2">
                     <p>• Distance to <strong>Kings Cross and London St Pancras Stations</strong>: 10 mins</p>
                     <p>• Distance to <strong>Caledonian Road and Barnsbury</strong>: 8 mins</p>

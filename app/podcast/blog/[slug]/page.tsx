@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { client } from "@/sanity.client";
 import { blogPostQuery, blogPostsQuery, type BlogPost } from "@/sanity.queries";
+import { portableTextBlogImageSrc, urlForBlogImageSafe, blogShareImageUrl } from "@/sanity.image";
 import { PortableText } from "@portabletext/react";
 import { Calendar, User, ArrowLeft, ArrowRight, Share2, Clock } from "lucide-react";
 
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   const title = post.metaTitle || post.title;
   const description = post.metaDescription || post.excerpt;
-  const image = post.ogImage?.asset?.url || post.featuredImage?.asset?.url || "/studio-1.jpg";
+  const image = blogShareImageUrl(post.ogImage, post.featuredImage);
 
   return {
     title: `${title} | Voices Studio Blog`,
@@ -179,7 +180,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Featured Image */}
         <div className="relative h-96 mb-12 rounded-2xl overflow-hidden shadow-xl">
           <Image
-            src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
+            src={urlForBlogImageSafe(post.featuredImage, 1600, 900)}
             alt={post.title}
             fill
             className="object-cover"
@@ -202,13 +203,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 types: {
                   image: ({ value }) => (
                     <div className="my-8">
-                      <Image
-                        src={value.asset?.url || "/studio-1.jpg"}
-                        alt={value.alt || ""}
-                        width={800}
-                        height={400}
-                        className="rounded-lg shadow-md"
-                      />
+                      <div className="relative aspect-video w-full max-w-3xl mx-auto overflow-hidden rounded-lg shadow-md">
+                        <Image
+                          src={portableTextBlogImageSrc(value)}
+                          alt={value.alt || ""}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 896px) 100vw, 896px"
+                        />
+                      </div>
                       {value.caption && (
                         <p className="text-sm text-slate-500 mt-2 text-center italic">
                           {value.caption}
@@ -313,7 +316,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 >
                   <div className="relative h-48">
                     <Image
-                      src={relatedPost.featuredImage?.asset?.url || "/studio-1.jpg"}
+                      src={urlForBlogImageSafe(relatedPost.featuredImage, 720, 405)}
                       alt={relatedPost.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
