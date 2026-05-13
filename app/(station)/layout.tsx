@@ -1,10 +1,11 @@
 import { getSettings } from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
+import { JsonLd } from "../components/json-ld";
 import Navigation from "../components/navigation";
 import Footer from "../components/navigation/footer";
 import SpriteSheet from "../components/sprite-sheet";
-import ChatbotWidget from "../podcast/chatbot-widget";
+
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
@@ -46,13 +47,32 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function StationLayout({
+export default async function StationLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSettings();
+
+  const sameAs = [
+    settings.twitter_link,
+    settings.instagram_link,
+    settings.facebook_link,
+    settings.linkedin_link,
+    settings.mixcloud_link,
+  ].filter(Boolean);
+
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: settings.title,
+    url: "https://voicesradio.co.uk",
+    ...(sameAs.length > 0 && { sameAs }),
+  };
+
   return (
     <>
+      <JsonLd data={organizationJsonLd} />
       <Navigation />
 
       {children}
@@ -60,9 +80,6 @@ export default function StationLayout({
       <Footer />
 
       <SpriteSheet />
-      
-      {/* Global chatbot management */}
-      <ChatbotWidget />
     </>
   );
 }

@@ -121,11 +121,27 @@ export const podcastQuery = groq`*[_type == "podcast"][0] {
   podcast_final_image {
     ...,
     "lqip": asset->metadata.lqip
+  },
+  seoOgImage {
+    ...,
+    "lqip": asset->metadata.lqip
   }
 }`;
 
+export interface PodcastFaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface PodcastService {
+  name: string;
+  description?: string;
+  priceFrom?: string;
+}
+
 export interface Podcast {
   hero_image: Image & { lqip: string };
+  heroImageAlt?: string;
 
   heading_podcast_intro: string;
   podcast_cta_text?: string;
@@ -139,6 +155,58 @@ export interface Podcast {
   podcast_final_heading: string;
   podcast_final: PortableTextBlock[];
   podcast_final_image: Image & { lqip: string };
+
+  // SEO
+  h1Override?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoOgImage?: Image & { lqip: string };
+  seoKeywords?: string[];
+
+  // Local business
+  streetAddress?: string;
+  locality?: string;
+  postalCode?: string;
+  phone?: string;
+  openingHours?: string[];
+  priceRange?: string;
+  geoLat?: number;
+  geoLng?: number;
+
+  // Structured data
+  studioServices?: PodcastService[];
+  faq?: PodcastFaqItem[];
+}
+
+export const locationPageSlugsQuery = groq`*[_type == "locationPage"] { "slug": slug.current, _updatedAt }`;
+
+export const locationPageBySlugQuery = groq`*[_type == "locationPage" && slug.current == $slug][0] {
+  ...,
+  ogImage {
+    ...,
+    "lqip": asset->metadata.lqip
+  }
+}`;
+
+export interface LocationPageFaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface LocationPage {
+  title: string;
+  slug: { current: string };
+  h1: string;
+  localityName: string;
+  intro?: PortableTextBlock[];
+  body?: PortableTextBlock[];
+  faq?: LocationPageFaqItem[];
+  ctaText?: string;
+  ctaUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: Image & { lqip: string };
+  keywords?: string[];
 }
 
 export const servicesQuery = groq`*[_type == "services"][0] {
@@ -210,7 +278,7 @@ const portableTextContentProjection = groq`content[]{
   }
 }`;
 
-// Blog Queries
+// Podcast Blog Queries
 export const blogPostsQuery = groq`*[_type == "blog"] | order(publishedAt desc) {
   _id,
   title,
@@ -292,6 +360,12 @@ export const featuredBlogPostsQuery = groq`*[_type == "blog" && featured == true
   publishedAt
 }`;
 
+/** Slugs + dates for sitemap (published podcast blog posts only) */
+export const podcastBlogSitemapQuery = groq`*[_type == "blog" && status == "published"] {
+  "slug": slug.current,
+  "lastModified": coalesce(publishedAt, _updatedAt)
+}`;
+
 export interface BlogPost {
   _id: string;
   title: string;
@@ -338,12 +412,6 @@ export const mainBlogPostsQuery = groq`*[_type == "mainBlog" && status == "publi
 
 /** Slugs + dates for sitemap (published main site blog posts only) */
 export const mainBlogSitemapQuery = groq`*[_type == "mainBlog" && status == "published"] {
-  "slug": slug.current,
-  "lastModified": coalesce(publishedAt, _updatedAt)
-}`;
-
-/** Slugs + dates for sitemap (published podcast blog posts only) */
-export const podcastBlogSitemapQuery = groq`*[_type == "blog" && status == "published"] {
   "slug": slug.current,
   "lastModified": coalesce(publishedAt, _updatedAt)
 }`;

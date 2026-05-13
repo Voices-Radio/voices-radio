@@ -7,12 +7,23 @@ import aboutType from "./schemas/about";
 import blogType from "./schemas/blog";
 import mainBlogType from "./schemas/mainBlog";
 import homeType from "./schemas/home";
+import locationPageType from "./schemas/locationPage";
 import partnerType from "./schemas/partner";
 import settingsType from "./schemas/settings";
 import podcastType from "./schemas/podcast";
 import servicesType from "./schemas/services";
 
-const schemaTypes = [settingsType, partnerType, homeType, aboutType, podcastType, servicesType, blogType, mainBlogType];
+const schemaTypes = [
+  settingsType,
+  partnerType,
+  homeType,
+  aboutType,
+  podcastType,
+  servicesType,
+  blogType,
+  mainBlogType,
+  locationPageType,
+];
 
 export default defineConfig({
   basePath: "/studio",
@@ -22,9 +33,21 @@ export default defineConfig({
   schema: { types: schemaTypes },
   plugins: [
     deskTool({
-      structure: pageStructure([settingsType, homeType, aboutType, podcastType, servicesType]),
+      structure: pageStructure([
+        settingsType,
+        homeType,
+        aboutType,
+        podcastType,
+        servicesType,
+      ]),
     }),
     visionTool({}),
-    singletonPlugin([settingsType.name, homeType.name, aboutType.name, podcastType.name, servicesType.name]),
+    singletonPlugin([
+      settingsType.name,
+      homeType.name,
+      aboutType.name,
+      podcastType.name,
+      servicesType.name,
+    ]),
   ],
 });
