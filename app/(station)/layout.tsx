@@ -6,7 +6,6 @@ import Navigation from "../components/navigation";
 import Footer from "../components/navigation/footer";
 import SpriteSheet from "../components/sprite-sheet";
 
-
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
 
@@ -15,7 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = settings?.description || "Community Radio in London";
   const ogImage = settings?.ogImage;
 
-  const imageUrl = ogImage ? urlForImage(ogImage).width(1200).height(627).url() : "/voices.svg";
+  const imageUrl = ogImage
+    ? urlForImage(ogImage).width(1200).height(627).url()
+    : "/voices.svg";
 
   return {
     metadataBase: new URL("https://voicesradio.co.uk"),
@@ -55,17 +56,17 @@ export default async function StationLayout({
   const settings = await getSettings();
 
   const sameAs = [
-    settings.twitter_link,
-    settings.instagram_link,
-    settings.facebook_link,
-    settings.linkedin_link,
-    settings.mixcloud_link,
+    settings?.twitter_link,
+    settings?.instagram_link,
+    settings?.facebook_link,
+    settings?.linkedin_link,
+    settings?.mixcloud_link,
   ].filter(Boolean);
 
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: settings.title,
+    name: settings?.title ?? "Voices Radio",
     url: "https://voicesradio.co.uk",
     ...(sameAs.length > 0 && { sameAs }),
   };
