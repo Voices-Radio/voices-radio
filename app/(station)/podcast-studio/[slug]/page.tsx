@@ -1,4 +1,8 @@
-import { getLocationPageBySlug, getLocationPageSlugs, getPodcast } from "@/sanity.client";
+import {
+  getLocationPageBySlug,
+  getLocationPageSlugs,
+  getPodcast,
+} from "@/sanity.client";
 import { urlForImage } from "@/sanity.image";
 import { PortableText } from "@portabletext/react";
 import { Metadata } from "next";
@@ -38,7 +42,9 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      ...(ogImageUrl && { images: [{ url: ogImageUrl, width: 1200, height: 627 }] }),
+      ...(ogImageUrl && {
+        images: [{ url: ogImageUrl, width: 1200, height: 627 }],
+      }),
     },
     twitter: {
       title,
@@ -49,7 +55,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function LocationPage({ params }: { params: { slug: string } }) {
+export default async function LocationPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const [page, podcast] = await Promise.all([
     getLocationPageBySlug(params.slug),
     getPodcast(),
@@ -66,47 +76,53 @@ export default async function LocationPage({ params }: { params: { slug: string 
       page.seoDescription ??
       `Professional podcast studio for hire in ${page.localityName}.`,
     url: `https://voicesradio.co.uk/podcast-studio/${params.slug}`,
-    ...(podcast.phone && { telephone: podcast.phone }),
+    ...(podcast?.phone && { telephone: podcast.phone }),
     address: {
       "@type": "PostalAddress",
-      ...(podcast.streetAddress && { streetAddress: podcast.streetAddress }),
-      addressLocality: podcast.locality ?? "London",
-      ...(podcast.postalCode && { postalCode: podcast.postalCode }),
+      ...(podcast?.streetAddress && { streetAddress: podcast.streetAddress }),
+      addressLocality: podcast?.locality ?? "London",
+      ...(podcast?.postalCode && { postalCode: podcast.postalCode }),
       addressCountry: "GB",
     },
-    ...(podcast.geoLat &&
-      podcast.geoLng && {
+    ...(podcast?.geoLat &&
+      podcast?.geoLng && {
         geo: {
           "@type": "GeoCoordinates",
           latitude: podcast.geoLat,
           longitude: podcast.geoLng,
         },
       }),
-    ...(podcast.openingHours?.length && { openingHours: podcast.openingHours }),
-    ...(podcast.priceRange && { priceRange: podcast.priceRange }),
+    ...(podcast?.openingHours?.length && {
+      openingHours: podcast.openingHours,
+    }),
+    ...(podcast?.priceRange && { priceRange: podcast.priceRange }),
     areaServed: page.localityName,
   };
 
   // ── JSON-LD: FAQPage ───────────────────────────────────────────────────
-  const faqJsonLd =
-    page.faq?.length
-      ? {
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: page.faq.map((item) => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: { "@type": "Answer", text: item.answer },
-          })),
-        }
-      : null;
+  const faqJsonLd = page.faq?.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: page.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+      }
+    : null;
 
   // ── JSON-LD: BreadcrumbList ────────────────────────────────────────────
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://voicesradio.co.uk" },
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://voicesradio.co.uk",
+      },
       {
         "@type": "ListItem",
         position: 2,
@@ -175,10 +191,12 @@ export default async function LocationPage({ params }: { params: { slug: string 
               <dl className="space-y-6">
                 {page.faq.map((item, i) => (
                   <div key={i} className="space-y-2">
-                    <dt className="font-semibold text-mobile-inter-text md:text-inter-text">
+                    <dt className="text-mobile-inter-text font-semibold md:text-inter-text">
                       {item.question}
                     </dt>
-                    <dd className="text-mobile-inter-text md:text-inter-text">{item.answer}</dd>
+                    <dd className="text-mobile-inter-text md:text-inter-text">
+                      {item.answer}
+                    </dd>
                   </div>
                 ))}
               </dl>
