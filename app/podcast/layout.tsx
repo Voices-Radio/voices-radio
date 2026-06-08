@@ -3,7 +3,6 @@ import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
 import { JsonLd } from "../components/json-ld";
 import SpriteSheet from "../components/sprite-sheet";
-import ChatbotWidget from "./chatbot-widget";
 
 const DEFAULT_TITLE = "London Podcast Studio in Kings Cross";
 const DEFAULT_DESCRIPTION =
@@ -107,9 +106,6 @@ export default async function PodcastLayout({
       {children}
 
       <SpriteSheet />
-
-      {/* Global chatbot management */}
-      <ChatbotWidget />
     </>
   );
 }
