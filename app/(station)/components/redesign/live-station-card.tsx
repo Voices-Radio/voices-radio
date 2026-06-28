@@ -104,7 +104,7 @@ export default function LiveStationCard({
 
       {error && (
         <p className="bg-voicesNext-background/85 absolute bottom-3 left-3 right-3 p-2 font-gabarito text-xs text-voicesNext-orange">
-          Stream unavailable. Check the RadioCult config.
+          Stream unavailable. Check the audio stream config.
         </p>
       )}
     </article>

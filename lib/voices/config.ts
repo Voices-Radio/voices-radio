@@ -10,9 +10,12 @@ export const VOICES_DEFAULT_FEATURED_LIMIT = 10;
 export const VOICES_APPLY_FOR_SHOW_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSdlV09iFlcP2_n6ldRsSUoeZclzJpb0AMY4F2rrXUpC7jueZQ/viewform";
 
+export const VOICES_AIRTIME_STREAM_URL =
+  "https://voicesradio.out.airtime.pro/voicesradio_a";
+
 export const voicesMediaConfig = {
   radioCult: {
-    kxStreamUrl: process.env.NEXT_PUBLIC_RADIOCULT_KX_STREAM_URL,
+    kxStreamUrl: VOICES_AIRTIME_STREAM_URL,
     eastStreamUrl: process.env.NEXT_PUBLIC_RADIOCULT_EAST_STREAM_URL,
   },
   restream: {

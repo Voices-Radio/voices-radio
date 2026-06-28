@@ -5,6 +5,7 @@ import Play from "@/icons/play";
 import Spinner from "@/icons/spinner";
 import Stop from "@/icons/stop";
 import { unescapeString } from "@/lib/unescape";
+import { VOICES_AIRTIME_STREAM_URL } from "@/lib/voices/config";
 import { format } from "date-fns";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { FallbackProps } from "react-error-boundary";
@@ -36,7 +37,7 @@ export default function NowPlaying({
 
     loadingSet(true);
 
-    el.src = "https://voicesradio.out.airtime.pro/voicesradio_a";
+    el.src = VOICES_AIRTIME_STREAM_URL;
 
     await el.play();
 
