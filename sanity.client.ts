@@ -3,6 +3,7 @@ import { env } from "./env";
 import {
   About,
   Home,
+  HomePage,
   Podcast,
   Partner,
   Settings,
@@ -11,6 +12,7 @@ import {
   aboutQuery,
   servicesQuery,
   homeQuery,
+  homePageQuery,
   podcastQuery,
   partnersQuery,
   settingsQuery,
@@ -36,7 +38,7 @@ const safeFetch = async <T>(query: string, params?: any): Promise<T | null> => {
   try {
     return await client.fetch<T>(query, params);
   } catch (error) {
-    console.error('Sanity fetch error:', error);
+    console.error("Sanity fetch error:", error);
     return null;
   }
 };
@@ -47,6 +49,8 @@ export const getPartners = () => safeFetch<Partner[]>(partnersQuery);
 
 export const getHome = () => safeFetch<Home>(homeQuery);
 
+export const getHomePage = () => safeFetch<HomePage>(homePageQuery);
+
 export const getAbout = () => safeFetch<About>(aboutQuery);
 
 export const getPodcast = () => safeFetch<Podcast>(podcastQuery);
@@ -56,6 +60,8 @@ export const getServices = () => safeFetch<Services>(servicesQuery);
 // Blog functions
 export const getBlogPosts = () => safeFetch<BlogPost[]>(blogPostsQuery);
 
-export const getBlogPost = (slug: string) => safeFetch<BlogPost>(blogPostQuery, { slug });
+export const getBlogPost = (slug: string) =>
+  safeFetch<BlogPost>(blogPostQuery, { slug });
 
-export const getFeaturedBlogPosts = () => safeFetch<BlogPost[]>(featuredBlogPostsQuery);
+export const getFeaturedBlogPosts = () =>
+  safeFetch<BlogPost[]>(featuredBlogPostsQuery);

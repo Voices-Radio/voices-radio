@@ -3,7 +3,7 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
   name: "home",
-  title: "Home",
+  title: "Home - LEGACY",
   type: "document",
   // @ts-ignore
   icon: HomeIcon,
@@ -18,7 +18,7 @@ export default defineType({
   fields: [
     defineField({
       name: "internal",
-      initialValue: "Home",
+      initialValue: "Home - LEGACY",
       type: "string",
       readOnly: true,
       hidden: true,

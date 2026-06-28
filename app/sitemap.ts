@@ -11,6 +11,10 @@ type SitemapDoc = { slug: string; lastModified: string };
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (process.env.NEXT_PUBLIC_SITE_ENV !== "production") {
+    return [];
+  }
+
   const base = getBaseUrl();
 
   const [mainBlogRows, podcastBlogRows] = await Promise.all([
@@ -26,6 +30,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/explore`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${base}/artists`, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${base}/shows`, changeFrequency: "daily", priority: 0.85 },
+    { url: `${base}/collaborate`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/services`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/blog`, changeFrequency: "daily", priority: 0.9 },
     { url: `${base}/podcast`, changeFrequency: "weekly", priority: 0.85 },

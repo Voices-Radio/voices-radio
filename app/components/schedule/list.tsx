@@ -14,22 +14,24 @@ export default function ScheduleList() {
     const [date, shows] = Object.entries(data)[index];
 
     return (
-      <div className="mx-auto w-full max-w-5xl pt-10 md:p-10">
-        <div className="mx-auto mb-4 grid w-full grid-cols-3 gap-16">
+      <div className="mx-auto w-full max-w-3xl px-3 pb-8 pt-4 md:px-6 md:pb-10 md:pt-6">
+        <div className="sticky top-3 z-10 mx-auto mb-4 grid w-fit max-w-full grid-cols-[2.25rem_auto_2.25rem] items-center gap-3 rounded-full border border-white/15 bg-black/40 px-3 py-2 shadow-lg shadow-black/20 backdrop-blur-xl md:mb-5 md:gap-5 md:px-4">
           <button
-            className="inline-flex h-8 w-8 items-center justify-center justify-self-end text-inter-text text-white focus:outline-none disabled:text-white/50"
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center justify-self-end rounded-full text-mobile-inter-text text-white transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white disabled:text-white/40 disabled:hover:bg-transparent md:text-inter-text-small"
             disabled={index <= 0}
             onClick={() => indexSet(index - 1)}
           >
             <span role="img" aria-label="Left">{`<-`}</span>
           </button>
 
-          <p className="justify-self-center text-center text-inter-text capitalize text-white">
+          <p className="flex min-h-9 items-center justify-center whitespace-nowrap text-center text-mobile-inter-text capitalize leading-none text-white md:text-inter-text-small">
             {format(new Date(date), "eeee dd/MM")}
           </p>
 
           <button
-            className="inline-flex h-8 w-8 items-center justify-center justify-self-start text-inter-text text-white focus:outline-none disabled:text-white/50"
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center justify-self-start rounded-full text-mobile-inter-text text-white transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white disabled:text-white/40 disabled:hover:bg-transparent md:text-inter-text-small"
             onClick={() => indexSet(index + 1)}
             disabled={index >= Object.entries(data).length - 1}
           >
@@ -44,8 +46,8 @@ export default function ScheduleList() {
             ))}
           </ul>
         ) : (
-          <div className="p-5">
-            <p className="flex-1 text-center text-3xl font-black uppercase leading-none text-white md:text-6xl">
+          <div className="p-4">
+            <p className="flex-1 text-center text-2xl font-black uppercase leading-none text-white md:text-4xl">
               No Shows Scheduled For Today
             </p>
           </div>
@@ -56,7 +58,7 @@ export default function ScheduleList() {
 
   return (
     <div className="flex flex-1 items-center justify-center p-5">
-      <p className="text-center text-3xl font-black uppercase leading-none text-white md:text-6xl">
+      <p className="text-center text-2xl font-black uppercase leading-none text-white md:text-4xl">
         Loading Schedule
       </p>
     </div>

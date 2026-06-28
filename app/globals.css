@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --voices-color-background: #242424;
+  --voices-color-surface: #313131;
+  --voices-color-text-primary: #f8efe0;
+  --voices-color-text-inverse: #161616;
+  --voices-color-text-secondary: #999999;
+  --voices-color-accent-primary: #d34e24;
+  --voices-color-status-live: #db1a1a;
+  --voices-color-white: #ffffff;
+  --voices-color-border-subtle: #6f6a63;
+
+  --voices-space-2: 2px;
+  --voices-space-4: 4px;
+  --voices-space-8: 8px;
+  --voices-space-10: 10px;
+  --voices-space-12: 12px;
+  --voices-space-16: 16px;
+  --voices-space-20: 20px;
+  --voices-space-24: 24px;
+  --voices-space-40: 40px;
+
+  --voices-radius-none: 0;
+  --voices-radius-xs: 4px;
+  --voices-radius-sm: 8px;
+  --voices-radius-md: 20px;
+  --voices-radius-lg: 40px;
+  --voices-radius-full: 100px;
+}
+
 .grid-template-navigation {
   @apply gap-2;
 
@@ -22,6 +51,56 @@
 
 .overflow-y-scroll {
   -webkit-overflow-scrolling: touch;
+}
+
+.voices-nav-link {
+  position: relative;
+  display: inline-flex;
+  min-width: 76px;
+  justify-content: center;
+  color: var(--voices-color-text-primary);
+  transition: color 180ms ease;
+}
+
+.voices-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 3px);
+  width: calc(100% + 16px);
+  height: 16px;
+  pointer-events: none;
+  background-image: url("/nav-underline.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  opacity: 0;
+  transform: translateX(-50%) scaleX(0.82);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.voices-nav-link:hover::after,
+.voices-nav-link:focus-visible::after,
+.voices-nav-link[data-active="true"]::after,
+.voices-nav-link[data-state="open"]::after {
+  opacity: 1;
+  transform: translateX(-50%) scaleX(1);
+}
+
+.voices-on-air-marquee {
+  animation: voices-on-air-marquee 18s linear infinite;
+}
+
+@keyframes voices-on-air-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Capsize Augments */

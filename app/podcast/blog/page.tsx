@@ -8,11 +8,19 @@ import { PortableText } from "@portabletext/react";
 
 export const metadata: Metadata = {
   title: "Blog | Voices Studio - Podcast Recording Tips & Industry News",
-  description: "Discover expert podcast recording tips, studio updates, and industry insights from Voices Studio. Learn how to create professional podcasts with our comprehensive guides.",
-  keywords: ["podcast tips", "recording studio", "podcast equipment", "audio production", "podcast industry"],
+  description:
+    "Discover expert podcast recording tips, studio updates, and industry insights from Voices Studio. Learn how to create professional podcasts with our comprehensive guides.",
+  keywords: [
+    "podcast tips",
+    "recording studio",
+    "podcast equipment",
+    "audio production",
+    "podcast industry",
+  ],
   openGraph: {
     title: "Blog | Voices Studio - Podcast Recording Tips & Industry News",
-    description: "Discover expert podcast recording tips, studio updates, and industry insights from Voices Studio.",
+    description:
+      "Discover expert podcast recording tips, studio updates, and industry insights from Voices Studio.",
     type: "website",
   },
 };
@@ -47,14 +55,15 @@ export default async function BlogPage() {
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-slate-900 to-slate-800 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
+            <h1 className="mb-6 text-4xl font-bold text-white sm:text-5xl md:text-6xl">
               Voices Studio Blog
             </h1>
-            <p className="text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed">
-              Expert insights, recording tips, and industry news to help you create professional podcasts. 
-              Learn from our experience and stay updated with the latest in podcast production.
+            <p className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-200">
+              Expert insights, recording tips, and industry news to help you
+              create professional podcasts. Learn from our experience and stay
+              updated with the latest in podcast production.
             </p>
           </div>
         </div>
@@ -62,86 +71,98 @@ export default async function BlogPage() {
 
       {/* Blog Posts Grid */}
       <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {blogPosts.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="bg-white rounded-2xl p-12 shadow-lg">
-                <h2 className="text-2xl font-bold text-slate-800 mb-4">No Blog Posts Yet</h2>
-                <p className="text-slate-600 mb-6">
-                  We're working on creating amazing content for you. Check back soon!
+            <div className="py-16 text-center">
+              <div className="rounded-2xl bg-white p-12 shadow-lg">
+                <h2 className="mb-4 text-2xl font-bold text-slate-800">
+                  No Blog Posts Yet
+                </h2>
+                <p className="mb-6 text-slate-600">
+                  We&apos;re working on creating amazing content for you. Check
+                  back soon!
                 </p>
-                <Link 
+                <Link
                   href="/podcast"
-                  className="inline-flex items-center bg-accent text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-700 transition-colors"
+                  className="inline-flex items-center rounded-full bg-accent px-6 py-3 font-semibold text-white transition-colors hover:bg-orange-700"
                 >
                   Back to Studio
-                  <ArrowRight className="h-4 w-4 ml-2" />
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
             </div>
           ) : (
             <>
               {/* Featured Posts */}
-              {blogPosts.filter(post => post.featured).length > 0 && (
+              {blogPosts.filter((post) => post.featured).length > 0 && (
                 <div className="mb-16">
-                  <h2 className="text-3xl font-bold text-slate-800 mb-8 text-center">Featured Posts</h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <h2 className="mb-8 text-center text-3xl font-bold text-slate-800">
+                    Featured Posts
+                  </h2>
+                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                     {blogPosts
-                      .filter(post => post.featured)
+                      .filter((post) => post.featured)
                       .slice(0, 2)
                       .map((post) => (
-                        <article 
+                        <article
                           key={post._id}
-                          className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                          className="overflow-hidden rounded-2xl bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl"
                         >
                           <div className="relative h-64">
                             <Image
-                              src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
+                              src={
+                                post.featuredImage?.asset?.url ||
+                                "/studio-1.jpg"
+                              }
                               alt={post.title}
                               fill
                               className="object-cover"
                               sizes="(max-width: 768px) 100vw, 50vw"
                             />
-                            <div className="absolute top-4 left-4">
-                              <span className="bg-accent text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            <div className="absolute left-4 top-4">
+                              <span className="rounded-full bg-accent px-3 py-1 text-sm font-semibold text-white">
                                 Featured
                               </span>
                             </div>
                           </div>
                           <div className="p-6">
-                            <div className="flex flex-wrap gap-2 mb-4">
+                            <div className="mb-4 flex flex-wrap gap-2">
                               {post.categories?.map((category) => (
                                 <span
                                   key={category}
-                                  className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(category)}`}
+                                  className={`rounded-full px-3 py-1 text-xs font-medium ${getCategoryColor(
+                                    category,
+                                  )}`}
                                 >
-                                  {category.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase())}
+                                  {category
+                                    .replace("-", " ")
+                                    .replace(/\b\w/g, (l) => l.toUpperCase())}
                                 </span>
                               ))}
                             </div>
-                            <h3 className="text-xl font-bold text-slate-800 mb-3 line-clamp-2">
+                            <h3 className="mb-3 line-clamp-2 text-xl font-bold text-slate-800">
                               {post.title}
                             </h3>
-                            <p className="text-slate-600 mb-4 line-clamp-3">
+                            <p className="mb-4 line-clamp-3 text-slate-600">
                               {post.excerpt}
                             </p>
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-4 text-sm text-slate-500">
                                 <div className="flex items-center">
-                                  <User className="h-4 w-4 mr-1" />
+                                  <User className="mr-1 h-4 w-4" />
                                   {post.author}
                                 </div>
                                 <div className="flex items-center">
-                                  <Calendar className="h-4 w-4 mr-1" />
+                                  <Calendar className="mr-1 h-4 w-4" />
                                   {formatDate(post.publishedAt)}
                                 </div>
                               </div>
                               <Link
                                 href={`/podcast/blog/${post.slug.current}`}
-                                className="text-accent hover:text-orange-700 font-semibold flex items-center"
+                                className="flex items-center font-semibold text-accent hover:text-orange-700"
                               >
                                 Read More
-                                <ArrowRight className="h-4 w-4 ml-1" />
+                                <ArrowRight className="ml-1 h-4 w-4" />
                               </Link>
                             </div>
                           </div>
@@ -153,18 +174,22 @@ export default async function BlogPage() {
 
               {/* All Posts */}
               <div className="mb-8">
-                <h2 className="text-3xl font-bold text-slate-800 mb-8 text-center">
-                  {blogPosts.filter(post => post.featured).length > 0 ? "All Posts" : "Latest Posts"}
+                <h2 className="mb-8 text-center text-3xl font-bold text-slate-800">
+                  {blogPosts.filter((post) => post.featured).length > 0
+                    ? "All Posts"
+                    : "Latest Posts"}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                   {blogPosts.map((post) => (
-                    <article 
+                    <article
                       key={post._id}
-                      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                      className="overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-lg"
                     >
                       <div className="relative h-48">
                         <Image
-                          src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
+                          src={
+                            post.featuredImage?.asset?.url || "/studio-1.jpg"
+                          }
                           alt={post.title}
                           fill
                           className="object-cover"
@@ -172,39 +197,43 @@ export default async function BlogPage() {
                         />
                       </div>
                       <div className="p-6">
-                        <div className="flex flex-wrap gap-2 mb-3">
+                        <div className="mb-3 flex flex-wrap gap-2">
                           {post.categories?.slice(0, 2).map((category) => (
                             <span
                               key={category}
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(category)}`}
+                              className={`rounded-full px-2 py-1 text-xs font-medium ${getCategoryColor(
+                                category,
+                              )}`}
                             >
-                              {category.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase())}
+                              {category
+                                .replace("-", " ")
+                                .replace(/\b\w/g, (l) => l.toUpperCase())}
                             </span>
                           ))}
                         </div>
-                        <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2">
+                        <h3 className="mb-2 line-clamp-2 text-lg font-bold text-slate-800">
                           {post.title}
                         </h3>
-                        <p className="text-slate-600 mb-4 line-clamp-3 text-sm">
+                        <p className="mb-4 line-clamp-3 text-sm text-slate-600">
                           {post.excerpt}
                         </p>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3 text-xs text-slate-500">
                             <div className="flex items-center">
-                              <User className="h-3 w-3 mr-1" />
+                              <User className="mr-1 h-3 w-3" />
                               {post.author}
                             </div>
                             <div className="flex items-center">
-                              <Calendar className="h-3 w-3 mr-1" />
+                              <Calendar className="mr-1 h-3 w-3" />
                               {formatDate(post.publishedAt)}
                             </div>
                           </div>
                           <Link
                             href={`/podcast/blog/${post.slug.current}`}
-                            className="text-accent hover:text-orange-700 font-semibold text-sm flex items-center"
+                            className="flex items-center text-sm font-semibold text-accent hover:text-orange-700"
                           >
                             Read More
-                            <ArrowRight className="h-3 w-3 ml-1" />
+                            <ArrowRight className="ml-1 h-3 w-3" />
                           </Link>
                         </div>
                       </div>
@@ -219,25 +248,26 @@ export default async function BlogPage() {
 
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-accent to-orange-600 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-4 text-3xl font-bold text-white">
             Ready to Start Your Podcast Journey?
           </h2>
-          <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-            Book our professional studio and bring your podcast ideas to life with state-of-the-art equipment and expert support.
+          <p className="mx-auto mb-8 max-w-3xl text-xl text-white/90">
+            Book our professional studio and bring your podcast ideas to life
+            with state-of-the-art equipment and expert support.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link
               href="https://voicesradio.spaces.nexudus.com/bookings?tab=Resources&view=card"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white text-accent px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="transform rounded-full bg-white px-8 py-4 text-lg font-bold text-accent shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-100"
             >
               Book Studio Now
             </Link>
             <Link
               href="/podcast"
-              className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-accent transition-all duration-300"
+              className="rounded-full border-2 border-white px-8 py-4 text-lg font-bold text-white transition-all duration-300 hover:bg-white hover:text-accent"
             >
               Learn More
             </Link>

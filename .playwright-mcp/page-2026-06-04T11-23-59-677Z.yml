@@ -1,0 +1,876 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Voices Radio home" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Voices
+        - navigation "Primary" [ref=e8]:
+          - button "Schedule" [ref=e9] [cursor=pointer]
+          - link "Explore" [ref=e10] [cursor=pointer]:
+            - /url: /explore
+          - link "Collaborate" [ref=e11] [cursor=pointer]:
+            - /url: /collaborate
+          - link "Shop" [ref=e12] [cursor=pointer]:
+            - /url: https://shop.voicesradio.co.uk
+        - button "Open menu" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+    - main [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - article [ref=e20]:
+            - generic [ref=e21]:
+              - button "Play KX" [disabled] [ref=e22]: KX
+              - link "KX video" [disabled]:
+                - /url: "#video-placeholder"
+                - img
+            - generic [ref=e24]:
+              - generic [ref=e26]: On air
+              - generic [ref=e29]: On air
+              - generic [ref=e32]: On air
+              - generic [ref=e35]: On air
+              - generic [ref=e38]: On air
+              - generic [ref=e41]: On air
+              - generic [ref=e44]: On air
+              - generic [ref=e47]: On air
+              - generic [ref=e50]: On air
+              - generic [ref=e53]: On air
+              - generic [ref=e56]: On air
+              - generic [ref=e59]: On air
+              - generic [ref=e62]: On air
+              - generic [ref=e65]: On air
+              - generic [ref=e68]: On air
+              - generic [ref=e71]: On air
+              - generic [ref=e74]: On air
+              - generic [ref=e77]: On air
+              - generic [ref=e80]: On air
+              - generic [ref=e83]: On air
+              - generic [ref=e86]: On air
+              - generic [ref=e89]: On air
+              - generic [ref=e92]: On air
+              - generic [ref=e95]: On air
+            - generic [ref=e97]:
+              - img "Voices Radio" [ref=e98]
+              - heading "Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio" [level=2] [ref=e100]
+          - article [ref=e101]:
+            - generic [ref=e102]:
+              - button "Play EAST" [disabled] [ref=e103]: EAST
+              - link "EAST video" [disabled]:
+                - /url: "#video-placeholder"
+                - img
+            - generic [ref=e105]:
+              - generic [ref=e107]: On air
+              - generic [ref=e110]: On air
+              - generic [ref=e113]: On air
+              - generic [ref=e116]: On air
+              - generic [ref=e119]: On air
+              - generic [ref=e122]: On air
+              - generic [ref=e125]: On air
+              - generic [ref=e128]: On air
+              - generic [ref=e131]: On air
+              - generic [ref=e134]: On air
+              - generic [ref=e137]: On air
+              - generic [ref=e140]: On air
+              - generic [ref=e143]: On air
+              - generic [ref=e146]: On air
+              - generic [ref=e149]: On air
+              - generic [ref=e152]: On air
+              - generic [ref=e155]: On air
+              - generic [ref=e158]: On air
+              - generic [ref=e161]: On air
+              - generic [ref=e164]: On air
+              - generic [ref=e167]: On air
+              - generic [ref=e170]: On air
+              - generic [ref=e173]: On air
+              - generic [ref=e176]: On air
+            - generic [ref=e178]:
+              - img "Voices Radio" [ref=e179]
+              - heading "The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio" [level=2] [ref=e181]
+        - generic [ref=e183]:
+          - generic [ref=e184]:
+            - img "Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio artwork" [ref=e185]
+            - generic [ref=e186]:
+              - generic [ref=e187]: Radio
+              - generic [ref=e188]: London
+            - generic [ref=e190]:
+              - link "Listen" [ref=e191] [cursor=pointer]:
+                - /url: /shows/6a204fadf057dab688f5f10f
+                - generic [ref=e192]: Listen
+                - img [ref=e194]
+              - generic [ref=e196]:
+                - heading "Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio" [level=1] [ref=e197]
+                - generic [ref=e198]:
+                  - generic [ref=e199]: Neo soul
+                  - generic [ref=e200]: Reggae
+                  - generic [ref=e201]: Funk
+                  - generic [ref=e202]: 03 Jun 2026
+          - generic [ref=e203]:
+            - button "Show previous featured post" [ref=e204] [cursor=pointer]:
+              - generic [ref=e205]: ‹
+            - generic [ref=e206]: 1/8
+            - button "Show next featured post" [ref=e207] [cursor=pointer]:
+              - generic [ref=e208]: ›
+      - generic [ref=e210]:
+        - generic [ref=e211]:
+          - heading "Latest on KX" [level=2] [ref=e212]
+          - paragraph [ref=e213]: The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.
+        - generic [ref=e214]:
+          - link "Open Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio" [ref=e215] [cursor=pointer]:
+            - /url: /shows/6a204fadf057dab688f5f10f
+            - article [ref=e216]:
+              - generic [ref=e217]:
+                - generic [ref=e218]: RADIO
+                - generic [ref=e219]: London
+              - generic [ref=e220]:
+                - img "Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio artwork" [ref=e221]
+                - heading "Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio" [level=3] [ref=e223]
+              - generic [ref=e224]:
+                - generic [ref=e225]:
+                  - generic [ref=e226]: Neo soul
+                  - generic [ref=e227]: Reggae
+                  - generic [ref=e228]: Funk
+                - generic [ref=e229]:
+                  - generic [ref=e230]: Tracklist
+                  - generic [ref=e231]: 03.06.26
+                  - generic [ref=e232]: London
+                  - img [ref=e233]
+          - link "Open jamie.stew b2b Raplh Richards 03/06/26 - Voices Radio" [ref=e235] [cursor=pointer]:
+            - /url: /shows/6a204c28f057dab688f5f0f8
+            - article [ref=e236]:
+              - generic [ref=e237]:
+                - generic [ref=e238]: RADIO
+                - generic [ref=e239]: London
+              - generic [ref=e240]:
+                - img "jamie.stew b2b Raplh Richards 03/06/26 - Voices Radio artwork" [ref=e241]
+                - heading "jamie.stew b2b Raplh Richards 03/06/26 - Voices Radio" [level=3] [ref=e243]
+              - generic [ref=e244]:
+                - generic [ref=e245]:
+                  - generic [ref=e246]: "\"soul"
+                  - generic [ref=e247]: "\""
+                  - generic [ref=e248]: funk
+                - generic [ref=e249]:
+                  - generic [ref=e250]: Tracklist
+                  - generic [ref=e251]: 03.06.26
+                  - generic [ref=e252]: London
+                  - img [ref=e253]
+          - link "Open The Voices Breakfast Show w/ Kit Lockey ft Norsciaa - 01.06.2026 - [Voices Radio]" [ref=e255] [cursor=pointer]:
+            - /url: /shows/6a1d62d98a9b670640ac3c65
+            - article [ref=e256]:
+              - generic [ref=e257]:
+                - generic [ref=e258]: RADIO
+                - generic [ref=e259]: London
+              - generic [ref=e260]:
+                - img "The Voices Breakfast Show w/ Kit Lockey ft Norsciaa - 01.06.2026 - [Voices Radio] artwork" [ref=e261]
+                - heading "The Voices Breakfast Show w/ Kit Lockey ft Norsciaa - 01.06.2026 - [Voices Radio]" [level=3] [ref=e263]
+              - generic [ref=e264]:
+                - generic [ref=e265]:
+                  - generic [ref=e266]: Jazz
+                  - generic [ref=e267]: Funk
+                  - generic [ref=e268]: Soul
+                - generic [ref=e269]:
+                  - generic [ref=e270]: Tracklist
+                  - generic [ref=e271]: 01.06.26
+                  - generic [ref=e272]: London
+                  - img [ref=e273]
+          - link "Open Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio]" [ref=e275] [cursor=pointer]:
+            - /url: /shows/6a1b10b4fd2be7f2a9a09c34
+            - article [ref=e276]:
+              - generic [ref=e277]:
+                - generic [ref=e278]: RADIO
+                - generic [ref=e279]: London
+              - generic [ref=e280]:
+                - img "Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio] artwork" [ref=e281]
+                - heading "Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio]" [level=3] [ref=e283]
+              - generic [ref=e284]:
+                - generic [ref=e285]:
+                  - generic [ref=e286]: electro
+                  - generic [ref=e287]: acid
+                  - generic [ref=e288]: breakbeat
+                - generic [ref=e289]:
+                  - generic [ref=e290]: Tracklist
+                  - generic [ref=e291]: 30.05.26
+                  - generic [ref=e292]: London
+                  - img [ref=e293]
+          - link "Open Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio]" [ref=e295] [cursor=pointer]:
+            - /url: /shows/6a1ad4f07da4d3c2e7a879df
+            - article [ref=e296]:
+              - generic [ref=e297]:
+                - generic [ref=e298]: RADIO
+                - generic [ref=e299]: London
+              - generic [ref=e300]:
+                - img "Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio] artwork" [ref=e301]
+                - heading "Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio]" [level=3] [ref=e303]
+              - generic [ref=e304]:
+                - generic [ref=e305]:
+                  - generic [ref=e306]: UKG
+                  - generic [ref=e307]: "\"2"
+                  - generic [ref=e308]: step"
+                - generic [ref=e309]:
+                  - generic [ref=e310]: Tracklist
+                  - generic [ref=e311]: 30.05.26
+                  - generic [ref=e312]: London
+                  - img [ref=e313]
+          - link "Open The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio" [ref=e315] [cursor=pointer]:
+            - /url: /shows/6a1aca64c6a07a8576406e3d
+            - article [ref=e316]:
+              - generic [ref=e317]:
+                - generic [ref=e318]: RADIO
+                - generic [ref=e319]: London
+              - generic [ref=e320]:
+                - img "The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio artwork" [ref=e321]
+                - heading "The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio" [level=3] [ref=e323]
+              - generic [ref=e324]:
+                - generic [ref=e325]:
+                  - generic [ref=e326]: grime
+                  - generic [ref=e327]: batida
+                  - generic [ref=e328]: "\"Baile"
+                - generic [ref=e329]:
+                  - generic [ref=e330]: Tracklist
+                  - generic [ref=e331]: 30.05.26
+                  - generic [ref=e332]: London
+                  - img [ref=e333]
+          - link "Open The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio" [ref=e335] [cursor=pointer]:
+            - /url: /shows/6a198dff84ae1da5788786f7
+            - article [ref=e336]:
+              - generic [ref=e337]:
+                - generic [ref=e338]: RADIO
+                - generic [ref=e339]: London
+              - generic [ref=e340]:
+                - img "The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio artwork" [ref=e341]
+                - heading "The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio" [level=3] [ref=e343]
+              - generic [ref=e344]:
+                - generic [ref=e345]:
+                  - generic [ref=e346]: Hip Hop
+                  - generic [ref=e347]: R&B
+                  - generic [ref=e348]: House
+                - generic [ref=e349]:
+                  - generic [ref=e350]: Tracklist
+                  - generic [ref=e351]: 29.05.26
+                  - generic [ref=e352]: London
+                  - img [ref=e353]
+          - link "Open The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio" [ref=e355] [cursor=pointer]:
+            - /url: /shows/6a198dfb84ae1da5788786ec
+            - article [ref=e356]:
+              - generic [ref=e357]:
+                - generic [ref=e358]: RADIO
+                - generic [ref=e359]: London
+              - generic [ref=e360]:
+                - img "The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio artwork" [ref=e361]
+                - heading "The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio" [level=3] [ref=e363]
+              - generic [ref=e364]:
+                - generic [ref=e365]:
+                  - generic [ref=e366]: "\"house"
+                  - generic [ref=e367]: "\""
+                  - generic [ref=e368]: "\"disco"
+                - generic [ref=e369]:
+                  - generic [ref=e370]: Tracklist
+                  - generic [ref=e371]: 29.05.26
+                  - generic [ref=e372]: London
+                  - img [ref=e373]
+          - link "Open The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio" [ref=e375] [cursor=pointer]:
+            - /url: /shows/6a197fed84ae1da5788786bb
+            - article [ref=e376]:
+              - generic [ref=e377]:
+                - generic [ref=e378]: RADIO
+                - generic [ref=e379]: London
+              - generic [ref=e380]:
+                - img "The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio artwork" [ref=e381]
+                - heading "The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio" [level=3] [ref=e383]
+              - generic [ref=e384]:
+                - generic [ref=e385]:
+                  - generic [ref=e386]: Neo soul
+                  - generic [ref=e387]: Funk
+                  - generic [ref=e388]: World
+                - generic [ref=e389]:
+                  - generic [ref=e390]: Tracklist
+                  - generic [ref=e391]: 29.05.26
+                  - generic [ref=e392]: London
+                  - img [ref=e393]
+          - link "Open Folkways w/ Gem Stark 28/05/26 - [Voices Radio]" [ref=e395] [cursor=pointer]:
+            - /url: /shows/6a184e0ff18115e21253518a
+            - article [ref=e396]:
+              - generic [ref=e397]:
+                - generic [ref=e398]: RADIO
+                - generic [ref=e399]: London
+              - generic [ref=e400]:
+                - img "Folkways w/ Gem Stark 28/05/26 - [Voices Radio] artwork" [ref=e401]
+                - heading "Folkways w/ Gem Stark 28/05/26 - [Voices Radio]" [level=3] [ref=e403]
+              - generic [ref=e404]:
+                - generic [ref=e405]:
+                  - generic [ref=e406]: "\"folk"
+                  - generic [ref=e407]: "\""
+                  - generic [ref=e408]: Folk & Singer-Songwriter
+                - generic [ref=e409]:
+                  - generic [ref=e410]: Tracklist
+                  - generic [ref=e411]: 28.05.26
+                  - generic [ref=e412]: London
+                  - img [ref=e413]
+      - generic [ref=e416]:
+        - generic [ref=e417]:
+          - heading "Latest on EAST" [level=2] [ref=e418]
+          - paragraph [ref=e419]: The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.
+        - generic [ref=e420]:
+          - link "Open The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio" [ref=e421] [cursor=pointer]:
+            - /url: /shows/6a1aca64c6a07a8576406e3d
+            - article [ref=e422]:
+              - generic [ref=e423]:
+                - generic [ref=e424]: RADIO
+                - generic [ref=e425]: London
+              - generic [ref=e426]:
+                - img "The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio artwork" [ref=e427]
+                - heading "The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio" [level=3] [ref=e429]
+              - generic [ref=e430]:
+                - generic [ref=e431]:
+                  - generic [ref=e432]: grime
+                  - generic [ref=e433]: batida
+                  - generic [ref=e434]: "\"Baile"
+                - generic [ref=e435]:
+                  - generic [ref=e436]: Tracklist
+                  - generic [ref=e437]: 30.05.26
+                  - generic [ref=e438]: London
+                  - img [ref=e439]
+          - link "Open The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio" [ref=e441] [cursor=pointer]:
+            - /url: /shows/6a198dff84ae1da5788786f7
+            - article [ref=e442]:
+              - generic [ref=e443]:
+                - generic [ref=e444]: RADIO
+                - generic [ref=e445]: London
+              - generic [ref=e446]:
+                - img "The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio artwork" [ref=e447]
+                - heading "The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio" [level=3] [ref=e449]
+              - generic [ref=e450]:
+                - generic [ref=e451]:
+                  - generic [ref=e452]: Hip Hop
+                  - generic [ref=e453]: R&B
+                  - generic [ref=e454]: House
+                - generic [ref=e455]:
+                  - generic [ref=e456]: Tracklist
+                  - generic [ref=e457]: 29.05.26
+                  - generic [ref=e458]: London
+                  - img [ref=e459]
+          - link "Open The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio" [ref=e461] [cursor=pointer]:
+            - /url: /shows/6a198dfb84ae1da5788786ec
+            - article [ref=e462]:
+              - generic [ref=e463]:
+                - generic [ref=e464]: RADIO
+                - generic [ref=e465]: London
+              - generic [ref=e466]:
+                - img "The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio artwork" [ref=e467]
+                - heading "The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio" [level=3] [ref=e469]
+              - generic [ref=e470]:
+                - generic [ref=e471]:
+                  - generic [ref=e472]: "\"house"
+                  - generic [ref=e473]: "\""
+                  - generic [ref=e474]: "\"disco"
+                - generic [ref=e475]:
+                  - generic [ref=e476]: Tracklist
+                  - generic [ref=e477]: 29.05.26
+                  - generic [ref=e478]: London
+                  - img [ref=e479]
+          - link "Open The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio" [ref=e481] [cursor=pointer]:
+            - /url: /shows/6a197fed84ae1da5788786bb
+            - article [ref=e482]:
+              - generic [ref=e483]:
+                - generic [ref=e484]: RADIO
+                - generic [ref=e485]: London
+              - generic [ref=e486]:
+                - img "The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio artwork" [ref=e487]
+                - heading "The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio" [level=3] [ref=e489]
+              - generic [ref=e490]:
+                - generic [ref=e491]:
+                  - generic [ref=e492]: Neo soul
+                  - generic [ref=e493]: Funk
+                  - generic [ref=e494]: World
+                - generic [ref=e495]:
+                  - generic [ref=e496]: Tracklist
+                  - generic [ref=e497]: 29.05.26
+                  - generic [ref=e498]: London
+                  - img [ref=e499]
+          - link "Open Folkways w/ Gem Stark 28/05/26 - [Voices Radio]" [ref=e501] [cursor=pointer]:
+            - /url: /shows/6a184e0ff18115e21253518a
+            - article [ref=e502]:
+              - generic [ref=e503]:
+                - generic [ref=e504]: RADIO
+                - generic [ref=e505]: London
+              - generic [ref=e506]:
+                - img "Folkways w/ Gem Stark 28/05/26 - [Voices Radio] artwork" [ref=e507]
+                - heading "Folkways w/ Gem Stark 28/05/26 - [Voices Radio]" [level=3] [ref=e509]
+              - generic [ref=e510]:
+                - generic [ref=e511]:
+                  - generic [ref=e512]: "\"folk"
+                  - generic [ref=e513]: "\""
+                  - generic [ref=e514]: Folk & Singer-Songwriter
+                - generic [ref=e515]:
+                  - generic [ref=e516]: Tracklist
+                  - generic [ref=e517]: 28.05.26
+                  - generic [ref=e518]: London
+                  - img [ref=e519]
+          - link "Open Out of Office ??? w/ Jameson Jameson 27/05/26 - Voices Radio" [ref=e521] [cursor=pointer]:
+            - /url: /shows/6a171c34638309e65a8ba69b
+            - article [ref=e522]:
+              - generic [ref=e523]:
+                - generic [ref=e524]: RADIO
+                - generic [ref=e525]: London
+              - generic [ref=e526]:
+                - img "Out of Office ??? w/ Jameson Jameson 27/05/26 - Voices Radio artwork" [ref=e527]
+                - heading "Out of Office ??? w/ Jameson Jameson 27/05/26 - Voices Radio" [level=3] [ref=e529]
+              - generic [ref=e530]:
+                - generic [ref=e531]:
+                  - generic [ref=e532]: R&B
+                  - generic [ref=e533]: hiphop
+                  - generic [ref=e534]: "\"rap"
+                - generic [ref=e535]:
+                  - generic [ref=e536]: Tracklist
+                  - generic [ref=e537]: 27.05.26
+                  - generic [ref=e538]: London
+                  - img [ref=e539]
+          - link "Open Seyless invites Sadiq Bello + KSLICE 27/05/26 - Voices Radio" [ref=e541] [cursor=pointer]:
+            - /url: /shows/6a17071ca228f8d0959d57ac
+            - article [ref=e542]:
+              - generic [ref=e543]:
+                - generic [ref=e544]: RADIO
+                - generic [ref=e545]: London
+              - generic [ref=e546]:
+                - img "Seyless invites Sadiq Bello + KSLICE 27/05/26 - Voices Radio artwork" [ref=e547]
+                - heading "Seyless invites Sadiq Bello + KSLICE 27/05/26 - Voices Radio" [level=3] [ref=e549]
+              - generic [ref=e550]:
+                - generic [ref=e551]:
+                  - generic [ref=e552]: "\"jersey"
+                  - generic [ref=e553]: "\""
+                  - generic [ref=e554]: "\"garage"
+                - generic [ref=e555]:
+                  - generic [ref=e556]: Tracklist
+                  - generic [ref=e557]: 27.05.26
+                  - generic [ref=e558]: London
+                  - img [ref=e559]
+          - link "Open Natural Element w/ Leopold - 26/05/26 - Voices Radio" [ref=e561] [cursor=pointer]:
+            - /url: /shows/6a15c0273bb4e357d79bf4f6
+            - article [ref=e562]:
+              - generic [ref=e563]:
+                - generic [ref=e564]: RADIO
+                - generic [ref=e565]: London
+              - generic [ref=e566]:
+                - img "Natural Element w/ Leopold - 26/05/26 - Voices Radio artwork" [ref=e567]
+                - heading "Natural Element w/ Leopold - 26/05/26 - Voices Radio" [level=3] [ref=e569]
+              - generic [ref=e570]:
+                - generic [ref=e571]:
+                  - generic [ref=e572]: "\"soulful"
+                  - generic [ref=e573]: house"
+                  - generic [ref=e574]: jazz
+                - generic [ref=e575]:
+                  - generic [ref=e576]: Tracklist
+                  - generic [ref=e577]: 26.05.26
+                  - generic [ref=e578]: London
+                  - img [ref=e579]
+          - 'link "Open Off-centre w/ glosssd: speedy special - 26/05/26 - [Voices Radio]" [ref=e581] [cursor=pointer]':
+            - /url: /shows/6a15dfd1192a220536206685
+            - article [ref=e582]:
+              - generic [ref=e583]:
+                - generic [ref=e584]: RADIO
+                - generic [ref=e585]: London
+              - generic [ref=e586]:
+                - 'img "Off-centre w/ glosssd: speedy special - 26/05/26 - [Voices Radio] artwork" [ref=e587]'
+                - 'heading "Off-centre w/ glosssd: speedy special - 26/05/26 - [Voices Radio]" [level=3] [ref=e589]'
+              - generic [ref=e590]:
+                - generic [ref=e591]:
+                  - generic [ref=e592]: Bass & Club music
+                  - generic [ref=e593]: "160"
+                - generic [ref=e594]:
+                  - generic [ref=e595]: Tracklist
+                  - generic [ref=e596]: 26.05.26
+                  - generic [ref=e597]: London
+                  - img [ref=e598]
+          - link "Open The Voices Breakfast Show w/ Kit Lockey 25/05/26- Voices Radio" [ref=e600] [cursor=pointer]:
+            - /url: /shows/6a144479c98224fcabe8a6a6
+            - article [ref=e601]:
+              - generic [ref=e602]:
+                - generic [ref=e603]: RADIO
+                - generic [ref=e604]: London
+              - generic [ref=e605]:
+                - img "The Voices Breakfast Show w/ Kit Lockey 25/05/26- Voices Radio artwork" [ref=e606]
+                - heading "The Voices Breakfast Show w/ Kit Lockey 25/05/26- Voices Radio" [level=3] [ref=e608]
+              - generic [ref=e609]:
+                - generic [ref=e610]:
+                  - generic [ref=e611]: Jazz
+                  - generic [ref=e612]: New era jazz
+                  - generic [ref=e613]: Talk
+                - generic [ref=e614]:
+                  - generic [ref=e615]: Tracklist
+                  - generic [ref=e616]: 25.05.26
+                  - generic [ref=e617]: London
+                  - img [ref=e618]
+      - generic [ref=e623]:
+        - heading "Voices picks" [level=2] [ref=e624]
+        - link "Apply for a show" [ref=e625] [cursor=pointer]:
+          - /url: https://docs.google.com/forms/d/e/1FAIpQLSdlV09iFlcP2_n6ldRsSUoeZclzJpb0AMY4F2rrXUpC7jueZQ/viewform
+      - generic [ref=e627]:
+        - generic [ref=e628]:
+          - heading "Featured" [level=2] [ref=e629]
+          - paragraph [ref=e630]: The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.
+        - generic [ref=e631]:
+          - link "Open Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio" [ref=e632] [cursor=pointer]:
+            - /url: /shows/6a204fadf057dab688f5f10f
+            - article [ref=e633]:
+              - generic [ref=e634]:
+                - generic [ref=e635]: RADIO
+                - generic [ref=e636]: London
+              - generic [ref=e637]:
+                - img "Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio artwork" [ref=e638]
+                - heading "Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio" [level=3] [ref=e640]
+              - generic [ref=e641]:
+                - generic [ref=e642]:
+                  - generic [ref=e643]: Neo soul
+                  - generic [ref=e644]: Reggae
+                  - generic [ref=e645]: Funk
+                - generic [ref=e646]:
+                  - generic [ref=e647]: Tracklist
+                  - generic [ref=e648]: 03.06.26
+                  - generic [ref=e649]: London
+                  - img [ref=e650]
+          - link "Open jamie.stew b2b Raplh Richards 03/06/26 - Voices Radio" [ref=e652] [cursor=pointer]:
+            - /url: /shows/6a204c28f057dab688f5f0f8
+            - article [ref=e653]:
+              - generic [ref=e654]:
+                - generic [ref=e655]: RADIO
+                - generic [ref=e656]: London
+              - generic [ref=e657]:
+                - img "jamie.stew b2b Raplh Richards 03/06/26 - Voices Radio artwork" [ref=e658]
+                - heading "jamie.stew b2b Raplh Richards 03/06/26 - Voices Radio" [level=3] [ref=e660]
+              - generic [ref=e661]:
+                - generic [ref=e662]:
+                  - generic [ref=e663]: "\"soul"
+                  - generic [ref=e664]: "\""
+                  - generic [ref=e665]: funk
+                - generic [ref=e666]:
+                  - generic [ref=e667]: Tracklist
+                  - generic [ref=e668]: 03.06.26
+                  - generic [ref=e669]: London
+                  - img [ref=e670]
+          - link "Open The Voices Breakfast Show w/ Kit Lockey ft Norsciaa - 01.06.2026 - [Voices Radio]" [ref=e672] [cursor=pointer]:
+            - /url: /shows/6a1d62d98a9b670640ac3c65
+            - article [ref=e673]:
+              - generic [ref=e674]:
+                - generic [ref=e675]: RADIO
+                - generic [ref=e676]: London
+              - generic [ref=e677]:
+                - img "The Voices Breakfast Show w/ Kit Lockey ft Norsciaa - 01.06.2026 - [Voices Radio] artwork" [ref=e678]
+                - heading "The Voices Breakfast Show w/ Kit Lockey ft Norsciaa - 01.06.2026 - [Voices Radio]" [level=3] [ref=e680]
+              - generic [ref=e681]:
+                - generic [ref=e682]:
+                  - generic [ref=e683]: Jazz
+                  - generic [ref=e684]: Funk
+                  - generic [ref=e685]: Soul
+                - generic [ref=e686]:
+                  - generic [ref=e687]: Tracklist
+                  - generic [ref=e688]: 01.06.26
+                  - generic [ref=e689]: London
+                  - img [ref=e690]
+          - link "Open Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio]" [ref=e692] [cursor=pointer]:
+            - /url: /shows/6a1b10b4fd2be7f2a9a09c34
+            - article [ref=e693]:
+              - generic [ref=e694]:
+                - generic [ref=e695]: RADIO
+                - generic [ref=e696]: London
+              - generic [ref=e697]:
+                - img "Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio] artwork" [ref=e698]
+                - heading "Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio]" [level=3] [ref=e700]
+              - generic [ref=e701]:
+                - generic [ref=e702]:
+                  - generic [ref=e703]: electro
+                  - generic [ref=e704]: acid
+                  - generic [ref=e705]: breakbeat
+                - generic [ref=e706]:
+                  - generic [ref=e707]: Tracklist
+                  - generic [ref=e708]: 30.05.26
+                  - generic [ref=e709]: London
+                  - img [ref=e710]
+          - link "Open Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio]" [ref=e712] [cursor=pointer]:
+            - /url: /shows/6a1ad4f07da4d3c2e7a879df
+            - article [ref=e713]:
+              - generic [ref=e714]:
+                - generic [ref=e715]: RADIO
+                - generic [ref=e716]: London
+              - generic [ref=e717]:
+                - img "Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio] artwork" [ref=e718]
+                - heading "Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio]" [level=3] [ref=e720]
+              - generic [ref=e721]:
+                - generic [ref=e722]:
+                  - generic [ref=e723]: UKG
+                  - generic [ref=e724]: "\"2"
+                  - generic [ref=e725]: step"
+                - generic [ref=e726]:
+                  - generic [ref=e727]: Tracklist
+                  - generic [ref=e728]: 30.05.26
+                  - generic [ref=e729]: London
+                  - img [ref=e730]
+          - link "Open The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio" [ref=e732] [cursor=pointer]:
+            - /url: /shows/6a1aca64c6a07a8576406e3d
+            - article [ref=e733]:
+              - generic [ref=e734]:
+                - generic [ref=e735]: RADIO
+                - generic [ref=e736]: London
+              - generic [ref=e737]:
+                - img "The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio artwork" [ref=e738]
+                - heading "The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio" [level=3] [ref=e740]
+              - generic [ref=e741]:
+                - generic [ref=e742]:
+                  - generic [ref=e743]: grime
+                  - generic [ref=e744]: batida
+                  - generic [ref=e745]: "\"Baile"
+                - generic [ref=e746]:
+                  - generic [ref=e747]: Tracklist
+                  - generic [ref=e748]: 30.05.26
+                  - generic [ref=e749]: London
+                  - img [ref=e750]
+          - link "Open The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio" [ref=e752] [cursor=pointer]:
+            - /url: /shows/6a198dff84ae1da5788786f7
+            - article [ref=e753]:
+              - generic [ref=e754]:
+                - generic [ref=e755]: RADIO
+                - generic [ref=e756]: London
+              - generic [ref=e757]:
+                - img "The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio artwork" [ref=e758]
+                - heading "The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio" [level=3] [ref=e760]
+              - generic [ref=e761]:
+                - generic [ref=e762]:
+                  - generic [ref=e763]: Hip Hop
+                  - generic [ref=e764]: R&B
+                  - generic [ref=e765]: House
+                - generic [ref=e766]:
+                  - generic [ref=e767]: Tracklist
+                  - generic [ref=e768]: 29.05.26
+                  - generic [ref=e769]: London
+                  - img [ref=e770]
+          - link "Open The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio" [ref=e772] [cursor=pointer]:
+            - /url: /shows/6a198dfb84ae1da5788786ec
+            - article [ref=e773]:
+              - generic [ref=e774]:
+                - generic [ref=e775]: RADIO
+                - generic [ref=e776]: London
+              - generic [ref=e777]:
+                - img "The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio artwork" [ref=e778]
+                - heading "The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio" [level=3] [ref=e780]
+              - generic [ref=e781]:
+                - generic [ref=e782]:
+                  - generic [ref=e783]: "\"house"
+                  - generic [ref=e784]: "\""
+                  - generic [ref=e785]: "\"disco"
+                - generic [ref=e786]:
+                  - generic [ref=e787]: Tracklist
+                  - generic [ref=e788]: 29.05.26
+                  - generic [ref=e789]: London
+                  - img [ref=e790]
+          - link "Open The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio" [ref=e792] [cursor=pointer]:
+            - /url: /shows/6a197fed84ae1da5788786bb
+            - article [ref=e793]:
+              - generic [ref=e794]:
+                - generic [ref=e795]: RADIO
+                - generic [ref=e796]: London
+              - generic [ref=e797]:
+                - img "The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio artwork" [ref=e798]
+                - heading "The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio" [level=3] [ref=e800]
+              - generic [ref=e801]:
+                - generic [ref=e802]:
+                  - generic [ref=e803]: Neo soul
+                  - generic [ref=e804]: Funk
+                  - generic [ref=e805]: World
+                - generic [ref=e806]:
+                  - generic [ref=e807]: Tracklist
+                  - generic [ref=e808]: 29.05.26
+                  - generic [ref=e809]: London
+                  - img [ref=e810]
+          - link "Open Folkways w/ Gem Stark 28/05/26 - [Voices Radio]" [ref=e812] [cursor=pointer]:
+            - /url: /shows/6a184e0ff18115e21253518a
+            - article [ref=e813]:
+              - generic [ref=e814]:
+                - generic [ref=e815]: RADIO
+                - generic [ref=e816]: London
+              - generic [ref=e817]:
+                - img "Folkways w/ Gem Stark 28/05/26 - [Voices Radio] artwork" [ref=e818]
+                - heading "Folkways w/ Gem Stark 28/05/26 - [Voices Radio]" [level=3] [ref=e820]
+              - generic [ref=e821]:
+                - generic [ref=e822]:
+                  - generic [ref=e823]: "\"folk"
+                  - generic [ref=e824]: "\""
+                  - generic [ref=e825]: Folk & Singer-Songwriter
+                - generic [ref=e826]:
+                  - generic [ref=e827]: Tracklist
+                  - generic [ref=e828]: 28.05.26
+                  - generic [ref=e829]: London
+                  - img [ref=e830]
+      - generic [ref=e833]:
+        - generic [ref=e834]:
+          - heading "Producer Picks" [level=2] [ref=e835]
+          - paragraph [ref=e836]: A list of highlights from the recent weeks picked by our team of producers.
+        - generic [ref=e837]:
+          - link "Open Out of Office ??? w/ Jameson Jameson 27/05/26 - Voices Radio" [ref=e838] [cursor=pointer]:
+            - /url: /shows/6a171c34638309e65a8ba69b
+            - article [ref=e839]:
+              - generic [ref=e840]:
+                - generic [ref=e841]: RADIO
+                - generic [ref=e842]: London
+              - generic [ref=e843]:
+                - img "Out of Office ??? w/ Jameson Jameson 27/05/26 - Voices Radio artwork" [ref=e844]
+                - heading "Out of Office ??? w/ Jameson Jameson 27/05/26 - Voices Radio" [level=3] [ref=e846]
+              - generic [ref=e847]:
+                - generic [ref=e848]:
+                  - generic [ref=e849]: R&B
+                  - generic [ref=e850]: hiphop
+                  - generic [ref=e851]: "\"rap"
+                - generic [ref=e852]:
+                  - generic [ref=e853]: Tracklist
+                  - generic [ref=e854]: 27.05.26
+                  - generic [ref=e855]: London
+                  - img [ref=e856]
+          - link "Open Seyless invites Sadiq Bello + KSLICE 27/05/26 - Voices Radio" [ref=e858] [cursor=pointer]:
+            - /url: /shows/6a17071ca228f8d0959d57ac
+            - article [ref=e859]:
+              - generic [ref=e860]:
+                - generic [ref=e861]: RADIO
+                - generic [ref=e862]: London
+              - generic [ref=e863]:
+                - img "Seyless invites Sadiq Bello + KSLICE 27/05/26 - Voices Radio artwork" [ref=e864]
+                - heading "Seyless invites Sadiq Bello + KSLICE 27/05/26 - Voices Radio" [level=3] [ref=e866]
+              - generic [ref=e867]:
+                - generic [ref=e868]:
+                  - generic [ref=e869]: "\"jersey"
+                  - generic [ref=e870]: "\""
+                  - generic [ref=e871]: "\"garage"
+                - generic [ref=e872]:
+                  - generic [ref=e873]: Tracklist
+                  - generic [ref=e874]: 27.05.26
+                  - generic [ref=e875]: London
+                  - img [ref=e876]
+          - link "Open Natural Element w/ Leopold - 26/05/26 - Voices Radio" [ref=e878] [cursor=pointer]:
+            - /url: /shows/6a15c0273bb4e357d79bf4f6
+            - article [ref=e879]:
+              - generic [ref=e880]:
+                - generic [ref=e881]: RADIO
+                - generic [ref=e882]: London
+              - generic [ref=e883]:
+                - img "Natural Element w/ Leopold - 26/05/26 - Voices Radio artwork" [ref=e884]
+                - heading "Natural Element w/ Leopold - 26/05/26 - Voices Radio" [level=3] [ref=e886]
+              - generic [ref=e887]:
+                - generic [ref=e888]:
+                  - generic [ref=e889]: "\"soulful"
+                  - generic [ref=e890]: house"
+                  - generic [ref=e891]: jazz
+                - generic [ref=e892]:
+                  - generic [ref=e893]: Tracklist
+                  - generic [ref=e894]: 26.05.26
+                  - generic [ref=e895]: London
+                  - img [ref=e896]
+          - 'link "Open Off-centre w/ glosssd: speedy special - 26/05/26 - [Voices Radio]" [ref=e898] [cursor=pointer]':
+            - /url: /shows/6a15dfd1192a220536206685
+            - article [ref=e899]:
+              - generic [ref=e900]:
+                - generic [ref=e901]: RADIO
+                - generic [ref=e902]: London
+              - generic [ref=e903]:
+                - 'img "Off-centre w/ glosssd: speedy special - 26/05/26 - [Voices Radio] artwork" [ref=e904]'
+                - 'heading "Off-centre w/ glosssd: speedy special - 26/05/26 - [Voices Radio]" [level=3] [ref=e906]'
+              - generic [ref=e907]:
+                - generic [ref=e908]:
+                  - generic [ref=e909]: Bass & Club music
+                  - generic [ref=e910]: "160"
+                - generic [ref=e911]:
+                  - generic [ref=e912]: Tracklist
+                  - generic [ref=e913]: 26.05.26
+                  - generic [ref=e914]: London
+                  - img [ref=e915]
+          - link "Open The Voices Breakfast Show w/ Kit Lockey 25/05/26- Voices Radio" [ref=e917] [cursor=pointer]:
+            - /url: /shows/6a144479c98224fcabe8a6a6
+            - article [ref=e918]:
+              - generic [ref=e919]:
+                - generic [ref=e920]: RADIO
+                - generic [ref=e921]: London
+              - generic [ref=e922]:
+                - img "The Voices Breakfast Show w/ Kit Lockey 25/05/26- Voices Radio artwork" [ref=e923]
+                - heading "The Voices Breakfast Show w/ Kit Lockey 25/05/26- Voices Radio" [level=3] [ref=e925]
+              - generic [ref=e926]:
+                - generic [ref=e927]:
+                  - generic [ref=e928]: Jazz
+                  - generic [ref=e929]: New era jazz
+                  - generic [ref=e930]: Talk
+                - generic [ref=e931]:
+                  - generic [ref=e932]: Tracklist
+                  - generic [ref=e933]: 25.05.26
+                  - generic [ref=e934]: London
+                  - img [ref=e935]
+          - link "Open SQUISH - 24/05/2026" [ref=e937] [cursor=pointer]:
+            - /url: /shows/6a135c70c3ad0587ec30e219
+            - article [ref=e938]:
+              - generic [ref=e939]:
+                - generic [ref=e940]: RADIO
+                - generic [ref=e941]: London
+              - generic [ref=e942]:
+                - img "SQUISH - 24/05/2026 artwork" [ref=e943]
+                - heading "SQUISH - 24/05/2026" [level=3] [ref=e945]
+              - generic [ref=e946]:
+                - generic [ref=e947]:
+                  - generic [ref=e948]: rush
+                  - generic [ref=e949]: geddylee
+                  - generic [ref=e950]: Ambient
+                - generic [ref=e951]:
+                  - generic [ref=e952]: Tracklist
+                  - generic [ref=e953]: 24.05.26
+                  - generic [ref=e954]: London
+                  - img [ref=e955]
+      - generic [ref=e958]:
+        - generic [ref=e959]:
+          - heading "May Highlights" [level=2] [ref=e960]
+          - paragraph [ref=e961]: The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.
+        - link "Open SQUISH - 24/05/2026" [ref=e963] [cursor=pointer]:
+          - /url: /shows/6a135c70c3ad0587ec30e219
+          - article [ref=e964]:
+            - generic [ref=e965]:
+              - generic [ref=e966]: RADIO
+              - generic [ref=e967]: London
+            - generic [ref=e968]:
+              - img "SQUISH - 24/05/2026 artwork" [ref=e969]
+              - heading "SQUISH - 24/05/2026" [level=3] [ref=e971]
+            - generic [ref=e972]:
+              - generic [ref=e973]:
+                - generic [ref=e974]: rush
+                - generic [ref=e975]: geddylee
+                - generic [ref=e976]: Ambient
+              - generic [ref=e977]:
+                - generic [ref=e978]: Tracklist
+                - generic [ref=e979]: 24.05.26
+                - generic [ref=e980]: London
+                - img [ref=e981]
+      - generic [ref=e984]:
+        - generic [ref=e985]:
+          - heading "Independent Label Market" [level=2] [ref=e986]
+          - paragraph [ref=e987]: Shows that aired as part of the annual event at the Coal Drops Yard
+        - generic [ref=e988]: No matched shows are available for this section yet.
+      - generic [ref=e990]:
+        - generic [ref=e991]:
+          - heading "Voices Global Community" [level=2] [ref=e992]
+          - paragraph [ref=e993]: Shows from our hosts around the world.
+        - generic [ref=e994]: No matched shows are available for this section yet.
+      - generic [ref=e996]:
+        - img "Voices Radio" [ref=e998]
+        - generic [ref=e999]: Become a Supporter
+        - paragraph [ref=e1000]: Voices Radio is a completely independent radio supporting local and international creatives. With a small monthly contribution, you can help keep Voices sustainable and receive supporter perks.
+    - contentinfo [ref=e1001]:
+      - generic [ref=e1002]:
+        - generic [ref=e1003]:
+          - link "Voices Radio home" [ref=e1004] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e1006]: Voices
+          - navigation [ref=e1007]:
+            - link "About" [ref=e1008] [cursor=pointer]:
+              - /url: /about
+            - link "Work with us" [ref=e1009] [cursor=pointer]:
+              - /url: /services
+            - link "Contact" [ref=e1010] [cursor=pointer]:
+              - /url: /chat
+            - generic [ref=e1011]: Become a Supporter
+        - generic [ref=e1012]:
+          - paragraph [ref=e1013]: Listen on the Voices app
+          - generic [ref=e1014]:
+            - generic [ref=e1015]: App Store
+            - generic [ref=e1016]: Google Play
+        - paragraph [ref=e1017]: © 2026 Voices Radio • Voices Radio is a non-profit community supported station
+  - alert [ref=e1018]

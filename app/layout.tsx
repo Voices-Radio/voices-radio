@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Asap_Condensed, Gabarito, Inter, Outfit } from "next/font/google";
 import localFont from "next/font/local";
 import Fathom from "./components/fathom";
 import "./globals.css";
@@ -17,8 +17,27 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const gabarito = Gabarito({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-gabarito",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-outfit",
+});
+
+const asapCondensed = Asap_Condensed({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-asap-condensed",
+});
+
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#161616",
 };
 
 export default function RootLayout({
@@ -29,7 +48,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-black antialiased ${kinfolk.variable} ${inter.variable}`}
+      className={`bg-black antialiased ${kinfolk.variable} ${inter.variable} ${gabarito.variable} ${outfit.variable} ${asapCondensed.variable}`}
     >
       <body>
         {children}

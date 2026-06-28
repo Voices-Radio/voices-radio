@@ -1,28 +1,43 @@
 "use client";
 
 import { env } from "@/env";
-import { load, trackPageview } from "fathom-client";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
+
+let fathomClient: Promise<typeof import("fathom-client")> | undefined;
+
+function getFathomClient() {
+  fathomClient ??= import("fathom-client");
+  return fathomClient;
+}
 
 function TrackPageView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isProduction = env.NEXT_PUBLIC_SITE_ENV === "production";
 
   useEffect(() => {
-    load(env.NEXT_PUBLIC_FATHOM_SITE_ID, { auto: false });
-  }, []);
-
-  useEffect(() => {
-    if (!pathname) {
+    if (!isProduction) {
       return;
     }
 
-    trackPageview({
-      url: pathname + searchParams.toString(),
-      referrer: document.referrer,
+    void getFathomClient().then(({ load }) => {
+      load(env.NEXT_PUBLIC_FATHOM_SITE_ID, { auto: false });
     });
-  }, [pathname, searchParams]);
+  }, [isProduction]);
+
+  useEffect(() => {
+    if (!isProduction || !pathname) {
+      return;
+    }
+
+    void getFathomClient().then(({ trackPageview }) => {
+      trackPageview({
+        url: pathname + searchParams.toString(),
+        referrer: document.referrer,
+      });
+    });
+  }, [isProduction, pathname, searchParams]);
 
   return null;
 }

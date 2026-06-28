@@ -1,0 +1,115 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Voices Radio home" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Voices
+        - navigation "Primary" [ref=e8]:
+          - link "Home" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - button "Schedule" [ref=e10] [cursor=pointer]
+          - link "Explore" [ref=e11] [cursor=pointer]:
+            - /url: /explore
+          - link "Collaborate" [ref=e12] [cursor=pointer]:
+            - /url: /collaborate
+          - link "Shop" [ref=e13] [cursor=pointer]:
+            - /url: https://shop.voicesradio.co.uk
+        - generic [ref=e14]:
+          - search [ref=e15]:
+            - generic [ref=e16]: Search all content
+            - searchbox
+            - button "Open search" [ref=e17] [cursor=pointer]:
+              - img [ref=e18]
+          - button "Open menu" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+    - main [ref=e24]:
+      - region "Live player" [ref=e25]:
+        - generic [ref=e27]:
+          - paragraph [ref=e29]: Live
+          - generic [ref=e30]:
+            - generic [ref=e31]:
+              - generic [ref=e32]:
+                - generic [ref=e33]: KX
+                - generic [ref=e34]: Breakfast Show
+                - generic [ref=e35]: ON AIR
+              - button "Play KX" [disabled] [ref=e36]:
+                - img [ref=e37]
+            - generic [ref=e39]:
+              - generic [ref=e40]:
+                - generic [ref=e41]: EAST
+                - generic [ref=e42]: DJ Mongoose
+                - generic [ref=e43]: REPLAY
+              - button "Play EAST" [disabled] [ref=e44]:
+                - img [ref=e45]
+      - navigation "Explore sections" [ref=e48]:
+        - generic [ref=e50]:
+          - link "Shows" [ref=e51] [cursor=pointer]:
+            - /url: /explore
+            - text: Shows
+          - link "Artists" [ref=e53] [cursor=pointer]:
+            - /url: /artists
+          - generic [ref=e54]: Series
+      - generic [ref=e57]:
+        - paragraph [ref=e58]: "FILTERS:"
+        - button "GENRES" [ref=e59] [cursor=pointer]:
+          - text: GENRES
+          - img [ref=e60]
+        - button "KX" [ref=e62] [cursor=pointer]
+        - button "EAST" [ref=e63] [cursor=pointer]
+        - button "LONDON" [ref=e64] [cursor=pointer]
+        - button "WORLD" [ref=e65] [cursor=pointer]
+        - button "Apply" [ref=e66] [cursor=pointer]
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e70]:
+            - heading "Voices KX" [level=1] [ref=e71]
+            - paragraph [ref=e72]: Browse shows from our Kings Cross studio.
+          - generic [ref=e73]: No matched shows are available for this section yet.
+        - generic [ref=e74]:
+          - generic [ref=e76]:
+            - heading "Voices EAST" [level=1] [ref=e77]
+            - paragraph [ref=e78]: Browse shows from our Hackney Wick studio.
+          - generic [ref=e79]: No matched shows are available for this section yet.
+      - generic [ref=e81]:
+        - heading "Discover Shows By Genre" [level=2] [ref=e82]
+        - generic [ref=e83]:
+          - link "Ambient / New Age" [ref=e84] [cursor=pointer]:
+            - /url: /explore?genre=Ambient%20%2F%20New%20Age
+          - link "Electronica / Downtempo" [ref=e85] [cursor=pointer]:
+            - /url: /explore?genre=Electronica%20%2F%20Downtempo
+          - link "New Club" [ref=e86] [cursor=pointer]:
+            - /url: /explore?genre=New%20Club
+          - link "UK Dance / Grime" [ref=e87] [cursor=pointer]:
+            - /url: /explore?genre=UK%20Dance%20%2F%20Grime
+          - link "House / Techno" [ref=e88] [cursor=pointer]:
+            - /url: /explore?genre=House%20%2F%20Techno
+          - link "Post Punk / New Wave" [ref=e89] [cursor=pointer]:
+            - /url: /explore?genre=Post%20Punk%20%2F%20New%20Wave
+        - link "Browse All Genres" [ref=e90] [cursor=pointer]:
+          - /url: /explore
+      - generic [ref=e92]:
+        - img "Voices Radio" [ref=e94]
+        - generic [ref=e95]: Become a Supporter
+        - paragraph [ref=e96]: Voices Radio is a completely independent radio supporting local and international creatives. With a small monthly contribution, you can help keep Voices sustainable and receive supporter perks.
+    - contentinfo [ref=e97]:
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - link "Voices Radio home" [ref=e100] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e102]: Voices
+          - navigation [ref=e103]:
+            - link "About" [ref=e104] [cursor=pointer]:
+              - /url: /about
+            - link "Work with us" [ref=e105] [cursor=pointer]:
+              - /url: /services
+            - link "Contact" [ref=e106] [cursor=pointer]:
+              - /url: /chat
+            - generic [ref=e107]: Become a Supporter
+        - generic [ref=e108]:
+          - paragraph [ref=e109]: Listen on the Voices app
+          - generic [ref=e110]:
+            - generic [ref=e111]: App Store
+            - generic [ref=e112]: Google Play
+        - paragraph [ref=e113]: © 2026 Voices Radio • Voices Radio is a non-profit community supported station
+  - alert [ref=e114]

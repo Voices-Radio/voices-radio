@@ -68,6 +68,199 @@ export interface Home {
   apply_cta_url: string;
 }
 
+const homePageImageProjection = groq`{
+  ...,
+  "assetRef": asset._ref,
+  crop,
+  hotspot,
+  asset->{
+    _id,
+    url,
+    metadata {
+      lqip
+    }
+  }
+}`;
+
+export const homePageQuery = groq`*[_type == "homePage"][0] {
+  _id,
+  featuredContent[] {
+    _key,
+    _type,
+    label,
+    title,
+    description,
+    ctaText,
+    image ${homePageImageProjection},
+    _type == "homeFeaturedShow" => {
+      show
+    },
+    _type == "homeFeaturedBlog" => {
+      blog->{
+        _id,
+        title,
+        slug,
+        excerpt,
+        featuredImage ${homePageImageProjection},
+        author,
+        categories,
+        publishedAt
+      }
+    },
+    _type == "homeFeaturedEvent" => {
+      event->{
+        _id,
+        title,
+        slug,
+        excerpt,
+        artwork ${homePageImageProjection},
+        eventDate,
+        venue,
+        ctaText,
+        ctaUrl
+      }
+    }
+  },
+  liveStreams {
+    kx {
+      fallbackImage ${homePageImageProjection}
+    },
+    east {
+      fallbackImage ${homePageImageProjection}
+    }
+  },
+  showRails[] {
+    _key,
+    title,
+    description,
+    key,
+    enabled,
+    shows[] {
+      ...,
+      image ${homePageImageProjection},
+      _type == "homeRailShow" => {
+        show
+      }
+    }
+  }
+}`;
+
+export interface HomePageImage {
+  alt?: string;
+  assetRef?: string;
+  crop?: {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  };
+  hotspot?: {
+    x: number;
+    y: number;
+    height: number;
+    width: number;
+  };
+  asset?: {
+    _id?: string;
+    url: string;
+    metadata?: {
+      lqip?: string;
+    };
+  };
+}
+
+export interface HomeShowSelection {
+  _type?: "homeShowSelection";
+  showId?: string;
+  title?: string;
+  date?: string;
+  artistName?: string;
+  imageUrl?: string;
+  matchingStatus?: string;
+}
+
+export interface HomeRailShow {
+  _key?: string;
+  _type?: "homeRailShow";
+  show?: HomeShowSelection;
+  image?: HomePageImage;
+}
+
+interface HomeFeaturedBase {
+  _key: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  ctaText?: string;
+  image?: HomePageImage;
+}
+
+export interface HomeFeaturedShow extends HomeFeaturedBase {
+  _type: "homeFeaturedShow";
+  show?: HomeShowSelection;
+}
+
+export interface HomeFeaturedBlog extends HomeFeaturedBase {
+  _type: "homeFeaturedBlog";
+  blog?: Pick<
+    MainBlogPost,
+    | "_id"
+    | "title"
+    | "slug"
+    | "excerpt"
+    | "author"
+    | "categories"
+    | "publishedAt"
+  > & {
+    featuredImage?: HomePageImage;
+  };
+}
+
+export interface HomeFeaturedEvent extends HomeFeaturedBase {
+  _type: "homeFeaturedEvent";
+  event?: Pick<
+    EventPost,
+    | "_id"
+    | "title"
+    | "slug"
+    | "excerpt"
+    | "eventDate"
+    | "venue"
+    | "ctaText"
+    | "ctaUrl"
+  > & {
+    artwork?: HomePageImage;
+  };
+}
+
+export type HomeFeaturedContent =
+  | HomeFeaturedShow
+  | HomeFeaturedBlog
+  | HomeFeaturedEvent;
+
+export interface HomeShowRailConfig {
+  _key: string;
+  title: string;
+  description?: string;
+  key?: { current?: string };
+  enabled?: boolean;
+  shows?: Array<HomeShowSelection | HomeRailShow>;
+}
+
+export interface HomePage {
+  _id: string;
+  featuredContent?: HomeFeaturedContent[];
+  liveStreams?: {
+    kx?: {
+      fallbackImage?: HomePageImage;
+    };
+    east?: {
+      fallbackImage?: HomePageImage;
+    };
+  };
+  showRails?: HomeShowRailConfig[];
+}
+
 export const aboutQuery = groq`*[_type == "about"][0] {
   ...,
   hero_image {
@@ -394,6 +587,26 @@ export const featuredMainBlogPostsQuery = groq`*[_type == "mainBlog" && featured
   publishedAt
 }`;
 
+export const featuredEventsQuery = groq`*[_type == "event" && featured == true && status == "published"] | order(eventDate asc)[0...3] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  artwork {
+    ...,
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  eventDate,
+  venue,
+  ctaText,
+  ctaUrl
+}`;
+
 export interface MainBlogPost {
   _id: string;
   title: string;
@@ -424,4 +637,24 @@ export interface MainBlogPost {
       };
     };
   };
+}
+
+export interface EventPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  artwork?: {
+    alt?: string;
+    asset?: {
+      url: string;
+      metadata: {
+        lqip: string;
+      };
+    };
+  };
+  eventDate: string;
+  venue?: string;
+  ctaText?: string;
+  ctaUrl?: string;
 }

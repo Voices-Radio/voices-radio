@@ -1,0 +1,27 @@
+import { getSettings } from "@/sanity.client";
+import SiteFooter from "./site-footer";
+import SiteHeader from "./site-header";
+
+export default async function RedesignShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const settings = await getSettings();
+
+  return (
+    <div className="min-h-screen bg-voicesNext-background px-2 text-voicesNext-cream md:px-0">
+      <SiteHeader
+        settings={{
+          applyLink: settings?.apply_link,
+          contactLink: settings?.contact_link,
+          storeLink: settings?.store_link,
+          instagramLink: settings?.instagram_link,
+          mixcloudLink: settings?.mixcloud_link,
+        }}
+      />
+      {children}
+      <SiteFooter />
+    </div>
+  );
+}

@@ -1,0 +1,42 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "Voices Radio home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - text: Voices
+      - navigation "Primary" [ref=e6]:
+        - link "Home" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - button "Schedule" [ref=e8]
+        - link "Explore" [ref=e9] [cursor=pointer]:
+          - /url: /explore
+        - link "Collaborate" [ref=e10] [cursor=pointer]:
+          - /url: /collaborate
+        - link "Shop" [ref=e11] [cursor=pointer]:
+          - /url: https://shop.voicesradio.co.uk
+      - generic [ref=e12]:
+        - search [ref=e13]:
+          - text: Search all content
+          - searchbox [ref=e14]
+          - button "Open search" [ref=e15]:
+            - img [ref=e16]
+        - button "Open menu" [ref=e19]
+  - main
+  - contentinfo [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - link "Voices Radio home" [ref=e24] [cursor=pointer]:
+          - /url: /
+          - text: Voices
+        - navigation [ref=e25]:
+          - link "About" [ref=e26] [cursor=pointer]:
+            - /url: /about
+          - link "Work with us" [ref=e27] [cursor=pointer]:
+            - /url: /services
+          - link "Contact" [ref=e28] [cursor=pointer]:
+            - /url: /chat
+          - text: Become a Supporter
+      - generic [ref=e29]:
+        - paragraph [ref=e30]: Listen on the Voices app
+        - generic [ref=e31]: App StoreGoogle Play
+      - paragraph [ref=e32]: © 2026 Voices Radio • Voices Radio is a non-profit community supported station

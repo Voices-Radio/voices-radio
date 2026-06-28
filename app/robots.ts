@@ -4,6 +4,15 @@ import { getBaseUrl } from "@/lib/site-url";
 export default function robots(): MetadataRoute.Robots {
   const base = getBaseUrl();
 
+  if (process.env.NEXT_PUBLIC_SITE_ENV !== "production") {
+    return {
+      rules: {
+        userAgent: "*",
+        disallow: "/",
+      },
+    };
+  }
+
   return {
     rules: {
       userAgent: "*",

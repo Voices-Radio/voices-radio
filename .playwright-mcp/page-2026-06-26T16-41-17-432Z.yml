@@ -1,0 +1,52 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Voices Radio home" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Voices
+        - navigation "Primary" [ref=e8]:
+          - link "Home" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - button "Schedule" [ref=e10] [cursor=pointer]
+          - link "Explore" [ref=e11] [cursor=pointer]:
+            - /url: /explore
+          - link "Collaborate" [ref=e12] [cursor=pointer]:
+            - /url: /collaborate
+          - link "Shop" [ref=e13] [cursor=pointer]:
+            - /url: https://shop.voicesradio.co.uk
+        - generic [ref=e14]:
+          - search [ref=e15]:
+            - generic [ref=e16]: Search all content
+            - searchbox
+            - button "Open search" [ref=e17] [cursor=pointer]:
+              - img [ref=e18]
+          - button "Open menu" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+    - main [ref=e24]:
+      - generic [ref=e25]:
+        - paragraph [ref=e26]: Something went wrong
+        - heading "Could not load this page" [level=1] [ref=e27]
+        - paragraph [ref=e28]: Attempted to call filter() from the server but filter is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.
+        - button "Retry" [ref=e29] [cursor=pointer]
+    - contentinfo [ref=e30]:
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - link "Voices Radio home" [ref=e33] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e35]: Voices
+          - navigation [ref=e36]:
+            - link "About" [ref=e37] [cursor=pointer]:
+              - /url: /about
+            - link "Work with us" [ref=e38] [cursor=pointer]:
+              - /url: /services
+            - link "Contact" [ref=e39] [cursor=pointer]:
+              - /url: /chat
+            - generic [ref=e40]: Become a Supporter
+        - generic [ref=e41]:
+          - paragraph [ref=e42]: Listen on the Voices app
+          - generic [ref=e43]:
+            - generic [ref=e44]: App Store
+            - generic [ref=e45]: Google Play
+        - paragraph [ref=e46]: © 2026 Voices Radio • Voices Radio is a non-profit community supported station
+  - alert [ref=e47]

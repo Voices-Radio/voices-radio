@@ -36,3 +36,17 @@ next-env.d.ts
 
 # bolt folder (separate Vite project)
 /bolt/
+
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.git/
+*.log
+*.lock
+*.csv
+*.pdf
+*.png
+*.jpg
+.env
