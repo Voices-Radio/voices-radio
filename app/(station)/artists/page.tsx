@@ -1,5 +1,5 @@
-import Link from "next/link";
 import ArtistCard from "../components/redesign/artist-card";
+import ExploreLiveStrip from "../explore/explore-live-strip";
 import { getArtists } from "@/lib/voices/api";
 import { matchesStationOrLocation } from "@/lib/voices/normalizers";
 import type { VoicesArtist } from "@/lib/voices/types";
@@ -8,27 +8,6 @@ const filterPills = ["GENRES", "KX", "EAST", "LONDON", "WORLD"];
 
 function sortArtists(artists: VoicesArtist[]) {
   return [...artists].sort((a, b) => a.name.localeCompare(b.name));
-}
-
-function DiscoveryTabs() {
-  return (
-    <nav
-      className="border-b border-black bg-voicesNext-cream text-voicesNext-background"
-      aria-label="Explore sections"
-    >
-      <div className="mx-auto flex h-[68px] max-w-[1280px] items-center px-4 lg:px-[482px]">
-        <div className="flex items-center gap-7 font-gabarito text-[20px] font-bold">
-          <Link href="/explore" className="text-voicesNext-secondary">
-            Shows
-          </Link>
-          <Link href="/artists" className="relative">
-            Artists
-            <span className="absolute -bottom-[22px] left-0 h-[2px] w-[60px] bg-voicesNext-orange" />
-          </Link>
-        </div>
-      </div>
-    </nav>
-  );
 }
 
 function FilterStrip() {
@@ -115,7 +94,7 @@ export default async function ArtistsPage() {
 
   return (
     <main>
-      <DiscoveryTabs />
+      <ExploreLiveStrip />
       <FilterStrip />
       {hasExplicitStationGroups ? (
         <>

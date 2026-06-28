@@ -2,6 +2,7 @@
 
 import { Pause, Play } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { voicesMediaConfig } from "@/lib/voices/config";
@@ -32,18 +33,40 @@ const stations: LiveStation[] = [
 ];
 
 function DiscoveryTabs() {
+  const pathname = usePathname();
+  const activeSection = pathname.startsWith("/artists") ? "artists" : "shows";
+
   return (
     <nav
       className="flex min-h-[68px] flex-1 items-center px-4 md:px-[60px] lg:px-[70px]"
       aria-label="Explore sections"
     >
       <div className="flex items-center gap-7 font-gabarito text-[20px] font-bold">
-        <Link href="/explore" className="relative">
+        <Link
+          href="/explore"
+          className={cn(
+            "relative",
+            activeSection !== "shows" && "text-voicesNext-secondary",
+          )}
+          aria-current={activeSection === "shows" ? "page" : undefined}
+        >
           Shows
-          <span className="absolute -bottom-[22px] left-0 h-[2px] w-[57px] bg-voicesNext-orange" />
+          {activeSection === "shows" && (
+            <span className="absolute -bottom-[22px] left-0 h-[2px] w-[57px] bg-voicesNext-orange" />
+          )}
         </Link>
-        <Link href="/artists" className="text-voicesNext-secondary">
+        <Link
+          href="/artists"
+          className={cn(
+            "relative",
+            activeSection !== "artists" && "text-voicesNext-secondary",
+          )}
+          aria-current={activeSection === "artists" ? "page" : undefined}
+        >
           Artists
+          {activeSection === "artists" && (
+            <span className="absolute -bottom-[22px] left-0 h-[2px] w-[60px] bg-voicesNext-orange" />
+          )}
         </Link>
         <span className="text-voicesNext-secondary" aria-disabled="true">
           Series
