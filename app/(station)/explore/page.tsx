@@ -1,11 +1,16 @@
 import Link from "next/link";
 import ExploreFilters from "./explore-filters";
 import ExploreLiveStrip from "./explore-live-strip";
-import { exploreGenreOptions } from "./explore-options";
+import { exploreGenreOptions, isGenreKey } from "./explore-options";
 import ExploreShowSection from "./explore-show-section";
+import {
+  ExploreFilterTransitionProvider,
+  ExploreResultsTransition,
+} from "./explore-filter-transition";
 import SupporterBlock from "../components/redesign/supporter-block";
 import { getShows } from "@/lib/voices/api";
 import { matchesStationOrLocation } from "@/lib/voices/normalizers";
+import { getGenreAliases } from "@/lib/voices/genre-taxonomy";
 import type { VoicesShow } from "@/lib/voices/types";
 
 type ExploreSearchParams = Record<string, string | string[] | undefined>;
@@ -31,36 +36,14 @@ function normalizeFilterValue(value: string) {
     .trim();
 }
 
-function getGenreTargets(genre: string) {
-  const normalized = normalizeFilterValue(genre);
-  const parts = normalized
-    .split(/\s+\/\s+|\/|\s+and\s+/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-
-  if (/hip hop/.test(normalized) || /rnb|r n b/.test(normalized)) {
-    return ["hip hop", "rnb", "r n b", "randb"];
-  }
-
-  return parts.length ? parts : [normalized];
-}
-
 function matchesGenres(show: VoicesShow, selectedGenres: string[]) {
   if (!selectedGenres.length) return true;
   const showGenres = show.genres.map(normalizeFilterValue).filter(Boolean);
   if (!showGenres.length) return false;
 
   return selectedGenres.some((genre) => {
-    const targets = getGenreTargets(genre);
-
-    return targets.some((target) =>
-      showGenres.some(
-        (showGenre) =>
-          showGenre === target ||
-          showGenre.includes(target) ||
-          target.includes(showGenre),
-      ),
-    );
+    const targets = getGenreAliases(genre).map(normalizeFilterValue);
+    return targets.some((target) => showGenres.includes(target));
   });
 }
 
@@ -110,17 +93,15 @@ function GenreBlock() {
         Discover Shows By Genre
       </h2>
       <div className="mt-8 flex flex-wrap justify-center gap-4">
-        {exploreGenreOptions
-          .filter((genre) => genre !== "Hip Hop / R'n'B")
-          .map((genre) => (
-            <Link
-              key={genre}
-              href={`/explore?genre=${encodeURIComponent(genre)}`}
-              className="rounded-full border border-voicesNext-cream px-2 py-2 font-asap text-[16px] font-bold leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface"
-            >
-              {genre}
-            </Link>
-          ))}
+        {exploreGenreOptions.map((genre) => (
+          <Link
+            key={genre}
+            href={`/explore?genre=${encodeURIComponent(genre)}`}
+            className="rounded-full border border-voicesNext-cream px-2 py-2 font-asap text-[16px] font-bold leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface"
+          >
+            {genre}
+          </Link>
+        ))}
       </div>
       <Link
         href="/explore"
@@ -137,8 +118,8 @@ export default async function ExplorePage({
 }: {
   searchParams?: ExploreSearchParams;
 }) {
-  const selectedGenres = getParamArray(searchParams, "genre").filter((genre) =>
-    exploreGenreOptions.includes(genre),
+  const selectedGenres = getParamArray(searchParams, "genre").filter(
+    isGenreKey,
   );
   const selectedStations = getParamArray(searchParams, "station").filter(
     (station) =>
@@ -149,7 +130,7 @@ export default async function ExplorePage({
       locationFilters.includes(location as (typeof locationFilters)[number]),
   );
 
-  const shows = await getShows({ limit: 100 });
+  const shows = await getShows({ genres: selectedGenres, limit: 100 });
   const filteredShows = sortShows(
     shows.filter(
       (show) =>
@@ -183,32 +164,36 @@ export default async function ExplorePage({
   return (
     <main>
       <ExploreLiveStrip />
-      <ExploreFilters
-        selectedGenres={selectedGenres}
-        selectedStations={selectedStations}
-        selectedLocations={selectedLocations}
-      />
-      <div className="space-y-16 pb-16 md:space-y-[86px] md:pb-[96px]">
-        {visibleSections.map((station) => {
-          const sectionShows = filteredShows.filter((show, index) =>
-            matchesSectionWithFallback(show, station, index),
-          );
+      <ExploreFilterTransitionProvider>
+        <ExploreFilters
+          selectedGenres={selectedGenres}
+          selectedStations={selectedStations}
+          selectedLocations={selectedLocations}
+        />
+        <ExploreResultsTransition>
+          <div className="space-y-16 pb-16 md:space-y-[86px] md:pb-[96px]">
+            {visibleSections.map((station) => {
+              const sectionShows = filteredShows.filter((show, index) =>
+                matchesSectionWithFallback(show, station, index),
+              );
 
-          return (
-            <ExploreShowSection
-              key={station}
-              title={sectionCopy[station].title}
-              description={sectionCopy[station].description}
-              shows={sectionShows}
-              emptyMessage={
-                hasActiveFilters
-                  ? "No shows match these filters yet."
-                  : "No matched shows are available for this section yet."
-              }
-            />
-          );
-        })}
-      </div>
+              return (
+                <ExploreShowSection
+                  key={station}
+                  title={sectionCopy[station].title}
+                  description={sectionCopy[station].description}
+                  shows={sectionShows}
+                  emptyMessage={
+                    hasActiveFilters
+                      ? "No shows match these filters yet."
+                      : "No matched shows are available for this section yet."
+                  }
+                />
+              );
+            })}
+          </div>
+        </ExploreResultsTransition>
+      </ExploreFilterTransitionProvider>
       <div className="px-4 py-10 md:px-[50px]">
         <GenreBlock />
       </div>

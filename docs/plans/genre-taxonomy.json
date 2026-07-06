@@ -1,0 +1,269 @@
+{
+  "generatedAt": "2026-07-03T18:54:08.942Z",
+  "taxonomy": {
+    "House & Techno": {
+      "House": [
+        "house",
+        "deep house",
+        "soulful house",
+        "tech house",
+        "acid house",
+        "house music"
+      ],
+      "Techno": [
+        "techno",
+        "acid techno",
+        "minimal"
+      ],
+      "Trance": [
+        "trance",
+        "psytrance",
+        "hardstyle"
+      ],
+      "Electro": [
+        "electro",
+        "electroclash"
+      ],
+      "Disco": [
+        "disco",
+        "nu-disco",
+        "nu disco",
+        "italo disco",
+        "italo"
+      ]
+    },
+    "Bass, Breaks & Jungle": {
+      "Drum & Bass": [
+        "drum & bass",
+        "dnb",
+        "d&b",
+        "liquid"
+      ],
+      "Jungle": [
+        "jungle"
+      ],
+      "UK Garage": [
+        "garage",
+        "ukg",
+        "uk garage",
+        "garage (ukg)",
+        "2-step",
+        "2 step"
+      ],
+      "Dubstep": [
+        "dubstep",
+        "uk bass",
+        "bass",
+        "bass & club",
+        "bass & club music"
+      ],
+      "Grime": [
+        "grime"
+      ],
+      "Breaks & Footwork": [
+        "breaks",
+        "breakbeat",
+        "footwork",
+        "juke"
+      ]
+    },
+    "Ambient & Electronica": {
+      "Ambient": [
+        "ambient",
+        "drone",
+        "new age"
+      ],
+      "Downtempo & Trip Hop": [
+        "downtempo",
+        "triphop",
+        "trip hop",
+        "trip-hop",
+        "chillout",
+        "chill"
+      ],
+      "Electronica": [
+        "electronica",
+        "idm",
+        "glitch"
+      ],
+      "Experimental": [
+        "experimental",
+        "noise",
+        "avant-garde"
+      ],
+      "Electronic": [
+        "electronic"
+      ]
+    },
+    "Hip Hop & Rap": {
+      "Hip Hop": [
+        "hip hop",
+        "hip-hop",
+        "hip-hop & rap",
+        "hiphop"
+      ],
+      "Rap": [
+        "rap",
+        "trap",
+        "drill"
+      ],
+      "R&B": [
+        "r&b",
+        "r'n'b",
+        "rnb",
+        "r&b & soul"
+      ],
+      "Neo Soul": [
+        "neo soul",
+        "neo-soul"
+      ]
+    },
+    "Soul, Funk & Disco": {
+      "Soul": [
+        "soul",
+        "northern soul",
+        "motown"
+      ],
+      "Funk": [
+        "funk",
+        "p-funk"
+      ],
+      "Boogie": [
+        "boogie",
+        "modern soul"
+      ]
+    },
+    "Jazz & Blues": {
+      "Jazz": [
+        "jazz",
+        "nu jazz",
+        "nu-jazz",
+        "spiritual jazz"
+      ],
+      "Blues": [
+        "blues",
+        "jazz & blues"
+      ],
+      "Broken Beat": [
+        "broken beat",
+        "bruk"
+      ]
+    },
+    "Rock, Punk & Indie": {
+      "Rock": [
+        "rock",
+        "alternative rock",
+        "classic rock",
+        "psych rock",
+        "psychedelic"
+      ],
+      "Indie": [
+        "indie",
+        "indie rock",
+        "alternative"
+      ],
+      "Post Punk & Shoegaze": [
+        "post punk",
+        "post-punk",
+        "punk",
+        "shoegaze",
+        "goth"
+      ]
+    },
+    "Pop & Dance": {
+      "Pop": [
+        "pop",
+        "synth pop",
+        "synthpop",
+        "dream pop"
+      ],
+      "Dance / EDM": [
+        "dance",
+        "dance & edm",
+        "edm",
+        "dance music",
+        "club"
+      ]
+    },
+    "Global & World": {
+      "Afro": [
+        "afrobeat",
+        "afrobeats",
+        "afro house",
+        "afro",
+        "highlife"
+      ],
+      "Amapiano": [
+        "amapiano",
+        "gqom"
+      ],
+      "Latin": [
+        "latin",
+        "reggaeton",
+        "salsa",
+        "cumbia",
+        "brazilian",
+        "bossa nova"
+      ],
+      "World": [
+        "world",
+        "global",
+        "balearic"
+      ]
+    },
+    "Reggae, Dub & Dancehall": {
+      "Reggae": [
+        "reggae",
+        "roots",
+        "ska",
+        "rocksteady"
+      ],
+      "Dub": [
+        "dub"
+      ],
+      "Dancehall": [
+        "dancehall"
+      ]
+    },
+    "Folk, Country & Classical": {
+      "Folk & Singer-Songwriter": [
+        "folk",
+        "folk & singer-songwriter",
+        "singer-songwriter",
+        "americana"
+      ],
+      "Country": [
+        "country"
+      ],
+      "Classical": [
+        "classical",
+        "classical music",
+        "contemporary classical",
+        "modern classical"
+      ]
+    },
+    "Talk & Non-Music": {
+      "Podcast": [
+        "podcast",
+        "the potluck podcast"
+      ],
+      "Interview & Talk": [
+        "interview",
+        "talk",
+        "talk show",
+        "talkshow",
+        "discussion",
+        "breakfast show"
+      ],
+      "Spoken Word & Poetry": [
+        "poetry",
+        "spoken word",
+        "storytelling",
+        "speech"
+      ],
+      "Comedy": [
+        "comedy"
+      ]
+    }
+  }
+}

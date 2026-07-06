@@ -1,10 +1,15 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { exploreGenreOptions } from "./explore-options";
+import {
+  exploreGenreOptions,
+  exploreGenreTaxonomy,
+  getGenreKey,
+} from "./explore-options";
+import { useExploreFilterTransition } from "./explore-filter-transition";
 
 const stationOptions = [
   { label: "KX", value: "kx" },
@@ -22,13 +27,33 @@ function toggleValue(values: string[], value: string) {
     : [...values, value];
 }
 
+function toggleGenre(values: string[], primary: string, subgenre?: string) {
+  const leafPrefix = `${primary} > `;
+  const withoutBranch = values.filter(
+    (value) => value !== primary && !value.startsWith(leafPrefix),
+  );
+
+  if (!subgenre) {
+    return values.includes(primary)
+      ? withoutBranch
+      : [...withoutBranch, primary];
+  }
+
+  const key = getGenreKey(primary, subgenre);
+  const currentLeaves = values.filter((value) => value.startsWith(leafPrefix));
+  const nextLeaves = toggleValue(currentLeaves, key);
+  return [...withoutBranch, ...nextLeaves];
+}
+
 function FilterPill({
   active,
   children,
+  disabled = false,
   onClick,
 }: {
   active: boolean;
   children: React.ReactNode;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
@@ -41,11 +66,16 @@ function FilterPill({
           : "text-voicesNext-cream hover:bg-voicesNext-cream hover:text-voicesNext-background",
       )}
       aria-pressed={active}
+      disabled={disabled}
       onClick={onClick}
     >
       {children}
     </button>
   );
+}
+
+function getGenreControlId(genre: string) {
+  return genre.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 }
 
 export default function ExploreFilters({
@@ -57,26 +87,74 @@ export default function ExploreFilters({
   selectedStations: string[];
   selectedLocations: string[];
 }) {
-  const [genresOpen, setGenresOpen] = useState(selectedGenres.length > 0);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { isPending, startFilterTransition } = useExploreFilterTransition();
+  const [genresOpen, setGenresOpen] = useState(false);
+  const [expandedGenre, setExpandedGenre] = useState<string | null>(null);
   const [genres, setGenres] = useState(selectedGenres);
   const [stations, setStations] = useState(selectedStations);
   const [locations, setLocations] = useState(selectedLocations);
   const hasActiveFilters =
     genres.length > 0 || stations.length > 0 || locations.length > 0;
 
+  useEffect(() => {
+    setGenres(selectedGenres);
+    setStations(selectedStations);
+    setLocations(selectedLocations);
+  }, [selectedGenres, selectedStations, selectedLocations]);
+
+  function navigate(
+    nextGenres: string[],
+    nextStations: string[],
+    nextLocations: string[],
+  ) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("genre");
+    params.delete("station");
+    params.delete("location");
+    nextGenres.forEach((genre) => params.append("genre", genre));
+    nextStations.forEach((station) => params.append("station", station));
+    nextLocations.forEach((location) => params.append("location", location));
+    const query = params.toString();
+
+    startFilterTransition(() => {
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
+    });
+  }
+
+  function updateGenres(nextGenres: string[]) {
+    setGenres(nextGenres);
+    setGenresOpen(false);
+    setExpandedGenre(null);
+    navigate(nextGenres, stations, locations);
+  }
+
+  function updateStations(nextStations: string[]) {
+    setStations(nextStations);
+    navigate(genres, nextStations, locations);
+  }
+
+  function updateLocations(nextLocations: string[]) {
+    setLocations(nextLocations);
+    navigate(genres, stations, nextLocations);
+  }
+
+  function clearFilters() {
+    setGenres([]);
+    setStations([]);
+    setLocations([]);
+    setGenresOpen(false);
+    setExpandedGenre(null);
+    navigate([], [], []);
+  }
+
   return (
     <section className="mx-auto max-w-[1280px] px-4 py-8 md:px-[60px] md:py-[34px]">
-      <form action="/explore" className="relative">
-        {genres.map((genre) => (
-          <input key={genre} type="hidden" name="genre" value={genre} />
-        ))}
-        {stations.map((station) => (
-          <input key={station} type="hidden" name="station" value={station} />
-        ))}
-        {locations.map((location) => (
-          <input key={location} type="hidden" name="location" value={location} />
-        ))}
-
+      <div className="relative">
         <div className="flex flex-wrap items-center gap-[9px]">
           <p className="mr-[4px] font-asap text-[14px] uppercase leading-none text-voicesNext-cream">
             FILTERS:
@@ -91,6 +169,7 @@ export default function ExploreFilters({
             )}
             aria-expanded={genresOpen}
             aria-controls="explore-genre-list"
+            disabled={isPending}
             onClick={() => setGenresOpen((open) => !open)}
           >
             GENRES
@@ -107,8 +186,9 @@ export default function ExploreFilters({
             <FilterPill
               key={option.value}
               active={stations.includes(option.value)}
+              disabled={isPending}
               onClick={() =>
-                setStations((current) => toggleValue(current, option.value))
+                updateStations(toggleValue(stations, option.value))
               }
             >
               {option.label}
@@ -119,28 +199,24 @@ export default function ExploreFilters({
             <FilterPill
               key={option.value}
               active={locations.includes(option.value)}
+              disabled={isPending}
               onClick={() =>
-                setLocations((current) => toggleValue(current, option.value))
+                updateLocations(toggleValue(locations, option.value))
               }
             >
               {option.label}
             </FilterPill>
           ))}
 
-          <button
-            type="submit"
-            className="ml-0 inline-flex h-[24px] items-center justify-center rounded-full bg-voicesNext-orange px-4 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:ml-[22px]"
-          >
-            Apply
-          </button>
-
           {hasActiveFilters && (
-            <Link
-              href="/explore"
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={clearFilters}
               className="font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-secondary transition-colors hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
             >
               Clear
-            </Link>
+            </button>
           )}
         </div>
 
@@ -151,43 +227,90 @@ export default function ExploreFilters({
           >
             {exploreGenreOptions.map((genre) => {
               const active = genres.includes(genre);
+              const subgenres = Object.keys(exploreGenreTaxonomy[genre]);
+              const hasActiveSubgenre = genres.some((value) =>
+                value.startsWith(`${genre} > `),
+              );
+              const isExpanded = expandedGenre === genre;
 
               return (
-                <button
-                  key={genre}
-                  type="button"
-                  className={cn(
-                    "inline-flex min-h-[35px] w-auto max-w-full items-center gap-[15px] rounded-full border-2 border-voicesNext-cream py-[4px] pl-[13px] pr-[5px] text-left font-asap text-[18px] font-bold leading-none text-voicesNext-cream transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-                    active
-                      ? "border-voicesNext-orange text-voicesNext-orange"
-                      : "hover:border-voicesNext-orange hover:text-voicesNext-orange",
-                  )}
-                  aria-pressed={active}
-                  onClick={() =>
-                    setGenres((current) => toggleValue(current, genre))
-                  }
-                >
-                  <span className="min-w-0 truncate">{genre}</span>
-                  <span
+                <div key={genre} className="w-full">
+                  <div
                     className={cn(
-                      "inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center rounded-full border-2 border-current",
-                      active && "bg-voicesNext-orange text-voicesNext-background",
+                      "inline-flex min-h-[35px] w-auto max-w-full items-center rounded-full border-2 border-voicesNext-cream text-left font-asap text-[18px] font-bold leading-none text-voicesNext-cream transition-colors",
+                      active || hasActiveSubgenre
+                        ? "border-voicesNext-orange text-voicesNext-orange"
+                        : "hover:border-voicesNext-orange hover:text-voicesNext-orange",
                     )}
-                    aria-hidden="true"
                   >
-                    <ChevronDown
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      className="min-w-0 truncate py-[6px] pl-[13px] pr-[15px] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange"
+                      aria-pressed={active}
+                      onClick={() =>
+                        updateGenres(toggleGenre(genres, genre))
+                      }
+                    >
+                      {genre}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isPending}
                       className={cn(
-                        "size-[15px] stroke-[4px]",
-                        active && "rotate-180",
+                        "mr-[3px] inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center rounded-full border-2 border-current focus:outline-none focus:ring-2 focus:ring-voicesNext-orange",
+                        active &&
+                          "bg-voicesNext-orange text-voicesNext-background",
                       )}
-                    />
-                  </span>
-                </button>
+                      aria-label={`Toggle ${genre} subgenres`}
+                      aria-expanded={isExpanded}
+                      aria-controls={`explore-subgenres-${getGenreControlId(genre)}`}
+                      onClick={() =>
+                        setExpandedGenre((current) =>
+                          current === genre ? null : genre,
+                        )
+                      }
+                    >
+                      <ChevronDown
+                        className={cn(
+                          "size-[15px] stroke-[4px]",
+                          isExpanded && "rotate-180",
+                        )}
+                      />
+                    </button>
+                  </div>
+                  {isExpanded && (
+                    <div
+                      id={`explore-subgenres-${getGenreControlId(genre)}`}
+                      className="mt-3 flex flex-wrap gap-2 pl-4"
+                    >
+                      {subgenres.map((subgenre) => {
+                        const key = getGenreKey(genre, subgenre);
+                        const subgenreActive = genres.includes(key);
+
+                        return (
+                          <FilterPill
+                            key={key}
+                            active={active || subgenreActive}
+                            disabled={isPending}
+                            onClick={() =>
+                              updateGenres(
+                                toggleGenre(genres, genre, subgenre),
+                              )
+                            }
+                          >
+                            {subgenre}
+                          </FilterPill>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
         )}
-      </form>
+      </div>
     </section>
   );
 }

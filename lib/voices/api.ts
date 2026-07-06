@@ -12,6 +12,7 @@ import {
   normalizeArtist,
   normalizeShow,
 } from "./normalizers";
+import { getGenreRegexPatterns } from "./genre-taxonomy";
 import type {
   VoicesArtist,
   VoicesArtistRaw,
@@ -23,9 +24,10 @@ import type {
   VoicesWebsiteRailRaw,
 } from "./types";
 
+type SearchParamValue = string | number | boolean;
 type SearchParams = Record<
   string,
-  string | number | boolean | null | undefined
+  SearchParamValue | SearchParamValue[] | null | undefined
 >;
 
 function voicesUrl(path: string, searchParams: SearchParams = {}) {
@@ -33,7 +35,8 @@ function voicesUrl(path: string, searchParams: SearchParams = {}) {
 
   for (const [key, value] of Object.entries(searchParams)) {
     if (value !== undefined && value !== null && value !== "") {
-      url.searchParams.set(key, String(value));
+      const values = Array.isArray(value) ? value : [value];
+      values.forEach((item) => url.searchParams.append(key, String(item)));
     }
   }
 
@@ -99,6 +102,7 @@ export async function getArtist(id: string) {
 export async function getShows({
   artistId,
   featured,
+  genres,
   station,
   location,
   limit = VOICES_DEFAULT_INDEX_LIMIT,
@@ -107,6 +111,7 @@ export async function getShows({
 }: {
   artistId?: string;
   featured?: boolean;
+  genres?: string[];
   station?: VoicesStation;
   location?: string;
   limit?: number;
@@ -114,14 +119,28 @@ export async function getShows({
   includeArtistFallbacks?: boolean;
 } = {}) {
   const fetchLimit = Math.min(Math.max(limit * 3, limit), 100);
-  const rawShows = await voicesFetch<VoicesShowRaw[]>("/api/shows", {
-    artist: artistId,
-    featured,
-    station,
-    location,
-    limit: fetchLimit,
-    skip,
-  });
+  const genrePatterns = getGenreRegexPatterns(genres ?? []);
+  const rawShows = genrePatterns.length
+    ? unwrapList(
+        await voicesFetch<VoicesListResponse<VoicesShowRaw>>(
+          "/api/shows/optimized",
+          {
+            artistId,
+            featured,
+            genres: genrePatterns,
+            page: Math.floor(skip / fetchLimit) + 1,
+            limit: fetchLimit,
+          },
+        ),
+      )
+    : await voicesFetch<VoicesShowRaw[]>("/api/shows", {
+        artist: artistId,
+        featured,
+        station,
+        location,
+        limit: fetchLimit,
+        skip,
+      });
   const publicShows = rawShows.filter(isPublicMatchedShow);
   const artistsById = includeArtistFallbacks
     ? await joinArtistsForShows(publicShows)
