@@ -1,7 +1,16 @@
-import { voicesMediaConfig } from "@/lib/voices/config";
+"use client";
+
+import { useRef, useState } from "react";
+import {
+  getVoicesLiveStation,
+  type VoicesLiveStationId,
+} from "@/lib/voices/config";
 import type { HomeLiveStreamConfig } from "@/lib/voices/home";
 import type { VoicesShow } from "@/lib/voices/types";
+import { stopLiveAudio } from "@/hooks/use-station-audio";
+import { EastComingSoonCard } from "./east-coming-soon";
 import LiveStationCard from "./live-station-card";
+import RestreamVideoModal from "./restream-video-modal";
 
 function getLiveArtwork(
   show: VoicesShow | undefined,
@@ -41,25 +50,74 @@ export default function LiveStack({
 }) {
   const kxArtwork = getLiveArtwork(kxShow, kxFallback, "KX");
   const eastArtwork = getLiveArtwork(eastShow, eastFallback, "East");
+  const kxStation = getVoicesLiveStation("kx");
+  const eastStation = getVoicesLiveStation("east");
+  const [selectedStation, setSelectedStation] =
+    useState<VoicesLiveStationId | null>(null);
+  const [videoStation, setVideoStation] = useState<VoicesLiveStationId | null>(
+    null,
+  );
+  const [videoOpen, setVideoOpen] = useState(false);
+  const kxCardRef = useRef<HTMLButtonElement>(null);
+  const eastCardRef = useRef<HTMLButtonElement>(null);
+  const activeVideoStation = videoStation
+    ? getVoicesLiveStation(videoStation)
+    : undefined;
+
+  function watchLive(stationId: VoicesLiveStationId) {
+    const station = getVoicesLiveStation(stationId);
+    if (!station?.videoUrl || station.comingSoon) return;
+
+    setSelectedStation(stationId);
+    setVideoStation(stationId);
+    stopLiveAudio();
+    setVideoOpen(true);
+  }
+
+  function handleVideoOpenChange(open: boolean) {
+    setVideoOpen(open);
+    if (!open) setSelectedStation(null);
+  }
 
   return (
-    <div className="grid gap-0 sm:grid-cols-2 md:w-[316px] md:grid-cols-1">
-      <LiveStationCard
-        station="KX"
-        title={kxShow?.title ?? "The Breakfast Show w/ Maria Hanlon"}
-        artwork={kxArtwork.src}
-        artworkAlt={kxArtwork.alt}
-        streamUrl={voicesMediaConfig.radioCult.kxStreamUrl}
-        videoUrl={voicesMediaConfig.restream.kxEmbedUrl}
+    <>
+      <div className="grid gap-0 sm:grid-cols-2 md:w-[316px] md:grid-cols-1">
+        <LiveStationCard
+          cardRef={kxCardRef}
+          stationId="kx"
+          station="KX"
+          title={kxShow?.title ?? "The Breakfast Show w/ Maria Hanlon"}
+          artwork={kxArtwork.src}
+          artworkAlt={kxArtwork.alt}
+          videoUrl={kxStation?.videoUrl}
+          selected={selectedStation === "kx"}
+          onSelect={() => setSelectedStation("kx")}
+          onWatchLive={() => watchLive("kx")}
+        />
+        {eastStation?.comingSoon ? (
+          <EastComingSoonCard />
+        ) : (
+          <LiveStationCard
+            cardRef={eastCardRef}
+            stationId="east"
+            station="EAST"
+            title={eastShow?.title ?? "Live from Voices East"}
+            artwork={eastArtwork.src}
+            artworkAlt={eastArtwork.alt}
+            videoUrl={eastStation?.videoUrl}
+            selected={selectedStation === "east"}
+            onSelect={() => setSelectedStation("east")}
+            onWatchLive={() => watchLive("east")}
+          />
+        )}
+      </div>
+      <RestreamVideoModal
+        label={activeVideoStation?.label ?? "Voices"}
+        videoUrl={activeVideoStation?.videoUrl}
+        open={videoOpen}
+        onOpenChange={handleVideoOpenChange}
+        returnFocusRef={videoStation === "east" ? eastCardRef : kxCardRef}
       />
-      <LiveStationCard
-        station="EAST"
-        title={eastShow?.title ?? "Live from Voices East"}
-        artwork={eastArtwork.src}
-        artworkAlt={eastArtwork.alt}
-        streamUrl={voicesMediaConfig.radioCult.eastStreamUrl}
-        videoUrl={voicesMediaConfig.restream.eastEmbedUrl}
-      />
-    </div>
+    </>
   );
 }

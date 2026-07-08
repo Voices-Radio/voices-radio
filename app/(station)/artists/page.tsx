@@ -1,5 +1,4 @@
 import ArtistCard from "../components/redesign/artist-card";
-import ExploreLiveStrip from "../explore/explore-live-strip";
 import { getArtists } from "@/lib/voices/api";
 import { matchesStationOrLocation } from "@/lib/voices/normalizers";
 import type { VoicesArtist } from "@/lib/voices/types";
@@ -94,7 +93,6 @@ export default async function ArtistsPage() {
 
   return (
     <main>
-      <ExploreLiveStrip />
       <FilterStrip />
       {hasExplicitStationGroups ? (
         <>

@@ -1,6 +1,4 @@
-import Footer from "../components/navigation/footer";
 import SpriteSheet from "../components/sprite-sheet";
-import ChatbotWidget from "./chatbot-widget";
 
 export default function PodcastLayout({
   children,
@@ -12,9 +10,6 @@ export default function PodcastLayout({
       {children}
 
       <SpriteSheet />
-      
-      {/* Global chatbot management */}
-      <ChatbotWidget />
     </>
   );
 }

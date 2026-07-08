@@ -3,37 +3,16 @@
 import { Pause, Play } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { voicesMediaConfig } from "@/lib/voices/config";
+import {
+  voicesLiveStations,
+  type VoicesLiveStationConfig,
+} from "@/lib/voices/config";
+import useRadioCultLiveMetadata from "@/hooks/use-radio-cult-live-metadata";
+import useStationAudio from "@/hooks/use-station-audio";
+import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
 
-type LiveStation = {
-  id: "kx" | "east";
-  label: "KX" | "EAST";
-  title: string;
-  status: "ON AIR" | "REPLAY";
-  streamUrl?: string;
-};
-
-const stations: LiveStation[] = [
-  {
-    id: "kx",
-    label: "KX",
-    title: "Breakfast Show",
-    status: "ON AIR",
-    streamUrl: voicesMediaConfig.radioCult.kxStreamUrl,
-  },
-  {
-    id: "east",
-    label: "EAST",
-    title: "DJ Mongoose",
-    status: "REPLAY",
-    streamUrl: voicesMediaConfig.radioCult.eastStreamUrl,
-  },
-];
-
-function DiscoveryTabs() {
-  const pathname = usePathname();
+function DiscoveryTabs({ pathname }: { pathname: string }) {
   const activeSection = pathname.startsWith("/artists") ? "artists" : "shows";
 
   return (
@@ -77,34 +56,8 @@ function DiscoveryTabs() {
 }
 
 export default function ExploreLiveStrip() {
-  const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
-  const [activeStation, setActiveStation] = useState<string | null>(null);
-  const [errorStation, setErrorStation] = useState<string | null>(null);
-
-  async function toggleStation(station: LiveStation) {
-    const audio = audioRefs.current[station.id];
-    if (!audio || !station.streamUrl) return;
-
-    try {
-      setErrorStation(null);
-
-      if (activeStation === station.id) {
-        audio.pause();
-        setActiveStation(null);
-        return;
-      }
-
-      Object.entries(audioRefs.current).forEach(([id, item]) => {
-        if (id !== station.id) item?.pause();
-      });
-
-      await audio.play();
-      setActiveStation(station.id);
-    } catch {
-      setActiveStation(null);
-      setErrorStation(station.id);
-    }
-  }
+  const pathname = usePathname();
+  const showDiscoveryTabs = pathname === "/explore" || pathname === "/artists";
 
   return (
     <section
@@ -119,59 +72,61 @@ export default function ExploreLiveStrip() {
             </p>
           </div>
           <div className="w-full md:w-[350px]">
-            {stations.map((station) => {
-              const playing = activeStation === station.id;
-              const hasError = errorStation === station.id;
-
-              return (
-                <div
-                  key={station.id}
-                  className="flex h-[34px] border-b border-black last:border-b-0"
-                >
-                  <audio
-                    ref={(node) => {
-                      audioRefs.current[station.id] = node;
-                    }}
-                    src={station.streamUrl}
-                    preload="none"
-                  />
-                  <div className="grid min-w-0 flex-1 grid-cols-[52px_1fr_auto] items-center gap-3 px-2">
-                    <span className="font-outfit text-[19px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
-                      {station.label}
-                    </span>
-                    <span className="truncate font-outfit text-[13px] leading-none tracking-[1px] text-[#443f3f]">
-                      {hasError ? "Stream unavailable" : station.title}
-                    </span>
-                    <span className="inline-flex items-center gap-2 font-asap text-[10px] uppercase tracking-[1px]">
-                      {station.status}
-                      <span className="size-2 rounded-full bg-voicesNext-live" />
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    disabled={!station.streamUrl}
-                    onClick={() => toggleStation(station)}
-                    className={cn(
-                      "inline-flex h-[34px] w-[35px] shrink-0 items-center justify-center border-l border-black transition-colors hover:bg-voicesNext-background hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-inset disabled:cursor-not-allowed disabled:text-voicesNext-secondary",
-                      playing && "bg-voicesNext-background text-voicesNext-cream",
-                    )}
-                    aria-label={
-                      playing ? `Pause ${station.label}` : `Play ${station.label}`
-                    }
-                  >
-                    {playing ? (
-                      <Pause aria-hidden="true" size={14} fill="currentColor" />
-                    ) : (
-                      <Play aria-hidden="true" size={14} fill="currentColor" />
-                    )}
-                  </button>
-                </div>
-              );
-            })}
+            {voicesLiveStations.map((station) =>
+              station.comingSoon ? (
+                <EastComingSoonStrip key={station.id} />
+              ) : (
+                <ExploreLiveStation key={station.id} station={station} />
+              ),
+            )}
           </div>
         </div>
-        <DiscoveryTabs />
+        {showDiscoveryTabs && <DiscoveryTabs pathname={pathname} />}
       </div>
     </section>
+  );
+}
+
+function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
+  const liveMetadata = useRadioCultLiveMetadata(station.id);
+  const { audioRef, error, loading, playing, toggle } = useStationAudio(
+    station.streamUrl,
+  );
+  const status = liveMetadata.status === "offAir" ? "OFF AIR" : "ON AIR";
+
+  return (
+    <div className="flex h-[34px] border-b border-black last:border-b-0">
+      <audio ref={audioRef} src={station.streamUrl} preload="none" />
+      <div className="grid min-w-0 flex-1 grid-cols-[52px_1fr_auto] items-center gap-3 px-2">
+        <span className="font-outfit text-[19px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
+          {station.label}
+        </span>
+        <span className="truncate font-outfit text-[13px] leading-none tracking-[1px] text-[#443f3f]">
+          {error ? "Stream unavailable" : liveMetadata.title}
+        </span>
+        <span className="inline-flex items-center gap-2 font-asap text-[10px] uppercase tracking-[1px]">
+          {status}
+          <span className="size-2 rounded-full bg-voicesNext-live" />
+        </span>
+      </div>
+      <button
+        type="button"
+        disabled={!station.streamUrl || loading}
+        onClick={toggle}
+        className={cn(
+          "inline-flex h-[34px] w-[35px] shrink-0 items-center justify-center border-l border-black transition-colors hover:bg-voicesNext-background hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange disabled:cursor-not-allowed disabled:text-voicesNext-secondary",
+          playing && "bg-voicesNext-background text-voicesNext-cream",
+        )}
+        aria-label={
+          playing ? `Pause ${station.label}` : `Play ${station.label}`
+        }
+      >
+        {playing ? (
+          <Pause aria-hidden="true" size={14} fill="currentColor" />
+        ) : (
+          <Play aria-hidden="true" size={14} fill="currentColor" />
+        )}
+      </button>
+    </div>
   );
 }

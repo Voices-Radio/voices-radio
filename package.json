@@ -36,6 +36,7 @@
     "react-fast-marquee": "^1.6.2",
     "sanity": "^3.18.1",
     "sharp": "^0.32.6",
+    "socket.io-client": "^4.8.3",
     "swr": "^2.2.4",
     "tailwind-merge": "^1.14.0",
     "zod": "^3.22.4"

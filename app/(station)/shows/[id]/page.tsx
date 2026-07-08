@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import PageHero from "../../components/redesign/page-hero";
 import ShowRail from "../../components/redesign/show-rail";
 import { getShow, getShowsForArtist } from "@/lib/voices/api";
+import MixcloudArchivePlayer from "../../components/redesign/mixcloud-archive-player";
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
@@ -135,6 +136,9 @@ export default async function ShowDetailPage({
             >
               {show.artist.name}
             </Link>
+          )}
+          {show.mixcloudUrl && (
+            <MixcloudArchivePlayer title={show.title} url={show.mixcloudUrl} />
           )}
           {show.archiveUrl && (
             <a

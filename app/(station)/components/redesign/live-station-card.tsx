@@ -2,111 +2,144 @@
 
 import { Video } from "lucide-react";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useState, type RefObject } from "react";
 import { cn } from "@/lib/utils";
+import type { VoicesLiveStationId } from "@/lib/voices/config";
+import useRadioCultLiveMetadata from "@/hooks/use-radio-cult-live-metadata";
+import { isSafeRestreamUrl } from "./restream-video-modal";
 
 export default function LiveStationCard({
+  cardRef,
+  stationId,
   station,
   title,
   artwork,
   artworkAlt,
-  streamUrl,
   videoUrl,
+  selected,
+  onSelect,
+  onWatchLive,
   className,
 }: {
+  cardRef: RefObject<HTMLButtonElement>;
+  stationId: VoicesLiveStationId;
   station: "KX" | "EAST";
   title: string;
   artwork?: string;
   artworkAlt?: string;
-  streamUrl?: string;
   videoUrl?: string;
+  selected: boolean;
+  onSelect: () => void;
+  onWatchLive: () => void;
   className?: string;
 }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [error, setError] = useState(false);
-
-  async function toggleAudio() {
-    const audio = audioRef.current;
-    if (!audio || !streamUrl) return;
-
-    try {
-      setError(false);
-      if (playing) {
-        audio.pause();
-        setPlaying(false);
-        return;
-      }
-      await audio.play();
-      setPlaying(true);
-    } catch {
-      setPlaying(false);
-      setError(true);
-    }
-  }
+  const liveMetadata = useRadioCultLiveMetadata(stationId);
+  const [mouseHovering, setMouseHovering] = useState(false);
+  const [focusWithin, setFocusWithin] = useState(false);
+  const displayTitle = liveMetadata.title || title;
+  const videoAvailable = isSafeRestreamUrl(videoUrl);
+  const showWatchLive =
+    videoAvailable && (selected || mouseHovering || focusWithin);
 
   return (
     <article
       className={cn(
-        "relative h-[316px] overflow-hidden bg-voicesNext-background",
+        "group relative h-[316px] overflow-hidden bg-voicesNext-background",
+        !videoAvailable && "cursor-not-allowed",
         className,
       )}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") setMouseHovering(true);
+      }}
+      onPointerLeave={() => setMouseHovering(false)}
+      onFocusCapture={() => setFocusWithin(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setFocusWithin(false);
+        }
+      }}
     >
-      <audio ref={audioRef} src={streamUrl} preload="none" />
-      <div className="flex h-[34px] items-center justify-between bg-voicesNext-cream px-[14px] text-voicesNext-background">
-        <button
-          type="button"
-          className="font-outfit text-[24px] font-black uppercase leading-none tracking-[1px] transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange disabled:cursor-not-allowed disabled:text-voicesNext-border"
-          onClick={toggleAudio}
-          disabled={!streamUrl}
-          aria-label={playing ? `Pause ${station}` : `Play ${station}`}
-        >
-          {station}
-        </button>
-        <a
-          href={videoUrl ?? "#video-placeholder"}
-          className={cn(
-            "inline-flex h-[26px] w-[31px] items-center justify-center transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange",
-            !videoUrl && "pointer-events-none text-voicesNext-border",
-          )}
-          aria-disabled={!videoUrl}
-          aria-label={`${station} video`}
-        >
-          <Video aria-hidden="true" size={26} strokeWidth={2.6} />
-        </a>
-      </div>
+      <div
+        className={cn(
+          "transition-[filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          (selected || !videoAvailable) && "grayscale",
+        )}
+      >
+        <div className="flex h-[34px] items-center justify-between bg-voicesNext-cream px-[14px] text-voicesNext-background">
+          <span className="font-outfit text-[24px] font-black uppercase leading-none tracking-[1px]">
+            {station}
+          </span>
+          <Video
+            aria-hidden="true"
+            className={cn(!videoAvailable && "opacity-40")}
+            size={26}
+            strokeWidth={2.6}
+          />
+        </div>
 
-      <div className="h-[13px] overflow-hidden border-y border-voicesNext-cream bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary">
-        <div className="voices-on-air-marquee flex w-max items-center gap-[6px] px-1">
-          {Array.from({ length: 24 }).map((_, index) => (
-            <span key={index} className="flex shrink-0 items-center gap-[6px]">
-              <span>On air</span>
-              <span className="h-2 w-2 rounded-full bg-voicesNext-live" />
-            </span>
-          ))}
+        <div className="h-[13px] overflow-hidden border-y border-voicesNext-cream bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary">
+          <div className="voices-on-air-marquee flex w-max items-center gap-[6px] px-1">
+            {Array.from({ length: 24 }).map((_, index) => (
+              <span
+                key={index}
+                className="flex shrink-0 items-center gap-[6px]"
+              >
+                <span>On air</span>
+                <span className="h-2 w-2 rounded-full bg-voicesNext-live" />
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative h-[269px]">
+          <Image
+            src={artwork ?? "/VOICESLOGO_LIGHTBOX.png"}
+            alt={artworkAlt ?? `${station} live show artwork`}
+            fill
+            sizes="316px"
+            className="object-cover"
+            priority={station === "KX"}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent from-[57%] to-voicesNext-background/60" />
+          <h2 className="absolute bottom-3 left-[10px] right-6 font-gabarito text-[20px] font-bold leading-[1.08] text-voicesNext-cream">
+            {displayTitle}
+          </h2>
         </div>
       </div>
 
-      <div className="relative h-[269px]">
-        <Image
-          src={artwork ?? "/VOICESLOGO_LIGHTBOX.png"}
-          alt={artworkAlt ?? `${station} live show artwork`}
-          fill
-          sizes="316px"
-          className="object-cover"
-          priority={station === "KX"}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent from-[57%] to-voicesNext-background/60" />
-        <h2 className="absolute bottom-3 left-[10px] right-6 font-gabarito text-[20px] font-bold leading-[1.08] text-voicesNext-cream">
-          {title}
-        </h2>
-      </div>
-
-      {error && (
-        <p className="bg-voicesNext-background/85 absolute bottom-3 left-3 right-3 p-2 font-gabarito text-xs text-voicesNext-orange">
-          Stream unavailable. Check the audio stream config.
-        </p>
-      )}
+      <div
+        aria-hidden="true"
+        className={cn(
+          "bg-[#8d8d8d]/55 pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          selected && "opacity-100",
+          !videoAvailable && "opacity-45",
+        )}
+      />
+      <button
+        ref={cardRef}
+        type="button"
+        disabled={!videoAvailable}
+        onClick={onSelect}
+        className="absolute inset-0 z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange disabled:cursor-not-allowed"
+        aria-label={
+          videoAvailable
+            ? `Select ${station} live video`
+            : `${station} live video unavailable`
+        }
+        aria-pressed={selected}
+      />
+      <button
+        type="button"
+        disabled={!showWatchLive}
+        onClick={onWatchLive}
+        className={cn(
+          "absolute left-1/2 top-1/2 z-30 inline-flex -translate-x-1/2 translate-y-2 items-center justify-center rounded-full bg-voicesNext-cream px-5 py-2 font-gabarito text-sm font-bold text-voicesNext-background opacity-0 shadow-lg transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
+          showWatchLive && "pointer-events-auto -translate-y-1/2 opacity-100",
+        )}
+        aria-label={`Watch ${station} live video`}
+      >
+        Watch live
+      </button>
     </article>
   );
 }

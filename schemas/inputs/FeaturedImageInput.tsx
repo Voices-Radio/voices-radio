@@ -2,7 +2,7 @@
 
 import { Button, Card, Spinner, Stack, Text } from "@sanity/ui";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ImageInputProps, ImageValue, Path } from "sanity";
+import type { ImageValue, ObjectInputProps, Path } from "sanity";
 import { PatchEvent, set, useClient, useFormValue } from "sanity";
 import { enhanceArtworkUrl } from "@/lib/voices/artwork";
 
@@ -80,7 +80,7 @@ async function readProxyResponse(response: Response) {
 }
 
 export default function FeaturedImageInput(
-  props: ImageInputProps & { value?: FeaturedImageValue },
+  props: ObjectInputProps<FeaturedImageValue>,
 ) {
   const { onChange } = props;
   const client = useClient({ apiVersion: API_VERSION });

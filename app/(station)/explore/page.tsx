@@ -1,6 +1,5 @@
 import Link from "next/link";
 import ExploreFilters from "./explore-filters";
-import ExploreLiveStrip from "./explore-live-strip";
 import { exploreGenreOptions, isGenreKey } from "./explore-options";
 import ExploreShowSection from "./explore-show-section";
 import {
@@ -163,7 +162,6 @@ export default async function ExplorePage({
 
   return (
     <main>
-      <ExploreLiveStrip />
       <ExploreFilterTransitionProvider>
         <ExploreFilters
           selectedGenres={selectedGenres}

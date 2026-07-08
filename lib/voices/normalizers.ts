@@ -32,6 +32,20 @@ function normalizeLocationTags(
   return cleanStrings(tags).map((tag) => tag.toLowerCase());
 }
 
+function isMixcloudUrl(url?: string | null) {
+  if (!url) return false;
+
+  try {
+    const parsed = new URL(url);
+    return (
+      parsed.hostname === "mixcloud.com" ||
+      parsed.hostname === "www.mixcloud.com"
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function normalizeArtist(raw: VoicesArtistRaw): VoicesArtist {
   const imageUrl = enhanceArtworkUrl(
     raw.imageUrl ??
@@ -95,6 +109,9 @@ export function normalizeShow(
   const locationTags = normalizeLocationTags(
     raw.locationTags?.length ? raw.locationTags : artist?.locationTags,
   );
+  const archiveUrl = raw.url ?? raw.mixcloudUrl ?? raw.soundcloudUrl ?? undefined;
+  const mixcloudUrl =
+    raw.mixcloudUrl ?? (isMixcloudUrl(raw.url) ? raw.url : undefined) ?? undefined;
 
   return {
     id: raw._id,
@@ -116,8 +133,8 @@ export function normalizeShow(
     station,
     locationTags,
     platform: raw.platform,
-    archiveUrl: raw.url ?? raw.mixcloudUrl ?? raw.soundcloudUrl ?? undefined,
-    mixcloudUrl: raw.mixcloudUrl ?? undefined,
+    archiveUrl,
+    mixcloudUrl,
     soundcloudUrl: raw.soundcloudUrl ?? undefined,
     matchingStatus: raw.matching_status,
   };

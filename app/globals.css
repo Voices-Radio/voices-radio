@@ -93,6 +93,10 @@
   animation: voices-on-air-marquee 18s linear infinite;
 }
 
+.voices-coming-soon-marquee {
+  animation: voices-on-air-marquee 22s linear infinite;
+}
+
 @keyframes voices-on-air-marquee {
   from {
     transform: translateX(0);
@@ -100,6 +104,87 @@
 
   to {
     transform: translateX(-50%);
+  }
+}
+
+.voices-east-orbit {
+  animation: voices-east-orbit 3.2s ease-out infinite;
+}
+
+.voices-east-orbit-delayed {
+  animation-delay: 1.15s;
+}
+
+.voices-east-signal {
+  animation: voices-east-signal 2.4s ease-in-out infinite;
+}
+
+.voices-east-tease {
+  animation: voices-east-tease 2.8s ease-in-out infinite;
+}
+
+.voices-east-tuning-dot {
+  animation: voices-east-tuning-dot 1.3s ease-in-out infinite;
+}
+
+@keyframes voices-east-orbit {
+  0% {
+    opacity: 0;
+    transform: scale(0.48);
+  }
+
+  35% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes voices-east-signal {
+  0%,
+  100% {
+    transform: scale(0.94) rotate(-3deg);
+  }
+
+  50% {
+    transform: scale(1.04) rotate(3deg);
+  }
+}
+
+@keyframes voices-east-tease {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes voices-east-tuning-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(211 78 36 / 55%);
+    transform: scale(0.8);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgb(211 78 36 / 0%);
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voices-coming-soon-marquee,
+  .voices-east-orbit,
+  .voices-east-signal,
+  .voices-east-tease,
+  .voices-east-tuning-dot {
+    animation: none;
   }
 }
 

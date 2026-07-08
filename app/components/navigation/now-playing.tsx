@@ -1,13 +1,13 @@
 "use client";
 
-import useLiveInfoV2 from "@/hooks/use-live-info-v2";
+import useRadioCultLiveMetadata from "@/hooks/use-radio-cult-live-metadata";
+import useStationAudio from "@/hooks/use-station-audio";
 import Play from "@/icons/play";
 import Spinner from "@/icons/spinner";
 import Stop from "@/icons/stop";
-import { unescapeString } from "@/lib/unescape";
-import { VOICES_AIRTIME_STREAM_URL } from "@/lib/voices/config";
+import { getVoicesLiveStation } from "@/lib/voices/config";
 import { format } from "date-fns";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect } from "react";
 import { FallbackProps } from "react-error-boundary";
 import Marquee from "react-fast-marquee";
 
@@ -22,48 +22,17 @@ export default function NowPlaying({
   style: CSSProperties;
   withPlayer?: boolean;
 }) {
-  const { data } = useLiveInfoV2();
-
-  const ref = useRef<HTMLAudioElement>(null);
-
-  const [loading, loadingSet] = useState(false);
-  const [playing, playingSet] = useState(false);
-
-  const play = async () => {
-    const el = ref.current;
-    if (!el) {
-      return;
-    }
-
-    loadingSet(true);
-
-    el.src = VOICES_AIRTIME_STREAM_URL;
-
-    await el.play();
-
-    loadingSet(false);
-
-    playingSet(true);
-  };
-
-  const stop = () => {
-    const el = ref.current;
-    if (!el) {
-      return;
-    }
-
-    el.src = "";
-
-    playingSet(false);
-  };
+  const station = getVoicesLiveStation("kx");
+  const data = useRadioCultLiveMetadata("kx");
+  const { audioRef, loading, playing, toggle } = useStationAudio(
+    station?.streamUrl,
+  );
 
   useEffect(() => {
     if ("mediaSession" in navigator && data) {
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: data.shows.current
-          ? unescapeString(data.shows.current.name)
-          : "Live DJ",
-        artist: "Voices Radio",
+        title: data.title,
+        artist: data.subtitle || "Voices Radio",
       });
     }
   }, [playing, data]);
@@ -73,21 +42,27 @@ export default function NowPlaying({
       className="relative h-12 rounded-lg bg-white p-2 lg:mr-10"
       style={style}
     >
-      {withPlayer ? <audio ref={ref} controls={false} hidden /> : null}
+      {withPlayer ? (
+        <audio ref={audioRef} src={station?.streamUrl} controls={false} hidden />
+      ) : null}
 
       <div className="flex gap-4 overflow-hidden">
         {withPlayer ? (
           playing ? (
-            <button className="h-8 w-8" onClick={stop}>
+            <button className="h-8 w-8" onClick={toggle}>
               <Stop />
               <div className="sr-only">Stop</div>
             </button>
-          ) : loading || !data ? (
+          ) : loading ? (
             <div className="p-1">
               <Spinner />
             </div>
           ) : (
-            <button className="h-8 w-8" onClick={play}>
+            <button
+              className="h-8 w-8 disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={toggle}
+              disabled={!station?.streamUrl}
+            >
               <Play />
               <div className="sr-only">Play</div>
             </button>
@@ -96,7 +71,7 @@ export default function NowPlaying({
 
         <div className="min-w-0 flex-1">
           {data ? (
-            data.shows.current ? (
+            data.status !== "offAir" ? (
               <Marquee
                 autoFill
                 gradient
@@ -104,29 +79,14 @@ export default function NowPlaying({
                 gradientWidth={40}
               >
                 <div className="mr-14 inline-flex gap-5 whitespace-nowrap text-inter-text-black">
-                  <p className="font-semibold tabular-nums">
-                    {formatDateToHour(data.shows.current.starts)} &ndash;{" "}
-                    {formatDateToHour(data.shows.current.ends)}
-                  </p>
-                  <p>
-                    {data.shows.current
-                      ? unescapeString(data.shows.current.name)
-                      : "Live DJ"}
-                  </p>
+                  {data.starts && data.ends && (
+                    <p className="font-semibold tabular-nums">
+                      {formatDateToHour(data.starts)} &ndash;{" "}
+                      {formatDateToHour(data.ends)}
+                    </p>
+                  )}
+                  <p>{data.title}</p>
                 </div>
-              </Marquee>
-            ) : data.shows.current === null &&
-              data.tracks.current &&
-              data.tracks.current?.type === "livestream" ? (
-              <Marquee
-                autoFill
-                gradient
-                gradientColor="#ffffff"
-                gradientWidth={40}
-              >
-                <p className="mr-10 whitespace-nowrap text-inter-text-black uppercase">
-                  Live DJ
-                </p>
               </Marquee>
             ) : (
               <Marquee

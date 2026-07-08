@@ -1,4 +1,5 @@
 import { getSettings } from "@/sanity.client";
+import ExploreLiveStrip from "../../explore/explore-live-strip";
 import SiteFooter from "./site-footer";
 import SiteHeader from "./site-header";
 
@@ -20,6 +21,7 @@ export default async function RedesignShell({
           mixcloudLink: settings?.mixcloud_link,
         }}
       />
+      <ExploreLiveStrip />
       {children}
       <SiteFooter />
     </div>
