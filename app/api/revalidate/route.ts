@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const headersList = headers();
+    const headersList = await headers();
 
     const signatureHeader = headersList.get(SIGNATURE_HEADER_NAME);
 

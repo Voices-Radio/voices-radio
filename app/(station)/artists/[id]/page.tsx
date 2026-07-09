@@ -5,12 +5,15 @@ import PageHero from "../../components/redesign/page-hero";
 import ShowGrid from "../../components/redesign/show-grid";
 import { getArtist, getShowsForArtist } from "@/lib/voices/api";
 
+type ArtistPageProps = {
+  params: Promise<{ id: string }>;
+};
+
 export async function generateMetadata({
   params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> {
-  const artist = await getArtist(params.id).catch(() => null);
+}: ArtistPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const artist = await getArtist(id).catch(() => null);
 
   if (!artist) {
     return { title: "Artist not found" };
@@ -60,10 +63,9 @@ function getArtistLinks(artist: Awaited<ReturnType<typeof getArtist>>) {
 
 export default async function ArtistDetailPage({
   params,
-}: {
-  params: { id: string };
-}) {
-  const artist = await getArtist(params.id).catch(() => null);
+}: ArtistPageProps) {
+  const { id } = await params;
+  const artist = await getArtist(id).catch(() => null);
 
   if (!artist) {
     notFound();

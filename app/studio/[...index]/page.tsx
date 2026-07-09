@@ -1,2 +1,2 @@
-export { metadata } from "next-sanity/studio/metadata";
+export { metadata } from "next-sanity/studio";
 export { default } from "../page";

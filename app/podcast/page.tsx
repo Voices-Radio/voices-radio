@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowRight,
   ArrowDown,
@@ -710,13 +711,13 @@ const PodcastPage = () => {
                 We&apos;re preparing amazing content about podcast recording,
                 equipment reviews, and industry insights.
               </p>
-              <a
+              <Link
                 href="/podcast/blog"
                 className="inline-flex items-center text-sm font-semibold text-accent hover:text-orange-700"
               >
                 View Blog
                 <ArrowRight className="ml-1 h-4 w-4" />
-              </a>
+              </Link>
             </div>
 
             <div className="rounded-xl bg-white p-6 text-center shadow-md">
@@ -742,13 +743,13 @@ const PodcastPage = () => {
                 Learn professional recording techniques and equipment
                 recommendations from our experienced team.
               </p>
-              <a
+              <Link
                 href="/podcast/blog"
                 className="inline-flex items-center text-sm font-semibold text-accent hover:text-orange-700"
               >
                 Read More
                 <ArrowRight className="ml-1 h-4 w-4" />
-              </a>
+              </Link>
             </div>
 
             <div className="rounded-xl bg-white p-6 text-center shadow-md">
@@ -774,24 +775,24 @@ const PodcastPage = () => {
                 Stay updated with the latest podcast industry trends, technology
                 updates, and market insights.
               </p>
-              <a
+              <Link
                 href="/podcast/blog"
                 className="inline-flex items-center text-sm font-semibold text-accent hover:text-orange-700"
               >
                 Explore
                 <ArrowRight className="ml-1 h-4 w-4" />
-              </a>
+              </Link>
             </div>
           </div>
 
           <div className="text-center">
-            <a
+            <Link
               href="/podcast/blog"
               className="inline-flex transform items-center rounded-full bg-accent px-8 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-orange-700"
             >
               <span>View All Posts</span>
               <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
+            </Link>
           </div>
         </div>
       </section>

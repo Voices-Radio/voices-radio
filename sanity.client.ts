@@ -29,7 +29,6 @@ export const client = createClient({
    * @note If you set this to true the client will fetch content from our cache delivery network. In this case, however, we will not generate a whole lot of API traffic, and we want updates to be instantly available, so set this to false
    */
   useCdn: false,
-  studioUrl: "/",
   fetch: { next: { revalidate: 0 } },
 });
 

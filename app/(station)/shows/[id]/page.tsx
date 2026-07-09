@@ -7,6 +7,10 @@ import ShowRail from "../../components/redesign/show-rail";
 import { getShow, getShowsForArtist } from "@/lib/voices/api";
 import MixcloudArchivePlayer from "../../components/redesign/mixcloud-archive-player";
 
+type ShowPageProps = {
+  params: Promise<{ id: string }>;
+};
+
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
   month: "long",
@@ -33,10 +37,9 @@ function formatDuration(duration?: number) {
 
 export async function generateMetadata({
   params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> {
-  const show = await getShow(params.id).catch(() => null);
+}: ShowPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const show = await getShow(id).catch(() => null);
 
   if (!show) {
     return { title: "Show not found" };
@@ -57,10 +60,9 @@ export async function generateMetadata({
 
 export default async function ShowDetailPage({
   params,
-}: {
-  params: { id: string };
-}) {
-  const show = await getShow(params.id);
+}: ShowPageProps) {
+  const { id } = await params;
+  const show = await getShow(id);
 
   if (!show) {
     notFound();

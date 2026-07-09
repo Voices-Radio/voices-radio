@@ -115,18 +115,23 @@ function GenreBlock() {
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams?: ExploreSearchParams;
+  searchParams?: Promise<ExploreSearchParams>;
 }) {
-  const selectedGenres = getParamArray(searchParams, "genre").filter(
+  const resolvedSearchParams = await searchParams;
+  const selectedGenres = getParamArray(resolvedSearchParams, "genre").filter(
     isGenreKey,
   );
-  const selectedStations = getParamArray(searchParams, "station").filter(
-    (station) =>
-      stationFilters.includes(station as (typeof stationFilters)[number]),
+  const selectedStations = getParamArray(
+    resolvedSearchParams,
+    "station",
+  ).filter((station) =>
+    stationFilters.includes(station as (typeof stationFilters)[number]),
   );
-  const selectedLocations = getParamArray(searchParams, "location").filter(
-    (location) =>
-      locationFilters.includes(location as (typeof locationFilters)[number]),
+  const selectedLocations = getParamArray(
+    resolvedSearchParams,
+    "location",
+  ).filter((location) =>
+    locationFilters.includes(location as (typeof locationFilters)[number]),
   );
 
   const shows = await getShows({ genres: selectedGenres, limit: 100 });

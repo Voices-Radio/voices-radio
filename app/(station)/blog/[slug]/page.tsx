@@ -8,9 +8,7 @@ import { PortableText } from "@portabletext/react";
 import { Calendar, User, ArrowLeft, ArrowRight, Share2, Clock } from "lucide-react";
 
 interface BlogPostPageProps {
-  params: {
-    slug: string;
-  };
+  params: Promise<{ slug: string }>;
 }
 
 export const dynamic = "force-dynamic";
@@ -23,7 +21,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const post = await client.fetch(mainBlogPostQuery, { slug: params.slug });
+  const { slug } = await params;
+  const post = await client.fetch(mainBlogPostQuery, { slug });
   
   if (!post) {
     return {
@@ -75,7 +74,8 @@ async function getRelatedPosts(currentPost: MainBlogPost): Promise<MainBlogPost[
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = await getBlogPost(params.slug);
+  const { slug } = await params;
+  const post = await getBlogPost(slug);
   
   if (!post) {
     notFound();
