@@ -71,7 +71,7 @@ export default function ExploreLiveStrip() {
               Live
             </p>
           </div>
-          <div className="w-full md:w-[350px]">
+          <div className="w-full md:w-[430px] lg:w-[500px]">
             {voicesLiveStations.map((station) =>
               station.comingSoon ? (
                 <EastComingSoonStrip key={station.id} />
@@ -97,7 +97,7 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
   return (
     <div className="flex h-[34px] border-b border-black last:border-b-0">
       <audio ref={audioRef} src={station.streamUrl} preload="none" />
-      <div className="grid min-w-0 flex-1 grid-cols-[52px_1fr_auto] items-center gap-3 px-2">
+      <div className="grid min-w-0 flex-1 grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-3 px-2 md:gap-4 md:px-3">
         <span className="font-outfit text-[19px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
           {station.label}
         </span>

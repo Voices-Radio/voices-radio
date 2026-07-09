@@ -3,7 +3,7 @@
 import ScheduleDialog from "@/app/components/schedule/dialog";
 import { Search, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,34 @@ type HeaderSettings = {
   mixcloudLink?: string;
 };
 
+type SearchResult = {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  imageUrl?: string;
+  subtitle?: string;
+  station?: string;
+  tags?: string[];
+};
+
+type SearchCategories = {
+  shows: SearchResult[];
+  artists: SearchResult[];
+  mainBlog: SearchResult[];
+  podcastBlog: SearchResult[];
+};
+
+type SearchResponse = {
+  categories?: Partial<SearchCategories>;
+  message?: string;
+};
+
+type SearchSection = {
+  key: keyof SearchCategories;
+  label: string;
+};
+
 const menuLinks = [
   { href: "/", label: "Home" },
   { href: "/blog", label: "Blog" },
@@ -26,9 +54,31 @@ const menuLinks = [
   { href: "/collaborate", label: "Collaborate" },
 ];
 
+const searchSections: SearchSection[] = [
+  { key: "shows", label: "Shows" },
+  { key: "artists", label: "Artists" },
+  { key: "mainBlog", label: "Main blog" },
+  { key: "podcastBlog", label: "Podcast blog" },
+];
+
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function getFirstSearchResult(categories: SearchCategories | null) {
+  for (const section of searchSections) {
+    const result = categories?.[section.key]?.[0];
+    if (result) return result;
+  }
+
+  return null;
+}
+
+function hasSearchResults(categories: SearchCategories | null) {
+  return searchSections.some((section) =>
+    Boolean(categories?.[section.key]?.length),
+  );
 }
 
 function WavyMenuIcon() {
@@ -52,15 +102,27 @@ function WavyMenuIcon() {
 
 export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchCategories | null>(
+    null,
+  );
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   const shopLink = settings.storeLink || SHOP_FALLBACK_URL;
+  const trimmedSearchQuery = searchQuery.trim();
+  const searchReady = trimmedSearchQuery.length >= 2;
+  const searchHasResults = hasSearchResults(searchResults);
 
   useEffect(() => {
     setOpen(false);
     setSearchOpen(false);
+    setSearchResults(null);
+    setSearchError(null);
   }, [pathname]);
 
   useEffect(() => {
@@ -76,8 +138,94 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
     searchInputRef.current?.focus();
   }, [searchOpen]);
 
+  useEffect(() => {
+    if (!searchOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setSearchOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen || !searchReady) {
+      setSearchResults(null);
+      setSearchError(null);
+      setSearchLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      setSearchLoading(true);
+      setSearchError(null);
+
+      try {
+        const params = new URLSearchParams({
+          q: trimmedSearchQuery,
+          limit: "5",
+        });
+        const response = await fetch(`/api/search?${params.toString()}`, {
+          signal: controller.signal,
+        });
+        const payload = (await response
+          .json()
+          .catch(() => null)) as SearchResponse | null;
+
+        if (!response.ok) {
+          throw new Error(payload?.message ?? "Search failed.");
+        }
+
+        setSearchResults({
+          shows: payload?.categories?.shows ?? [],
+          artists: payload?.categories?.artists ?? [],
+          mainBlog: payload?.categories?.mainBlog ?? [],
+          podcastBlog: payload?.categories?.podcastBlog ?? [],
+        });
+      } catch (error) {
+        if ((error as Error).name === "AbortError") return;
+
+        setSearchResults(null);
+        setSearchError(
+          error instanceof Error ? error.message : "Search failed.",
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setSearchLoading(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [searchOpen, searchReady, trimmedSearchQuery]);
+
   function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!searchOpen) {
+      setSearchOpen(true);
+      return;
+    }
+
+    const firstResult = getFirstSearchResult(searchResults);
+
+    if (firstResult?.url) {
+      setSearchOpen(false);
+      router.push(firstResult.url);
+    }
   }
 
   return (
@@ -129,50 +277,145 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
         </nav>
 
         <div className="ml-3 flex h-[54px] items-center gap-2 md:ml-4 md:h-[72px] lg:ml-7 lg:gap-3">
-          <form
-            className="flex items-center justify-end"
-            onSubmit={handleSearchSubmit}
-            role="search"
-          >
-            <label htmlFor="site-search" className="sr-only">
-              Search all content
-            </label>
-            <input
-              id="site-search"
-              ref={searchInputRef}
-              type="search"
-              value={searchQuery}
-              tabIndex={searchOpen ? 0 : -1}
-              aria-hidden={!searchOpen}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Escape") {
-                  setSearchOpen(false);
-                }
-              }}
-              placeholder="Search"
-              className={cn(
-                "h-9 min-w-0 border border-voicesNext-border bg-voicesNext-background px-3 font-gabarito text-sm font-bold text-voicesNext-cream outline-none transition-all duration-200 placeholder:text-voicesNext-secondary focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-10",
-                searchOpen
-                  ? "mr-2 w-[52vw] max-w-[240px] opacity-100 md:w-[190px] lg:w-[240px]"
-                  : "pointer-events-none mr-0 w-0 border-transparent px-0 opacity-0",
-              )}
-            />
-            <button
-              type={searchOpen ? "submit" : "button"}
-              className="inline-flex h-[54px] w-10 shrink-0 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[72px] md:w-11"
-              onClick={() => {
-                if (!searchOpen) {
-                  setSearchOpen(true);
-                }
-              }}
-              aria-label={searchOpen ? "Submit search" : "Open search"}
-              aria-expanded={searchOpen}
-              aria-controls="site-search"
+          <div ref={searchContainerRef} className="relative">
+            <form
+              className="flex items-center justify-end"
+              onSubmit={handleSearchSubmit}
+              role="search"
             >
-              <Search aria-hidden="true" size={22} strokeWidth={3.2} />
-            </button>
-          </form>
+              <label htmlFor="site-search" className="sr-only">
+                Search all content
+              </label>
+              <input
+                id="site-search"
+                ref={searchInputRef}
+                type="search"
+                value={searchQuery}
+                tabIndex={searchOpen ? 0 : -1}
+                aria-hidden={!searchOpen}
+                aria-autocomplete="list"
+                aria-controls="site-search-results"
+                onChange={(event) => setSearchQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    setSearchOpen(false);
+                  }
+                }}
+                placeholder="Search"
+                className={cn(
+                  "h-9 min-w-0 border border-voicesNext-border bg-voicesNext-background px-3 font-gabarito text-sm font-bold text-voicesNext-cream outline-none transition-all duration-200 placeholder:text-voicesNext-secondary focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-10",
+                  searchOpen
+                    ? "mr-2 w-[52vw] max-w-[260px] opacity-100 md:w-[220px] lg:w-[280px]"
+                    : "pointer-events-none mr-0 w-0 border-transparent px-0 opacity-0",
+                )}
+              />
+              <button
+                type={searchOpen ? "submit" : "button"}
+                className="inline-flex h-[54px] w-10 shrink-0 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[72px] md:w-11"
+                onClick={() => {
+                  if (!searchOpen) {
+                    setSearchOpen(true);
+                  }
+                }}
+                aria-label={searchOpen ? "Submit search" : "Open search"}
+                aria-expanded={searchOpen}
+                aria-controls="site-search"
+              >
+                <Search aria-hidden="true" size={22} strokeWidth={3.2} />
+              </button>
+            </form>
+
+            {searchOpen && trimmedSearchQuery && (
+              <div
+                id="site-search-results"
+                className="absolute right-0 top-full z-50 mt-2 max-h-[70vh] w-[calc(100vw-1rem)] max-w-[440px] overflow-y-auto border border-voicesNext-border bg-voicesNext-background shadow-2xl md:w-[440px]"
+                role="region"
+                aria-live="polite"
+              >
+                <div className="border-b border-voicesNext-border px-4 py-3">
+                  <p className="font-asap text-[11px] font-bold uppercase tracking-[1px] text-voicesNext-secondary">
+                    Search
+                  </p>
+                  <p className="mt-1 truncate font-gabarito text-sm font-bold text-voicesNext-cream">
+                    {trimmedSearchQuery}
+                  </p>
+                </div>
+
+                {!searchReady && (
+                  <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
+                    Type at least 2 characters.
+                  </p>
+                )}
+
+                {searchReady && searchLoading && !searchResults && (
+                  <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
+                    Searching...
+                  </p>
+                )}
+
+                {searchReady && searchError && (
+                  <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
+                    {searchError}
+                  </p>
+                )}
+
+                {searchReady &&
+                  searchResults &&
+                  !searchLoading &&
+                  !searchError &&
+                  !searchHasResults && (
+                    <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
+                      No results found.
+                    </p>
+                  )}
+
+                {searchReady && searchHasResults && (
+                  <div className="divide-y divide-voicesNext-border">
+                    {searchSections.map((section) => {
+                      const items = searchResults?.[section.key] ?? [];
+
+                      if (!items.length) return null;
+
+                      return (
+                        <section
+                          key={section.key}
+                          className="px-2 py-3"
+                          aria-labelledby={`site-search-${section.key}`}
+                        >
+                          <h2
+                            id={`site-search-${section.key}`}
+                            className="px-2 pb-2 font-asap text-[11px] font-bold uppercase tracking-[1px] text-voicesNext-orange"
+                          >
+                            {section.label}
+                          </h2>
+                          <ul className="space-y-1">
+                            {items.map((item) => (
+                              <li key={`${section.key}-${item.id}`}>
+                                <Link
+                                  href={item.url}
+                                  className="block px-2 py-2 transition-colors hover:bg-voicesNext-surface focus:bg-voicesNext-surface focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange"
+                                  onClick={() => setSearchOpen(false)}
+                                >
+                                  <span className="block truncate font-gabarito text-sm font-bold text-voicesNext-cream">
+                                    {item.title}
+                                  </span>
+                                  <span className="mt-1 line-clamp-2 block font-asap text-xs leading-snug text-voicesNext-secondary">
+                                    {[item.subtitle, item.description]
+                                      .filter(Boolean)
+                                      .join(" · ")}
+                                  </span>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </section>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           <button
             type="button"
             className="inline-flex h-[54px] w-10 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[72px] md:w-11"

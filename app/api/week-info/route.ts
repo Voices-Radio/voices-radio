@@ -25,7 +25,7 @@ export const runtime = "edge";
 
 export const revalidate = 60;
 
-const stations: VoicesLiveStationId[] = ["kx", "east"];
+const stations: VoicesLiveStationId[] = ["kx"];
 
 function getEventDate(value?: string) {
   if (!value) return null;
@@ -108,7 +108,9 @@ function processSchedule(
             name: unescapeString(event.title ?? `${stationLabel} Show`),
             start_timestamp: startTimestamp,
             end_timestamp: endTimestamp,
-            show_start_hour: starts ? formatInTimeZone(starts, tz, "HH:mm") : "",
+            show_start_hour: starts
+              ? formatInTimeZone(starts, tz, "HH:mm")
+              : "",
             show_end_hour: ends ? formatInTimeZone(ends, tz, "HH:mm") : "",
             is_past: ends ? isBefore(ends, new Date()) : false,
             is_live:

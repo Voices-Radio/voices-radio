@@ -11,7 +11,7 @@ export default async function Home() {
     await getHomePageContent();
 
   return (
-    <main className="md:px-3">
+    <main className="pt-2 md:px-3 md:pt-3">
       <section className="grid w-full bg-voicesNext-background md:min-h-[632px] md:grid-cols-[316px_minmax(0,1fr)]">
         <div className="order-2 md:order-1">
           <LiveStack

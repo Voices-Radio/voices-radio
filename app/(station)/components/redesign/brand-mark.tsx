@@ -1,20 +1,21 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function BrandMark() {
   return (
     <Link
       href="/"
-      className="group relative block h-9 w-[150px] overflow-hidden focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[46px] md:w-[189px]"
+      className="group relative block h-9 w-[114px] focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[46px] md:w-[145px]"
       aria-label="Voices Radio home"
     >
-      <span
+      <Image
         aria-hidden="true"
-        className="absolute left-0 top-0 h-[56px] w-[230px] origin-top-left scale-[0.65] bg-no-repeat md:scale-[0.82]"
-        style={{
-          backgroundImage: "url('/voices-header-reference.png')",
-          backgroundPosition: "-45px -22px",
-          backgroundSize: "1280px 100px",
-        }}
+        src="/voices-wordmark.svg"
+        alt=""
+        fill
+        sizes="(min-width: 768px) 145px, 114px"
+        className="object-contain"
+        priority
       />
       <span className="sr-only">Voices</span>
     </Link>
