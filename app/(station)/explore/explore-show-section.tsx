@@ -42,30 +42,34 @@ export default function ExploreShowSection({
 
   return (
     <section className="mx-auto max-w-[1280px] px-4 md:px-[70px]">
-      <div className="mb-[30px] flex items-end justify-between gap-4">
+      <div className="mb-5 flex items-end justify-between gap-4 md:mb-[30px]">
         <div>
-          <h1 className="font-gabarito text-[24px] font-bold leading-none text-voicesNext-cream">
+          <h1 className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream md:text-[24px]">
             {title}
           </h1>
-          <p className="mt-2 font-asap text-[14px] text-voicesNext-secondary">
+          <p className="mt-1 font-asap text-[13px] leading-tight text-voicesNext-secondary md:mt-2 md:text-[14px]">
             {description}
           </p>
         </div>
       </div>
 
       {visibleShows.length > 0 ? (
-        <div className="space-y-5">
+        <div className="flex gap-3 overflow-x-auto px-0 pb-6 md:block md:space-y-5 md:overflow-visible md:pb-0">
           {visibleShowGroups.map((group, groupIndex) => (
             <div
               key={`${title}-${groupIndex}`}
-              className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+              className="contents md:grid md:gap-5 md:sm:grid-cols-2 md:xl:grid-cols-3"
             >
               {group.map((show, index) => (
-                <ShowCard
+                <div
                   key={show.id}
-                  show={show}
-                  priority={groupIndex === 0 && index < 3}
-                />
+                  className="w-[350px] shrink-0 md:w-auto md:shrink"
+                >
+                  <ShowCard
+                    show={show}
+                    priority={groupIndex === 0 && index < 3}
+                  />
+                </div>
               ))}
             </div>
           ))}

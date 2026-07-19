@@ -5,6 +5,7 @@ import { Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 import type { HomeFeatureItem } from "@/lib/voices/home";
 
 const AUTO_SLIDE_DELAY_MS = 7000;
@@ -136,6 +137,12 @@ export default function HomeFeaturePanel({
   const [autoSlideResetKey, setAutoSlideResetKey] = useState(0);
   const shouldReduceMotion = useReducedMotion();
   const item = featureItems[activeIndex] ?? featureItems[0];
+  const stationLabel =
+    item.type === "show" && item.show.station === "east" ? "EAST" : "KX";
+  const locationLabel =
+    item.type === "show" && item.show.locationTags.includes("world")
+      ? "WORLD"
+      : "LONDON";
   const genres =
     item.type === "show" && item.show.genres.length
       ? item.show.genres.slice(0, 3)
@@ -177,8 +184,8 @@ export default function HomeFeaturePanel({
   }, [autoSlideResetKey, featureItems.length, hasMultipleItems]);
 
   return (
-    <section className="relative min-h-[520px] overflow-hidden bg-voicesNext-background md:h-[632px] md:min-h-0">
-      <div className="absolute inset-x-5 top-5 h-[calc(100%-42px)] overflow-hidden border-2 border-voicesNext-cream md:h-[590px]">
+    <section className="relative h-[388px] overflow-hidden bg-voicesNext-background md:h-[632px]">
+      <div className="absolute inset-x-1 top-0 h-[377px] overflow-hidden rounded-[4px] md:inset-x-5 md:top-5 md:h-[590px] md:rounded-none md:border-2 md:border-voicesNext-cream">
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={item.id}
@@ -200,12 +207,35 @@ export default function HomeFeaturePanel({
           >
             <FeatureImage item={item} priority={activeIndex === 0} />
 
-            <div className="absolute right-0 top-0 flex flex-col items-end gap-[10px] font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background">
-              <span className="bg-voicesNext-cream px-1 py-[2px]">Radio</span>
-              <span className="bg-voicesNext-cream px-1 py-[2px]">London</span>
+            <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background md:right-0 md:top-0 md:gap-[10px]">
+              <span className="bg-voicesNext-cream px-1 py-[2px]">
+                {stationLabel}
+              </span>
+              <span className="bg-voicesNext-cream px-1 py-[2px]">
+                {locationLabel}
+              </span>
             </div>
 
-            <div className="absolute bottom-0 left-0 w-full md:w-[620px]">
+            <FeatureLink
+              href={item.href}
+              className="absolute bottom-[25px] left-0 block w-[320px] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-cream md:hidden"
+            >
+              <h1 className="truncate font-gabarito text-[24px] font-bold leading-none">
+                {item.title}
+              </h1>
+              <div className="mt-3 flex flex-wrap items-center gap-[7px] font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orange">
+                {genres.map((genre) => (
+                  <span
+                    key={genre}
+                    className="rounded-full bg-voicesNext-cream px-2 py-1"
+                  >
+                    {genre}
+                  </span>
+                ))}
+              </div>
+            </FeatureLink>
+
+            <div className="absolute bottom-0 left-0 hidden w-full md:block md:w-[620px]">
               <div className="relative grid min-h-[122px] grid-cols-[110px_minmax(0,1fr)] items-stretch text-voicesNext-cream md:min-h-[132px] md:grid-cols-[120px_minmax(0,1fr)]">
                 <FeatureLink
                   href={item.href}
@@ -242,6 +272,28 @@ export default function HomeFeaturePanel({
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {hasMultipleItems && (
+        <div className="absolute bottom-0 left-1/2 flex h-2 -translate-x-1/2 items-center gap-1 md:hidden">
+          {featureItems.map((featureItem, index) => (
+            <button
+              key={featureItem.id}
+              type="button"
+              className={cn(
+                "rounded-full bg-voicesNext-cream transition-all",
+                index === activeIndex ? "size-2" : "size-1.5 opacity-70",
+              )}
+              onClick={() => {
+                setDirection(index > activeIndex ? 1 : -1);
+                setAutoSlideResetKey((resetKey) => resetKey + 1);
+                setActiveIndex(index);
+              }}
+              aria-label={`Show featured item ${index + 1}`}
+              aria-current={index === activeIndex}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="absolute bottom-0 right-5 hidden h-[22px] w-[70px] items-center justify-center gap-3 font-asap text-[12px] font-bold leading-none text-voicesNext-cream md:flex">
         <button

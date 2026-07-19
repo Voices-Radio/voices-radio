@@ -6,12 +6,12 @@ export default function SectionHeading({
   description?: string;
 }) {
   return (
-    <div className="border-b border-voicesNext-border pb-4">
-      <h2 className="font-gabarito text-[22px] font-bold leading-none text-voicesNext-cream md:text-[24px]">
+    <div className="px-2 pb-2 md:border-b md:border-voicesNext-border md:px-0 md:pb-4">
+      <h2 className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream md:text-[24px]">
         {title}
       </h2>
       {description && (
-        <p className="mt-3 max-w-4xl font-gabarito text-[12px] leading-tight text-voicesNext-secondary">
+        <p className="mt-1 max-w-4xl font-asap text-[13px] leading-tight text-voicesNext-secondary md:mt-3 md:font-gabarito md:text-[12px]">
           {description}
         </p>
       )}

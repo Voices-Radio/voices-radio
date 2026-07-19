@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useMemo } from "react";
 
 function getMixcloudFeedPath(url: string) {
@@ -34,10 +35,36 @@ export default function MixcloudArchivePlayer({
 
   return (
     <section
-      className="overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface"
+      className="overflow-hidden border border-[#4d4d4d] bg-voicesNext-surface md:rounded-voices-sm md:border-voicesNext-border"
       aria-label="Archive player"
     >
-      <div className="border-b border-voicesNext-border px-4 py-3">
+      <div className="relative h-[88px] border-b border-[#4d4d4d] px-[63px] pt-[13px] md:hidden">
+        <h2 className="truncate font-gabarito text-[14px] font-bold leading-none text-voicesNext-cream">
+          {title}
+        </h2>
+        <p className="mt-1 font-asap text-[11px] leading-none text-[#b3b3b3]">
+          KX • Archive
+        </p>
+        <div className="absolute left-[63px] right-8 top-[59px] h-1 rounded-full bg-[#4d4d4d]">
+          <div className="h-full w-1/3 rounded-full bg-voicesNext-orange" />
+          <span className="absolute left-[31%] top-1/2 size-[10px] -translate-y-1/2 rounded-full bg-voicesNext-orange" />
+        </div>
+        <span className="absolute left-[63px] top-[70px] font-asap text-[10px] leading-none text-voicesNext-cream">
+          12:34
+        </span>
+        <span className="absolute right-8 top-[70px] font-asap text-[10px] leading-none text-voicesNext-cream">
+          -25:48
+        </span>
+        <button
+          type="button"
+          className="absolute right-3 top-3 inline-flex size-6 items-center justify-center text-voicesNext-cream"
+          aria-label="Close archive player"
+          disabled
+        >
+          <X aria-hidden="true" size={16} strokeWidth={3} />
+        </button>
+      </div>
+      <div className="hidden border-b border-voicesNext-border px-4 py-3 md:block">
         <p className="font-asap text-xs font-bold uppercase text-voicesNext-orange">
           Listen back
         </p>
@@ -48,7 +75,7 @@ export default function MixcloudArchivePlayer({
       <iframe
         title={`${title} Mixcloud player`}
         src={src}
-        className="h-[120px] w-full"
+        className="h-[96px] w-full md:h-[120px]"
         allow="autoplay"
       />
     </section>

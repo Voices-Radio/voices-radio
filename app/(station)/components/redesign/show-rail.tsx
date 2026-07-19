@@ -12,11 +12,11 @@ export default function ShowRail({
   shows: VoicesShow[];
 }) {
   return (
-    <section className="overflow-hidden border-b border-voicesNext-border py-8 md:py-[50px]">
+    <section className="overflow-hidden py-[30px] md:border-b md:border-voicesNext-border md:py-[50px]">
       <div className="w-full">
         <SectionHeading title={title} description={description} />
         {shows.length > 0 ? (
-          <div className="mt-6 flex gap-4 overflow-x-auto pb-6 md:mt-7">
+          <div className="mt-3 flex gap-3 overflow-x-auto px-2 pb-6 md:mt-7 md:gap-4 md:px-0">
             {shows.map((show, index) => (
               <ShowCard key={show.id} show={show} priority={index === 0} rail />
             ))}

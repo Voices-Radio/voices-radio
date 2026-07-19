@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageHero from "../../components/redesign/page-hero";
 import ShowRail from "../../components/redesign/show-rail";
+import SupporterBlock from "../../components/redesign/supporter-block";
 import { getShow, getShowsForArtist } from "@/lib/voices/api";
 import MixcloudArchivePlayer from "../../components/redesign/mixcloud-archive-player";
 
@@ -73,23 +74,88 @@ export default async function ShowDetailPage({
     : [];
   const duration = formatDuration(show.duration);
   const relatedShows = moreFromArtist.filter((item) => item.id !== show.id);
+  const stationLabel =
+    show.station === "east" ? "EAST" : show.station === "kx" ? "KX" : "KX";
+  const locationLabel = show.locationTags.includes("world")
+    ? "WORLD"
+    : "LONDON";
+  const genres = show.genres.slice(0, 3);
 
   return (
     <main>
-      <PageHero
-        eyebrow={show.platform ?? "Archive"}
-        title={show.title}
-        description={show.artist?.name ?? "Voices Radio"}
-      />
+      <div className="hidden md:block">
+        <PageHero
+          eyebrow={show.platform ?? "Archive"}
+          title={show.title}
+          description={show.artist?.name ?? "Voices Radio"}
+        />
+      </div>
 
-      <section className="mx-auto grid max-w-[1280px] gap-8 px-4 py-10 md:grid-cols-[minmax(0,420px)_1fr] md:px-8">
+      <section className="px-1 pt-5 md:hidden">
+        <div className="relative h-[388px]">
+          <div className="relative h-[377px] overflow-hidden rounded-[4px]">
+            <Image
+              src={show.artwork.src}
+              alt={show.artwork.alt}
+              fill
+              sizes="calc(100vw - 8px)"
+              className="object-cover"
+            />
+            <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background">
+              <span className="bg-voicesNext-cream px-1 py-[2px]">
+                {stationLabel}
+              </span>
+              <span className="bg-voicesNext-cream px-1 py-[2px]">
+                {locationLabel}
+              </span>
+            </div>
+            <div className="absolute bottom-[25px] left-0 w-[320px] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream">
+              <h1 className="truncate font-gabarito text-[24px] font-bold leading-none">
+                {show.title}
+              </h1>
+              {genres.length > 0 && (
+                <div className="mt-3 flex flex-wrap items-center gap-[7px] font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orange">
+                  {genres.map((genre) => (
+                    <span
+                      key={genre}
+                      className="rounded-full bg-voicesNext-cream px-2 py-1"
+                    >
+                      {genre}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="absolute bottom-0 left-1/2 flex h-2 -translate-x-1/2 items-center gap-1">
+            <span className="size-1 rounded-full bg-voicesNext-cream/70" />
+            <span className="size-1.5 rounded-full bg-voicesNext-cream/80" />
+            <span className="size-2 rounded-full bg-voicesNext-cream" />
+            <span className="size-1.5 rounded-full bg-voicesNext-cream/80" />
+            <span className="size-1 rounded-full bg-voicesNext-cream/70" />
+          </div>
+        </div>
+
+        {show.description && (
+          <p className="mx-auto mt-5 max-w-[365px] font-asap text-[16px] leading-normal text-voicesNext-cream">
+            {show.description}
+          </p>
+        )}
+
+        {show.mixcloudUrl && (
+          <div className="mx-auto mt-6 max-w-[365px]">
+            <MixcloudArchivePlayer title={show.title} url={show.mixcloudUrl} />
+          </div>
+        )}
+      </section>
+
+      <section className="mx-auto hidden max-w-[1280px] gap-8 px-4 py-10 md:grid md:grid-cols-[minmax(0,420px)_1fr] md:px-8">
         <div className="relative aspect-square overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface">
           <Image
             src={show.artwork.src}
             alt={show.artwork.alt}
             fill
             sizes="(min-width: 768px) 420px, 90vw"
-            priority
             className="object-cover"
           />
         </div>
@@ -162,6 +228,7 @@ export default async function ShowDetailPage({
           shows={relatedShows}
         />
       )}
+      <SupporterBlock />
     </main>
   );
 }

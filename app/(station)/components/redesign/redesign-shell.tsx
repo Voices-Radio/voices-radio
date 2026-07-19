@@ -23,7 +23,10 @@ export default async function RedesignShell({
       />
       <ExploreLiveStrip />
       {children}
-      <SiteFooter />
+      <SiteFooter
+        supporterUrl={settings?.apply_link}
+        contactUrl={settings?.contact_link}
+      />
     </div>
   );
 }

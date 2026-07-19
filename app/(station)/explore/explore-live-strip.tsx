@@ -1,6 +1,6 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, Search, Video } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -55,16 +55,150 @@ function DiscoveryTabs({ pathname }: { pathname: string }) {
   );
 }
 
+function MobileDiscoveryNav({ pathname }: { pathname: string }) {
+  const activeSection = pathname.startsWith("/artists") ? "hosts" : "discover";
+
+  return (
+    <div className="bg-voicesNext-background px-[10px] pb-8 pt-2 md:hidden">
+      <nav
+        className="relative flex h-[60px] items-center gap-[22px] px-4 font-gabarito text-[18px] font-bold"
+        aria-label="Explore sections"
+      >
+        <Link
+          href="/explore"
+          className={cn(
+            "relative",
+            activeSection !== "discover" && "text-voicesNext-secondary",
+          )}
+          aria-current={activeSection === "discover" ? "page" : undefined}
+        >
+          Discover
+          {activeSection === "discover" && (
+            <span className="absolute -bottom-[13px] left-0 h-[2px] w-full bg-voicesNext-orange" />
+          )}
+        </Link>
+        <Link
+          href="/artists"
+          className={cn(
+            "relative",
+            activeSection !== "hosts" && "text-voicesNext-secondary",
+          )}
+          aria-current={activeSection === "hosts" ? "page" : undefined}
+        >
+          Hosts
+          {activeSection === "hosts" && (
+            <span className="absolute -bottom-[13px] left-0 h-[2px] w-full bg-voicesNext-orange" />
+          )}
+        </Link>
+        <span className="text-voicesNext-secondary" aria-disabled="true">
+          Series
+        </span>
+      </nav>
+      <form action="/explore" className="px-[10px]" role="search">
+        <label htmlFor="mobile-discover-search" className="sr-only">
+          Search hosts, shows, genres
+        </label>
+        <div className="flex h-11 w-full items-center gap-3 rounded-full border border-voicesNext-cream px-4">
+          <Search aria-hidden="true" size={14} strokeWidth={2.2} />
+          <input
+            id="mobile-discover-search"
+            name="search"
+            type="search"
+            placeholder="Search hosts, shows, genres..."
+            className="min-w-0 flex-1 bg-transparent font-asap text-[14px] text-voicesNext-cream outline-none placeholder:text-voicesNext-secondary"
+          />
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function MobileStationControl({
+  station,
+  align = "left",
+}: {
+  station: VoicesLiveStationConfig;
+  align?: "left" | "right";
+}) {
+  const liveMetadata = useRadioCultLiveMetadata(station.id);
+  const { audioRef, loading, playing, toggle } = useStationAudio(
+    station.streamUrl,
+  );
+  const disabled = !station.streamUrl || loading || station.comingSoon;
+
+  return (
+    <div className="flex h-7 min-w-0 flex-1 items-center justify-between overflow-hidden bg-voicesNext-cream px-1 text-voicesNext-background">
+      <audio ref={audioRef} src={station.streamUrl} preload="none" />
+      {align === "right" && (
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={toggle}
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center disabled:opacity-45"
+          aria-label={playing ? `Pause ${station.label}` : `Play ${station.label}`}
+        >
+          {playing ? (
+            <Pause aria-hidden="true" size={14} fill="currentColor" />
+          ) : (
+            <Play aria-hidden="true" size={14} fill="currentColor" />
+          )}
+        </button>
+      )}
+      <span
+        className={cn(
+          "min-w-0 truncate font-outfit text-[20px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]",
+          align === "right" && "ml-auto",
+        )}
+        title={liveMetadata.title || station.title}
+      >
+        {station.label}
+      </span>
+      {align === "left" && (
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={toggle}
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center disabled:opacity-45"
+          aria-label={playing ? `Pause ${station.label}` : `Play ${station.label}`}
+        >
+          {playing ? (
+            <Pause aria-hidden="true" size={14} fill="currentColor" />
+          ) : station.videoUrl ? (
+            <Video aria-hidden="true" size={17} strokeWidth={2.2} />
+          ) : (
+            <Play aria-hidden="true" size={14} fill="currentColor" />
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function MobileLiveControls() {
+  const [kxStation, eastStation] = voicesLiveStations;
+
+  if (!kxStation || !eastStation) return null;
+
+  return (
+    <div
+      className="flex h-7 divide-x divide-voicesNext-background md:hidden"
+      aria-label="Mobile live controls"
+    >
+      <MobileStationControl station={kxStation} />
+      <MobileStationControl station={eastStation} align="right" />
+    </div>
+  );
+}
+
 export default function ExploreLiveStrip() {
   const pathname = usePathname();
   const showDiscoveryTabs = pathname === "/explore" || pathname === "/artists";
 
   return (
-    <section
-      className="border-y border-black bg-voicesNext-cream text-voicesNext-background"
-      aria-label="Live player"
-    >
-      <div className="mx-auto flex max-w-[1280px] flex-col md:h-[68px] md:flex-row">
+    <section aria-label="Live player">
+      <MobileLiveControls />
+      {showDiscoveryTabs && <MobileDiscoveryNav pathname={pathname} />}
+      <div className="mx-auto hidden max-w-[1280px] flex-col border-y border-black bg-voicesNext-cream text-voicesNext-background md:flex md:h-[68px] md:flex-row">
         <div className="flex border-b border-black md:border-b-0 md:border-r">
           <div className="flex w-[70px] shrink-0 items-center justify-center border-r border-black px-2">
             <p className="font-outfit text-[15px] font-black uppercase tracking-[1px]">

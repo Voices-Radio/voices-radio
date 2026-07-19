@@ -1,45 +1,43 @@
 import Link from "next/link";
-import BrandMark from "./brand-mark";
+import { VOICES_APPLY_FOR_SHOW_URL } from "@/lib/voices/config";
+import MobileAppBadges from "./mobile-app-badges";
 
 export default function SiteFooter({
   supporterUrl,
+  contactUrl,
 }: {
   supporterUrl?: string | null;
+  contactUrl?: string | null;
 }) {
+  const ctaUrl = supporterUrl || VOICES_APPLY_FOR_SHOW_URL;
+  const contactHref = contactUrl || "/chat";
+
   return (
     <footer className="border-t border-voicesNext-border bg-black text-voicesNext-cream">
-      <div className="grid w-full gap-10 py-10 md:min-h-[280px] md:grid-cols-[1fr_1fr_1fr] md:py-[27px]">
-        <div className="space-y-5">
-          <BrandMark />
-          <nav className="grid gap-2 font-gabarito text-sm font-bold">
+      <div className="grid min-h-[240px] w-full content-start gap-[14px] px-[19px] py-6 md:min-h-[280px] md:grid-cols-[1fr_1fr_1fr] md:gap-10 md:px-0 md:py-[27px]">
+        <div className="space-y-3 md:space-y-5">
+          <p className="font-gabarito text-[16px] font-medium leading-none md:hidden">
+            Listen on the Voices app
+          </p>
+          <MobileAppBadges className="md:hidden" />
+
+          <nav className="grid gap-1 font-gabarito text-[14px] font-medium leading-none md:gap-2 md:text-sm md:font-bold md:leading-normal">
+            <p className="uppercase md:hidden">VOICES RADIO</p>
             <Link href="/about">About</Link>
             <Link href="/services">Work with us</Link>
-            <Link href="/chat">Contact</Link>
-            {supporterUrl ? (
-              <a href={supporterUrl}>Become a Supporter</a>
-            ) : (
-              <span className="text-voicesNext-secondary" aria-disabled="true">
-                Become a Supporter
-              </span>
-            )}
+            <a href={contactHref}>Contact</a>
+            <a href={ctaUrl}>Become a Supporter</a>
           </nav>
         </div>
 
-        <div className="space-y-4">
+        <div className="hidden space-y-4 md:block">
           <p className="font-gabarito text-lg font-bold">
             Listen on the Voices app
           </p>
-          <div className="flex flex-wrap gap-3">
-            <span className="inline-flex h-10 min-w-[120px] items-center justify-center rounded-voices-xs border border-voicesNext-border px-4 font-asap text-xs font-bold uppercase text-voicesNext-secondary">
-              App Store
-            </span>
-            <span className="inline-flex h-10 min-w-[135px] items-center justify-center rounded-voices-xs border border-voicesNext-border px-4 font-asap text-xs font-bold uppercase text-voicesNext-secondary">
-              Google Play
-            </span>
-          </div>
+          <MobileAppBadges />
         </div>
 
-        <p className="self-end font-gabarito text-xs text-voicesNext-secondary md:text-center">
+        <p className="hidden self-end font-gabarito text-xs text-voicesNext-secondary md:block md:text-center">
           © 2026 Voices Radio • Voices Radio is a non-profit community
           supported station
         </p>

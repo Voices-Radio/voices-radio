@@ -48,5 +48,6 @@ coverage/
 *.csv
 *.pdf
 *.png
+!public/mobile-app-badges.png
 *.jpg
 .env

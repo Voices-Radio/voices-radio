@@ -3,10 +3,10 @@ import { Radio } from "lucide-react";
 export function EastComingSoonCard() {
   return (
     <article
-      className="relative h-[316px] overflow-hidden bg-voicesNext-orange text-voicesNext-cream"
+      className="relative h-[126px] overflow-hidden border border-voicesNext-cream bg-voicesNext-orange text-voicesNext-cream md:h-[316px] md:border-0"
       aria-labelledby="east-coming-soon-title"
     >
-      <div className="flex h-[34px] items-center justify-between bg-voicesNext-cream px-[14px] text-voicesNext-background">
+      <div className="hidden h-[34px] items-center justify-between bg-voicesNext-cream px-[14px] text-voicesNext-background md:flex">
         <span className="font-outfit text-[24px] font-black uppercase leading-none tracking-[1px]">
           East
         </span>
@@ -15,7 +15,7 @@ export function EastComingSoonCard() {
         </span>
       </div>
 
-      <div className="h-[13px] overflow-hidden border-y border-voicesNext-cream bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-cream">
+      <div className="hidden h-[13px] overflow-hidden border-y border-voicesNext-cream bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-cream md:block">
         <div className="voices-coming-soon-marquee flex w-max items-center gap-[8px] px-1">
           {Array.from({ length: 16 }).map((_, index) => (
             <span key={index} className="flex shrink-0 items-center gap-[8px]">
@@ -26,24 +26,24 @@ export function EastComingSoonCard() {
         </div>
       </div>
 
-      <div className="relative flex h-[269px] items-center justify-center overflow-hidden">
-        <div className="voices-east-orbit border-voicesNext-cream/35 absolute h-[230px] w-[230px] rounded-full border" />
-        <div className="voices-east-orbit voices-east-orbit-delayed border-voicesNext-cream/45 absolute h-[166px] w-[166px] rounded-full border" />
-        <div className="voices-east-signal absolute h-[92px] w-[92px] rounded-full bg-voicesNext-background" />
+      <div className="relative flex h-[126px] items-center justify-center overflow-hidden md:h-[269px]">
+        <div className="voices-east-orbit border-voicesNext-cream/35 absolute h-[120px] w-[120px] rounded-full border md:h-[230px] md:w-[230px]" />
+        <div className="voices-east-orbit voices-east-orbit-delayed border-voicesNext-cream/45 absolute h-[86px] w-[86px] rounded-full border md:h-[166px] md:w-[166px]" />
+        <div className="voices-east-signal absolute h-[52px] w-[52px] rounded-full bg-voicesNext-background md:h-[92px] md:w-[92px]" />
         <Radio
           aria-hidden="true"
           className="relative z-10 text-voicesNext-cream"
-          size={42}
+          size={28}
           strokeWidth={1.8}
         />
 
-        <div className="absolute inset-x-5 bottom-4 z-10 text-center">
-          <p className="font-asap text-[10px] font-bold uppercase tracking-[2.5px]">
+        <div className="absolute inset-x-3 bottom-2 z-10 text-center md:inset-x-5 md:bottom-4">
+          <p className="font-asap text-[9px] font-bold uppercase tracking-[1.5px] md:text-[10px] md:tracking-[2.5px]">
             Tuning in late summer
           </p>
           <h2
             id="east-coming-soon-title"
-            className="mt-1 font-gabarito text-[30px] font-bold leading-none"
+            className="mt-1 font-gabarito text-[18px] font-bold leading-none md:text-[30px]"
           >
             Coming soon
           </h2>

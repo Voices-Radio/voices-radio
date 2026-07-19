@@ -44,7 +44,7 @@ export default function LiveStationCard({
   return (
     <article
       className={cn(
-        "group relative h-[316px] overflow-hidden bg-voicesNext-background",
+        "group relative h-[126px] overflow-hidden border border-voicesNext-cream bg-voicesNext-background md:h-[316px] md:border-0",
         !videoAvailable && "cursor-not-allowed",
         className,
       )}
@@ -65,7 +65,7 @@ export default function LiveStationCard({
           (selected || !videoAvailable) && "grayscale",
         )}
       >
-        <div className="flex h-[34px] items-center justify-between bg-voicesNext-cream px-[14px] text-voicesNext-background">
+        <div className="hidden h-[34px] items-center justify-between bg-voicesNext-cream px-[14px] text-voicesNext-background md:flex">
           <span className="font-outfit text-[24px] font-black uppercase leading-none tracking-[1px]">
             {station}
           </span>
@@ -77,7 +77,7 @@ export default function LiveStationCard({
           />
         </div>
 
-        <div className="h-[13px] overflow-hidden border-y border-voicesNext-cream bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary">
+        <div className="hidden h-[13px] overflow-hidden border-y border-voicesNext-cream bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary md:block">
           <div className="voices-on-air-marquee flex w-max items-center gap-[6px] px-1">
             {Array.from({ length: 24 }).map((_, index) => (
               <span
@@ -91,17 +91,17 @@ export default function LiveStationCard({
           </div>
         </div>
 
-        <div className="relative h-[269px]">
+        <div className="relative h-[126px] md:h-[269px]">
           <Image
             src={artwork ?? "/VOICESLOGO_LIGHTBOX.png"}
             alt={artworkAlt ?? `${station} live show artwork`}
             fill
-            sizes="316px"
+            sizes="(min-width: 768px) 316px, 50vw"
             className="object-cover"
             priority={station === "KX"}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent from-[57%] to-voicesNext-background/60" />
-          <h2 className="absolute bottom-3 left-[10px] right-6 font-gabarito text-[20px] font-bold leading-[1.08] text-voicesNext-cream">
+          <h2 className="absolute bottom-2 left-2 right-3 line-clamp-2 font-gabarito text-[16px] font-bold leading-[1.08] text-voicesNext-cream md:bottom-3 md:left-[10px] md:right-6 md:text-[20px]">
             {displayTitle}
           </h2>
         </div>
