@@ -127,6 +127,11 @@ module.exports = {
           surface: "#313131",
           cream: "#F8EFE0",
           orange: "#D34E24",
+          // Same hue as `orange`, darkened to clear WCAG 2.2 AA contrast
+          // (4.5:1) for white text — the brand orange only reaches 4.29:1.
+          // Used for new white-on-orange buttons; existing `orange` usages
+          // are left as-is rather than retrofitted site-wide.
+          orangeButton: "#C24821",
           live: "#DB1A1A",
           secondary: "#999999",
           white: "#FFFFFF",

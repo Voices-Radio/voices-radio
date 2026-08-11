@@ -234,9 +234,7 @@ export interface HomeFeaturedEvent extends HomeFeaturedBase {
 }
 
 export type HomeFeaturedContent =
-  | HomeFeaturedShow
-  | HomeFeaturedBlog
-  | HomeFeaturedEvent;
+  HomeFeaturedShow | HomeFeaturedBlog | HomeFeaturedEvent;
 
 export interface HomeShowRailConfig {
   _key: string;
@@ -657,4 +655,71 @@ export interface EventPost {
   venue?: string;
   ctaText?: string;
   ctaUrl?: string;
+}
+
+// Membership Queries
+
+/** Reusable GROQ filter clause: only content with no effectiveFrom, or one that has already passed. */
+const notFutureDated = groq`(!defined(effectiveFrom) || effectiveFrom <= now())`;
+
+export const membershipPageQuery = groq`*[_type == "membershipPage"][0]`;
+
+export interface MembershipFaq {
+  question: string;
+  answer: PortableTextBlock[];
+}
+
+export interface MembershipPage {
+  support_heading: string;
+  support_subheading: string;
+  support_primary_cta_text?: string;
+  support_secondary_cta_text?: string;
+  support_radio_stays_open_heading: string;
+  support_radio_stays_open_body: string;
+  support_impact_heading?: string;
+  support_impact_body?: PortableTextBlock[];
+
+  join_heading: string;
+  join_subheading?: string;
+  join_ballot_disclaimer: string;
+
+  faqs?: MembershipFaq[];
+
+  dashboard_announcement?: string;
+  founding_member_badge_text: string;
+  cancellation_copy?: string;
+  supporter_downgrade_offer_heading?: string;
+  supporter_downgrade_offer_body?: string;
+}
+
+export const membershipTiersQuery = groq`*[_type == "membershipTier" && ${notFutureDated}] | order(sortOrder asc)`;
+
+export interface MembershipTier {
+  _id: string;
+  tierId: { current: string };
+  name: string;
+  headline: string;
+  description?: string;
+  monthlyPriceDisplay: string;
+  annualPriceDisplay: string;
+  benefitBullets: string[];
+  mostPopular?: boolean;
+  sortOrder: number;
+}
+
+export const membershipBenefitsQuery = groq`*[_type == "membershipBenefit" && ${notFutureDated}]`;
+
+export const membershipBenefitQuery = groq`*[_type == "membershipBenefit" && slug.current == $slug && ${notFutureDated}][0]`;
+
+export interface MembershipBenefit {
+  _id: string;
+  slug: { current: string };
+  name: string;
+  summary: string;
+  fullDescription?: string;
+  eligibilityExplanation?: string;
+  redemptionInstructions?: string;
+  terms?: string;
+  availableTierIds?: string[];
+  isCapacityLimited?: boolean;
 }

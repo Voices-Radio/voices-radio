@@ -9,6 +9,9 @@ import {
   Settings,
   Services,
   BlogPost,
+  MembershipPage,
+  MembershipTier,
+  MembershipBenefit,
   aboutQuery,
   servicesQuery,
   homeQuery,
@@ -19,6 +22,10 @@ import {
   blogPostsQuery,
   blogPostQuery,
   featuredBlogPostsQuery,
+  membershipPageQuery,
+  membershipTiersQuery,
+  membershipBenefitsQuery,
+  membershipBenefitQuery,
 } from "./sanity.queries";
 
 export const client = createClient({
@@ -64,3 +71,16 @@ export const getBlogPost = (slug: string) =>
 
 export const getFeaturedBlogPosts = () =>
   safeFetch<BlogPost[]>(featuredBlogPostsQuery);
+
+// Membership functions
+export const getMembershipPage = () =>
+  safeFetch<MembershipPage>(membershipPageQuery);
+
+export const getMembershipTiers = () =>
+  safeFetch<MembershipTier[]>(membershipTiersQuery);
+
+export const getMembershipBenefits = () =>
+  safeFetch<MembershipBenefit[]>(membershipBenefitsQuery);
+
+export const getMembershipBenefit = (slug: string) =>
+  safeFetch<MembershipBenefit>(membershipBenefitQuery, { slug });

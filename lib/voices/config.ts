@@ -1,6 +1,17 @@
 export const VOICES_API_BASE_URL =
   process.env.VOICES_API_BASE_URL ?? "https://api.voicesradio.co.uk";
 
+/**
+ * Base URL for auth + membership endpoints specifically. Defaults to
+ * VOICES_API_BASE_URL — same backend, same behavior — unless overridden
+ * separately. Kept distinct so E2E runs can point membership traffic at
+ * the stub backend (tests/e2e/stub-backend/server.mjs) without also
+ * rerouting unrelated site data (shows, blog, search) that already works
+ * fine against the real API in E2E.
+ */
+export const VOICES_MEMBERSHIP_API_BASE_URL =
+  process.env.VOICES_MEMBERSHIP_API_BASE_URL ?? VOICES_API_BASE_URL;
+
 export const VOICES_FALLBACK_ARTWORK = "/VOICESLOGO_LIGHTBOX.png";
 
 export const VOICES_DEFAULT_INDEX_LIMIT = 24;

@@ -62,6 +62,7 @@ const desktopMenuLinks = [
   { href: "/blog", label: "Blog" },
   { href: "/podcast", label: "Podcast Studio" },
   { href: "/collaborate", label: "Collaborate" },
+  { href: "/support", label: "Support Us" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -363,6 +364,14 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           >
             Shop
           </a>
+          <Link
+            href="/support"
+            className="voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]"
+            data-active={isActive(pathname, "/support")}
+            aria-current={isActive(pathname, "/support") ? "page" : undefined}
+          >
+            Support Us
+          </Link>
         </nav>
 
         <div className="ml-3 flex h-[54px] items-center gap-2 md:ml-4 md:h-[72px] lg:ml-7 lg:gap-3">
@@ -524,12 +533,12 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
       {open && (
         <div
           id="site-navigation-menu"
-          className="fixed inset-0 z-50 min-h-dvh bg-voicesNext-background text-voicesNext-cream"
+          className="min-h-dvh fixed inset-0 z-50 bg-voicesNext-background text-voicesNext-cream"
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
         >
-          <div className="flex min-h-dvh flex-col md:hidden">
+          <div className="min-h-dvh flex flex-col md:hidden">
             <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-[14px] py-[7px]">
               <MobileHeaderArtwork />
               <button
@@ -604,6 +613,17 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
               >
                 Work with us
               </Link>
+              <Link
+                href="/support"
+                className={cn(
+                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
+                  isActive(pathname, "/support")
+                    ? "text-voicesNext-orange"
+                    : "text-voicesNext-cream",
+                )}
+              >
+                Support Us
+              </Link>
               <a
                 href={contactLink}
                 className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
@@ -630,7 +650,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
             </div>
           </div>
 
-          <div className="hidden min-h-dvh px-2 py-0 md:block md:px-3">
+          <div className="min-h-dvh hidden px-2 py-0 md:block md:px-3">
             <div className="flex items-center justify-between">
               <BrandMark />
               <button
@@ -675,7 +695,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                   href={settings.instagramLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-voicesNext-orange focus:ring-offset-voicesNext-background"
+                  className="transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
                 >
                   Instagram
                 </a>

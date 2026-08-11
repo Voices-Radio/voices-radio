@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write \"**/*.{tsx,ts,js,jsx,css}\""
+    "format": "prettier --write \"**/*.{tsx,ts,js,jsx,css}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@portabletext/react": "^3.0.11",
@@ -72,19 +77,28 @@
     }
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.62.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.3",
     "@types/node": "^20.19.9",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/styled-components": "^5.1.29",
+    "@vitest/coverage-v8": "^4.1.10",
     "autoprefixer": "10.4.16",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.20",
     "install-peerdeps": "^3.0.3",
+    "jsdom": "^29.1.1",
     "prettier": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.5.6",
     "server-only": "^0.0.1",
     "styled-components": "^6.4.3",
     "tailwindcss": "3.3.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }

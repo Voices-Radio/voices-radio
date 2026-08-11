@@ -1,5 +1,7 @@
 # Voices Radio API Documentation
 
+> **Membership programme:** endpoints for the membership/subscription/benefits programme are not yet documented here because they don't exist yet. See [`voices-membership-backend-api-contract.md`](./voices-membership-backend-api-contract.md) for what the frontend needs from those endpoints.
+
 ## Base URL
 ```
 https://api.voicesradio.co.uk

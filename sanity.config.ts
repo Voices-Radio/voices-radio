@@ -13,6 +13,9 @@ import settingsType from "./schemas/settings";
 import podcastType from "./schemas/podcast";
 import servicesType from "./schemas/services";
 import eventType from "./schemas/event";
+import membershipPageType from "./schemas/membershipPage";
+import membershipTierType from "./schemas/membershipTier";
+import membershipBenefitType from "./schemas/membershipBenefit";
 
 const schemaTypes = [
   settingsType,
@@ -26,6 +29,9 @@ const schemaTypes = [
   blogType,
   mainBlogType,
   eventType,
+  membershipPageType,
+  membershipTierType,
+  membershipBenefitType,
 ];
 
 export default defineConfig({
@@ -43,6 +49,7 @@ export default defineConfig({
         aboutType,
         podcastType,
         servicesType,
+        membershipPageType,
       ]),
     }),
     visionTool({}),
@@ -53,6 +60,7 @@ export default defineConfig({
       aboutType.name,
       podcastType.name,
       servicesType.name,
+      membershipPageType.name,
     ]),
   ],
 });

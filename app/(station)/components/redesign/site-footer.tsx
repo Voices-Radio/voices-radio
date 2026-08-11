@@ -25,6 +25,7 @@ export default function SiteFooter({
             <p className="uppercase md:hidden">VOICES RADIO</p>
             <Link href="/about">About</Link>
             <Link href="/services">Work with us</Link>
+            <Link href="/support">Support Us</Link>
             <a href={contactHref}>Contact</a>
             <a href={ctaUrl}>Become a Supporter</a>
           </nav>
@@ -38,8 +39,8 @@ export default function SiteFooter({
         </div>
 
         <p className="hidden self-end font-gabarito text-xs text-voicesNext-secondary md:block md:text-center">
-          © 2026 Voices Radio • Voices Radio is a non-profit community
-          supported station
+          © 2026 Voices Radio • Voices Radio is a non-profit community supported
+          station
         </p>
       </div>
     </footer>
