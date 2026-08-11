@@ -414,16 +414,19 @@ export default function AgencyPage() {
         className="bg-slate-950 px-4 py-16 text-white sm:px-6 md:py-24 lg:px-8"
       >
         <div className="mx-auto max-w-7xl">
-          <SectionHeader
-            eyebrow="Selected work"
-            title="Programmes with a point of view."
-          >
-            <p className="text-slate-300">
+          <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
+            <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-voices-purple">
+              Selected work
+            </p>
+            <h2 className="text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
+              Programmes with a point of view.
+            </h2>
+            <p className="mt-5 text-base font-semibold leading-relaxed text-slate-300 md:text-lg">
               Four proof blocks for the first production version. Confirmed case
               studies are condensed from the supplied brief; placeholders are
               intentionally cautious until final details are approved.
             </p>
-          </SectionHeader>
+          </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
             {caseStudies.map((study, index) => (

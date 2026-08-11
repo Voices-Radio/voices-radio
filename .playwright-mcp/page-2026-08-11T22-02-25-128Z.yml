@@ -1,0 +1,254 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Voices Agency Voices Agency" [ref=e5] [cursor=pointer]:
+          - /url: "#home"
+          - img "Voices Agency" [ref=e6]
+          - generic [ref=e7]: Voices Agency
+        - generic [ref=e8]:
+          - link "Offer" [ref=e9] [cursor=pointer]:
+            - /url: "#offer"
+          - link "Formats" [ref=e10] [cursor=pointer]:
+            - /url: "#formats"
+          - link "Work" [ref=e11] [cursor=pointer]:
+            - /url: "#work"
+          - link "Process" [ref=e12] [cursor=pointer]:
+            - /url: "#process"
+          - link "Brief" [ref=e13] [cursor=pointer]:
+            - /url: "#brief"
+        - link "Start a brief" [ref=e14] [cursor=pointer]:
+          - /url: mailto:bookings@voicesradio.co.uk?subject=Voices%20Agency%20Brief
+    - generic [ref=e17]:
+      - generic [ref=e22]:
+        - paragraph [ref=e23]: London music programming
+        - heading "Voices Agency programmed for your space." [level=1] [ref=e24]:
+          - text: Voices Agency
+          - generic [ref=e25]: programmed for your space.
+        - paragraph [ref=e26]: Music programming and talent curation for venues, hospitality groups, brands and events - from one-off bookings to fully managed calendars.
+        - generic [ref=e27]:
+          - link "Start a brief" [ref=e28] [cursor=pointer]:
+            - /url: mailto:bookings@voicesradio.co.uk?subject=Voices%20Agency%20Brief
+          - link "See our work" [ref=e31] [cursor=pointer]:
+            - /url: "#work"
+      - link "Scroll to offer" [ref=e33] [cursor=pointer]:
+        - /url: "#offer"
+        - generic [ref=e34]: Scroll
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - paragraph [ref=e40]: The proposition
+        - heading "More than filling a DJ slot." [level=2] [ref=e41]
+        - paragraph [ref=e43]: Music shapes how a space feels and how people experience it. We begin with your audience, venue, trading rhythm and creative ambition, then build the right programme around them.
+      - generic [ref=e44]:
+        - article [ref=e45]:
+          - heading "Venue music programming" [level=3] [ref=e51]
+          - paragraph [ref=e52]: Music strategy, talent curation and managed calendars for hospitality venues, destinations and cultural spaces.
+        - article [ref=e53]:
+          - heading "Talent bookings" [level=3] [ref=e58]
+          - paragraph [ref=e59]: DJs, live artists and creative talent selected around your audience, setting, atmosphere and budget.
+        - article [ref=e60]:
+          - heading "Brand activations" [level=3] [ref=e65]
+          - paragraph [ref=e66]: Culturally credible talent, workshops, panels and music-led experiences for brands and public programmes.
+        - article [ref=e67]:
+          - heading "Production and content" [level=3] [ref=e75]
+          - paragraph [ref=e76]: Optional event, broadcast, podcast and content support through the wider Voices platform.
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - paragraph [ref=e80]: Engagement formats
+        - heading "One brief, one programming partner." [level=2] [ref=e81]
+        - paragraph [ref=e83]: We can support a single date, a recurring residency, a complete calendar or a larger music-led activation.
+      - generic [ref=e84]:
+        - generic [ref=e85]:
+          - paragraph [ref=e86]: Single date
+          - generic [ref=e87]:
+            - heading "One-off booking" [level=3] [ref=e88]
+            - paragraph [ref=e89]: Launches, parties, private events and individual dates.
+        - generic [ref=e95]:
+          - paragraph [ref=e96]: Recurring
+          - generic [ref=e97]:
+            - heading "Residency" [level=3] [ref=e98]
+            - paragraph [ref=e99]: Weekly or monthly programming with a consistent identity.
+        - generic [ref=e105]:
+          - paragraph [ref=e106]: Calendar
+          - generic [ref=e107]:
+            - heading "Fully managed programme" [level=3] [ref=e108]
+            - paragraph [ref=e109]: Venues or groups requiring an entire calendar to be managed.
+        - generic [ref=e115]:
+          - paragraph [ref=e116]: Campaign
+          - generic [ref=e117]:
+            - heading "Cultural activation" [level=3] [ref=e118]
+            - paragraph [ref=e119]: Brands seeking a larger concept, audience experience or content opportunity.
+    - generic [ref=e126]:
+      - generic [ref=e127]:
+        - paragraph [ref=e128]: Selected work
+        - heading "Programmes with a point of view." [level=2] [ref=e129]
+        - paragraph [ref=e130]: Four proof blocks for the first production version. Confirmed case studies are condensed from the supplied brief; placeholders are intentionally cautious until final details are approved.
+      - generic [ref=e131]:
+        - article [ref=e132]:
+          - generic [ref=e133]:
+            - generic [ref=e135]:
+              - generic [ref=e136]: Venue programme
+              - generic [ref=e137]: "01"
+            - generic [ref=e138]:
+              - heading "Hackney Bridge" [level=3] [ref=e139]
+              - paragraph [ref=e140]: Building a distinctive music programme at Nico's
+              - generic [ref=e141]:
+                - generic [ref=e142]: Hackney Wick
+                - generic [ref=e146]: Artwork pending approval
+          - generic [ref=e150]:
+            - generic [ref=e151]:
+              - paragraph [ref=e152]: Brief
+              - paragraph [ref=e153]: Build and manage a sustainable music and events programme across Hackney Bridge's venue spaces, with a consistent cultural offer and one retained partner.
+            - generic [ref=e154]:
+              - paragraph [ref=e155]: Delivered
+              - paragraph [ref=e156]: Voices supports programme development, promoter outreach, event sourcing, booking coordination, calendar management and marketing liaison. At Nico's, Voices creates DJ line-ups for live-music dates, weekly DJ sets, day parties and larger takeovers.
+            - generic [ref=e157]:
+              - paragraph [ref=e158]: Scale
+              - paragraph [ref=e159]: The public programming relationship began with Around the World with Nico in March 2024. A formal retained promoter arrangement started in January 2025 and remains ongoing. Internal records evidence at least 17 dated bookings between 7 May and 15 July 2026.
+            - generic [ref=e160]:
+              - paragraph [ref=e161]: Proof point
+              - paragraph [ref=e162]: "Hackney Bridge publicly credits Voices with creating Nico's DJ line-ups, and the weekly programme continued to be advertised as curated by Voices in 2026. Maria Hanlon presents: Soul Satisfaction was selected as a Resident Advisor Pick."
+        - article [ref=e163]:
+          - generic [ref=e164]:
+            - generic [ref=e166]:
+              - generic [ref=e167]: Venue and cultural programme
+              - generic [ref=e168]: "02"
+            - generic [ref=e169]:
+              - heading "Two Tribes Campfire" [level=3] [ref=e170]
+              - paragraph [ref=e171]: Building a year-round music identity
+              - generic [ref=e172]:
+                - generic [ref=e173]: Tileyard, King's Cross
+                - generic [ref=e177]: Artwork pending approval
+          - generic [ref=e181]:
+            - generic [ref=e182]:
+              - paragraph [ref=e183]: Brief
+              - paragraph [ref=e184]: Develop Campfire as a music destination as well as a brewery and taproom, combining regular trading-night programming with larger headline events and cultural moments.
+            - generic [ref=e185]:
+              - paragraph [ref=e186]: Delivered
+              - paragraph [ref=e187]: As Campfire's retained promoter, Voices curates and promotes the ongoing music programme, including regular DJ programming, artist and collective sourcing, headline-led day parties, guest takeovers, record fairs, showcases and annual Voices birthday events.
+            - generic [ref=e188]:
+              - paragraph [ref=e189]: Scale
+              - paragraph [ref=e190]: The documented partnership extends from at least June 2022 to the present. Campfire's public venue information describes Voices DJs performing regularly on Thursday, Friday and Saturday evenings.
+            - generic [ref=e191]:
+              - paragraph [ref=e192]: Proof point
+              - paragraph [ref=e193]: Voices birthday events at Campfire in 2022, 2023 and 2024 were publicly listed as sold out. The 2023 birthday and 2026 fifth-birthday event were selected as Resident Advisor Picks.
+        - article [ref=e194]:
+          - generic [ref=e195]:
+            - generic [ref=e197]:
+              - generic [ref=e198]: Cultural programme
+              - generic [ref=e199]: "03"
+            - generic [ref=e200]:
+              - heading "Tate Modern" [level=3] [ref=e201]
+              - paragraph [ref=e202]: Cultural programme case study
+              - generic [ref=e203]:
+                - generic [ref=e204]: London
+                - generic [ref=e208]: Placeholder pending final details
+          - generic [ref=e212]:
+            - generic [ref=e213]:
+              - paragraph [ref=e214]: Brief
+              - paragraph [ref=e215]: Placeholder for a cultural-programming brief once the exact relationship, scope and approved public wording are confirmed.
+            - generic [ref=e216]:
+              - paragraph [ref=e217]: Delivered
+              - paragraph [ref=e218]: Placeholder for what Voices delivered, such as talent curation, programming support, artist liaison, event coordination or broadcast/content support.
+            - generic [ref=e219]:
+              - paragraph [ref=e220]: Scale
+              - paragraph [ref=e221]: Placeholder for dates, number of artists, rooms, programme duration or other approved scale details.
+            - generic [ref=e222]:
+              - paragraph [ref=e223]: Proof point
+              - paragraph [ref=e224]: Placeholder for an approved public proof point. Do not publish attendance, revenue, footfall or impact claims without confirmed evidence.
+        - article [ref=e225]:
+          - generic [ref=e226]:
+            - generic [ref=e228]:
+              - generic [ref=e229]: Brand activation
+              - generic [ref=e230]: "04"
+            - generic [ref=e231]:
+              - heading "Aperol" [level=3] [ref=e232]
+              - paragraph [ref=e233]: Brand activation case study
+              - generic [ref=e234]:
+                - generic [ref=e235]: London
+                - generic [ref=e239]: Placeholder pending final details
+          - generic [ref=e243]:
+            - generic [ref=e244]:
+              - paragraph [ref=e245]: Brief
+              - paragraph [ref=e246]: Placeholder for a brand-activation brief once the exact campaign, audience, venue context and approved public wording are confirmed.
+            - generic [ref=e247]:
+              - paragraph [ref=e248]: Delivered
+              - paragraph [ref=e249]: Placeholder for what Voices delivered, such as DJ or host curation, music-led experience design, workshops, panels, production coordination or content support.
+            - generic [ref=e250]:
+              - paragraph [ref=e251]: Scale
+              - paragraph [ref=e252]: Placeholder for dates, number of artists, event format, campaign period or other approved scale details.
+            - generic [ref=e253]:
+              - paragraph [ref=e254]: Proof point
+              - paragraph [ref=e255]: Placeholder for an approved proof point. Avoid implying commercial performance, audience growth or media impact until substantiated.
+    - generic [ref=e257]:
+      - generic [ref=e258]:
+        - paragraph [ref=e259]: Why Voices
+        - heading "Built inside a working music community." [level=2] [ref=e260]
+        - paragraph [ref=e261]: Our insight comes from daily contact with DJs, broadcasters, musicians and creative contributors. This allows us to discover new talent, understand different audiences and build programmes with a genuine point of view.
+      - generic [ref=e262]:
+        - paragraph [ref=e267]: Curation rather than supply
+        - paragraph [ref=e272]: One-off and long-term capability
+        - paragraph [ref=e277]: Cultural credibility and commercial understanding
+        - paragraph [ref=e282]: Breadth across DJs, live talent, hosts and content
+    - generic [ref=e284]:
+      - generic [ref=e285]:
+        - paragraph [ref=e286]: How it works
+        - heading "From first brief to delivery." [level=2] [ref=e287]
+        - paragraph [ref=e289]: Clients get one accountable point of contact from curation through delivery, with clear programming decisions and consolidated communication.
+      - generic [ref=e290]:
+        - article [ref=e291]:
+          - paragraph [ref=e292]: "01"
+          - heading "Brief" [level=3] [ref=e293]
+          - paragraph [ref=e294]: We understand the space, audience, objectives, dates and budget.
+        - article [ref=e295]:
+          - paragraph [ref=e296]: "02"
+          - heading "Curate" [level=3] [ref=e297]
+          - paragraph [ref=e298]: We shape the musical direction and recommend appropriate talent.
+        - article [ref=e299]:
+          - paragraph [ref=e300]: "03"
+          - heading "Confirm" [level=3] [ref=e301]
+          - paragraph [ref=e302]: We agree the programme, commercial terms and production requirements.
+        - article [ref=e303]:
+          - paragraph [ref=e304]: "04"
+          - heading "Deliver" [level=3] [ref=e305]
+          - paragraph [ref=e306]: We manage artist communication and the agreed delivery scope.
+        - article [ref=e307]:
+          - paragraph [ref=e308]: "05"
+          - heading "Refine" [level=3] [ref=e309]
+          - paragraph [ref=e310]: For recurring programmes, we review and evolve the calendar over time.
+    - generic [ref=e312]:
+      - generic [ref=e313]:
+        - paragraph [ref=e314]: Impact
+        - heading "Commercial programming with a wider purpose." [level=2] [ref=e315]
+      - generic [ref=e316]:
+        - paragraph [ref=e317]: Every commercial programme expands the paid opportunities available across our creative community and strengthens the wider Voices platform.
+        - generic [ref=e318]:
+          - generic [ref=e319]:
+            - paragraph [ref=e320]: Hundreds
+            - paragraph [ref=e321]: creative contributors
+          - generic [ref=e322]:
+            - paragraph [ref=e323]: Regular
+            - paragraph [ref=e324]: paid opportunities
+          - generic [ref=e325]:
+            - paragraph [ref=e326]: London
+            - paragraph [ref=e327]: music community
+    - generic [ref=e329]:
+      - heading "Tell us what you are programming." [level=2] [ref=e334]
+      - paragraph [ref=e335]: Share the venue, event or programme you have in mind. Include the space, audience, dates, desired atmosphere, budget and any content requirements, and we will help shape the right approach.
+      - generic [ref=e336]:
+        - link "Start your brief" [ref=e337] [cursor=pointer]:
+          - /url: mailto:bookings@voicesradio.co.uk?subject=Voices%20Agency%20Brief
+        - link "bookings@voicesradio.co.uk" [ref=e340] [cursor=pointer]:
+          - /url: mailto:bookings@voicesradio.co.uk
+    - generic [ref=e342]:
+      - generic [ref=e343]:
+        - paragraph [ref=e344]: Voices Agency
+        - paragraph [ref=e345]: Music programming and talent curation for venues, brands and events. Operated through the Voices commercial platform.
+      - generic [ref=e346]:
+        - link "Offer" [ref=e347] [cursor=pointer]:
+          - /url: "#offer"
+        - link "Work" [ref=e348] [cursor=pointer]:
+          - /url: "#work"
+        - link "Start a brief" [ref=e349] [cursor=pointer]:
+          - /url: mailto:bookings@voicesradio.co.uk?subject=Voices%20Agency%20Brief
+  - alert [ref=e350]
