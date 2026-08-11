@@ -108,6 +108,8 @@ const caseStudies = [
   {
     title: "Hackney Bridge",
     subtitle: "Building a distinctive music programme at Nico's",
+    summary:
+      "A retained venue-programming relationship spanning weekly DJ curation, promoter development and larger cultural takeovers.",
     type: "Venue programme",
     location: "Hackney Wick",
     status: "Artwork pending approval",
@@ -123,6 +125,8 @@ const caseStudies = [
   {
     title: "Two Tribes Campfire",
     subtitle: "Building a year-round music identity",
+    summary:
+      "A multi-year retained programme combining regular DJ nights, headline events, workshops, showcases and wider cultural partnerships.",
     type: "Venue and cultural programme",
     location: "Tileyard, King's Cross",
     status: "Artwork pending approval",
@@ -138,6 +142,8 @@ const caseStudies = [
   {
     title: "Tate Modern",
     subtitle: "Cultural programme case study",
+    summary:
+      "A placeholder cultural-programming proof block, ready for final scope, dates and approved wording.",
     type: "Cultural programme",
     location: "London",
     status: "Placeholder pending final details",
@@ -153,6 +159,8 @@ const caseStudies = [
   {
     title: "Aperol",
     subtitle: "Brand activation case study",
+    summary:
+      "A placeholder brand-activation proof block, ready for final campaign details and approved public claims.",
     type: "Brand activation",
     location: "London",
     status: "Placeholder pending final details",
@@ -205,11 +213,11 @@ function SectionHeader({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
-      <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-voices-purple">
+    <div className="mx-auto mb-8 max-w-3xl text-center md:mb-14">
+      <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-voices-purple md:text-sm">
         {eyebrow}
       </p>
-      <h2 className="text-3xl font-black leading-tight text-slate-900 sm:text-4xl md:text-5xl">
+      <h2 className="text-2xl font-black leading-tight text-slate-900 sm:text-4xl md:text-5xl">
         {title}
       </h2>
       <div className="mt-5 text-base font-semibold leading-relaxed text-slate-600 md:text-lg">
@@ -224,7 +232,7 @@ export default function AgencyPage() {
     <main className="min-h-screen bg-white text-slate-900">
       <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <a href="#home" className="flex items-center gap-2">
+          <a href="#home" className="flex h-11 items-center gap-2">
             <Image
               src="/VOICESLOGO_LIGHTBOX.png"
               alt="Voices Agency"
@@ -250,9 +258,11 @@ export default function AgencyPage() {
 
           <a
             href={briefHref}
-            className="inline-flex items-center gap-2 rounded-full bg-voices-purple px-4 py-2 text-sm font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-slate-950"
+            aria-label="Start a brief"
+            className="inline-flex h-11 items-center gap-2 rounded-full bg-voices-purple px-4 py-2 text-sm font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-slate-950"
           >
-            Start a brief
+            <span className="sm:hidden">Brief</span>
+            <span className="hidden sm:inline">Start a brief</span>
             <ArrowRight className="h-4 w-4" />
           </a>
         </div>
@@ -260,7 +270,7 @@ export default function AgencyPage() {
 
       <section
         id="home"
-        className="relative flex min-h-screen items-center overflow-hidden bg-slate-950 px-4 pt-24 text-white sm:px-6 lg:px-8"
+        className="relative flex min-h-[640px] items-center overflow-hidden bg-slate-950 px-4 pb-12 pt-24 text-white sm:min-h-screen sm:px-6 sm:pb-0 lg:px-8"
       >
         <div className="absolute inset-0">
           <div
@@ -292,14 +302,14 @@ export default function AgencyPage() {
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
               <a
                 href={briefHref}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-voices-purple px-8 py-4 text-base font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-slate-950"
+                className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full bg-voices-purple px-8 py-4 text-base font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-slate-950 sm:w-auto"
               >
                 Start a brief
                 <ArrowRight className="h-5 w-5" />
               </a>
               <a
                 href="#work"
-                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-white px-8 py-4 text-base font-black text-white transition hover:bg-white hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-950"
+                className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-white px-8 py-4 text-base font-black text-white transition hover:bg-white hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-950 sm:w-auto"
               >
                 See our work
               </a>
@@ -307,7 +317,7 @@ export default function AgencyPage() {
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+        <div className="absolute bottom-8 left-0 right-0 hidden justify-center sm:flex">
           <a
             href="#offer"
             aria-label="Scroll to offer"
@@ -323,7 +333,7 @@ export default function AgencyPage() {
 
       <section
         id="offer"
-        className="bg-slate-50 px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        className="bg-slate-50 px-4 py-12 sm:px-6 md:py-24 lg:px-8"
       >
         <div className="mx-auto max-w-7xl">
           <SectionHeader
@@ -343,12 +353,12 @@ export default function AgencyPage() {
               return (
                 <article
                   key={service.title}
-                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg md:p-6"
                 >
-                  <div className="mb-5 inline-flex rounded-2xl bg-voices-purple/10 p-3 text-voices-purple">
+                  <div className="mb-4 inline-flex rounded-2xl bg-voices-purple/10 p-3 text-voices-purple md:mb-5">
                     <Icon className="h-7 w-7" />
                   </div>
-                  <h3 className="text-xl font-black text-slate-900">
+                  <h3 className="text-lg font-black text-slate-900 md:text-xl">
                     {service.title}
                   </h3>
                   <p className="mt-3 text-sm font-semibold leading-relaxed text-slate-600">
@@ -363,7 +373,7 @@ export default function AgencyPage() {
 
       <section
         id="formats"
-        className="bg-white px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8"
       >
         <div className="mx-auto max-w-7xl">
           <SectionHeader
@@ -380,13 +390,13 @@ export default function AgencyPage() {
             {formats.map((format, index) => (
               <div
                 key={format.label}
-                className="grid gap-4 border-b border-slate-200 p-6 last:border-b-0 md:grid-cols-[10rem_1fr_9rem] md:items-center"
+                className="grid gap-3 border-b border-slate-200 p-5 last:border-b-0 md:grid-cols-[10rem_1fr_9rem] md:items-center md:gap-4 md:p-6"
               >
                 <p className="font-mono text-sm font-black text-voices-purple">
                   {format.rhythm}
                 </p>
                 <div>
-                  <h3 className="text-xl font-black text-slate-900">
+                  <h3 className="text-lg font-black text-slate-900 md:text-xl">
                     {format.label}
                   </h3>
                   <p className="mt-1 font-semibold text-slate-600">
@@ -411,14 +421,14 @@ export default function AgencyPage() {
 
       <section
         id="work"
-        className="bg-slate-950 px-4 py-16 text-white sm:px-6 md:py-24 lg:px-8"
+        className="bg-slate-950 px-4 py-12 text-white sm:px-6 md:py-24 lg:px-8"
       >
         <div className="mx-auto max-w-7xl">
-          <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
-            <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-voices-purple">
+          <div className="mx-auto mb-8 max-w-3xl text-center md:mb-14">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-voices-purple md:text-sm">
               Selected work
             </p>
-            <h2 className="text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
+            <h2 className="text-2xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
               Programmes with a point of view.
             </h2>
             <p className="mt-5 text-base font-semibold leading-relaxed text-slate-300 md:text-lg">
@@ -434,28 +444,26 @@ export default function AgencyPage() {
                 key={study.title}
                 className="overflow-hidden rounded-3xl border border-white/10 bg-white text-slate-900 shadow-2xl"
               >
-                <div className="min-h-56 relative overflow-hidden bg-slate-900 p-6 text-white">
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(135deg, rgba(95, 92, 243, 0.55), rgba(15, 23, 42, 0.96)), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.24), transparent 24%)",
-                    }}
-                  />
-                  <div className="absolute left-6 right-6 top-6 flex items-center justify-between gap-4">
-                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em]">
-                      {study.type}
-                    </span>
-                    <span className="font-mono text-sm font-black text-white/70">
-                      0{index + 1}
-                    </span>
-                  </div>
-                  <div className="relative z-10 pt-20">
-                    <h3 className="text-3xl font-black">{study.title}</h3>
-                    <p className="mt-2 text-lg font-bold text-white/80">
+                <details className="group md:hidden">
+                  <summary className="cursor-pointer list-none bg-slate-900 p-5 text-white [&::-webkit-details-marker]:hidden">
+                    <div className="flex items-start justify-between gap-4">
+                      <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.14em]">
+                        {study.type}
+                      </span>
+                      <span className="font-mono text-sm font-black text-white/70">
+                        0{index + 1}
+                      </span>
+                    </div>
+                    <h3 className="mt-7 text-2xl font-black leading-tight">
+                      {study.title}
+                    </h3>
+                    <p className="mt-2 text-base font-bold text-white/80">
                       {study.subtitle}
                     </p>
-                    <div className="mt-5 flex flex-wrap gap-3 text-sm font-bold text-white/75">
+                    <p className="mt-4 text-sm font-semibold leading-relaxed text-white/75">
+                      {study.summary}
+                    </p>
+                    <div className="mt-5 flex flex-wrap gap-3 text-xs font-bold text-white/75">
                       <span className="inline-flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-voices-purple" />
                         {study.location}
@@ -465,25 +473,85 @@ export default function AgencyPage() {
                         {study.status}
                       </span>
                     </div>
-                  </div>
-                </div>
+                    <span className="mt-5 inline-flex h-11 items-center rounded-full bg-voices-purple px-4 text-sm font-black text-white">
+                      <span className="group-open:hidden">View details</span>
+                      <span className="hidden group-open:inline">
+                        Hide details
+                      </span>
+                    </span>
+                  </summary>
 
-                <div className="grid gap-5 p-6 md:p-8">
-                  {[
-                    ["Brief", study.brief],
-                    ["Delivered", study.delivered],
-                    ["Scale", study.scale],
-                    ["Proof point", study.proof],
-                  ].map(([label, text]) => (
-                    <div key={label}>
-                      <p className="text-xs font-black uppercase tracking-[0.16em] text-voices-purple">
-                        {label}
-                      </p>
-                      <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-600">
-                        {text}
-                      </p>
+                  <div className="grid gap-4 p-5">
+                    {[
+                      ["Brief", study.brief],
+                      ["Delivered", study.delivered],
+                      ["Scale", study.scale],
+                      ["Proof point", study.proof],
+                    ].map(([label, text]) => (
+                      <div key={label}>
+                        <p className="text-xs font-black uppercase tracking-[0.16em] text-voices-purple">
+                          {label}
+                        </p>
+                        <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-600">
+                          {text}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+
+                <div className="hidden md:block">
+                  <div className="min-h-56 relative overflow-hidden bg-slate-900 p-6 text-white">
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(135deg, rgba(95, 92, 243, 0.55), rgba(15, 23, 42, 0.96)), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.24), transparent 24%)",
+                      }}
+                    />
+                    <div className="absolute left-6 right-6 top-6 flex items-center justify-between gap-4">
+                      <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em]">
+                        {study.type}
+                      </span>
+                      <span className="font-mono text-sm font-black text-white/70">
+                        0{index + 1}
+                      </span>
                     </div>
-                  ))}
+                    <div className="relative z-10 pt-20">
+                      <h3 className="text-3xl font-black">{study.title}</h3>
+                      <p className="mt-2 text-lg font-bold text-white/80">
+                        {study.subtitle}
+                      </p>
+                      <div className="mt-5 flex flex-wrap gap-3 text-sm font-bold text-white/75">
+                        <span className="inline-flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-voices-purple" />
+                          {study.location}
+                        </span>
+                        <span className="inline-flex items-center gap-2">
+                          <Sparkles className="h-4 w-4 text-voices-purple" />
+                          {study.status}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-5 p-8">
+                    {[
+                      ["Brief", study.brief],
+                      ["Delivered", study.delivered],
+                      ["Scale", study.scale],
+                      ["Proof point", study.proof],
+                    ].map(([label, text]) => (
+                      <div key={label}>
+                        <p className="text-xs font-black uppercase tracking-[0.16em] text-voices-purple">
+                          {label}
+                        </p>
+                        <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-600">
+                          {text}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </article>
             ))}
@@ -491,16 +559,16 @@ export default function AgencyPage() {
         </div>
       </section>
 
-      <section className="bg-slate-50 px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+      <section className="bg-slate-50 px-4 py-12 sm:px-6 md:py-24 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
-            <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-voices-purple">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-voices-purple md:text-sm">
               Why Voices
             </p>
-            <h2 className="text-3xl font-black leading-tight text-slate-900 sm:text-4xl md:text-5xl">
+            <h2 className="text-2xl font-black leading-tight text-slate-900 sm:text-4xl md:text-5xl">
               Built inside a working music community.
             </h2>
-            <p className="mt-5 text-lg font-semibold leading-relaxed text-slate-600">
+            <p className="mt-5 text-base font-semibold leading-relaxed text-slate-600 md:text-lg">
               Our insight comes from daily contact with DJs, broadcasters,
               musicians and creative contributors. This allows us to discover
               new talent, understand different audiences and build programmes
@@ -517,7 +585,7 @@ export default function AgencyPage() {
             ].map((item) => (
               <div
                 key={item}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5"
               >
                 <CheckCircle2 className="mb-4 h-6 w-6 text-voices-purple" />
                 <p className="font-black text-slate-900">{item}</p>
@@ -529,7 +597,7 @@ export default function AgencyPage() {
 
       <section
         id="process"
-        className="bg-white px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8"
       >
         <div className="mx-auto max-w-7xl">
           <SectionHeader
@@ -547,7 +615,7 @@ export default function AgencyPage() {
             {process.map((step, index) => (
               <article
                 key={step.title}
-                className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-4 md:p-5"
               >
                 <p className="font-mono text-sm font-black text-voices-purple">
                   0{index + 1}
@@ -564,18 +632,18 @@ export default function AgencyPage() {
         </div>
       </section>
 
-      <section className="bg-slate-950 px-4 py-16 text-white sm:px-6 md:py-24 lg:px-8">
+      <section className="bg-slate-950 px-4 py-12 text-white sm:px-6 md:py-24 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
           <div>
-            <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-voices-purple">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-voices-purple md:text-sm">
               Impact
             </p>
-            <h2 className="text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
+            <h2 className="text-2xl font-black leading-tight sm:text-4xl md:text-5xl">
               Commercial programming with a wider purpose.
             </h2>
           </div>
-          <div className="rounded-3xl border border-white/10 bg-white/10 p-8">
-            <p className="text-xl font-semibold leading-relaxed text-slate-100">
+          <div className="rounded-3xl border border-white/10 bg-white/10 p-5 md:p-8">
+            <p className="text-lg font-semibold leading-relaxed text-slate-100 md:text-xl">
               Every commercial programme expands the paid opportunities
               available across our creative community and strengthens the wider
               Voices platform.
@@ -602,16 +670,16 @@ export default function AgencyPage() {
 
       <section
         id="brief"
-        className="bg-white px-4 py-16 sm:px-6 md:py-24 lg:px-8"
+        className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8"
       >
-        <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center shadow-lg md:p-12">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-slate-50 p-5 text-center shadow-lg md:p-12">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-voices-purple/10 text-voices-purple">
             <ClipboardList className="h-8 w-8" />
           </div>
-          <h2 className="text-3xl font-black text-slate-900 md:text-5xl">
+          <h2 className="text-2xl font-black text-slate-900 md:text-5xl">
             Tell us what you are programming.
           </h2>
-          <p className="mx-auto mt-5 max-w-3xl text-lg font-semibold leading-relaxed text-slate-600">
+          <p className="mx-auto mt-5 max-w-3xl text-base font-semibold leading-relaxed text-slate-600 md:text-lg">
             Share the venue, event or programme you have in mind. Include the
             space, audience, dates, desired atmosphere, budget and any content
             requirements, and we will help shape the right approach.
@@ -619,14 +687,14 @@ export default function AgencyPage() {
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
               href={briefHref}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-voices-purple px-8 py-4 text-base font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-white"
+              className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full bg-voices-purple px-8 py-4 text-base font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-white sm:w-auto"
             >
               Start your brief
               <ArrowRight className="h-5 w-5" />
             </a>
             <a
               href="mailto:bookings@voicesradio.co.uk"
-              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-slate-900 px-8 py-4 text-base font-black text-slate-900 transition hover:bg-slate-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 focus:ring-offset-white"
+              className="min-h-12 inline-flex w-full items-center justify-center gap-2 break-all rounded-full border-2 border-slate-900 px-6 py-4 text-sm font-black text-slate-900 transition hover:bg-slate-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 focus:ring-offset-white sm:w-auto sm:px-8 sm:text-base"
             >
               bookings@voicesradio.co.uk
             </a>
@@ -643,14 +711,23 @@ export default function AgencyPage() {
               events. Operated through the Voices commercial platform.
             </p>
           </div>
-          <div className="flex flex-wrap gap-4 text-sm font-bold text-slate-300">
-            <a href="#offer" className="transition hover:text-voices-purple">
+          <div className="flex flex-wrap gap-3 text-sm font-bold text-slate-300 md:gap-4">
+            <a
+              href="#offer"
+              className="inline-flex h-11 items-center px-2 transition hover:text-voices-purple"
+            >
               Offer
             </a>
-            <a href="#work" className="transition hover:text-voices-purple">
+            <a
+              href="#work"
+              className="inline-flex h-11 items-center px-2 transition hover:text-voices-purple"
+            >
               Work
             </a>
-            <a href={briefHref} className="transition hover:text-voices-purple">
+            <a
+              href={briefHref}
+              className="inline-flex h-11 items-center px-2 transition hover:text-voices-purple"
+            >
               Start a brief
             </a>
           </div>
