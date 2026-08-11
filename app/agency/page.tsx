@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const briefHref =
-  "mailto:accounts@voicesradio.co.uk?subject=Voices%20Agency%20Brief";
+  "mailto:bookings@voicesradio.co.uk?subject=Voices%20Agency%20Brief";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://voicesradio.co.uk"),
@@ -622,10 +622,10 @@ export default function AgencyPage() {
               <ArrowRight className="h-5 w-5" />
             </a>
             <a
-              href="mailto:accounts@voicesradio.co.uk"
+              href="mailto:bookings@voicesradio.co.uk"
               className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-slate-900 px-8 py-4 text-base font-black text-slate-900 transition hover:bg-slate-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 focus:ring-offset-white"
             >
-              accounts@voicesradio.co.uk
+              bookings@voicesradio.co.uk
             </a>
           </div>
         </div>
