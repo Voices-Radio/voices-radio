@@ -1,0 +1,3 @@
+[       0ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/explore:0
+[     111ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/.pnpm/react-dom@18.2.0_react@18.2.0/node_modules/react-dom/cjs/react-dom.development.js:29834
+[     127ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/.pnpm/next@14.2.5_@babel+core@7.23.2_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:45

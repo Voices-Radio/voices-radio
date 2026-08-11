@@ -147,6 +147,15 @@ export default function NavigationDialog({ settings }: { settings: Settings }) {
                 <Dialog.Close asChild>
                   <Link
                     className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
+                    href="/agency"
+                  >
+                    Agency
+                  </Link>
+                </Dialog.Close>
+
+                <Dialog.Close asChild>
+                  <Link
+                    className="text-kinfolk-navigation-sm text-center font-kinfolk text-white"
                     href="/services"
                   >
                     Our Services

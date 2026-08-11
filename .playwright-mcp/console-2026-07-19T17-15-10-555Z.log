@@ -1,0 +1,36 @@
+[    1084ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[    2005ms] [WARNING] Image with src "https://thumbnailer.mixcloud.com/unsafe/1000x1000/extaudio/d/6/2/1/5cee-d019-4914-9b03-4ef39893a148" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/shared/lib/utils/warn-once.js:15
+[    2177ms] [ERROR] Permissions policy violation: encrypted-media is not allowed in this document. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2177ms] [WARNING] Encrypted Media access has been blocked because of a Feature Policy applied to the current document. See https://crbug.com/414348233 for more details. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2177ms] [ERROR] Permissions policy violation: encrypted-media is not allowed in this document. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2177ms] [WARNING] Encrypted Media access has been blocked because of a Feature Policy applied to the current document. See https://crbug.com/414348233 for more details. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2177ms] [ERROR] Permissions policy violation: encrypted-media is not allowed in this document. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2177ms] [WARNING] Encrypted Media access has been blocked because of a Feature Policy applied to the current document. See https://crbug.com/414348233 for more details. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2226ms] [ERROR] Permissions policy violation: encrypted-media is not allowed in this document. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2226ms] [WARNING] Encrypted Media access has been blocked because of a Feature Policy applied to the current document. See https://crbug.com/414348233 for more details. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2227ms] [ERROR] Permissions policy violation: encrypted-media is not allowed in this document. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2227ms] [WARNING] Encrypted Media access has been blocked because of a Feature Policy applied to the current document. See https://crbug.com/414348233 for more details. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2227ms] [ERROR] Permissions policy violation: encrypted-media is not allowed in this document. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2227ms] [WARNING] Encrypted Media access has been blocked because of a Feature Policy applied to the current document. See https://crbug.com/414348233 for more details. @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:870
+[    2314ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://app.mixcloud.com/graphql?op=GoogleTagManagerQuery:0
+[    2314ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://app.mixcloud.com/graphql?op=rootQuery:0
+[    2314ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://app.mixcloud.com/graphql?op=GoogleTagManagerQuery:0
+[    2324ms] [ERROR] Error: Request failed: XHR error for https://app.mixcloud.com/graphql (readyState=4, status=0)
+    at XMLHttpRequest._ (https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:41:2905)
+    at XMLHttpRequest.r (https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:19:7924) @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:18
+[    2344ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://app.mixcloud.com/graphql?op=rootQuery:0
+[    2350ms] [ERROR] Error: Request failed: XHR error for https://app.mixcloud.com/graphql (readyState=4, status=0)
+    at XMLHttpRequest._ (https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:41:2905)
+    at XMLHttpRequest.r (https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:19:7924) @ https://player-widget.mixcloud.com/assets/index-j1Q3ri0n.js:18
+[    5618ms] [WARNING] The resource https://player-widget.mixcloud.com/assets/mix-RbQjuyZ0-dm-sans-latin-wght-normal.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://player-widget.mixcloud.com/?hide_cover=1&light=1&feed=%2FVoicesRadio%2Fdamn-england-190726-voices-radio%2F:0
+[    5618ms] [WARNING] The resource https://player-widget.mixcloud.com/assets/mix-BQjZ2nPP-open-sans-latin-wght-normal.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://player-widget.mixcloud.com/?hide_cover=1&light=1&feed=%2FVoicesRadio%2Fdamn-england-190726-voices-radio%2F:0
+[    5618ms] [WARNING] The resource https://player-widget.mixcloud.com/assets/mix-RbQjuyZ0-dm-sans-latin-wght-normal.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://player-widget.mixcloud.com/?hide_cover=1&light=1&feed=%2FVoicesRadio%2Fdamn-england-190726-voices-radio%2F:0
+[    5618ms] [WARNING] The resource https://player-widget.mixcloud.com/assets/mix-BQjZ2nPP-open-sans-latin-wght-normal.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://player-widget.mixcloud.com/?hide_cover=1&light=1&feed=%2FVoicesRadio%2Fdamn-england-190726-voices-radio%2F:0
+[   65991ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[   66518ms] [LOG] [Fast Refresh] done in 527ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  117356ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  117527ms] [LOG] [Fast Refresh] done in 172ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  117634ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  118201ms] [LOG] [Fast Refresh] done in 567ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  118904ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/_next/static/css/app/layout.css?v=1784481429366:0
+[  118944ms] Event
