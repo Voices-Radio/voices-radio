@@ -16,7 +16,7 @@ function LogoMark({ client }: { client: ClientLogo }) {
       alt={client.name}
       width={client.width}
       height={client.height}
-      className="h-7 w-auto object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 sm:h-8"
+      className="h-7 w-auto object-contain opacity-90 transition duration-300 hover:opacity-100 sm:h-8"
     />
   );
 
