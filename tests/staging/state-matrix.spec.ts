@@ -96,8 +96,15 @@ test("2. downgrade: member -> supporter is scheduled, not immediate", async ({
   // that's fixed server-side — this is not a frontend defect, and the UI
   // is doing exactly the right thing by surfacing the backend's own
   // message instead of masking it.
+  // isVisible() alone doesn't wait/retry the way expect().toBeVisible()
+  // does — it checks the current DOM immediately, which races the
+  // in-flight request. waitFor() actually waits for the error to land.
   const backendError = dialog.getByText(/failed to downgrade/i);
-  if (await backendError.isVisible({ timeout: 3_000 }).catch(() => false)) {
+  const errorAppeared = await backendError
+    .waitFor({ state: "visible", timeout: 8_000 })
+    .then(() => true)
+    .catch(() => false);
+  if (errorAppeared) {
     test.skip(
       true,
       "Known backend bug: downgrade 500s for this account — see the incident note in the contract doc.",
