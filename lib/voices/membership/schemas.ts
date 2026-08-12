@@ -181,11 +181,26 @@ export const redemptionsResponseSchema = z.object({
   redemptions: z.array(redemptionSchema),
 });
 
+/**
+ * A structured postal address, matching what the backend actually stores
+ * (routes/membership/profile.js persists line1/line2/city/postcode/country).
+ * Every part is optional: the backend returns a bare `{}` for a member who
+ * has never supplied one, and `address` is never a required field.
+ */
+export const membershipAddressSchema = z.object({
+  line1: nullish(z.string()),
+  line2: nullish(z.string()),
+  city: nullish(z.string()),
+  postcode: nullish(z.string()),
+  country: nullish(z.string()),
+});
+export type MembershipAddress = z.infer<typeof membershipAddressSchema>;
+
 export const membershipProfileSchema = z.object({
-  displayName: z.string().nullable(),
+  displayName: nullish(z.string()),
   supporterWallOptIn: z.boolean(),
   marketingConsent: z.boolean(),
-  address: z.string().nullable(),
+  address: nullish(membershipAddressSchema),
 });
 export type MembershipProfile = z.infer<typeof membershipProfileSchema>;
 

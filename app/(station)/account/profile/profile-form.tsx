@@ -7,6 +7,18 @@ import { updateProfileAction, type ProfileState } from "./actions";
 
 const initialState: ProfileState = undefined;
 
+const ADDRESS_FIELDS = [
+  { name: "line1", label: "Address line 1", autoComplete: "address-line1" },
+  {
+    name: "line2",
+    label: "Address line 2 (optional)",
+    autoComplete: "address-line2",
+  },
+  { name: "city", label: "Town or city", autoComplete: "address-level2" },
+  { name: "postcode", label: "Postcode", autoComplete: "postal-code" },
+  { name: "country", label: "Country", autoComplete: "country-name" },
+] as const;
+
 function SaveButton() {
   const { pending } = useFormStatus();
   return (
@@ -48,12 +60,17 @@ export default function ProfileForm({
           data-testid="form-error"
           className="rounded-voices-sm border border-voicesNext-orange bg-voicesNext-surface px-4 py-3 font-gabarito text-sm text-voicesNext-cream focus:outline-none"
         >
-          {state.status === "success" ? "Your profile has been updated." : state.message}
+          {state.status === "success"
+            ? "Your profile has been updated."
+            : state.message}
         </div>
       )}
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="displayName" className="font-gabarito text-sm font-bold text-voicesNext-cream">
+        <label
+          htmlFor="displayName"
+          className="font-gabarito text-sm font-bold text-voicesNext-cream"
+        >
           Recognition name
         </label>
         <input
@@ -93,22 +110,37 @@ export default function ProfileForm({
       </label>
 
       {showAddress && (
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="address" className="font-gabarito text-sm font-bold text-voicesNext-cream">
+        <fieldset className="flex flex-col gap-3 border-0 p-0">
+          <legend className="font-gabarito text-sm font-bold text-voicesNext-cream">
             Postal address
-          </label>
-          <textarea
-            id="address"
-            name="address"
-            rows={3}
-            defaultValue={profile.address ?? ""}
-            maxLength={500}
-            className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-          />
+          </legend>
           <p className="font-asap text-xs text-voicesNext-cream/70">
             Needed to fulfil a benefit on your current tier.
           </p>
-        </div>
+
+          {/* Separate fields, not one free-text box: the backend stores this
+              as a structured address (line1/line2/city/postcode/country) and
+              a single blob cannot be split back apart reliably. */}
+          {ADDRESS_FIELDS.map(({ name, label, autoComplete }) => (
+            <div key={name} className="flex flex-col gap-1.5">
+              <label
+                htmlFor={`address-${name}`}
+                className="font-gabarito text-sm text-voicesNext-cream/90"
+              >
+                {label}
+              </label>
+              <input
+                id={`address-${name}`}
+                name={`address.${name}`}
+                type="text"
+                autoComplete={autoComplete}
+                defaultValue={profile.address?.[name] ?? ""}
+                maxLength={200}
+                className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+              />
+            </div>
+          ))}
+        </fieldset>
       )}
 
       <SaveButton />

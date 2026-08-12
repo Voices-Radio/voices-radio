@@ -16,6 +16,7 @@ import {
   membershipProfileSchema,
   type CheckoutResponse,
   type PreviewChangeResponse,
+  type MembershipAddress,
 } from "./schemas";
 
 export type MutationResult<T> =
@@ -194,7 +195,8 @@ export function updateProfile(input: {
   displayName?: string;
   supporterWallOptIn?: boolean;
   marketingConsent?: boolean;
-  address?: string;
+  /** Structured, matching what the backend persists — not a free-text blob. */
+  address?: Partial<MembershipAddress>;
 }) {
   return authedMutate("/api/membership/profile", membershipProfileSchema, {
     method: "PATCH",

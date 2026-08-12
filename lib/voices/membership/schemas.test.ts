@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   benefitsResponseSchema,
+  membershipProfileSchema,
   membershipStateSchema,
   tiersResponseSchema,
 } from "./schemas";
@@ -150,6 +151,52 @@ describe("membershipStateSchema", () => {
       },
     });
     expect(result.success).toBe(true);
+  });
+});
+
+describe("membershipProfileSchema", () => {
+  // Verbatim from GET /api/membership/profile on 2026-08-12. address is a
+  // structured object (the backend persists line1/line2/city/postcode/country),
+  // and is a bare {} for a member who has never supplied one. Modelling it as
+  // a string made /account/profile fail to render at all.
+  it("accepts the live payload with an empty address object", () => {
+    const result = membershipProfileSchema.safeParse({
+      displayName: null,
+      supporterWallOptIn: false,
+      marketingConsent: false,
+      address: {},
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts a fully populated structured address", () => {
+    const result = membershipProfileSchema.safeParse({
+      displayName: "Jack",
+      supporterWallOptIn: true,
+      marketingConsent: false,
+      address: {
+        line1: "1 Example Street",
+        line2: null,
+        city: "London",
+        postcode: "SW1A 1AA",
+        country: "United Kingdom",
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.success && result.data.address?.city).toBe("London");
+  });
+
+  it("rejects an address sent as a plain string", () => {
+    expect(
+      membershipProfileSchema.safeParse({
+        displayName: null,
+        supporterWallOptIn: false,
+        marketingConsent: false,
+        address: "1 Example Street, London",
+      }).success,
+    ).toBe(false);
   });
 });
 

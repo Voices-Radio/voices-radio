@@ -4,17 +4,29 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { updateProfile } from "@/lib/voices/membership/membership-mutations";
 
+const addressPart = z.string().max(200).optional();
+
 const schema = z.object({
   displayName: z.string().max(80).optional(),
   supporterWallOptIn: z.string().optional(),
   marketingConsent: z.string().optional(),
-  address: z.string().max(500).optional(),
+  line1: addressPart,
+  line2: addressPart,
+  city: addressPart,
+  postcode: addressPart,
+  country: addressPart,
 });
 
+const ADDRESS_PARTS = [
+  "line1",
+  "line2",
+  "city",
+  "postcode",
+  "country",
+] as const;
+
 export type ProfileState =
-  | { status: "success" }
-  | { status: "error"; message: string }
-  | undefined;
+  { status: "success" } | { status: "error"; message: string } | undefined;
 
 /**
  * supporterWallOptIn and marketingConsent are independently controlled
@@ -29,7 +41,12 @@ export async function updateProfileAction(
     displayName: formData.get("displayName") || undefined,
     supporterWallOptIn: formData.get("supporterWallOptIn") ?? undefined,
     marketingConsent: formData.get("marketingConsent") ?? undefined,
-    address: formData.get("address") || undefined,
+    ...Object.fromEntries(
+      ADDRESS_PARTS.map((part) => [
+        part,
+        formData.get(`address.${part}`) || undefined,
+      ]),
+    ),
   });
 
   if (!parsed.success) {
@@ -39,11 +56,22 @@ export async function updateProfileAction(
     };
   }
 
+  // Only send `address` when at least one part was filled in. Sending an
+  // object of empty strings would overwrite a stored address with blanks.
+  const addressParts = ADDRESS_PARTS.reduce<Record<string, string>>(
+    (acc, part) => {
+      const value = parsed.data[part];
+      if (value) acc[part] = value;
+      return acc;
+    },
+    {},
+  );
+
   const result = await updateProfile({
     displayName: parsed.data.displayName,
     supporterWallOptIn: parsed.data.supporterWallOptIn === "on",
     marketingConsent: parsed.data.marketingConsent === "on",
-    address: parsed.data.address,
+    address: Object.keys(addressParts).length ? addressParts : undefined,
   });
 
   if (!result.ok) {
