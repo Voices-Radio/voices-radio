@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { VOICES_APPLY_FOR_SHOW_URL } from "@/lib/voices/config";
 import MobileAppBadges from "./mobile-app-badges";
 
 export default function SiteFooter({
@@ -9,7 +8,9 @@ export default function SiteFooter({
   supporterUrl?: string | null;
   contactUrl?: string | null;
 }) {
-  const ctaUrl = supporterUrl || VOICES_APPLY_FOR_SHOW_URL;
+  // Falls back to /join, not VOICES_APPLY_FOR_SHOW_URL (that's the
+  // apply-to-host-a-show form) — see site-header.tsx for the same fix.
+  const ctaUrl = supporterUrl || "/join";
   const contactHref = contactUrl || "/chat";
 
   return (

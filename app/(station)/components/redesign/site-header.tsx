@@ -8,7 +8,6 @@ import { usePathname, useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { VOICES_APPLY_FOR_SHOW_URL } from "@/lib/voices/config";
 import BrandMark from "./brand-mark";
 import MobileAppBadges from "./mobile-app-badges";
 
@@ -168,7 +167,11 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const shopLink = settings.storeLink || SHOP_FALLBACK_URL;
-  const supporterLink = settings.applyLink || VOICES_APPLY_FOR_SHOW_URL;
+  // Falls back to /join, not VOICES_APPLY_FOR_SHOW_URL (that's the
+  // apply-to-host-a-show form) — a "Become a Supporter" button that isn't
+  // explicitly configured in Sanity should still go somewhere related to
+  // becoming a supporter.
+  const supporterLink = settings.applyLink || "/join";
   const contactLink = settings.contactLink || "/chat";
   const trimmedSearchQuery = searchQuery.trim();
   const searchReady = trimmedSearchQuery.length >= 2;
