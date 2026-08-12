@@ -80,9 +80,9 @@ describe("membershipStateSchema", () => {
       "expired",
       "pending_reconciliation",
     ]) {
-      expect(
-        membershipStateSchema.safeParse({ ...base, status }).success,
-      ).toBe(true);
+      expect(membershipStateSchema.safeParse({ ...base, status }).success).toBe(
+        true,
+      );
     }
   });
 
@@ -90,6 +90,52 @@ describe("membershipStateSchema", () => {
     expect(
       membershipStateSchema.safeParse({ ...base, status: "some_new_status" })
         .success,
+    ).toBe(false);
+  });
+
+  // Verbatim from GET /api/membership/me on 2026-08-12, immediately after
+  // checkout. The backend omits renewsAt entirely in this state even though
+  // the contract documents it; requiring it made /account render a generic
+  // error at the exact moment a member had just paid.
+  it("accepts the live pending_reconciliation payload, which omits renewsAt", () => {
+    const result = membershipStateSchema.safeParse({
+      status: "pending_reconciliation",
+      tierId: "supporter",
+      cadence: "monthly",
+      priceMinor: 300,
+      currency: "gbp",
+      paidThroughAt: null,
+      scheduledChange: null,
+      isFoundingMember: false,
+      paymentIssue: null,
+    });
+
+    expect(result.success).toBe(true);
+    // An omitted nullable field must normalise to null, not undefined, so
+    // downstream `=== null` checks behave the same either way.
+    expect(result.success && result.data.renewsAt).toBeNull();
+  });
+
+  it("treats every omitted nullable field as null", () => {
+    const result = membershipStateSchema.safeParse({
+      status: null,
+      isFoundingMember: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.tierId).toBeNull();
+    expect(result.data.cadence).toBeNull();
+    expect(result.data.priceMinor).toBeNull();
+    expect(result.data.currency).toBeNull();
+    expect(result.data.paidThroughAt).toBeNull();
+    expect(result.data.scheduledChange).toBeNull();
+    expect(result.data.paymentIssue).toBeNull();
+  });
+
+  it("still rejects a wrong type in a nullable field", () => {
+    expect(
+      membershipStateSchema.safeParse({ ...base, priceMinor: "300" }).success,
     ).toBe(false);
   });
 

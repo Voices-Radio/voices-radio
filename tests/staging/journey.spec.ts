@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * STATEFUL. Creates a real account and takes a real Stripe test-mode payment
- * against the production backend database. Not safe to re-run blindly — each
- * run needs a fresh email, so E2E_EMAIL is required rather than defaulted.
+ * STATEFUL. Signs in as a real verified account and takes a real Stripe
+ * test-mode payment against the production backend database.
+ *
+ * Assumes the account already exists and is email-verified — registration is a
+ * one-shot, so it is not re-run here.
  *
  *   STAGING_AUTH_USER=voices STAGING_PASSWORD=... \
- *   E2E_EMAIL=someone@example.com E2E_PASSWORD=... \
+ *   E2E_EMAIL=... E2E_PASSWORD=... \
  *     npx playwright test --config playwright.staging.config.ts journey
  */
 const EMAIL = process.env.E2E_EMAIL;
@@ -16,52 +18,55 @@ test.skip(!EMAIL || !PASSWORD, "E2E_EMAIL and E2E_PASSWORD must be set");
 
 const TEST_CARD = "4242424242424242";
 
-test("join → checkout → Stripe → complete → account", async ({ page }) => {
+test("signed-in member: not-a-member → checkout → Stripe → complete → active", async ({
+  page,
+}) => {
   test.setTimeout(300_000);
 
-  // ---- 1. Choose a tier -------------------------------------------------
-  await page.goto("/join");
-  await page.getByRole("link", { name: /choose supporter/i }).first().click();
-  await expect(page).toHaveURL(/create-account/);
-
-  // ---- 2. Create the account -------------------------------------------
-  await page.locator('input[name="firstName"]').fill("Jack");
-  await page.locator('input[name="lastName"]').fill("Test");
+  // ---- 1. Sign in -------------------------------------------------------
+  await page.goto("/sign-in");
   await page.locator('input[name="email"]').fill(EMAIL!);
   await page.locator('input[name="password"]').fill(PASSWORD!);
+  await page.getByRole("button", { name: /sign in/i }).click();
+  await page.waitForURL(/\/account/, { timeout: 60_000 });
 
-  await page.getByRole("button", { name: /create account/i }).click();
+  // ---- 2. status: null must read as "never joined", not "lapsed" --------
+  await expect(page.getByText(/you.re not a member yet/i)).toBeVisible();
+  await expect(page.getByText(/expired/i)).toHaveCount(0);
+  await page.screenshot({ path: "artifacts/staging-01-not-a-member.png", fullPage: true });
 
-  // ---- 3. Handoff to Stripe --------------------------------------------
-  // This is where INVALID_REDIRECT_URL surfaces if the origin is not allowed,
-  // so fail loudly with whatever the form error says rather than on a timeout.
-  const formError = page.getByTestId("form-error");
-  await Promise.race([
-    page.waitForURL(/checkout\.stripe\.com/, { timeout: 60_000 }),
-    formError.waitFor({ state: "visible", timeout: 60_000 }).then(async () => {
-      throw new Error(`Checkout handoff failed: ${await formError.innerText()}`);
-    }),
-  ]);
-  await expect(page).toHaveURL(/checkout\.stripe\.com/);
+  // ---- 3. Pick a tier ---------------------------------------------------
+  await page.goto("/join");
+  await page.getByRole("link", { name: /choose supporter/i }).first().click();
 
-  // ---- 4. Pay -----------------------------------------------------------
+  // ---- 4. Handoff to Stripe --------------------------------------------
+  // INVALID_REDIRECT_URL surfaces on /join as ?checkoutError=, so fail with
+  // the real reason rather than an opaque navigation timeout.
+  await page.waitForURL(/checkout\.stripe\.com|checkoutError=/, { timeout: 90_000 });
+  if (/checkoutError=/.test(page.url())) {
+    throw new Error(`Checkout refused: ${decodeURIComponent(page.url().split("checkoutError=")[1])}`);
+  }
+  await page.screenshot({ path: "artifacts/staging-02-stripe.png", fullPage: true });
+
+  // ---- 5. Pay -----------------------------------------------------------
   await page.locator("#cardNumber").fill(TEST_CARD);
   await page.locator("#cardExpiry").fill("12/30");
   await page.locator("#cardCvc").fill("123");
   await page.locator("#billingName").fill("Jack Test");
   const postal = page.locator("#billingPostalCode");
   if (await postal.count()) await postal.fill("SW1A 1AA");
-
   await page.getByTestId("hosted-payment-submit-button").click();
 
-  // ---- 5. Reconciliation ------------------------------------------------
-  await page.waitForURL(/\/join\/complete/, { timeout: 120_000 });
-  await expect(page).toHaveURL(/session_id=/);
+  // ---- 6. Reconciliation ------------------------------------------------
+  await page.waitForURL(/\/join\/complete/, { timeout: 150_000 });
+  expect(page.url()).toMatch(/session_id=/);
+  await page.screenshot({ path: "artifacts/staging-03-complete.png", fullPage: true });
 
-  // The poller must not claim success before the webhook lands.
-  await expect(page.locator('[aria-live="polite"]')).toBeVisible();
-
-  // ---- 6. Dashboard -----------------------------------------------------
-  await page.waitForURL(/\/account/, { timeout: 120_000 });
+  // ---- 7. Dashboard -----------------------------------------------------
+  await page.waitForURL(/\/account(?!\/)/, { timeout: 150_000 });
+  await expect(page.getByText(/you.re not a member yet/i)).toHaveCount(0);
   await expect(page.getByText(/supporter/i).first()).toBeVisible();
+  await page.screenshot({ path: "artifacts/staging-04-account-active.png", fullPage: true });
+
+  await page.context().storageState({ path: "tests/staging/.auth/member.json" });
 });

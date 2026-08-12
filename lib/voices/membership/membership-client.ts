@@ -88,7 +88,10 @@ export async function getTiers(): Promise<
  */
 async function authedGet<T>(
   path: string,
-  schema: z.ZodType<T>,
+  // Input is deliberately `unknown`, not `T`: the payload arrives untrusted
+  // off the network, and binding both ends would make T resolve to the
+  // schema's *input* type — reintroducing optionality for defaulted fields.
+  schema: z.ZodType<T, z.ZodTypeDef, unknown>,
 ): Promise<MembershipResult<T>> {
   const token = await getAccessToken();
   if (!token) {

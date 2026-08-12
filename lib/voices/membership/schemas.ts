@@ -8,6 +8,24 @@ import { z } from "zod";
  * deep.
  */
 
+/**
+ * A field the contract documents as nullable. Treats an omitted key exactly
+ * like an explicit `null`, because the two mean the same thing to us and the
+ * backend is not consistent about which it sends — `GET /api/membership/me`
+ * omits `renewsAt` entirely while a membership is `pending_reconciliation`.
+ *
+ * Being strict here is worse than useless: it turns one absent optional field
+ * into a hard parse failure, which the UI can only render as a generic error.
+ * That is a real state every member passes through the instant they pay.
+ * Strictness still applies to the fields that actually carry meaning.
+ */
+function nullish<T extends z.ZodTypeAny>(schema: T) {
+  // .default(null) makes the key optional on the way in but keeps it
+  // required-and-nullable on the way out, so consumers still get a plain
+  // `string | null` rather than having to handle undefined everywhere.
+  return schema.nullable().default(null);
+}
+
 export const membershipCadenceApiSchema = z.enum(["monthly", "annual"]);
 
 export const membershipTierApiSchema = z.object({
@@ -65,15 +83,15 @@ export type PaymentIssue = z.infer<typeof paymentIssueSchema>;
 
 export const membershipStateSchema = z.object({
   status: membershipStatusSchema,
-  tierId: z.string().nullable(),
-  cadence: membershipCadenceApiSchema.nullable(),
-  priceMinor: z.number().int().nonnegative().nullable(),
-  currency: z.string().nullable(),
-  renewsAt: z.string().nullable(),
-  paidThroughAt: z.string().nullable(),
-  scheduledChange: scheduledChangeSchema,
+  tierId: nullish(z.string()),
+  cadence: nullish(membershipCadenceApiSchema),
+  priceMinor: nullish(z.number().int().nonnegative()),
+  currency: nullish(z.string()),
+  renewsAt: nullish(z.string()),
+  paidThroughAt: nullish(z.string()),
+  scheduledChange: nullish(scheduledChangeSchema),
   isFoundingMember: z.boolean(),
-  paymentIssue: paymentIssueSchema,
+  paymentIssue: nullish(paymentIssueSchema),
 });
 export type MembershipState = z.infer<typeof membershipStateSchema>;
 
