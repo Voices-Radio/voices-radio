@@ -55,3 +55,4 @@ coverage/
 !public/mobile-app-badges.png
 *.jpg
 .env
+.env*
