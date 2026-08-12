@@ -296,6 +296,18 @@ POST /api/membership/change-cadence {"toCadence":"annual"}
 
 This matches the root-cause hypothesis below exactly: both `/downgrade` and `/change-cadence` route through the same scheduled branch of `applyChange` (`services/MembershipChangeService.js:121-171`), so anything reaching that branch hits the same orphaned-schedule collision.
 
+**✅ Fixed — 2026-08-12, `d11e2a4`.** Re-verified live against the same account, same two endpoints:
+
+```
+POST /api/membership/change-cadence {"toCadence":"annual"}
+→ 200 {"applied":"scheduled","scheduledChange":{"type":"change_cadence", ..., "stripeScheduleId":"sub_sched_1U3cryGcvYl5L8Letz8lew5S"}}
+
+POST /api/membership/downgrade {"toTierId":"insider"}
+→ 200 {"applied":"scheduled","scheduledChange":{"type":"downgrade", ..., "stripeScheduleId":"sub_sched_1U3cryGcvYl5L8Letz8lew5S"}}
+```
+
+Both succeed, and — worth noting — the second call reused the *same* `stripeScheduleId` rather than erroring, which is exactly the "member changes their mind about the target, replace the existing schedule's phase" path the original code comment described. That path now works too, not just the create-fresh path. Full state-matrix suite re-run below.
+
 **Sequence that produced it**, all against the same account, in order:
 1. Checkout → active/supporter (immediate).
 2. Upgrade → member (immediate).
