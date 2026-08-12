@@ -14,7 +14,7 @@ export default defineConfig({
     globals: true,
     css: false,
     clearMocks: true,
-    exclude: ["node_modules", ".next", "bolt", "tests/e2e"],
+    exclude: ["node_modules", ".next", "bolt", "tests/e2e", "tests/staging"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json-summary"],

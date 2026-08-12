@@ -80,10 +80,18 @@ export default function CreateAccountForm({
         </h1>
         <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
           We&rsquo;ve sent a verification link to <strong>{state.email}</strong>
-          . Verify your address, then sign in to continue.
+          {tier
+            ? `. Verify your address, then sign in and we'll pick your ${tier} membership back up.`
+            : ". Verify your address, then sign in to continue."}
         </p>
         <Link
-          href="/sign-in"
+          href={
+            tier
+              ? `/sign-in?next=${encodeURIComponent(
+                  `/join/checkout?tier=${tier}&cadence=${cadence}`,
+                )}`
+              : "/sign-in"
+          }
           className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-base font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
         >
           Go to sign in
