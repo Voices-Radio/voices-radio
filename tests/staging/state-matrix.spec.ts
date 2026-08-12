@@ -153,7 +153,11 @@ test("3. cancel while a downgrade is scheduled: cancelling wins", async ({
 
   const me = await (await page.request.get("/api/membership/me")).json();
   expect(me.status).toBe("cancelling");
-  expect(me.tierId).toBe("member"); // NOT supporter — the downgrade never applied
+  // Must still be whatever tier it was BEFORE this test scheduled a
+  // downgrade — not the downgrade's target — since cancelling discards the
+  // scheduled change rather than applying it.
+  expect(me.tierId).toBe(me0.tierId);
+  expect(me.tierId).not.toBe(me0.scheduledChange.toTierId);
   expect(me.scheduledChange).toBeNull(); // cleared, not carried forward
 
   await page.goto("/account/membership");
