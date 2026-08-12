@@ -21,21 +21,89 @@ export const navItems = [
   { label: "Brief", href: "#brief" },
 ];
 
-export const clientStrip = [
-  "Hackney Bridge",
-  "The Standard",
-  "Two Tribes Campfire",
-  "Tate Modern",
-  "Dr. Martens",
-  "Aperol",
-  "Mercato Metropolitano",
-  "Kensington Roof Gardens",
-  "Coal Drops Yard",
-  "Mare Street Market",
-  "Flat Iron Square",
-  "HOKA",
-  "MOTH Drinks",
-  "Moju Drinks",
+export type ClientLogo = {
+  name: string;
+  /** Omitted for the two clients with no public logo asset available - see notes below. */
+  logo?: string;
+  width?: number;
+  height?: number;
+  /** Mark is dark/near-black and needs a light chip to read on the strip's dark background. */
+  chip?: boolean;
+};
+
+export const clientLogos: ClientLogo[] = [
+  {
+    name: "Hackney Bridge",
+    logo: "/agency/logos/hackney-bridge.png",
+    width: 1740,
+    height: 484,
+  },
+  {
+    name: "The Standard",
+    logo: "/agency/logos/the-standard.svg",
+    width: 190,
+    height: 48,
+  },
+  {
+    name: "Two Tribes Campfire",
+    logo: "/agency/logos/two-tribes-campfire.svg",
+    width: 90,
+    height: 90,
+    chip: true,
+  },
+  {
+    name: "Tate Modern",
+    logo: "/agency/logos/tate-modern.svg",
+    width: 89,
+    height: 35,
+    chip: true,
+  },
+  {
+    name: "Dr. Martens",
+    logo: "/agency/logos/dr-martens.svg",
+    width: 288,
+    height: 164,
+  },
+  { name: "Aperol", logo: "/agency/logos/aperol.svg", width: 232, height: 112 },
+  {
+    name: "Mercato Metropolitano",
+    logo: "/agency/logos/mercato-metropolitano.svg",
+    width: 230,
+    height: 230,
+    chip: true,
+  },
+  // No public logo found: venue closed in 2018, domain is now parked.
+  { name: "Kensington Roof Gardens" },
+  // No public logo found: site is behind a JS challenge that blocks fetching,
+  // and no logo file exists on Wikimedia/Wikipedia.
+  { name: "Coal Drops Yard" },
+  {
+    name: "Mare Street Market",
+    logo: "/agency/logos/mare-street-market.svg",
+    width: 90,
+    height: 90,
+    chip: true,
+  },
+  {
+    name: "Flat Iron Square",
+    logo: "/agency/logos/flat-iron-square.png",
+    width: 70,
+    height: 85,
+  },
+  { name: "HOKA", logo: "/agency/logos/hoka.png", width: 32, height: 32 },
+  {
+    name: "MOTH Drinks",
+    logo: "/agency/logos/moth-drinks.png",
+    width: 32,
+    height: 32,
+    chip: true,
+  },
+  {
+    name: "Moju Drinks",
+    logo: "/agency/logos/moju-drinks.png",
+    width: 512,
+    height: 512,
+  },
 ];
 
 export const services = [
