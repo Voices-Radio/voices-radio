@@ -323,4 +323,18 @@ If right, the fix is symmetric with `cancel`'s: release any attached schedule (`
 
 **Impact**: any member who schedules a downgrade or cadence change, then changes their mind and upgrades immediately instead (a plausible real flow, not an edge case), permanently loses the ability to schedule *any* future downgrade or cadence change — every attempt 500s. Worth checking whether `jonslow4@gmail.com` is the only account currently in this state or whether it's been hit elsewhere.
 
+---
+
+## 🟡 Frontend finding — 2026-08-12: live-player-bar contrast, out of scope for this branch
+
+`axe` (`tests/staging/accessibility.spec.ts`, `/account` scan) flagged a marginal AA contrast failure on the persistent live-player bar rendered on every page, including the homepage:
+
+```
+color-contrast: #756f6b on #f8efe0 → 4.34:1 (needs 4.5:1 for normal text)
+```
+
+Not caused by, or fixable within, the membership work on `staging/redesign-preview` — the player bar is a shared, site-wide component untouched by any file in Phases 4–7, and the same contrast ratio is present on pages with no membership content at all (confirmed on `/`). It's a real, pre-existing AA violation (fails by a small margin — 0.16 short of threshold), not a false positive like the earlier zoom-reflow test artifact.
+
+**Not fixed here** — flagging for its own ticket rather than bundling an unrelated visual change into this branch. Likely the same class of fix as `voicesNext.orangeText` in `tailwind.config.js`: darken/lighten one of the two tokens by a small, hue-preserved amount until it clears 4.5:1, then audit for other places `#756f6b`-on-`#f8efe0` (or equivalent token pairing) is reused.
+
 **Not fixed here** — this is `voices_backend`, out of scope for the frontend branch this session is testing. Frontend behavior is correct throughout: the confirm-dialog UI surfaced the backend's own error text (`"Failed to downgrade"`) rather than masking it, which is exactly what the error-envelope work from earlier today was for.
