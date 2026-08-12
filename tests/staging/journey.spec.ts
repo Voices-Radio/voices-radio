@@ -41,6 +41,16 @@ test("signed-in member: not-a-member → checkout → Stripe → complete → ac
     fullPage: true,
   });
 
+  // This journey can only run against a member who has not yet subscribed —
+  // checkout is correctly refused for someone already on a tier. Skip rather
+  // than fail, so the rest of the staging suite stays re-runnable.
+  const me = await page.request.get("/api/membership/me");
+  const status = me.ok() ? (await me.json())?.status : null;
+  test.skip(
+    status === "active" || status === "cancelling",
+    `Account is already ${status} — re-run needs a fresh, verified account.`,
+  );
+
   // ---- 3. Pick a tier ---------------------------------------------------
   await page.goto("/join");
   await page
