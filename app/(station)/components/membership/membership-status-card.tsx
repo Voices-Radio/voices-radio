@@ -21,19 +21,37 @@ type StatusKey = NonNullable<MembershipState["status"]>;
 // is what actually communicates the state.
 const STATUS_META: Record<
   StatusKey,
-  { label: string; icon: typeof CheckCircle2; tone: "positive" | "warning" | "neutral" }
+  {
+    label: string;
+    icon: typeof CheckCircle2;
+    tone: "positive" | "warning" | "neutral";
+  }
 > = {
   active: { label: "Active", icon: CheckCircle2, tone: "positive" },
   cancelling: { label: "Cancelling", icon: Clock, tone: "warning" },
-  grace: { label: "Payment needs attention", icon: AlertTriangle, tone: "warning" },
-  complimentary: { label: "Complimentary membership", icon: Gift, tone: "positive" },
+  grace: {
+    label: "Payment needs attention",
+    icon: AlertTriangle,
+    tone: "warning",
+  },
+  complimentary: {
+    label: "Complimentary membership",
+    icon: Gift,
+    tone: "positive",
+  },
   expired: { label: "Expired", icon: XCircle, tone: "neutral" },
-  pending_reconciliation: { label: "Activating…", icon: Loader2, tone: "neutral" },
+  pending_reconciliation: {
+    label: "Activating…",
+    icon: Loader2,
+    tone: "neutral",
+  },
 };
 
 const TONE_CLASSES: Record<"positive" | "warning" | "neutral", string> = {
-  positive: "text-voicesNext-orange",
-  warning: "text-voicesNext-orange",
+  // orangeText, not orange — plain orange fails 4.5:1 as text on this
+  // card's background (axe-flagged; see tailwind.config.js).
+  positive: "text-voicesNext-orangeText",
+  warning: "text-voicesNext-orangeText",
   neutral: "text-voicesNext-cream/70",
 };
 
@@ -87,7 +105,11 @@ export default function MembershipStatusCard({
         <Icon
           aria-hidden="true"
           size={18}
-          className={state.status === "pending_reconciliation" ? "animate-spin" : undefined}
+          className={
+            state.status === "pending_reconciliation"
+              ? "animate-spin"
+              : undefined
+          }
         />
         <span>{meta.label}</span>
       </div>
@@ -98,7 +120,11 @@ export default function MembershipStatusCard({
 
       {state.priceMinor !== null && state.currency && state.cadence && (
         <p className="mt-1 font-gabarito text-base text-voicesNext-cream/90">
-          {formatMinorUnitsWithCadence(state.priceMinor, state.currency, state.cadence)}
+          {formatMinorUnitsWithCadence(
+            state.priceMinor,
+            state.currency,
+            state.cadence,
+          )}
         </p>
       )}
 
@@ -115,7 +141,7 @@ export default function MembershipStatusCard({
       )}
 
       {state.paymentIssue && (
-        <p className="mt-3 font-gabarito text-sm text-voicesNext-orange">
+        <p className="mt-3 font-gabarito text-sm text-voicesNext-orangeText">
           There&rsquo;s a problem with your last payment.{" "}
           {state.paymentIssue.gracePeriodEndsAt &&
             `Please update your payment method by ${formatMembershipDate(state.paymentIssue.gracePeriodEndsAt)}.`}

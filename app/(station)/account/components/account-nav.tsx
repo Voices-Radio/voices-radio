@@ -45,8 +45,12 @@ export default function AccountNav() {
             aria-current={active ? "page" : undefined}
             className={cn(
               "font-gabarito text-sm font-bold uppercase tracking-wide transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange",
+              // orangeText, not orange — plain orange fails 4.5:1 as static
+              // text here (axe-flagged; see tailwind.config.js). The
+              // focus-visible ring above stays plain orange: rings are a
+              // non-text 3:1 threshold, which it already clears.
               active
-                ? "text-voicesNext-orange"
+                ? "text-voicesNext-orangeText"
                 : "text-voicesNext-cream/70 hover:text-voicesNext-cream",
             )}
           >

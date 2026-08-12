@@ -132,6 +132,14 @@ module.exports = {
           // Used for new white-on-orange buttons; existing `orange` usages
           // are left as-is rather than retrofitted site-wide.
           orangeButton: "#C24821",
+          // Same hue as `orange` again, lightened this time (not darkened —
+          // orangeButton goes the wrong direction for this) to clear 4.5:1
+          // for *text* on both voicesNext-background and voicesNext-surface.
+          // Plain `orange` measures 3.61:1 / 3.03:1 there — axe-flagged on
+          // /account's active nav link and status-card labels. Scoped to
+          // text; orange's use for buttons, borders and focus rings is a
+          // different (3:1 non-text) threshold that isn't failing.
+          orangeText: "#DF7E5F",
           live: "#DB1A1A",
           secondary: "#999999",
           white: "#FFFFFF",
