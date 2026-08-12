@@ -56,3 +56,6 @@ coverage/
 *.jpg
 .env
 .env*
+
+# Playwright transform cache (content-hashed, regenerated per run)
+playwright-transform-cache-501/
