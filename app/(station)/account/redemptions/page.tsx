@@ -16,7 +16,10 @@ export default async function AccountRedemptionsPage() {
       </h1>
 
       {!result.ok ? (
-        <p role="alert" className="mt-4 font-gabarito text-sm text-voicesNext-cream/90">
+        <p
+          role="alert"
+          className="mt-4 font-gabarito text-sm text-voicesNext-cream/90"
+        >
           {result.message}
         </p>
       ) : result.data.length === 0 ? (
@@ -39,8 +42,11 @@ export default async function AccountRedemptionsPage() {
                 </span>
               </div>
 
-              {/* Member-facing code only — never an internal redemption ID (contract §8). */}
-              <p className="mt-2 font-outfit text-lg font-black tracking-wide text-voicesNext-orange">
+              {/* Member-facing code only — never an internal redemption ID (contract §8).
+                  orangeText, not orange — plain orange fails 4.5:1 as text on this
+                  card (axe-flagged; see tailwind.config.js), and this is a code
+                  people actually need to read and type out. */}
+              <p className="mt-2 font-outfit text-lg font-black tracking-wide text-voicesNext-orangeText">
                 {redemption.code}
               </p>
 
