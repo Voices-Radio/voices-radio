@@ -22,19 +22,32 @@ test("dashboard renders the live membership state", async ({ page }) => {
   const main = page.getByRole("main");
 
   // Assertions are scoped to <main>: the footer's "Become a Supporter" link
-  // makes an unscoped /supporter/i match meaningless.
+  // makes an unscoped /supporter/i match meaningless. Not asserting a
+  // specific tier name — this account's tier moves as the state-matrix
+  // suite exercises real upgrades/downgrades against it, so "renders
+  // *a* real tier, not an error" is the stable thing to check here.
   await expect(main.getByText(/something went wrong/i)).toHaveCount(0);
   await expect(main.getByText(/you.re not a member yet/i)).toHaveCount(0);
-  await expect(main.getByText(/supporter/i).first()).toBeVisible();
+  await expect(
+    main.getByText(/^(supporter|member|insider|patron)$/i).first(),
+  ).toBeVisible();
 
-  await page.screenshot({ path: "artifacts/dashboard-active.png", fullPage: true });
+  await page.screenshot({
+    path: "artifacts/dashboard-active.png",
+    fullPage: true,
+  });
 });
 
 test("membership page renders without error", async ({ page }) => {
   await page.goto("/account/membership");
   await page.waitForLoadState("networkidle");
-  await expect(page.getByRole("main").getByText(/something went wrong/i)).toHaveCount(0);
-  await page.screenshot({ path: "artifacts/membership-page.png", fullPage: true });
+  await expect(
+    page.getByRole("main").getByText(/something went wrong/i),
+  ).toHaveCount(0);
+  await page.screenshot({
+    path: "artifacts/membership-page.png",
+    fullPage: true,
+  });
 });
 
 test("benefits and redemptions render without error", async ({ page }) => {
@@ -45,7 +58,12 @@ test("benefits and redemptions render without error", async ({ page }) => {
   ] as const) {
     await page.goto(path);
     await page.waitForLoadState("networkidle");
-    await expect(page.getByRole("main").getByText(/something went wrong/i)).toHaveCount(0);
-    await page.screenshot({ path: `artifacts/${name}-page.png`, fullPage: true });
+    await expect(
+      page.getByRole("main").getByText(/something went wrong/i),
+    ).toHaveCount(0);
+    await page.screenshot({
+      path: `artifacts/${name}-page.png`,
+      fullPage: true,
+    });
   }
 });

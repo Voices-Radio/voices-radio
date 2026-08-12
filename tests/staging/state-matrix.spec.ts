@@ -50,6 +50,16 @@ async function confirmChange(
 }
 
 test("1. upgrade: supporter -> member is immediate", async ({ page }) => {
+  // The matrix needs to start from Supporter — skip rather than fail once
+  // the shared account has moved past it, since a prior run of this exact
+  // suite is what moves it. Tests 2 onward don't need this: they consume
+  // whatever state the test before them left, by design.
+  const me0 = await (await page.request.get("/api/membership/me")).json();
+  test.skip(
+    me0.tierId !== "supporter",
+    `Account is already ${me0.tierId} — this suite already ran past this point.`,
+  );
+
   const preview = await confirmChange(page, /^Upgrade$/, /^Confirm upgrade$/);
   expect(preview).toMatch(/£5/); // Member's price, shown in the preview
 
