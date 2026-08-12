@@ -278,3 +278,34 @@ All fifteen were open questions when this document was written; all are now impl
 15. Founding-member cohort: first 250 successful first payments, permanent, excludes comps/admin grants, concurrency-safe.
 
 One thing found during implementation that wasn't a question in this document: the upgrade endpoint's response now includes `unlockedBenefits` (the full post-upgrade benefit list), matching section 5's "show these immediately on success" requirement — flagging since it wasn't in the original request/response examples above.
+
+---
+
+## 🔴 Bug found during FE E2E — 2026-08-12: downgrade 500s after an immediate upgrade overtakes a scheduled change
+
+**Reproduced live** against `jonslow4@gmail.com` (Stripe test mode), both via the real `/account/membership` UI and directly against the API:
+
+```
+POST /api/membership/downgrade  {"toTierId":"insider"}   (adjacent tier)
+POST /api/membership/downgrade  {"toTierId":"supporter"} (skip-tier)
+→ both: 500 {"error":{"code":"INTERNAL","message":"Failed to downgrade"}}
+```
+
+Not tier-specific — both an adjacent-tier and a skip-tier downgrade fail identically from the account's current tier (Patron). `preview-change` for the exact same target succeeds (200) both times; only the confirm step 500s. So the account can currently preview a downgrade but never actually complete one.
+
+**Sequence that produced it**, all against the same account, in order:
+1. Checkout → active/supporter (immediate).
+2. Upgrade → member (immediate).
+3. Downgrade → supporter, scheduled — `MembershipChangeService.applyChange`'s scheduled branch creates a Stripe Subscription Schedule ("schedule A").
+4. Cancel while that downgrade was pending — correctly releases schedule A (`changes.js:159-162`) before setting `cancel_at_period_end`. This step is fine, and is the "cancelling wins" regression you fixed on the 11th — confirmed still correct.
+5. Resume — clean, only touches `cancel_at_period_end`.
+6. Switch to annual billing, scheduled — creates a fresh Stripe schedule ("schedule B"), correctly, since step 4 had cleared `scheduledChange` in Mongo.
+7. **Upgrade → insider (immediate)**, with schedule B still attached and un-released.
+
+**Root-cause hypothesis** (code-level, not confirmed against your Stripe dashboard — flagging confidence honestly): the *immediate* branch of `applyChange` (`services/MembershipChangeService.js:100-118`) calls `stripe.subscriptions.update()` directly and sets `membership.scheduledChange = null` (line 113), but — unlike `cancel` (`routes/membership/changes.js:159-160`) — never calls `stripe.subscriptionSchedules.release()` first. If a schedule is attached when an immediate upgrade happens, Mongo forgets about it (`scheduledChange` is now `null`) while Stripe still has it attached. The next scheduled-change attempt takes the `else` branch at `MembershipChangeService.js:129-131`, sees no `stripeScheduleId` on the Mongo doc, and calls `subscriptionSchedules.create({ from_subscription: ... })` — which is exactly the rejection the comment on lines 122-128 already anticipated for a *different* trigger ("attempting create() while one already exists"), just reached via this path instead of the one it was written to guard against.
+
+If right, the fix is symmetric with `cancel`'s: release any attached schedule (`membership.scheduledChange?.stripeScheduleId`) as part of the immediate-upgrade branch, before nulling the field.
+
+**Impact**: any member who schedules a downgrade or cadence change, then changes their mind and upgrades immediately instead (a plausible real flow, not an edge case), permanently loses the ability to schedule *any* future downgrade or cadence change — every attempt 500s. Worth checking whether `jonslow4@gmail.com` is the only account currently in this state or whether it's been hit elsewhere.
+
+**Not fixed here** — this is `voices_backend`, out of scope for the frontend branch this session is testing. Frontend behavior is correct throughout: the confirm-dialog UI surfaced the backend's own error text (`"Failed to downgrade"`) rather than masking it, which is exactly what the error-envelope work from earlier today was for.
