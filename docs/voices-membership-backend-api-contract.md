@@ -281,17 +281,20 @@ One thing found during implementation that wasn't a question in this document: t
 
 ---
 
-## 🔴 Bug found during FE E2E — 2026-08-12: downgrade 500s after an immediate upgrade overtakes a scheduled change
+## 🔴 Bug found during FE E2E — 2026-08-12: every scheduled change 500s after an immediate upgrade overtakes one
 
-**Reproduced live** against `jonslow4@gmail.com` (Stripe test mode), both via the real `/account/membership` UI and directly against the API:
+**Update, same day**: broader than first scoped — this isn't downgrade-specific. `change-cadence` fails identically:
 
 ```
-POST /api/membership/downgrade  {"toTierId":"insider"}   (adjacent tier)
-POST /api/membership/downgrade  {"toTierId":"supporter"} (skip-tier)
-→ both: 500 {"error":{"code":"INTERNAL","message":"Failed to downgrade"}}
+POST /api/membership/downgrade      {"toTierId":"insider"}   (adjacent tier)
+POST /api/membership/downgrade      {"toTierId":"supporter"} (skip-tier)
+POST /api/membership/change-cadence {"toCadence":"annual"}
+→ all three: 500 {"error":{"code":"INTERNAL","message":"Failed to <downgrade|change cadence>"}}
 ```
 
-Not tier-specific — both an adjacent-tier and a skip-tier downgrade fail identically from the account's current tier (Patron). `preview-change` for the exact same target succeeds (200) both times; only the confirm step 500s. So the account can currently preview a downgrade but never actually complete one.
+**Reproduced live** against `jonslow4@gmail.com` (Stripe test mode), both via the real `/account/membership` UI and directly against the API. Not tier- or action-specific — adjacent-tier downgrade, skip-tier downgrade, and cadence change all fail identically from the account's current tier (Patron). `preview-change` succeeds (200) for all three; only the confirm step 500s. The account can currently *preview* any scheduled change but never complete one — immediate upgrades are the only mutation still working on it.
+
+This matches the root-cause hypothesis below exactly: both `/downgrade` and `/change-cadence` route through the same scheduled branch of `applyChange` (`services/MembershipChangeService.js:121-171`), so anything reaching that branch hits the same orphaned-schedule collision.
 
 **Sequence that produced it**, all against the same account, in order:
 1. Checkout → active/supporter (immediate).
