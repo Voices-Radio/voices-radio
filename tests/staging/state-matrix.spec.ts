@@ -22,6 +22,24 @@ test.beforeEach(async ({ page }) => {
   await page.locator('input[name="password"]').fill(PASSWORD!);
   await page.getByRole("button", { name: /sign in/i }).click();
   await page.waitForURL(/\/account/, { timeout: 60_000 });
+
+  // Safety net: a run that fails partway (e.g. test 3 cancels but a later
+  // test's own assertion fails before test 4/resume runs) leaves the shared
+  // account "cancelling" — which hides every tier-change control the rest
+  // of this suite needs. Clear that before each test rather than let it
+  // silently break unrelated tests on the next run. There's no BFF proxy
+  // for POST /api/membership/resume (only GET /me is proxied — see
+  // app/api/membership/me/route.ts), so this goes through the real UI
+  // rather than a route that doesn't exist on this origin.
+  const me = await (await page.request.get("/api/membership/me")).json();
+  if (me.status === "cancelling") {
+    await page.goto("/account/membership");
+    await page.getByRole("button", { name: /resume membership/i }).click();
+    await expect(page.getByText(/^active$/i).first()).toBeVisible({
+      timeout: 15_000,
+    });
+  }
+
   await page.goto("/account/membership");
   await page.waitForLoadState("networkidle");
 });

@@ -64,6 +64,23 @@ test.describe("keyboard-only: confirm-change-dialog", () => {
     await page.goto("/account/membership");
     await page.waitForLoadState("networkidle");
 
+    // No Upgrade/Downgrade controls render while cancelling (correctly —
+    // that state only offers Resume). This account is shared with the
+    // stateful state-matrix suite, so clear a leftover "cancelling" from an
+    // earlier run rather than let this test fail for an unrelated reason.
+    if (
+      await page
+        .getByText(/^cancelling$/i)
+        .first()
+        .isVisible()
+        .catch(() => false)
+    ) {
+      await page.getByRole("button", { name: /resume membership/i }).click();
+      await expect(page.getByText(/^active$/i).first()).toBeVisible({
+        timeout: 15_000,
+      });
+    }
+
     // Tab from the top of the document to the first tier-change trigger
     // rather than .focus()ing it directly — a real keyboard user has to
     // reach it by tabbing, so that's the path worth proving works.
