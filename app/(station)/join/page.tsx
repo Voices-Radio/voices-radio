@@ -43,21 +43,21 @@ export default async function JoinPage({
   // visitor might not actually be charged.
   if (!tiersResult.ok) {
     return (
-      <div className="mx-auto max-w-[720px] px-4 py-16 text-center md:px-0">
+      <main className="mx-auto max-w-[720px] px-4 py-16 text-center md:px-0">
         <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
           Pricing is temporarily unavailable
         </h1>
         <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
           {tiersResult.message}
         </p>
-      </div>
+      </main>
     );
   }
 
   const tiers = mergeMembershipTiers(tiersResult.data, cmsTiers);
 
   return (
-    <div className="mx-auto max-w-[1120px] px-4 py-10 md:px-8 md:py-16">
+    <main className="mx-auto max-w-[1120px] px-4 py-10 md:px-8 md:py-16">
       <header className="mb-10 flex flex-col gap-3 text-center md:mb-14">
         <h1 className="font-outfit text-4xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-6xl">
           {copy.join_heading}
@@ -108,6 +108,6 @@ export default async function JoinPage({
           </dl>
         </section>
       )}
-    </div>
+    </main>
   );
 }

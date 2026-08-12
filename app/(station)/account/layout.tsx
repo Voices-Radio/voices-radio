@@ -17,9 +17,13 @@ export default async function AccountLayout({
   await requireSession("/account");
 
   return (
-    <div className="mx-auto max-w-[960px] px-4 py-10 md:px-8 md:py-16">
+    // <main>, not <div>: every other page on the site exposes a main landmark
+    // (app/(station)/page.tsx, explore, about, collaborate…), and without one
+    // screen-reader users have no skip-to-content target anywhere under
+    // /account.
+    <main className="mx-auto max-w-[960px] px-4 py-10 md:px-8 md:py-16">
       <AccountNav />
       {children}
-    </div>
+    </main>
   );
 }
