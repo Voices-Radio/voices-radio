@@ -7,6 +7,10 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/playwright-transform-cache-*/
+/artifacts/
 
 # next.js
 /.next/
