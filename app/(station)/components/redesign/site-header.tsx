@@ -8,8 +8,10 @@ import { usePathname, useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import AccountMenu, { getInitials } from "./account-menu";
 import BrandMark from "./brand-mark";
 import MobileAppBadges from "./mobile-app-badges";
+import { useSessionUser } from "./use-session-user";
 
 const SHOP_FALLBACK_URL = "https://shop.voicesradio.co.uk/";
 
@@ -149,6 +151,79 @@ function MobileOnAirTicker() {
           </span>
         ))}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Mobile counterpart to <AccountMenu /> — the desktop avatar/Sign in cluster
+ * lives in a `hidden md:flex` row, so without this, members on phones would
+ * have no route to /account at all. Sits above the existing "Become a
+ * Supporter" CTA in the mobile menu.
+ */
+function MobileAccountLinks({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate: () => void;
+}) {
+  const router = useRouter();
+  const { user, status, signOut } = useSessionUser();
+  const [signingOut, setSigningOut] = useState(false);
+
+  if (status === "loading") return null;
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    try {
+      await signOut();
+    } finally {
+      onNavigate();
+      router.push("/");
+      router.refresh();
+    }
+  }
+
+  if (!user) {
+    return (
+      <div className="mt-6 px-6">
+        <Link
+          href={`/sign-in?next=${encodeURIComponent(pathname || "/")}`}
+          onClick={onNavigate}
+          className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+        >
+          Sign in
+        </Link>
+      </div>
+    );
+  }
+
+  const initials = getInitials(user);
+
+  return (
+    <div className="mt-6 flex flex-col gap-[25px] px-6">
+      <Link
+        href="/account"
+        onClick={onNavigate}
+        className="flex items-center gap-3 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+      >
+        <span
+          aria-hidden="true"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-voicesNext-border bg-voicesNext-surface font-gabarito text-xs font-bold uppercase"
+        >
+          {initials}
+        </span>
+        My account
+      </Link>
+      <button
+        type="button"
+        onClick={handleSignOut}
+        disabled={signingOut}
+        className="text-left font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream/70 transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background disabled:opacity-60"
+      >
+        {signingOut ? "Signing out…" : "Sign out"}
+      </button>
     </div>
   );
 }
@@ -517,6 +592,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
               </div>
             )}
           </div>
+          <AccountMenu />
           <button
             type="button"
             className="inline-flex h-[54px] w-10 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[72px] md:w-11"
@@ -634,6 +710,11 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                 Contact
               </a>
             </nav>
+
+            <MobileAccountLinks
+              pathname={pathname}
+              onNavigate={() => setOpen(false)}
+            />
 
             <div className="mt-auto">
               <div className="px-[23px] pb-6">
