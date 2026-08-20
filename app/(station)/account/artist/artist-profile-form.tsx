@@ -1,0 +1,198 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import type { ArtistProfile } from "@/lib/voices/membership/schemas";
+import {
+  updateArtistProfileAction,
+  type ArtistProfileState,
+} from "./actions";
+
+const initialState: ArtistProfileState = undefined;
+
+function SaveButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      aria-busy={pending}
+      className="inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange disabled:opacity-60"
+    >
+      {pending ? "Saving…" : "Save artist profile"}
+    </button>
+  );
+}
+
+function TextField({
+  id,
+  name,
+  label,
+  defaultValue,
+  type = "text",
+}: {
+  id: string;
+  name: string;
+  label: string;
+  defaultValue?: string | null;
+  type?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label
+        htmlFor={id}
+        className="font-gabarito text-sm font-bold text-voicesNext-cream"
+      >
+        {label}
+      </label>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        defaultValue={defaultValue ?? ""}
+        className="h-12 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+      />
+    </div>
+  );
+}
+
+export default function ArtistProfileForm({
+  profile,
+}: {
+  profile: ArtistProfile;
+}) {
+  const [state, formAction] = useFormState(
+    updateArtistProfileAction,
+    initialState,
+  );
+  const statusRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (state?.status) statusRef.current?.focus();
+  }, [state]);
+
+  return (
+    <form action={formAction} className="mt-8 flex max-w-2xl flex-col gap-5">
+      {state?.status && (
+        <div
+          ref={statusRef}
+          role={state.status === "error" ? "alert" : "status"}
+          aria-live="polite"
+          tabIndex={-1}
+          data-testid="form-error"
+          className="rounded-voices-sm border border-voicesNext-orange bg-voicesNext-surface px-4 py-3 font-gabarito text-sm text-voicesNext-cream focus:outline-none"
+        >
+          {state.status === "success"
+            ? "Your artist profile has been updated."
+            : state.message}
+        </div>
+      )}
+
+      <div className="grid gap-4 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-4 sm:grid-cols-2">
+        <div>
+          <p className="font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/60">
+            Artist name
+          </p>
+          <p className="mt-1 font-gabarito text-base font-bold text-voicesNext-cream">
+            {profile.name}
+          </p>
+        </div>
+        {profile.programmingEmail && (
+          <div>
+            <p className="font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/60">
+              Programming email
+            </p>
+            <p className="mt-1 font-gabarito text-base font-bold text-voicesNext-cream">
+              {profile.programmingEmail}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label
+          htmlFor="bio"
+          className="font-gabarito text-sm font-bold text-voicesNext-cream"
+        >
+          Bio
+        </label>
+        <textarea
+          id="bio"
+          name="bio"
+          defaultValue={profile.bio ?? ""}
+          rows={6}
+          className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+        />
+      </div>
+
+      <TextField
+        id="imageUrl"
+        name="imageUrl"
+        label="Profile image URL"
+        type="url"
+        defaultValue={profile.imageUrl}
+      />
+      <TextField
+        id="bannerUrl"
+        name="bannerUrl"
+        label="Banner image URL"
+        type="url"
+        defaultValue={profile.bannerUrl}
+      />
+      <TextField
+        id="genres"
+        name="genres"
+        label="Genres"
+        defaultValue={profile.genres.join(", ")}
+      />
+      <TextField
+        id="mixcloudUsername"
+        name="mixcloudUsername"
+        label="Mixcloud username"
+        defaultValue={profile.mixcloudUsername}
+      />
+      <TextField
+        id="soundcloudUsername"
+        name="soundcloudUsername"
+        label="SoundCloud username"
+        defaultValue={profile.soundcloudUsername}
+      />
+
+      <fieldset className="grid gap-4 border-0 p-0 sm:grid-cols-2">
+        <legend className="font-gabarito text-sm font-bold text-voicesNext-cream">
+          Social links
+        </legend>
+        <TextField
+          id="instagram"
+          name="instagram"
+          label="Instagram URL"
+          type="url"
+          defaultValue={profile.socialLinks.instagram}
+        />
+        <TextField
+          id="website"
+          name="website"
+          label="Website URL"
+          type="url"
+          defaultValue={profile.socialLinks.website}
+        />
+        <TextField
+          id="twitter"
+          name="twitter"
+          label="Twitter URL"
+          type="url"
+          defaultValue={profile.socialLinks.twitter}
+        />
+        <TextField
+          id="facebook"
+          name="facebook"
+          label="Facebook URL"
+          type="url"
+          defaultValue={profile.socialLinks.facebook}
+        />
+      </fieldset>
+
+      <SaveButton />
+    </form>
+  );
+}

@@ -255,3 +255,23 @@ export async function requireSession(
 
   redirect(`/sign-in?next=${encodeURIComponent(safePath)}`);
 }
+
+export async function requireArtist(
+  nextPath = "/account/artist",
+): Promise<AccountCapabilities> {
+  await requireSession(nextPath);
+
+  const capabilities = await getCapabilities();
+  if (
+    capabilities?.capabilities.includes("artist") &&
+    capabilities.artist?.canManageProfile
+  ) {
+    return capabilities;
+  }
+
+  if (capabilities?.capabilities.includes("artist")) {
+    redirect("/account?artist=unavailable");
+  }
+
+  redirect("/account?artist=missing");
+}

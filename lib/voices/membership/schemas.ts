@@ -210,3 +210,27 @@ export const backendErrorEnvelopeSchema = z.object({
     message: z.string(),
   }),
 });
+
+export const artistSocialLinksSchema = z
+  .object({
+    instagram: z.string().nullable().optional(),
+    website: z.string().nullable().optional(),
+    twitter: z.string().nullable().optional(),
+    facebook: z.string().nullable().optional(),
+  })
+  .default({});
+export type ArtistSocialLinks = z.infer<typeof artistSocialLinksSchema>;
+
+export const artistProfileSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  bio: nullish(z.string()),
+  imageUrl: nullish(z.string()),
+  bannerUrl: nullish(z.string()),
+  genres: z.array(z.string()).default([]),
+  mixcloudUsername: nullish(z.string()),
+  soundcloudUsername: nullish(z.string()),
+  programmingEmail: nullish(z.string()),
+  socialLinks: artistSocialLinksSchema,
+});
+export type ArtistProfile = z.infer<typeof artistProfileSchema>;

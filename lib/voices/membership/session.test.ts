@@ -33,6 +33,7 @@ const {
   clearSessionCookies,
   getCapabilities,
   getSession,
+  requireArtist,
   requireSession,
   setSessionCookies,
 } = await import("./session");
@@ -384,5 +385,88 @@ describe("requireSession", () => {
     );
 
     expect(redirect).toHaveBeenCalledWith("/sign-in?next=%2Faccount");
+  });
+});
+
+describe("requireArtist", () => {
+  it("returns capabilities when the account can manage its artist profile", async () => {
+    cookieStore.set("voices_at", { value: "valid-token" });
+    mockFetchSequence([
+      new Response(JSON.stringify({ user: { _id: "u1", email: "dj@example.com" } }), {
+        status: 200,
+      }),
+      new Response(
+        JSON.stringify({
+          user: { _id: "u1", email: "dj@example.com" },
+          capabilities: ["artist"],
+          artist: {
+            id: "artist-1",
+            name: "DJ Test",
+            imageUrl: null,
+            programmingEmail: "dj@example.com",
+            radioCultArtistId: "rc-1",
+            radioCultSyncState: "linked",
+            canManageProfile: true,
+          },
+          member: null,
+        }),
+        { status: 200 },
+      ),
+    ]);
+
+    await expect(requireArtist("/account/artist")).resolves.toMatchObject({
+      capabilities: ["artist"],
+      artist: { canManageProfile: true },
+    });
+  });
+
+  it("redirects away when the account has no artist link", async () => {
+    cookieStore.set("voices_at", { value: "valid-token" });
+    mockFetchSequence([
+      new Response(JSON.stringify({ user: { _id: "u1", email: "member@example.com" } }), {
+        status: 200,
+      }),
+      new Response(
+        JSON.stringify({
+          user: { _id: "u1", email: "member@example.com" },
+          capabilities: ["member"],
+          artist: null,
+          member: { status: "active", tierId: "insider", cadence: "monthly" },
+        }),
+        { status: 200 },
+      ),
+    ]);
+
+    await expect(requireArtist("/account/artist")).rejects.toThrow(RedirectSignal);
+    expect(redirect).toHaveBeenCalledWith("/account?artist=missing");
+  });
+
+  it("redirects with different messaging when the artist is linked but cannot be edited", async () => {
+    cookieStore.set("voices_at", { value: "valid-token" });
+    mockFetchSequence([
+      new Response(JSON.stringify({ user: { _id: "u1", email: "dj@example.com" } }), {
+        status: 200,
+      }),
+      new Response(
+        JSON.stringify({
+          user: { _id: "u1", email: "dj@example.com" },
+          capabilities: ["artist"],
+          artist: {
+            id: "artist-1",
+            name: "DJ Test",
+            imageUrl: null,
+            programmingEmail: "dj@example.com",
+            radioCultArtistId: "rc-1",
+            radioCultSyncState: "linked",
+            canManageProfile: false,
+          },
+          member: null,
+        }),
+        { status: 200 },
+      ),
+    ]);
+
+    await expect(requireArtist("/account/artist")).rejects.toThrow(RedirectSignal);
+    expect(redirect).toHaveBeenCalledWith("/account?artist=unavailable");
   });
 });

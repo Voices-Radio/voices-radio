@@ -20,14 +20,34 @@ export const metadata: Metadata = {
 
 const USABLE_BENEFIT_STATES = new Set(["available", "requires_action"]);
 
-function AccountNotice({ missing }: { missing?: string }) {
-  if (missing !== "artist" && missing !== "member") return null;
+function AccountNotice({
+  missing,
+  artist,
+}: {
+  missing?: string;
+  artist?: string;
+}) {
+  if (
+    missing !== "artist" &&
+    missing !== "member" &&
+    artist !== "missing" &&
+    artist !== "unavailable"
+  ) {
+    return null;
+  }
+
+  const message =
+    artist === "missing"
+      ? "This account is not linked to an artist profile. Use the invitation link from Voices to claim one."
+      : artist === "unavailable"
+        ? "Your artist profile is linked, but it cannot be edited from this account right now. Contact Voices if this looks wrong."
+        : missing === "artist"
+          ? "You signed in successfully, but this account is not linked to an artist profile."
+          : "You signed in successfully, but this account does not currently have a membership.";
 
   return (
     <div className="mb-6 rounded-voices-sm border border-voicesNext-orange bg-voicesNext-surface px-4 py-3 font-gabarito text-sm text-voicesNext-cream">
-      {missing === "artist"
-        ? "You signed in successfully, but this account is not linked to an artist profile."
-        : "You signed in successfully, but this account does not currently have a membership."}
+      {message}
     </div>
   );
 }
@@ -88,7 +108,7 @@ export default async function AccountPage({
 
   return (
     <div>
-      <AccountNotice missing={params.missing} />
+      <AccountNotice missing={params.missing} artist={params.artist} />
       <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
         {user?.firstName ? `Hi ${user.firstName}` : "Your account"}
       </h1>
