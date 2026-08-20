@@ -16,6 +16,7 @@ const SIGNED_IN_USER = {
   email: "jack@example.com",
   firstName: "Jack",
   lastName: "Onslow",
+  capabilities: ["member"],
 };
 
 function mockSessionFetch(user: unknown) {

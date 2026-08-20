@@ -1,4 +1,7 @@
-import { requireSession } from "@/lib/voices/membership/session";
+import {
+  getCapabilities,
+  requireSession,
+} from "@/lib/voices/membership/session";
 import AccountNav from "./components/account-nav";
 
 /**
@@ -15,6 +18,7 @@ export default async function AccountLayout({
   children: React.ReactNode;
 }) {
   await requireSession("/account");
+  const capabilities = await getCapabilities();
 
   return (
     // <main>, not <div>: every other page on the site exposes a main landmark
@@ -22,7 +26,7 @@ export default async function AccountLayout({
     // screen-reader users have no skip-to-content target anywhere under
     // /account.
     <main className="mx-auto max-w-[960px] px-4 py-10 md:px-8 md:py-16">
-      <AccountNav />
+      <AccountNav capabilities={capabilities?.capabilities ?? []} />
       {children}
     </main>
   );

@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { accountLinksForCapabilities } from "@/lib/voices/membership/capabilities";
 import AccountMenu, { getInitials } from "./account-menu";
 import BrandMark from "./brand-mark";
 import MobileAppBadges from "./mobile-app-badges";
@@ -200,22 +201,28 @@ function MobileAccountLinks({
   }
 
   const initials = getInitials(user);
+  const accountLinks = accountLinksForCapabilities(user.capabilities);
 
   return (
     <div className="mt-6 flex flex-col gap-[25px] px-6">
-      <Link
-        href="/account"
-        onClick={onNavigate}
-        className="flex items-center gap-3 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-      >
-        <span
-          aria-hidden="true"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-voicesNext-border bg-voicesNext-surface font-gabarito text-xs font-bold uppercase"
+      {accountLinks.map((link, index) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          onClick={onNavigate}
+          className="flex items-center gap-3 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
         >
-          {initials}
-        </span>
-        My account
-      </Link>
+          {index === 0 && (
+            <span
+              aria-hidden="true"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-voicesNext-border bg-voicesNext-surface font-gabarito text-xs font-bold uppercase"
+            >
+              {initials}
+            </span>
+          )}
+          {index === 0 ? "My account" : link.label}
+        </Link>
+      ))}
       <button
         type="button"
         onClick={handleSignOut}

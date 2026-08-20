@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/voices/membership/session", () => ({
+  getCapabilities: vi.fn(),
   getSession: vi.fn(),
   refreshTokens: vi.fn(),
   setSessionCookies: vi.fn(),
 }));
 
-const { getSession, refreshTokens, setSessionCookies } = await import(
-  "@/lib/voices/membership/session"
-);
+const { getCapabilities, getSession, refreshTokens, setSessionCookies } =
+  await import("@/lib/voices/membership/session");
 const { GET } = await import("./route");
 
 const USER = {
@@ -20,6 +20,12 @@ const USER = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(getCapabilities).mockResolvedValue({
+    user: USER,
+    capabilities: ["member"],
+    artist: null,
+    member: { status: "active", tierId: "insider", cadence: "monthly" },
+  });
 });
 
 describe("GET /api/auth/session", () => {
@@ -29,7 +35,14 @@ describe("GET /api/auth/session", () => {
     const response = await GET();
     const payload = await response.json();
 
-    expect(payload).toEqual({ user: USER });
+    expect(payload).toEqual({
+      user: {
+        ...USER,
+        capabilities: ["member"],
+        artist: null,
+        member: { status: "active", tierId: "insider", cadence: "monthly" },
+      },
+    });
     expect(refreshTokens).not.toHaveBeenCalled();
   });
 
@@ -49,7 +62,14 @@ describe("GET /api/auth/session", () => {
       token: "fresh-access",
       refreshToken: "fresh-refresh",
     });
-    expect(payload).toEqual({ user: USER });
+    expect(payload).toEqual({
+      user: {
+        ...USER,
+        capabilities: ["member"],
+        artist: null,
+        member: { status: "active", tierId: "insider", cadence: "monthly" },
+      },
+    });
   });
 
   it("returns user: null with a 200 when there is no session at all", async () => {

@@ -1,11 +1,17 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import {
   getBenefits,
   getMembership,
   getTiers,
 } from "@/lib/voices/membership/membership-client";
-import { getSession } from "@/lib/voices/membership/session";
+import {
+  accountHomeDecision,
+  parseAccountMode,
+} from "@/lib/voices/membership/capabilities";
+import { getCapabilities, getSession } from "@/lib/voices/membership/session";
 import MembershipStatusCard from "../components/membership/membership-status-card";
 
 export const metadata: Metadata = {
@@ -14,7 +20,64 @@ export const metadata: Metadata = {
 
 const USABLE_BENEFIT_STATES = new Set(["available", "requires_action"]);
 
-export default async function AccountPage() {
+function AccountNotice({ missing }: { missing?: string }) {
+  if (missing !== "artist" && missing !== "member") return null;
+
+  return (
+    <div className="mb-6 rounded-voices-sm border border-voicesNext-orange bg-voicesNext-surface px-4 py-3 font-gabarito text-sm text-voicesNext-cream">
+      {missing === "artist"
+        ? "You signed in successfully, but this account is not linked to an artist profile."
+        : "You signed in successfully, but this account does not currently have a membership."}
+    </div>
+  );
+}
+
+function EmptyAccountState() {
+  return (
+    <div>
+      <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
+        Your account
+      </h1>
+      <div className="mt-6 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6">
+        <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
+          Nothing active yet
+        </h2>
+        <p className="mt-3 font-asap text-sm leading-relaxed text-voicesNext-cream/75">
+          This login is not linked to a membership or an artist profile right
+          now. Join as a member, or use the invitation link from Voices to claim
+          an artist profile.
+        </p>
+        <Link
+          href="/join"
+          className="mt-5 inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+        >
+          Join as a member
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ missing?: string; artist?: string }>;
+}) {
+  const [params, store] = await Promise.all([searchParams, cookies()]);
+  const capabilities = await getCapabilities();
+  const decision = accountHomeDecision(
+    capabilities,
+    parseAccountMode(store.get("voices_account_mode")?.value),
+  );
+
+  if (decision.kind === "redirect") {
+    redirect(decision.href);
+  }
+
+  if (decision.kind === "empty") {
+    return <EmptyAccountState />;
+  }
+
   const [user, membershipResult, tiersResult, benefitsResult] =
     await Promise.all([
       getSession(),
@@ -25,6 +88,7 @@ export default async function AccountPage() {
 
   return (
     <div>
+      <AccountNotice missing={params.missing} />
       <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
         {user?.firstName ? `Hi ${user.firstName}` : "Your account"}
       </h1>

@@ -5,18 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { accountLinksForCapabilities } from "@/lib/voices/membership/capabilities";
 import type { VoicesSessionUser } from "@/lib/voices/membership/session";
 import { useSessionUser } from "./use-session-user";
-
-// Same five tabs as app/(station)/account/components/account-nav.tsx — the
-// dropdown and the in-page account nav are deliberately one consistent set.
-const ACCOUNT_LINKS = [
-  { href: "/account", label: "Dashboard" },
-  { href: "/account/membership", label: "Membership" },
-  { href: "/account/benefits", label: "Benefits" },
-  { href: "/account/redemptions", label: "Redemptions" },
-  { href: "/account/profile", label: "Profile" },
-];
 
 const focusRingClasses =
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background";
@@ -78,6 +69,7 @@ function AccountAvatarMenu({
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const initials = getInitials(user);
+  const links = accountLinksForCapabilities(user.capabilities);
 
   useEffect(() => {
     setOpen(false);
@@ -172,7 +164,7 @@ function AccountAvatarMenu({
           </div>
 
           <div className="py-1">
-            {ACCOUNT_LINKS.map((link) => (
+            {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

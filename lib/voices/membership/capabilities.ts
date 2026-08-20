@@ -33,6 +33,11 @@ export interface AccountCapabilities {
 }
 
 export type AccountIntent = AccountCapability;
+export type AccountMode = "artist" | "member";
+export type AccountHomeDecision =
+  | { kind: "member" }
+  | { kind: "empty" }
+  | { kind: "redirect"; href: string };
 
 export function hasCapability(
   capabilities: AccountCapabilities | null | undefined,
@@ -57,6 +62,27 @@ export function defaultAccountPathForCapabilities(
   if (hasCapability(capabilities, "member")) return "/account";
   if (hasCapability(capabilities, "artist")) return "/account/artist";
   return "/account";
+}
+
+export function parseAccountMode(value: unknown): AccountMode | undefined {
+  return value === "artist" || value === "member" ? value : undefined;
+}
+
+export function accountHomeDecision(
+  capabilities: AccountCapabilities | null,
+  persistedMode: AccountMode | undefined,
+): AccountHomeDecision {
+  const hasMember = hasCapability(capabilities, "member");
+  const hasArtist = hasCapability(capabilities, "artist");
+
+  if (hasMember && hasArtist && persistedMode === "artist") {
+    return { kind: "redirect", href: "/account/artist" };
+  }
+
+  if (hasMember) return { kind: "member" };
+  if (hasArtist) return { kind: "redirect", href: "/account/artist" };
+
+  return { kind: "empty" };
 }
 
 export function resolvePostLoginPath({
@@ -92,6 +118,10 @@ export function accountLinksForCapabilities(
   const values = capabilities ?? [];
   const hasMember = values.includes("member");
   const hasArtist = values.includes("artist");
+
+  if (!hasMember && !hasArtist) {
+    return [{ href: "/account", label: "Account" }];
+  }
 
   return [
     ...(hasMember ? [{ href: "/account", label: "Dashboard" }] : []),

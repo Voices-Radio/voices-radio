@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {
+  getCapabilities,
   getSession,
   refreshTokens,
   setSessionCookies,
@@ -22,11 +23,35 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   const user = await getSession();
-  if (user) return NextResponse.json({ user });
+  if (user) {
+    const capabilities = await getCapabilities();
+    return NextResponse.json({
+      user: capabilities
+        ? {
+            ...user,
+            capabilities: capabilities.capabilities,
+            artist: capabilities.artist,
+            member: capabilities.member,
+          }
+        : user,
+    });
+  }
 
   const refreshed = await refreshTokens();
   if (!refreshed) return NextResponse.json({ user: null });
 
   await setSessionCookies(refreshed);
-  return NextResponse.json({ user: await getSession() });
+  const refreshedUser = await getSession();
+  const capabilities = await getCapabilities();
+  return NextResponse.json({
+    user:
+      refreshedUser && capabilities
+        ? {
+            ...refreshedUser,
+            capabilities: capabilities.capabilities,
+            artist: capabilities.artist,
+            member: capabilities.member,
+          }
+        : refreshedUser,
+  });
 }

@@ -4,19 +4,35 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import {
+  accountLinksForCapabilities,
+  type AccountCapability,
+} from "@/lib/voices/membership/capabilities";
 
-const LINKS = [
-  { href: "/account", label: "Dashboard" },
-  { href: "/account/membership", label: "Membership" },
-  { href: "/account/benefits", label: "Benefits" },
-  { href: "/account/redemptions", label: "Redemptions" },
-  { href: "/account/profile", label: "Profile" },
-];
+const ACCOUNT_MODE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 
-export default function AccountNav() {
+function persistAccountMode(mode: "artist" | "member") {
+  document.cookie = [
+    `voices_account_mode=${mode}`,
+    "path=/",
+    `max-age=${ACCOUNT_MODE_COOKIE_MAX_AGE_SECONDS}`,
+    "samesite=lax",
+  ].join("; ");
+}
+
+export default function AccountNav({
+  capabilities,
+}: {
+  capabilities: AccountCapability[];
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
+  const links = accountLinksForCapabilities(capabilities);
+  const hasArtist = capabilities.includes("artist");
+  const hasMember = capabilities.includes("member");
+  const showModeToggle = hasArtist && hasMember;
+  const inArtistMode = pathname?.startsWith("/account/artist") ?? false;
 
   async function handleSignOut() {
     setSigningOut(true);
@@ -33,7 +49,7 @@ export default function AccountNav() {
       aria-label="Account"
       className="mb-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-voicesNext-border pb-4"
     >
-      {LINKS.map((link) => {
+      {links.map((link) => {
         const active =
           link.href === "/account"
             ? pathname === "/account"
@@ -58,6 +74,15 @@ export default function AccountNav() {
           </Link>
         );
       })}
+      {showModeToggle && (
+        <Link
+          href={inArtistMode ? "/account" : "/account/artist"}
+          onClick={() => persistAccountMode(inArtistMode ? "member" : "artist")}
+          className="rounded-full border border-voicesNext-border px-3 py-1 font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/80 transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange"
+        >
+          {inArtistMode ? "Member Mode" : "DJ Mode"}
+        </Link>
+      )}
       <button
         type="button"
         onClick={handleSignOut}
