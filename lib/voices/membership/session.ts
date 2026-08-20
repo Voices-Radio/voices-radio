@@ -4,6 +4,12 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { VOICES_MEMBERSHIP_API_BASE_URL } from "@/lib/voices/config";
 import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
+import type {
+  AccountCapabilities,
+  AccountCapability,
+  ArtistCapabilityProfile,
+  MemberCapabilityProfile,
+} from "./capabilities";
 import { safeInternalPath } from "./paths";
 
 const ACCESS_COOKIE = "voices_at";
@@ -19,9 +25,13 @@ export interface VoicesSessionUser {
   firstName?: string;
   lastName?: string;
   role?: string;
+  capabilities?: AccountCapability[];
+  artist?: ArtistCapabilityProfile | null;
+  member?: MemberCapabilityProfile | null;
 }
 
 type AuthTokens = { token: string; refreshToken: string };
+type AccessTokenOnly = { token: string };
 
 function cookieOptions(maxAge: number) {
   return {
@@ -42,6 +52,12 @@ export async function setSessionCookies({ token, refreshToken }: AuthTokens) {
     refreshToken,
     cookieOptions(REFRESH_TOKEN_MAX_AGE_SECONDS),
   );
+}
+
+/** Route Handler / Server Action only — used when a backend flow returns no refresh token. */
+export async function setAccessTokenCookie({ token }: AccessTokenOnly) {
+  const store = await cookies();
+  store.set(ACCESS_COOKIE, token, cookieOptions(ACCESS_TOKEN_MAX_AGE_SECONDS));
 }
 
 /** Route Handler / Server Action only. */
@@ -99,6 +115,27 @@ export const getSession = cache(async (): Promise<VoicesSessionUser | null> => {
     return null;
   }
 });
+
+export const getCapabilities = cache(
+  async (): Promise<AccountCapabilities | null> => {
+    const token = await getAccessToken();
+    if (!token) return null;
+
+    try {
+      const response = await authedFetch("/api/auth/capabilities");
+      if (!response.ok) return null;
+
+      const payload = await response.json().catch(() => null);
+      if (!payload?.user || !Array.isArray(payload.capabilities)) return null;
+
+      return payload as AccountCapabilities;
+    } catch (error) {
+      if (isNextControlFlowError(error)) throw error;
+      console.error("Voices capabilities request failed:", error);
+      return null;
+    }
+  },
+);
 
 // Single-flight refresh: the backend rotates the refresh token on every
 // use, so concurrent 401s for the SAME session must share one refresh call

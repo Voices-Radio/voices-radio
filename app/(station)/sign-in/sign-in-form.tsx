@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
+import type { AccountIntent } from "@/lib/voices/membership/capabilities";
 import { signInAction, type SignInState } from "./actions";
 
 const initialState: SignInState = undefined;
@@ -22,9 +23,27 @@ function SubmitButton() {
   );
 }
 
-export default function SignInForm({ next }: { next: string }) {
+export default function SignInForm({
+  next,
+  intent,
+}: {
+  next: string;
+  intent?: AccountIntent;
+}) {
   const [state, formAction] = useFormState(signInAction, initialState);
   const errorRef = useRef<HTMLDivElement>(null);
+  const heading =
+    intent === "artist"
+      ? "Artist sign in"
+      : intent === "member"
+        ? "Member sign in"
+        : "Sign in";
+  const description =
+    intent === "artist"
+      ? "Sign in to manage your Voices artist profile."
+      : intent === "member"
+        ? "Sign in to manage your Voices membership."
+        : "Sign in to manage your Voices account.";
 
   useEffect(() => {
     if (state?.formError) {
@@ -35,14 +54,38 @@ export default function SignInForm({ next }: { next: string }) {
   return (
     <div className="mx-auto max-w-[440px] px-4 py-16 md:px-0">
       <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-        Sign in
+        {heading}
       </h1>
       <p className="mt-2 font-gabarito text-sm text-voicesNext-cream/70">
-        Sign in to manage your Voices membership.
+        {description}
       </p>
+
+      {!intent && (
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <Link
+            href={`/sign-in?as=artist${next ? `&next=${encodeURIComponent(next)}` : ""}`}
+            className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface px-4 py-3 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+          >
+            Artist
+            <span className="mt-1 block font-asap text-xs font-normal text-voicesNext-cream/70">
+              Manage your DJ profile.
+            </span>
+          </Link>
+          <Link
+            href={`/sign-in?as=member${next ? `&next=${encodeURIComponent(next)}` : ""}`}
+            className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface px-4 py-3 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+          >
+            Member
+            <span className="mt-1 block font-asap text-xs font-normal text-voicesNext-cream/70">
+              Manage your membership.
+            </span>
+          </Link>
+        </div>
+      )}
 
       <form action={formAction} noValidate className="mt-8 flex flex-col gap-5">
         <input type="hidden" name="next" value={next} />
+        <input type="hidden" name="as" value={intent ?? ""} />
 
         {state?.formError && (
           <div

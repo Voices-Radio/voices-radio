@@ -17,12 +17,13 @@ vi.mock("@/lib/voices/membership/auth-client", () => ({
 }));
 
 vi.mock("@/lib/voices/membership/session", () => ({
+  getCapabilities: vi.fn(),
   setSessionCookies: vi.fn(),
 }));
 
 const { redirect } = await import("next/navigation");
 const { backendLogin } = await import("@/lib/voices/membership/auth-client");
-const { setSessionCookies } = await import(
+const { getCapabilities, setSessionCookies } = await import(
   "@/lib/voices/membership/session"
 );
 const { signInAction } = await import("./actions");
@@ -37,6 +38,7 @@ function formData(fields: Record<string, string>) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(getCapabilities).mockResolvedValue(null);
 });
 
 describe("signInAction", () => {
@@ -98,6 +100,104 @@ describe("signInAction", () => {
       refreshToken: "rt",
     });
     expect(redirect).toHaveBeenCalledWith("/account");
+  });
+
+  it("uses artist intent only as a default landing hint when the account has artist access", async () => {
+    vi.mocked(backendLogin).mockResolvedValue({
+      ok: true,
+      status: 200,
+      payload: { token: "at", refreshToken: "rt", user: { _id: "u1" } },
+    });
+    vi.mocked(getCapabilities).mockResolvedValue({
+      user: { _id: "u1", email: "dj@example.com" },
+      capabilities: ["artist"],
+      artist: {
+        id: "artist-1",
+        name: "DJ Test",
+        imageUrl: null,
+        programmingEmail: "dj@example.com",
+        radioCultArtistId: "rc-1",
+        radioCultSyncState: "linked",
+        canManageProfile: true,
+      },
+      member: null,
+    });
+
+    await expect(
+      signInAction(
+        undefined,
+        formData({
+          email: "dj@example.com",
+          password: "correct",
+          as: "artist",
+        }),
+      ),
+    ).rejects.toThrow(RedirectSignal);
+
+    expect(redirect).toHaveBeenCalledWith("/account/artist");
+  });
+
+  it("still signs in through the wrong door and lands on the capability the account actually has", async () => {
+    vi.mocked(backendLogin).mockResolvedValue({
+      ok: true,
+      status: 200,
+      payload: { token: "at", refreshToken: "rt", user: { _id: "u1" } },
+    });
+    vi.mocked(getCapabilities).mockResolvedValue({
+      user: { _id: "u1", email: "dj@example.com" },
+      capabilities: ["artist"],
+      artist: {
+        id: "artist-1",
+        name: "DJ Test",
+        imageUrl: null,
+        programmingEmail: "dj@example.com",
+        radioCultArtistId: "rc-1",
+        radioCultSyncState: "linked",
+        canManageProfile: true,
+      },
+      member: null,
+    });
+
+    await expect(
+      signInAction(
+        undefined,
+        formData({
+          email: "dj@example.com",
+          password: "correct",
+          as: "member",
+        }),
+      ),
+    ).rejects.toThrow(RedirectSignal);
+
+    expect(redirect).toHaveBeenCalledWith("/account/artist?missing=member");
+  });
+
+  it("lets an explicit safe next path win over the as intent", async () => {
+    vi.mocked(backendLogin).mockResolvedValue({
+      ok: true,
+      status: 200,
+      payload: { token: "at", refreshToken: "rt" },
+    });
+    vi.mocked(getCapabilities).mockResolvedValue({
+      user: { _id: "u1", email: "dj@example.com" },
+      capabilities: ["artist"],
+      artist: null,
+      member: null,
+    });
+
+    await expect(
+      signInAction(
+        undefined,
+        formData({
+          email: "dj@example.com",
+          password: "correct",
+          as: "artist",
+          next: "/benefits/friends",
+        }),
+      ),
+    ).rejects.toThrow(RedirectSignal);
+
+    expect(redirect).toHaveBeenCalledWith("/benefits/friends");
   });
 
   it("redirects to a same-origin `next` path when provided", async () => {

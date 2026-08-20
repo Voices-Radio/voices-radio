@@ -31,6 +31,7 @@ const { redirect } = await import("next/navigation");
 const {
   authedFetch,
   clearSessionCookies,
+  getCapabilities,
   getSession,
   requireSession,
   setSessionCookies,
@@ -120,6 +121,72 @@ describe("getSession", () => {
     );
 
     await expect(getSession()).resolves.toBeNull();
+  });
+});
+
+describe("getCapabilities", () => {
+  it("returns null when the visitor has no access token", async () => {
+    expect(await getCapabilities()).toBeNull();
+  });
+
+  it("returns the parsed capabilities payload on success", async () => {
+    cookieStore.set("voices_at", { value: "valid-token" });
+    const fetchMock = mockFetchOnce(
+      new Response(
+        JSON.stringify({
+          user: { _id: "u1", email: "dj@example.com", role: "presenter" },
+          capabilities: ["artist", "member"],
+          artist: {
+            id: "artist-1",
+            name: "DJ Test",
+            imageUrl: "https://example.com/dj.jpg",
+            programmingEmail: "dj@example.com",
+            radioCultArtistId: "rc-1",
+            radioCultSyncState: "linked",
+            canManageProfile: true,
+          },
+          member: {
+            status: "active",
+            tierId: "insider",
+            cadence: "monthly",
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+
+    expect(await getCapabilities()).toMatchObject({
+      capabilities: ["artist", "member"],
+      artist: { id: "artist-1", canManageProfile: true },
+      member: { status: "active", tierId: "insider" },
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/api/auth/capabilities"),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer valid-token",
+        }),
+      }),
+    );
+  });
+
+  it("returns null when the capabilities endpoint rejects the session", async () => {
+    cookieStore.set("voices_at", { value: "expired-token" });
+    mockFetchOnce(new Response(null, { status: 401 }));
+
+    expect(await getCapabilities()).toBeNull();
+  });
+
+  it("returns null rather than throwing when the request errors", async () => {
+    cookieStore.set("voices_at", { value: "token" });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("network down");
+      }),
+    );
+
+    await expect(getCapabilities()).resolves.toBeNull();
   });
 });
 

@@ -3,7 +3,14 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { backendLogin } from "@/lib/voices/membership/auth-client";
-import { setSessionCookies } from "@/lib/voices/membership/session";
+import {
+  parseAccountIntent,
+  resolvePostLoginPath,
+} from "@/lib/voices/membership/capabilities";
+import {
+  getCapabilities,
+  setSessionCookies,
+} from "@/lib/voices/membership/session";
 
 const schema = z.object({
   email: z
@@ -12,6 +19,7 @@ const schema = z.object({
     .email("Enter a valid email address."),
   password: z.string().min(1, "Enter your password."),
   next: z.string().optional(),
+  as: z.string().optional(),
 });
 
 export type SignInState =
@@ -21,12 +29,6 @@ export type SignInState =
     }
   | undefined;
 
-function safeNextPath(next: string | undefined) {
-  return next && next.startsWith("/") && !next.startsWith("//")
-    ? next
-    : "/account";
-}
-
 export async function signInAction(
   _prevState: SignInState,
   formData: FormData,
@@ -35,6 +37,7 @@ export async function signInAction(
     email: formData.get("email"),
     password: formData.get("password"),
     next: formData.get("next") || undefined,
+    as: formData.get("as") || undefined,
   });
 
   if (!parsed.success) {
@@ -71,5 +74,12 @@ export async function signInAction(
     refreshToken: payload.refreshToken,
   });
 
-  redirect(safeNextPath(parsed.data.next));
+  const capabilities = await getCapabilities();
+  redirect(
+    resolvePostLoginPath({
+      next: parsed.data.next,
+      intent: parseAccountIntent(parsed.data.as),
+      capabilities,
+    }),
+  );
 }
