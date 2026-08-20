@@ -1,6 +1,8 @@
 import { Studio } from "./Studio";
 
-export { metadata } from "next-sanity/studio";
+export const metadata = {
+  title: "Studio",
+};
 
 export default function StudioPage() {
   return <Studio />;

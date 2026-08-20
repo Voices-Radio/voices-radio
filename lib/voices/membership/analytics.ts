@@ -29,6 +29,9 @@ export type MembershipAnalyticsEvent =
   | { name: "membership_benefit_redeemed"; benefitSlug: string };
 
 let fathomClient: Promise<typeof import("fathom-client")> | undefined;
+type FathomClient = typeof import("fathom-client") & {
+  trackEvent?: (name: string) => void;
+};
 
 function getFathomClient() {
   fathomClient ??= import("fathom-client");
@@ -65,7 +68,13 @@ export function eventName(event: MembershipAnalyticsEvent): string {
 export function trackMembershipEvent(event: MembershipAnalyticsEvent) {
   if (env.NEXT_PUBLIC_SITE_ENV !== "production") return;
 
-  void getFathomClient().then(({ trackEvent }) => {
-    trackEvent(eventName(event));
+  void getFathomClient().then((client) => {
+    const fathom = client as FathomClient;
+    const name = eventName(event);
+    if (fathom.trackEvent) {
+      fathom.trackEvent(name);
+      return;
+    }
+    fathom.trackGoal(name, 0);
   });
 }
