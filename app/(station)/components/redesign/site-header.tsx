@@ -258,6 +258,11 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   const trimmedSearchQuery = searchQuery.trim();
   const searchReady = trimmedSearchQuery.length >= 2;
   const searchHasResults = hasSearchResults(searchResults);
+  const searchButtonLabel = searchOpen
+    ? trimmedSearchQuery
+      ? "Submit search"
+      : "Close search"
+    : "Open search";
 
   useEffect(() => {
     setOpen(false);
@@ -369,11 +374,9 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
     };
   }, [searchOpen, searchReady, trimmedSearchQuery]);
 
-  function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!searchOpen) {
-      setSearchOpen(true);
+  function submitSearch() {
+    if (!trimmedSearchQuery) {
+      setSearchOpen(false);
       return;
     }
 
@@ -383,6 +386,20 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
       setSearchOpen(false);
       router.push(firstResult.url);
     }
+  }
+
+  function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    submitSearch();
+  }
+
+  function handleSearchButtonClick() {
+    if (!searchOpen) {
+      setSearchOpen(true);
+      return;
+    }
+
+    submitSearch();
   }
 
   return (
@@ -493,14 +510,10 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                 )}
               />
               <button
-                type={searchOpen ? "submit" : "button"}
+                type="button"
                 className="inline-flex h-[54px] w-10 shrink-0 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[72px] md:w-11"
-                onClick={() => {
-                  if (!searchOpen) {
-                    setSearchOpen(true);
-                  }
-                }}
-                aria-label={searchOpen ? "Submit search" : "Open search"}
+                onClick={handleSearchButtonClick}
+                aria-label={searchButtonLabel}
                 aria-expanded={searchOpen}
                 aria-controls="site-search"
               >
