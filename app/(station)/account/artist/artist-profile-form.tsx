@@ -3,10 +3,10 @@
 import { useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import type { ArtistProfile } from "@/lib/voices/membership/schemas";
-import {
-  updateArtistProfileAction,
-  type ArtistProfileState,
-} from "./actions";
+import { updateArtistProfileAction, type ArtistProfileState } from "./actions";
+import ImageField from "./image-field";
+import GenreTagInput from "./genre-tag-input";
+import UsernameField from "./username-field";
 
 const initialState: ArtistProfileState = undefined;
 
@@ -125,36 +125,31 @@ export default function ArtistProfileForm({
         />
       </div>
 
-      <TextField
-        id="imageUrl"
-        name="imageUrl"
-        label="Profile image URL"
-        type="url"
-        defaultValue={profile.imageUrl}
+      <ImageField
+        kind="profile"
+        fieldName="imageUrl"
+        label="Profile image"
+        initialUrl={profile.imageUrl}
       />
-      <TextField
-        id="bannerUrl"
-        name="bannerUrl"
-        label="Banner image URL"
-        type="url"
-        defaultValue={profile.bannerUrl}
+      <ImageField
+        kind="banner"
+        fieldName="bannerUrl"
+        label="Banner image"
+        initialUrl={profile.bannerUrl}
       />
-      <TextField
-        id="genres"
-        name="genres"
-        label="Genres"
-        defaultValue={profile.genres.join(", ")}
-      />
-      <TextField
+      <GenreTagInput name="genres" initialGenres={profile.genres} />
+      <UsernameField
         id="mixcloudUsername"
         name="mixcloudUsername"
         label="Mixcloud username"
+        platform="mixcloud"
         defaultValue={profile.mixcloudUsername}
       />
-      <TextField
+      <UsernameField
         id="soundcloudUsername"
         name="soundcloudUsername"
         label="SoundCloud username"
+        platform="soundcloud"
         defaultValue={profile.soundcloudUsername}
       />
 

@@ -6,20 +6,25 @@ import { describeErrorResponse } from "./membership-client";
 import { describeMembershipError } from "./errors";
 import {
   artistProfileSchema,
+  profileLookupResultSchema,
   type ArtistProfile,
   type ArtistSocialLinks,
+  type ProfileLookupResult,
 } from "./schemas";
 
 export type ArtistProfileResult<T> =
   | { ok: true; data: T }
   | { ok: false; code: string; message: string };
 
+const MY_PROFILE_PATH = "/api/artists/presenter/my-profile";
+
 async function artistProfileRequest<T>(
   init: RequestInit,
   schema: z.ZodType<T, z.ZodTypeDef, unknown>,
+  path: string = MY_PROFILE_PATH,
 ): Promise<ArtistProfileResult<T>> {
   try {
-    const response = await authedFetch("/api/artists/presenter/my-profile", init);
+    const response = await authedFetch(path, init);
 
     if (!response.ok) {
       const { code, message } = await describeErrorResponse(response);
@@ -75,5 +80,47 @@ export function updateArtistProfile(input: {
       body: JSON.stringify(input),
     },
     artistProfileSchema,
+  );
+}
+
+export type ArtistImageKind = "profile" | "banner";
+
+/**
+ * Uploads a DJ's profile or banner image. A dedicated call rather than a
+ * variant of updateArtistProfile(): that call sends JSON, this sends
+ * multipart form data, and the two can't share a body encoding. Saves
+ * immediately, independent of the rest of the profile form — see
+ * routes/artists.js's POST /presenter/my-profile/image.
+ *
+ * No explicit Content-Type header: fetch sets the multipart boundary itself
+ * from the FormData body, and overriding it here would drop the boundary.
+ */
+export function uploadArtistProfileImage(kind: ArtistImageKind, file: File) {
+  const body = new FormData();
+  body.append("image", file);
+
+  return artistProfileRequest<ArtistProfile>(
+    { method: "POST", body },
+    artistProfileSchema,
+    `${MY_PROFILE_PATH}/image?kind=${kind}`,
+  );
+}
+
+export type ProfileLookupPlatform = "mixcloud" | "soundcloud";
+
+/**
+ * Advisory "does this account exist?" check for the Mixcloud/SoundCloud
+ * username fields. See profileLookupResultSchema for why the result is a
+ * three-state status rather than a boolean, and services/profileLookup.js
+ * for the backend side.
+ */
+export function lookupArtistUsername(
+  platform: ProfileLookupPlatform,
+  username: string,
+) {
+  return artistProfileRequest<ProfileLookupResult>(
+    { method: "GET" },
+    profileLookupResultSchema,
+    `/api/artists/presenter/lookup/${platform}/${encodeURIComponent(username)}`,
   );
 }

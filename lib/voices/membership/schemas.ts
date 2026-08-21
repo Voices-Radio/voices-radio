@@ -234,3 +234,23 @@ export const artistProfileSchema = z.object({
   socialLinks: artistSocialLinksSchema,
 });
 export type ArtistProfile = z.infer<typeof artistProfileSchema>;
+
+/**
+ * GET /api/artists/presenter/lookup/:platform/:username (routes/artists.js,
+ * services/profileLookup.js) — a three-state result, not a boolean. Advisory
+ * UI, never validation: 'unavailable' must stay distinguishable from
+ * 'not_found', because a false "doesn't exist" would push a DJ to delete a
+ * username that's actually fine while the upstream platform is just down.
+ */
+export const profileLookupStatusSchema = z.enum([
+  "found",
+  "not_found",
+  "unavailable",
+]);
+export const profileLookupResultSchema = z.object({
+  status: profileLookupStatusSchema,
+  displayName: z.string().optional(),
+  profileUrl: z.string().optional(),
+  avatarUrl: z.string().nullable().optional(),
+});
+export type ProfileLookupResult = z.infer<typeof profileLookupResultSchema>;
