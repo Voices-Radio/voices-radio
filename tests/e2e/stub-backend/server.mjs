@@ -36,9 +36,35 @@ const profiles = new Map();
 const redemptionsByUser = new Map();
 /** @type {Map<string, {redeemed: boolean, idempotencyKey: string | null}>} userId:benefitId -> redemption record */
 const benefitRedemptions = new Map();
+/** @type {Map<string, any>} userId -> artist profile */
+const artistsByUserId = new Map();
+/** @type {Map<string, any>} invitation token -> invitation */
+const invitationsByToken = new Map();
+
+/**
+ * The self-editable whitelist, copied from routes/artists.js. `name` and
+ * `programmingEmail` are absent on purpose (see plan §D6 and Phase 0) — the
+ * stub drops them so a spec can prove the form cannot move them.
+ */
+const ARTIST_EDITABLE_FIELDS = [
+  "bio",
+  "imageUrl",
+  "bannerUrl",
+  "genres",
+  "mixcloudUsername",
+  "soundcloudUsername",
+  "socialLinks",
+];
 
 function tierById(id) {
   return TIERS.find((tier) => tier.id === id) ?? null;
+}
+
+function userById(userId) {
+  for (const user of usersByEmail.values()) {
+    if (user._id === userId) return user;
+  }
+  return null;
 }
 
 function userFromAuth(req) {
@@ -156,6 +182,69 @@ const server = createServer(async (req, res) => {
       return res.end("<html><body><h1>Stripe customer portal (stub)</h1></body></html>");
     }
 
+    // --- Test-only fixture control -----------------------------------
+    // Lets a spec put the stub into a precise state (an existing member who
+    // is not yet an artist, a pending invitation of either kind) without
+    // driving six UI flows to get there. Namespaced under /__test__ so it is
+    // obvious this has no counterpart in the real API.
+    if (pathname === "/__test__/seed" && req.method === "POST") {
+      const body = await readJsonBody(req);
+
+      if (body.user) {
+        const user = {
+          _id: randomUUID(),
+          email: body.user.email,
+          password: body.user.password,
+          firstName: body.user.firstName ?? "Test",
+          lastName: body.user.lastName ?? "User",
+        };
+        usersByEmail.set(user.email, user);
+
+        if (body.membership) {
+          memberships.set(user._id, {
+            status: "active",
+            tierId: "member",
+            cadence: "monthly",
+            priceMinor: 800,
+            currency: "gbp",
+            renewsAt: null,
+            paidThroughAt: null,
+            scheduledChange: null,
+            isFoundingMember: false,
+            paymentIssue: null,
+            ...body.membership,
+          });
+        }
+
+        if (body.artist) {
+          artistsByUserId.set(user._id, {
+            id: randomUUID(),
+            name: "Test Artist",
+            programmingEmail: user.email,
+            imageUrl: null,
+            bio: "",
+            radioCultArtistId: "rc_seeded",
+            radioCultSyncState: "linked",
+            canManageProfile: true,
+            ...body.artist,
+          });
+        }
+      }
+
+      if (body.invitation) {
+        const token = body.invitation.token ?? randomUUID();
+        invitationsByToken.set(token, {
+          id: randomUUID(),
+          email: body.invitation.email,
+          status: body.invitation.status ?? "pending",
+          expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
+          artist: body.invitation.artist ?? null,
+        });
+      }
+
+      return sendJson(res, 200, { ok: true });
+    }
+
     // --- Auth (mirrors the existing mobile-app auth endpoints) ------
     if (pathname === "/api/auth/register" && req.method === "POST") {
       const body = await readJsonBody(req);
@@ -192,6 +281,173 @@ const server = createServer(async (req, res) => {
       refreshTokens.set(refreshToken, user._id);
       const { password, ...publicUser } = user;
       return sendJson(res, 200, { token, refreshToken, user: publicUser });
+    }
+
+    // --- Artist / Member capabilities (docs/artist-member-auth-plan.md §D3) ---
+    if (pathname === "/api/auth/capabilities" && req.method === "GET") {
+      const userId = userFromAuth(req);
+      if (!userId) {
+        return sendError(res, 401, "UNAUTHENTICATED", "Sign in required.");
+      }
+
+      const user = userById(userId);
+
+      // Deterministic failure hook. The frontend must distinguish "this
+      // account holds nothing" from "the lookup failed" — see
+      // lookupCapabilities() — and that is only testable if the endpoint can
+      // be made to fail on demand.
+      if (user?.email?.startsWith("capfail-")) {
+        return sendError(res, 500, "STUB_FORCED_FAILURE", "Forced failure for E2E.");
+      }
+
+      const artist = artistsByUserId.get(userId) ?? null;
+      const membership = memberships.get(userId) ?? null;
+      const capabilities = [
+        ...(artist ? ["artist"] : []),
+        ...(membership ? ["member"] : []),
+      ];
+
+      return sendJson(res, 200, {
+        user: {
+          id: userId,
+          email: user?.email ?? null,
+          firstName: user?.firstName,
+          lastName: user?.lastName,
+          role: artist ? "presenter" : "user",
+        },
+        capabilities,
+        artist: artist
+          ? {
+              id: artist.id,
+              name: artist.name,
+              imageUrl: artist.imageUrl ?? null,
+              programmingEmail: artist.programmingEmail ?? null,
+              radioCultArtistId: artist.radioCultArtistId ?? null,
+              radioCultSyncState: artist.radioCultSyncState ?? null,
+              canManageProfile: artist.canManageProfile !== false,
+            }
+          : null,
+        member: membership
+          ? {
+              status: membership.status,
+              tierId: membership.tierId,
+              cadence: membership.cadence,
+            }
+          : null,
+      });
+    }
+
+    // --- Artist self-service profile (routes/artists.js presenter endpoints) ---
+    if (pathname === "/api/artists/presenter/my-profile") {
+      const userId = userFromAuth(req);
+      if (!userId) {
+        return sendError(res, 401, "UNAUTHENTICATED", "Sign in required.");
+      }
+
+      const artist = artistsByUserId.get(userId);
+      if (!artist || artist.canManageProfile === false) {
+        return sendError(res, 403, "FORBIDDEN", "Not a presenter.");
+      }
+
+      if (req.method === "GET") return sendJson(res, 200, { artist });
+
+      if (req.method === "PATCH") {
+        const body = await readJsonBody(req);
+        // Mirrors the backend whitelist exactly. Anything outside it — most
+        // pointedly `name` and `programmingEmail` — is dropped rather than
+        // rejected, so a spec can assert it had no effect.
+        for (const field of ARTIST_EDITABLE_FIELDS) {
+          if (field in body) artist[field] = body[field];
+        }
+        return sendJson(res, 200, { artist });
+      }
+    }
+
+    // --- Artist invitations (routes/artistInvitations.js) ---
+    const validateMatch = pathname.match(/^\/api\/artist-invitations\/validate\/([^/]+)$/);
+    if (validateMatch && req.method === "GET") {
+      const invitation = invitationsByToken.get(validateMatch[1]);
+      if (!invitation || invitation.status !== "pending") {
+        return sendError(res, 404, "NOT_FOUND", "Invalid or expired invitation");
+      }
+      return sendJson(res, 200, {
+        invitation: {
+          id: invitation.id,
+          email: invitation.email,
+          expiresAt: invitation.expiresAt,
+          kind: invitation.artist ? "claim_existing" : "create_new",
+          artist: invitation.artist ?? null,
+        },
+      });
+    }
+
+    const claimMatch = pathname.match(/^\/api\/artist-invitations\/claim\/([^/]+)$/);
+    if (claimMatch && req.method === "POST") {
+      const invitation = invitationsByToken.get(claimMatch[1]);
+      if (!invitation) {
+        return sendError(res, 404, "NOT_FOUND", "Invalid or expired invitation");
+      }
+      if (invitation.status !== "pending") {
+        return sendError(res, 409, "ALREADY_CLAIMED", "This invitation has already been claimed");
+      }
+
+      const body = await readJsonBody(req);
+      const existing = usersByEmail.get(invitation.email);
+      let user = existing;
+
+      if (existing) {
+        // S1: token alone must never modify an existing account. Either a
+        // session for THAT user, or that account's password.
+        const bearerUserId = userFromAuth(req);
+        const bySession = bearerUserId === existing._id;
+        const byPassword =
+          typeof body.password === "string" && body.password === existing.password;
+
+        if (!bySession && !byPassword) {
+          return sendError(
+            res,
+            401,
+            "PROOF_REQUIRED",
+            "An account already exists for this email. Sign in, or provide the account password, to link this artist profile.",
+          );
+        }
+      } else {
+        if (!body.firstName || !body.lastName || !body.password) {
+          return sendError(res, 400, "MISSING_FIELDS", "First name, last name, and password are required");
+        }
+        user = {
+          _id: randomUUID(),
+          email: invitation.email,
+          password: body.password,
+          firstName: body.firstName,
+          lastName: body.lastName,
+        };
+        usersByEmail.set(invitation.email, user);
+      }
+
+      const artist = {
+        id: invitation.artist?.id ?? randomUUID(),
+        name: invitation.artist?.name ?? body.artistName ?? "Untitled artist",
+        // D5: set unconditionally, from the invitation, on every claim.
+        programmingEmail: invitation.email,
+        imageUrl: invitation.artist?.imageUrl ?? null,
+        bio: invitation.artist?.bio ?? "",
+        radioCultArtistId: `rc_${randomUUID()}`,
+        radioCultSyncState: "linked",
+        canManageProfile: true,
+      };
+      artistsByUserId.set(user._id, artist);
+      invitation.status = "accepted";
+
+      const token = `at_${randomUUID()}`;
+      accessTokens.set(token, user._id);
+      const { password, ...publicUser } = user;
+      return sendJson(res, 200, {
+        message: "Artist profile claimed successfully",
+        user: publicUser,
+        artist: { id: artist.id, name: artist.name },
+        token, // note: no refreshToken, matching the real backend
+      });
     }
 
     if (pathname === "/api/auth/refresh" && req.method === "POST") {

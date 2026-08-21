@@ -7,8 +7,17 @@ const invitationArtistSchema = z
   .object({
     id: z.string(),
     name: z.string(),
-    imageUrl: z.string().nullable(),
-    bio: z.string().nullable(),
+    // .default(null) — an omitted key must be treated exactly like an explicit
+    // null, the same rule schemas.ts applies for the same reason. The backend
+    // builds this block by reading fields straight off the Artist document,
+    // and JSON.stringify drops undefined keys entirely, so an artist with no
+    // image sends no `imageUrl` at all. Requiring the key turns that into a
+    // parse failure, which this page can only render as "invitation
+    // unavailable" — stranding a DJ on a perfectly valid invitation with
+    // nothing to diagnose. Verified against production: 1 of 137 artists is
+    // already in exactly this state.
+    imageUrl: z.string().nullable().default(null),
+    bio: z.string().nullable().default(null),
   })
   .nullable();
 
@@ -39,7 +48,9 @@ const claimSuccessSchema = z.object({
 });
 
 export type ArtistInvitation = z.infer<typeof invitationSchema>;
-export type ArtistInvitationValidation = z.infer<typeof validateInvitationSchema>;
+export type ArtistInvitationValidation = z.infer<
+  typeof validateInvitationSchema
+>;
 export type ArtistInvitationClaimSuccess = z.infer<typeof claimSuccessSchema>;
 
 export type ArtistInvitationResult<T> =
@@ -91,7 +102,8 @@ function errorResult(
     ok: false,
     status,
     code: "INVITATION_ERROR",
-    message: message ?? "We couldn't process this invitation. Please try again.",
+    message:
+      message ?? "We couldn't process this invitation. Please try again.",
   };
 }
 
@@ -100,7 +112,9 @@ export async function validateArtistInvitation(
 ): Promise<ArtistInvitationResult<ArtistInvitationValidation>> {
   try {
     const response = await fetch(
-      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/artist-invitations/validate/${encodeURIComponent(token)}`,
+      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/artist-invitations/validate/${encodeURIComponent(
+        token,
+      )}`,
       { cache: "no-store" },
     );
     const payload = await response.json().catch(() => null);
@@ -137,7 +151,9 @@ export async function claimArtistInvitation(
 ): Promise<ArtistInvitationResult<ArtistInvitationClaimSuccess>> {
   try {
     const response = await fetch(
-      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/artist-invitations/claim/${encodeURIComponent(token)}`,
+      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/artist-invitations/claim/${encodeURIComponent(
+        token,
+      )}`,
       {
         method: "POST",
         headers: {

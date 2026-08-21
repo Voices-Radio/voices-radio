@@ -11,7 +11,10 @@ import {
   accountHomeDecision,
   parseAccountMode,
 } from "@/lib/voices/membership/capabilities";
-import { getCapabilities, getSession } from "@/lib/voices/membership/session";
+import {
+  getSession,
+  lookupCapabilities,
+} from "@/lib/voices/membership/session";
 import MembershipStatusCard from "../components/membership/membership-status-card";
 
 export const metadata: Metadata = {
@@ -40,10 +43,10 @@ function AccountNotice({
     artist === "missing"
       ? "This account is not linked to an artist profile. Use the invitation link from Voices to claim one."
       : artist === "unavailable"
-        ? "Your artist profile is linked, but it cannot be edited from this account right now. Contact Voices if this looks wrong."
-        : missing === "artist"
-          ? "You signed in successfully, but this account is not linked to an artist profile."
-          : "You signed in successfully, but this account does not currently have a membership.";
+      ? "Your artist profile is linked, but it cannot be edited from this account right now. Contact Voices if this looks wrong."
+      : missing === "artist"
+      ? "You signed in successfully, but this account is not linked to an artist profile."
+      : "You signed in successfully, but this account does not currently have a membership.";
 
   return (
     <div className="mb-6 rounded-voices-sm border border-voicesNext-orange bg-voicesNext-surface px-4 py-3 font-gabarito text-sm text-voicesNext-cream">
@@ -78,13 +81,59 @@ function EmptyAccountState() {
   );
 }
 
+/**
+ * Shown when the capabilities lookup fails, in place of EmptyAccountState.
+ *
+ * Deliberately says nothing about what this account holds, because at this
+ * point we do not know — and a member reading "nothing active yet" during a
+ * backend blip would reasonably conclude their subscription had lapsed.
+ */
+function CapabilitiesUnavailableState() {
+  return (
+    <div>
+      <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
+        Your account
+      </h1>
+      <div
+        role="alert"
+        data-testid="capabilities-unavailable"
+        className="mt-6 rounded-voices-md border border-voicesNext-orange bg-voicesNext-surface p-6"
+      >
+        <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
+          We couldn&rsquo;t load your account
+        </h2>
+        <p className="mt-3 font-asap text-sm leading-relaxed text-voicesNext-cream/75">
+          Your membership and artist profile are unaffected — we just
+          couldn&rsquo;t reach them right now. Please try again in a moment.
+        </p>
+        <Link
+          href="/account"
+          className="mt-5 inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+        >
+          Try again
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 export default async function AccountPage({
   searchParams,
 }: {
   searchParams: Promise<{ missing?: string; artist?: string }>;
 }) {
   const [params, store] = await Promise.all([searchParams, cookies()]);
-  const capabilities = await getCapabilities();
+  const lookup = await lookupCapabilities();
+
+  // "We couldn't load your account" is a different sentence from "your
+  // account is empty", and only one of them is true when the capabilities
+  // endpoint is down. Told the wrong one, a paying member has every reason
+  // to think their membership has vanished.
+  if (lookup.status === "unavailable") {
+    return <CapabilitiesUnavailableState />;
+  }
+
+  const capabilities = lookup.status === "ok" ? lookup.data : null;
   const decision = accountHomeDecision(
     capabilities,
     parseAccountMode(store.get("voices_account_mode")?.value),
@@ -119,9 +168,9 @@ export default async function AccountPage({
             state={membershipResult.data}
             tierName={
               tiersResult.ok
-                ? (tiersResult.data.find(
+                ? tiersResult.data.find(
                     (tier) => tier.id === membershipResult.data.tierId,
-                  )?.name ?? null)
+                  )?.name ?? null
                 : null
             }
           />

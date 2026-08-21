@@ -96,10 +96,13 @@ export const getSession = cache(async (): Promise<VoicesSessionUser | null> => {
   if (!token) return null;
 
   try {
-    const response = await fetch(`${VOICES_MEMBERSHIP_API_BASE_URL}/api/auth/validate`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/auth/validate`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      },
+    );
 
     if (!response.ok) return null;
 
@@ -116,24 +119,58 @@ export const getSession = cache(async (): Promise<VoicesSessionUser | null> => {
   }
 });
 
-export const getCapabilities = cache(
-  async (): Promise<AccountCapabilities | null> => {
+/**
+ * Capabilities lookup that distinguishes "this account holds nothing" from
+ * "we could not find out".
+ *
+ * The distinction is load-bearing, not pedantry. `/account` renders its empty
+ * state — "you have no membership and no artist profile" — from an absence of
+ * capabilities. If a transient 500 on the capabilities endpoint collapsed into
+ * that same absence, a paying member would be told they have nothing, which is
+ * both alarming and false. Same shape of bug as the one §D3 of
+ * docs/artist-member-auth-plan.md calls out for `canManageProfile`: report the
+ * axes truthfully and let the UI explain, rather than folding an error into a
+ * negative answer.
+ */
+export type CapabilitiesLookup =
+  | { status: "ok"; data: AccountCapabilities }
+  | { status: "anonymous" }
+  | { status: "unavailable" };
+
+export const lookupCapabilities = cache(
+  async (): Promise<CapabilitiesLookup> => {
     const token = await getAccessToken();
-    if (!token) return null;
+    if (!token) return { status: "anonymous" };
 
     try {
       const response = await authedFetch("/api/auth/capabilities");
-      if (!response.ok) return null;
+      if (!response.ok) return { status: "unavailable" };
 
       const payload = await response.json().catch(() => null);
-      if (!payload?.user || !Array.isArray(payload.capabilities)) return null;
+      if (!payload?.user || !Array.isArray(payload.capabilities)) {
+        return { status: "unavailable" };
+      }
 
-      return payload as AccountCapabilities;
+      return { status: "ok", data: payload as AccountCapabilities };
     } catch (error) {
       if (isNextControlFlowError(error)) throw error;
       console.error("Voices capabilities request failed:", error);
-      return null;
+      return { status: "unavailable" };
     }
+  },
+);
+
+/**
+ * Best-effort view, for callers where degrading gracefully is correct — nav
+ * links and post-login routing both do something sensible with fewer
+ * capabilities than the account actually has, and self-correct on the next
+ * request. Anything that turns an absence into a *statement to the user*
+ * must use lookupCapabilities() and handle "unavailable" explicitly.
+ */
+export const getCapabilities = cache(
+  async (): Promise<AccountCapabilities | null> => {
+    const result = await lookupCapabilities();
+    return result.status === "ok" ? result.data : null;
   },
 );
 
@@ -261,15 +298,25 @@ export async function requireArtist(
 ): Promise<AccountCapabilities> {
   await requireSession(nextPath);
 
-  const capabilities = await getCapabilities();
+  const lookup = await lookupCapabilities();
+
+  // A failed lookup is not evidence that this account has no artist profile.
+  // Sending them to ?artist=missing would state, wrongly and in the second
+  // person, that they don't have one. /account renders the error state for
+  // the same failed lookup, so hand off without an explanatory marker.
+  if (lookup.status !== "ok") {
+    redirect("/account");
+  }
+
+  const capabilities = lookup.data;
   if (
-    capabilities?.capabilities.includes("artist") &&
+    capabilities.capabilities.includes("artist") &&
     capabilities.artist?.canManageProfile
   ) {
     return capabilities;
   }
 
-  if (capabilities?.capabilities.includes("artist")) {
+  if (capabilities.capabilities.includes("artist")) {
     redirect("/account?artist=unavailable");
   }
 
