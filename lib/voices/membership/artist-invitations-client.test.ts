@@ -40,6 +40,40 @@ describe("validateArtistInvitation", () => {
     });
   });
 
+  it("accepts a create_new invitation, whose artist has no id yet", async () => {
+    // The invitation kind the artistName feature exists for: no Artist
+    // document until the DJ actually claims, so the backend legitimately
+    // sends artist.id: null (routes/artistInvitations.js GET
+    // /validate/:token). This is the exact production shape that broke
+    // every net-new invite's claim link — the schema required id: z.string()
+    // and rejected the null, so the page showed "could not be loaded"
+    // instead of the claim form.
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        response({
+          invitation: {
+            id: "invite-2",
+            email: "dj@example.com",
+            expiresAt: "2027-01-01T00:00:00Z",
+            kind: "create_new",
+            artist: {
+              id: null,
+              name: "Faris Riaz",
+              imageUrl: null,
+              bio: null,
+            },
+          },
+        }),
+      ),
+    );
+
+    await expect(validateArtistInvitation("token")).resolves.toMatchObject({
+      ok: true,
+      data: { invitation: { kind: "create_new", artist: { id: null } } },
+    });
+  });
+
   it("maps a 404 to an invalid invitation state", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({}, 404)));
 
@@ -74,7 +108,9 @@ describe("claimArtistInvitation", () => {
       "fetch",
       vi
         .fn()
-        .mockResolvedValueOnce(response({ message: "Sign in or provide password." }, 401))
+        .mockResolvedValueOnce(
+          response({ message: "Sign in or provide password." }, 401),
+        )
         .mockResolvedValueOnce(response({ message: "Already claimed." }, 409)),
     );
 

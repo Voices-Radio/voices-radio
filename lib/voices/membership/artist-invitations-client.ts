@@ -5,7 +5,14 @@ import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
 
 const invitationArtistSchema = z
   .object({
-    id: z.string(),
+    // Nullable, not required: routes/artistInvitations.js sends `id: null`
+    // for a create_new invitation (the artistName path, invited before any
+    // Artist document exists) — that's most invitations, not an edge case.
+    // Unused downstream (only .name/.bio are ever read, in
+    // InvitationSummary), so relaxing this cost nothing but fixed a real
+    // production failure: every create_new claim link failed schema
+    // validation and rendered "could not be loaded" instead of the form.
+    id: z.string().nullable(),
     name: z.string(),
     // .default(null) — an omitted key must be treated exactly like an explicit
     // null, the same rule schemas.ts applies for the same reason. The backend
