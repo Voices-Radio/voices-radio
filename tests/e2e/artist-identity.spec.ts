@@ -208,6 +208,14 @@ test.describe("claiming an artist profile", () => {
     await page
       .getByRole("button", { name: /use existing account password/i })
       .click();
+    const resetLink = page.getByRole("link", { name: /reset it first/i });
+    await expect(resetLink).toBeVisible();
+    await expect(resetLink).toHaveAttribute(
+      "href",
+      `/forgot-password?email=${encodeURIComponent(email)}&next=${encodeURIComponent(
+        `/artists/claim/${token}`,
+      )}`,
+    );
 
     // Wrong password: the claim must not go through.
     await page

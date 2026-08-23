@@ -1,6 +1,6 @@
 "use client";
 
-import { Video } from "lucide-react";
+import { ExternalLink, Radio, Video } from "lucide-react";
 import Image from "next/image";
 import { useState, type RefObject } from "react";
 import { cn } from "@/lib/utils";
@@ -16,9 +16,12 @@ export default function LiveStationCard({
   artwork,
   artworkAlt,
   videoUrl,
+  watchLiveUrl,
+  canListenLive = false,
   selected,
   onSelect,
   onWatchLive,
+  onListenLive,
   className,
 }: {
   cardRef: RefObject<HTMLButtonElement>;
@@ -28,9 +31,12 @@ export default function LiveStationCard({
   artwork?: string;
   artworkAlt?: string;
   videoUrl?: string;
+  watchLiveUrl?: string;
+  canListenLive?: boolean;
   selected: boolean;
   onSelect: () => void;
   onWatchLive: () => void;
+  onListenLive: () => void;
   className?: string;
 }) {
   const liveMetadata = useRadioCultLiveMetadata(stationId);
@@ -38,14 +44,19 @@ export default function LiveStationCard({
   const [focusWithin, setFocusWithin] = useState(false);
   const displayTitle = liveMetadata.title || title;
   const videoAvailable = isSafeRestreamUrl(videoUrl);
+  const showKxLiveActions =
+    station === "KX" && (selected || mouseHovering || focusWithin);
   const showWatchLive =
-    videoAvailable && (selected || mouseHovering || focusWithin);
+    station !== "KX" &&
+    videoAvailable &&
+    (selected || mouseHovering || focusWithin);
+  const cardInteractive = station === "KX" || videoAvailable;
 
   return (
     <article
       className={cn(
         "group relative h-[126px] overflow-hidden border border-voicesNext-cream bg-voicesNext-background md:h-[316px] md:border-0",
-        !videoAvailable && "cursor-not-allowed",
+        !cardInteractive && "cursor-not-allowed",
         className,
       )}
       onPointerEnter={(event) => {
@@ -62,7 +73,7 @@ export default function LiveStationCard({
       <div
         className={cn(
           "transition-[filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          (selected || !videoAvailable) && "grayscale",
+          (selected || (!videoAvailable && station !== "KX")) && "grayscale",
         )}
       >
         <div className="hidden h-[34px] items-center justify-between bg-voicesNext-cream px-[14px] text-voicesNext-background md:flex">
@@ -71,7 +82,7 @@ export default function LiveStationCard({
           </span>
           <Video
             aria-hidden="true"
-            className={cn(!videoAvailable && "opacity-40")}
+            className={cn(!cardInteractive && "opacity-40")}
             size={26}
             strokeWidth={2.6}
           />
@@ -112,22 +123,54 @@ export default function LiveStationCard({
         className={cn(
           "bg-[#8d8d8d]/55 pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
           selected && "opacity-100",
-          !videoAvailable && "opacity-45",
+          !cardInteractive && "opacity-45",
         )}
       />
       <button
         ref={cardRef}
         type="button"
-        disabled={!videoAvailable}
+        disabled={!cardInteractive}
         onClick={onSelect}
         className="absolute inset-0 z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange disabled:cursor-not-allowed"
         aria-label={
-          videoAvailable
-            ? `Select ${station} live video`
-            : `${station} live video unavailable`
+          cardInteractive
+            ? `Show ${station} live actions`
+            : `${station} live actions unavailable`
         }
         aria-pressed={selected}
       />
+      {station === "KX" && (
+        <div
+          className={cn(
+            "pointer-events-none absolute left-1/2 top-1/2 z-30 hidden w-[210px] -translate-x-1/2 translate-y-2 flex-col gap-2 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:flex",
+            showKxLiveActions &&
+              "pointer-events-auto -translate-y-1/2 opacity-100",
+          )}
+        >
+          <a
+            href={watchLiveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            tabIndex={showKxLiveActions ? 0 : -1}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-voicesNext-cream px-5 font-gabarito text-sm font-bold text-voicesNext-background shadow-lg transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+            aria-label="Watch Voices live on Mixcloud"
+          >
+            <ExternalLink aria-hidden="true" size={15} strokeWidth={2.6} />
+            Watch live
+          </a>
+          <button
+            type="button"
+            disabled={!canListenLive}
+            tabIndex={showKxLiveActions ? 0 : -1}
+            onClick={onListenLive}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-voicesNext-orange px-5 font-gabarito text-sm font-bold text-voicesNext-cream shadow-lg transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary"
+            aria-label="Listen to Voices KX live"
+          >
+            <Radio aria-hidden="true" size={15} strokeWidth={2.6} />
+            Listen live
+          </button>
+        </div>
+      )}
       <button
         type="button"
         disabled={!showWatchLive}

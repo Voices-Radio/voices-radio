@@ -93,7 +93,7 @@ function FeatureImage({
             objectPosition: item.imagePosition ?? "50% 50%",
           }}
         />
-        <div className="absolute inset-0 bg-voicesNext-background/35" />
+        <div className="bg-voicesNext-background/35 absolute inset-0" />
         <Image
           src={item.imageUrl}
           alt={item.imageAlt}
@@ -185,7 +185,7 @@ export default function HomeFeaturePanel({
 
   return (
     <section className="relative h-[388px] overflow-hidden bg-voicesNext-background md:h-[632px]">
-      <div className="absolute inset-x-1 top-0 h-[377px] overflow-hidden rounded-[4px] md:inset-x-5 md:top-5 md:h-[590px] md:rounded-none md:border-2 md:border-voicesNext-cream">
+      <div className="absolute inset-x-1 top-0 h-[377px] overflow-hidden rounded-[4px] md:inset-x-0 md:h-[632px] md:rounded-none md:border-2 md:border-voicesNext-cream">
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={item.id}
@@ -207,11 +207,11 @@ export default function HomeFeaturePanel({
           >
             <FeatureImage item={item} priority={activeIndex === 0} />
 
-            <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background md:right-0 md:top-0 md:gap-[10px]">
-              <span className="bg-voicesNext-cream px-1 py-[2px]">
+            <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background md:inset-x-0 md:top-0 md:flex-row md:items-start md:justify-between md:gap-0 md:text-[18px]">
+              <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[104px] md:border-b-2 md:border-r-2 md:border-voicesNext-cream md:bg-voicesNext-orange md:px-4 md:py-[9px] md:text-center md:text-voicesNext-cream">
                 {stationLabel}
               </span>
-              <span className="bg-voicesNext-cream px-1 py-[2px]">
+              <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[124px] md:border-b-2 md:border-l-2 md:border-voicesNext-cream md:px-4 md:py-[9px] md:text-center">
                 {locationLabel}
               </span>
             </div>
@@ -239,13 +239,18 @@ export default function HomeFeaturePanel({
               <div className="relative grid min-h-[122px] grid-cols-[110px_minmax(0,1fr)] items-stretch text-voicesNext-cream md:min-h-[132px] md:grid-cols-[120px_minmax(0,1fr)]">
                 <FeatureLink
                   href={item.href}
-                  className="hover:bg-voicesNext-background/45 grid grid-rows-[38px_1fr] border-r-2 border-t-2 border-voicesNext-cream bg-voicesNext-background/25 font-outfit text-[18px] font-black uppercase leading-none tracking-[1px] transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-cream md:text-[20px]"
+                  className="group/feature-cta grid grid-rows-[38px_1fr] border-r-2 border-t-2 border-voicesNext-cream bg-voicesNext-background/30 font-outfit text-[18px] font-black uppercase leading-none tracking-[1px] transition-[background-color,color,box-shadow] duration-300 hover:bg-voicesNext-cream hover:text-voicesNext-background hover:shadow-[0_0_36px_rgba(248,239,224,0.36)] focus:bg-voicesNext-cream focus:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-cream md:text-[20px]"
                 >
                   <span className="flex items-center justify-center">
                     {item.cta}
                   </span>
                   <span className="flex items-center justify-center self-stretch">
-                    <Play aria-hidden="true" size={36} fill="currentColor" />
+                    <Play
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover/feature-cta:scale-110 group-focus/feature-cta:scale-110"
+                      size={36}
+                      fill="currentColor"
+                    />
                   </span>
                 </FeatureLink>
 

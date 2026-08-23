@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { lookupUsernameAction, type LookupState } from "./actions";
 import type { ProfileLookupPlatform } from "@/lib/voices/membership/artist-profile-client";
+import { accountFieldClassName } from "../components/account-surface";
 
 const DEBOUNCE_MS = 600;
 
@@ -68,7 +69,10 @@ export default function UsernameField({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="font-gabarito text-sm font-bold text-voicesNext-cream">
+      <label
+        htmlFor={id}
+        className="font-gabarito text-sm font-bold text-voicesNext-cream"
+      >
         {label}
       </label>
       <input
@@ -77,18 +81,23 @@ export default function UsernameField({
         type="text"
         value={value}
         onChange={handleChange}
-        className="h-12 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+        className={accountFieldClassName}
       />
       <p role="status" aria-live="polite" className="font-gabarito text-xs">
         {lookup.status === "checking" && (
-          <span className="text-voicesNext-cream/60">Checking {platformLabel}…</span>
+          <span className="text-voicesNext-cream/60">
+            Checking {platformLabel}…
+          </span>
         )}
         {lookup.status === "found" && (
-          <span className="text-voicesNext-cream/80">✓ Found: {lookup.displayName}</span>
+          <span className="text-voicesNext-cream/80">
+            ✓ Found: {lookup.displayName}
+          </span>
         )}
         {lookup.status === "not_found" && (
           <span className="text-voicesNext-orange">
-            We couldn&apos;t find this {platformLabel} account. You can still save it.
+            We couldn&apos;t find this {platformLabel} account. You can still
+            save it.
           </span>
         )}
         {lookup.status === "unavailable" && (

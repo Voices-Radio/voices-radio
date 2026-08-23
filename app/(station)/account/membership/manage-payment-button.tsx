@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { accountSecondaryButtonClassName } from "../components/account-surface";
 import { portalSessionAction } from "./actions";
 
 /**
@@ -31,12 +33,15 @@ export default function ManagePaymentButton() {
         onClick={handleClick}
         disabled={loading}
         aria-busy={loading}
-        className="inline-flex h-11 items-center justify-center rounded-full border border-voicesNext-border px-5 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange disabled:opacity-60"
+        className={cn(accountSecondaryButtonClassName, "h-11 px-5 text-sm")}
       >
         {loading ? "Opening…" : "Manage payment method"}
       </button>
       {error && (
-        <p role="alert" className="mt-2 font-gabarito text-sm text-voicesNext-orange">
+        <p
+          role="alert"
+          className="mt-2 font-gabarito text-sm text-voicesNext-orange"
+        >
           {error}
         </p>
       )}

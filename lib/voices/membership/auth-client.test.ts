@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { backendLogin, backendRegister } from "./auth-client";
+import {
+  backendCheckEmail,
+  backendForgotPassword,
+  backendLogin,
+  backendRegister,
+  backendResetPassword,
+  backendValidatePasswordResetToken,
+} from "./auth-client";
 
 beforeEach(() => {
   vi.unstubAllGlobals();
@@ -123,5 +130,123 @@ describe("backendRegister", () => {
         lastName: "Person",
       }),
     ).rejects.toBe(controlFlowError);
+  });
+});
+
+describe("password reset helpers", () => {
+  it("checks whether an email has an account before requesting reset", async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ exists: false, email: "new@example.com" }), {
+          status: 200,
+        }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      backendCheckEmail({ email: "new@example.com" }),
+    ).resolves.toEqual({
+      ok: true,
+      status: 200,
+      payload: { exists: false, email: "new@example.com" },
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/api/auth/check-email"),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ email: "new@example.com" }),
+      }),
+    );
+  });
+
+  it("requests a password reset email", async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ message: "Password reset email sent" }), {
+          status: 200,
+        }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      backendForgotPassword({ email: "artist@example.com" }),
+    ).resolves.toEqual({
+      ok: true,
+      status: 200,
+      payload: { message: "Password reset email sent" },
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/api/auth/forgot-password"),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ email: "artist@example.com" }),
+      }),
+    );
+  });
+
+  it("validates a password reset token with the documented query type", async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            valid: true,
+            type: "password_reset",
+            user: { _id: "u1", email: "artist@example.com" },
+          }),
+          { status: 200 },
+        ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      backendValidatePasswordResetToken("token with spaces"),
+    ).resolves.toEqual({
+      ok: true,
+      status: 200,
+      payload: {
+        valid: true,
+        type: "password_reset",
+        user: { _id: "u1", email: "artist@example.com" },
+      },
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "/api/auth/validate-token/token%20with%20spaces?type=password_reset",
+      ),
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("submits the new password with the reset token", async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({ message: "Password reset successfully" }),
+          { status: 200 },
+        ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      backendResetPassword({ token: "reset-token", password: "new-password" }),
+    ).resolves.toEqual({
+      ok: true,
+      status: 200,
+      payload: { message: "Password reset successfully" },
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/api/auth/reset-password"),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          token: "reset-token",
+          password: "new-password",
+        }),
+      }),
+    );
   });
 });

@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import ConfirmChangeDialog from "../../components/membership/confirm-change-dialog";
 import { trackMembershipEvent } from "@/lib/voices/membership/analytics";
 import { formatMinorUnits } from "@/lib/voices/membership/format";
+import { cn } from "@/lib/utils";
+import {
+  accountPrimaryButtonClassName,
+  accountSecondaryButtonClassName,
+} from "../components/account-surface";
 import {
   cancelAction,
   downgradeAction,
@@ -65,7 +70,10 @@ export default function CancelFlow({
               setResumeError(result.message);
             }
           }}
-          className="mt-4 inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange disabled:opacity-60"
+          className={cn(
+            accountPrimaryButtonClassName,
+            "mt-4 h-11 px-5 text-sm",
+          )}
         >
           {resuming ? "Resuming…" : "Resume membership"}
         </button>
@@ -94,8 +102,14 @@ export default function CancelFlow({
       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
         {supporterOffer && (
           <ConfirmChangeDialog
-            triggerLabel={`Switch to Supporter — ${formatMinorUnits(supporterOffer.priceMinor, currency)}/month`}
-            triggerClassName="inline-flex h-11 flex-1 items-center justify-center rounded-full border border-voicesNext-border px-5 text-center font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+            triggerLabel={`Switch to Supporter — ${formatMinorUnits(
+              supporterOffer.priceMinor,
+              currency,
+            )}/month`}
+            triggerClassName={cn(
+              accountSecondaryButtonClassName,
+              "h-11 flex-1 px-5 text-center text-sm",
+            )}
             title="Switch to Supporter"
             currency={currency}
             loadPreview={() =>
@@ -121,7 +135,10 @@ export default function CancelFlow({
 
         <ConfirmChangeDialog
           triggerLabel="Cancel membership"
-          triggerClassName="inline-flex h-11 flex-1 items-center justify-center rounded-full border border-voicesNext-border px-5 text-center font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+          triggerClassName={cn(
+            accountSecondaryButtonClassName,
+            "h-11 flex-1 px-5 text-center text-sm",
+          )}
           title="Cancel membership"
           currency={currency}
           loadPreview={() => previewChangeAction({ action: "cancel" })}

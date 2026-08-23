@@ -20,7 +20,12 @@ const AUTH_SERVICE_UNAVAILABLE = {
 };
 
 async function authRequest<T>(
-  path: "/api/auth/register" | "/api/auth/login",
+  path:
+    | "/api/auth/register"
+    | "/api/auth/login"
+    | "/api/auth/check-email"
+    | "/api/auth/forgot-password"
+    | "/api/auth/reset-password",
   input: unknown,
 ): Promise<BackendAuthResult<T>> {
   try {
@@ -28,6 +33,27 @@ async function authRequest<T>(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
+      cache: "no-store",
+    });
+
+    const payload = await response.json().catch(() => null);
+    return { ok: response.ok, status: response.status, payload };
+  } catch (error) {
+    if (isNextControlFlowError(error)) throw error;
+    console.error("Voices auth request failed:", error);
+    return {
+      ok: false,
+      status: 503,
+      payload: AUTH_SERVICE_UNAVAILABLE as T,
+    };
+  }
+}
+
+async function authGetRequest<T>(
+  path: string,
+): Promise<BackendAuthResult<T>> {
+  try {
+    const response = await fetch(`${VOICES_MEMBERSHIP_API_BASE_URL}${path}`, {
       cache: "no-store",
     });
 
@@ -59,4 +85,31 @@ export async function backendLogin(input: {
   password: string;
 }): Promise<BackendAuthResult> {
   return authRequest("/api/auth/login", input);
+}
+
+export async function backendCheckEmail(input: {
+  email: string;
+}): Promise<BackendAuthResult<{ exists: boolean; email?: string }>> {
+  return authRequest("/api/auth/check-email", input);
+}
+
+export async function backendForgotPassword(input: {
+  email: string;
+}): Promise<BackendAuthResult> {
+  return authRequest("/api/auth/forgot-password", input);
+}
+
+export async function backendValidatePasswordResetToken(
+  token: string,
+): Promise<BackendAuthResult> {
+  return authGetRequest(
+    `/api/auth/validate-token/${encodeURIComponent(token)}?type=password_reset`,
+  );
+}
+
+export async function backendResetPassword(input: {
+  token: string;
+  password: string;
+}): Promise<BackendAuthResult> {
+  return authRequest("/api/auth/reset-password", input);
 }

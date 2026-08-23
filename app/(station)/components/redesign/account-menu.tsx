@@ -49,7 +49,7 @@ function SignedOutLinks({ pathname }: { pathname: string }) {
           focusRingClasses,
         )}
       >
-        Join
+        Support Us
       </Link>
     </div>
   );

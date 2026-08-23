@@ -3,6 +3,11 @@
 import { useRef, useState, type ChangeEvent } from "react";
 import { uploadArtistImageAction } from "./actions";
 import type { ArtistImageKind } from "@/lib/voices/membership/artist-profile-client";
+import {
+  accountFieldClassName,
+  accountSecondaryButtonClassName,
+} from "../components/account-surface";
+import { cn } from "@/lib/utils";
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024; // matches the backend's multer limit
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -38,9 +43,10 @@ export default function ImageField({
   const [mode, setMode] = useState<"upload" | "url">("upload");
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialUrl);
   const [pending, setPending] = useState(false);
-  const [message, setMessage] = useState<{ tone: "success" | "error"; text: string } | null>(
-    null,
-  );
+  const [message, setMessage] = useState<{
+    tone: "success" | "error";
+    text: string;
+  } | null>(null);
   const labelId = `${fieldName}-label`;
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -49,12 +55,18 @@ export default function ImageField({
     if (!file) return;
 
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setMessage({ tone: "error", text: "Please choose a JPEG, PNG, or WebP image." });
+      setMessage({
+        tone: "error",
+        text: "Please choose a JPEG, PNG, or WebP image.",
+      });
       input.value = "";
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
-      setMessage({ tone: "error", text: "That image is over 8MB. Please choose a smaller file." });
+      setMessage({
+        tone: "error",
+        text: "That image is over 8MB. Please choose a smaller file.",
+      });
       input.value = "";
       return;
     }
@@ -78,12 +90,15 @@ export default function ImageField({
 
   return (
     <div className="flex flex-col gap-2">
-      <span id={labelId} className="font-gabarito text-sm font-bold text-voicesNext-cream">
+      <span
+        id={labelId}
+        className="font-gabarito text-sm font-bold text-voicesNext-cream"
+      >
         {label}
       </span>
 
       {mode === "upload" ? (
-        <div className="flex flex-col gap-3 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background p-4">
+        <div className="group/image flex flex-col gap-3 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background p-4 transition-[border-color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-voicesNext-orange/70 hover:bg-voicesNext-surface motion-reduce:transition-none motion-reduce:hover:translate-y-0">
           <div className="flex items-center gap-4">
             {previewUrl ? (
               // Externally hosted (Vercel Blob, or whatever URL a DJ entered
@@ -93,7 +108,7 @@ export default function ImageField({
               <img
                 src={previewUrl}
                 alt=""
-                className="h-16 w-16 shrink-0 rounded-voices-sm border border-voicesNext-border object-cover"
+                className="h-16 w-16 shrink-0 rounded-voices-sm border border-voicesNext-border object-cover transition-transform duration-200 group-hover/image:scale-[1.03] motion-reduce:transition-none"
               />
             ) : (
               <div
@@ -102,8 +117,17 @@ export default function ImageField({
               />
             )}
 
-            <label className="inline-flex h-9 w-fit cursor-pointer items-center justify-center rounded-full border border-voicesNext-border px-4 font-gabarito text-xs font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange focus-within:ring-2 focus-within:ring-voicesNext-orange">
-              {pending ? "Uploading…" : previewUrl ? "Replace image" : "Upload image"}
+            <label
+              className={cn(
+                accountSecondaryButtonClassName,
+                "h-9 w-fit cursor-pointer px-4 text-xs",
+              )}
+            >
+              {pending
+                ? "Uploading…"
+                : previewUrl
+                ? "Replace image"
+                : "Upload image"}
               <input
                 type="file"
                 accept={ACCEPTED_TYPES.join(",")}
@@ -118,7 +142,7 @@ export default function ImageField({
           <button
             type="button"
             onClick={() => setMode("url")}
-            className="w-fit font-gabarito text-xs font-bold text-voicesNext-cream/70 underline underline-offset-2 hover:text-voicesNext-orange"
+            className="w-fit font-gabarito text-xs font-bold text-voicesNext-cream/70 underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
           >
             Use a URL instead
           </button>
@@ -131,12 +155,12 @@ export default function ImageField({
             type="url"
             aria-labelledby={labelId}
             defaultValue={previewUrl ?? ""}
-            className="h-12 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+            className={accountFieldClassName}
           />
           <button
             type="button"
             onClick={() => setMode("upload")}
-            className="w-fit font-gabarito text-xs font-bold text-voicesNext-cream/70 underline underline-offset-2 hover:text-voicesNext-orange"
+            className="w-fit font-gabarito text-xs font-bold text-voicesNext-cream/70 underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
           >
             Upload a file instead
           </button>

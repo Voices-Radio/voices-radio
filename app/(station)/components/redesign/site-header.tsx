@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 import { accountLinksForCapabilities } from "@/lib/voices/membership/capabilities";
 import AccountMenu, { getInitials } from "./account-menu";
 import BrandMark from "./brand-mark";
-import MobileAppBadges from "./mobile-app-badges";
 import { useSessionUser } from "./use-session-user";
 
 const SHOP_FALLBACK_URL = "https://shop.voicesradio.co.uk/";
@@ -466,14 +465,6 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           >
             Shop
           </a>
-          <Link
-            href="/support"
-            className="voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]"
-            data-active={isActive(pathname, "/support")}
-            aria-current={isActive(pathname, "/support") ? "page" : undefined}
-          >
-            Support Us
-          </Link>
         </nav>
 
         <div className="ml-3 flex h-[54px] items-center gap-2 md:ml-4 md:h-[72px] lg:ml-7 lg:gap-3">
@@ -744,12 +735,6 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                 >
                   Become a Supporter
                 </a>
-              </div>
-              <div className="h-[110px] bg-black px-6 py-[22px]">
-                <p className="font-gabarito text-[16px] font-medium leading-none text-white">
-                  Listen on the Voices app
-                </p>
-                <MobileAppBadges className="mt-[11px]" />
               </div>
             </div>
           </div>

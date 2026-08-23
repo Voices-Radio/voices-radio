@@ -47,7 +47,9 @@ export default function GenreTagInput({
 
     const next = [...genres, value.slice(0, MAX_GENRE_LENGTH)];
     setGenres(next);
-    setAnnouncement(`Added ${value}. ${next.length} genre${next.length === 1 ? "" : "s"}.`);
+    setAnnouncement(
+      `Added ${value}. ${next.length} genre${next.length === 1 ? "" : "s"}.`,
+    );
   }
 
   function removeGenre(genre: string) {
@@ -73,7 +75,10 @@ export default function GenreTagInput({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={inputId} className="font-gabarito text-sm font-bold text-voicesNext-cream">
+      <label
+        htmlFor={inputId}
+        className="font-gabarito text-sm font-bold text-voicesNext-cream"
+      >
         Genres
       </label>
       <p id={hintId} className="font-gabarito text-xs text-voicesNext-cream/60">
@@ -81,18 +86,18 @@ export default function GenreTagInput({
         like — these show as tags on RadioCult and Voices.
       </p>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-3 py-2 focus-within:border-voicesNext-orange focus-within:ring-2 focus-within:ring-voicesNext-orange focus-within:ring-offset-2 focus-within:ring-offset-voicesNext-background">
+      <div className="flex flex-wrap items-center gap-2 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-3 py-2 transition-[border-color,box-shadow,background-color] duration-200 focus-within:border-voicesNext-orange focus-within:ring-2 focus-within:ring-voicesNext-orange focus-within:ring-offset-2 focus-within:ring-offset-voicesNext-background motion-reduce:transition-none">
         {genres.map((genre) => (
           <span
             key={genre}
-            className="inline-flex items-center gap-1.5 rounded-full bg-voicesNext-surface px-3 py-1 font-gabarito text-sm text-voicesNext-cream"
+            className="inline-flex items-center gap-1.5 rounded-full bg-voicesNext-surface px-3 py-1 font-gabarito text-sm text-voicesNext-cream transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-voicesNext-orangeButton motion-reduce:transition-none motion-reduce:hover:translate-y-0"
           >
             {genre}
             <button
               type="button"
               onClick={() => removeGenre(genre)}
               aria-label={`Remove ${genre}`}
-              className="text-voicesNext-cream/60 hover:text-voicesNext-orange focus:outline-none"
+              className="text-voicesNext-cream/60 transition-colors hover:text-voicesNext-cream focus:outline-none"
             >
               ×
             </button>

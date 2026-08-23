@@ -4,6 +4,10 @@ import type {
   MembershipCadence,
   MembershipTierView,
 } from "@/lib/voices/membership/types";
+import {
+  accountPrimaryButtonClassName,
+  accountSurfaceClassName,
+} from "../../account/components/account-surface";
 
 export default function TierCard({
   tier,
@@ -22,7 +26,8 @@ export default function TierCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-voices-md border p-6",
+        accountSurfaceClassName,
+        "flex flex-col gap-4",
         tier.mostPopular
           ? "border-voicesNext-orange bg-voicesNext-surface"
           : "border-voicesNext-border bg-voicesNext-background",
@@ -67,7 +72,10 @@ export default function TierCard({
 
       <Link
         href={ctaHref}
-        className="mt-2 inline-flex h-12 items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-base font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+        className={cn(
+          accountPrimaryButtonClassName,
+          "mt-2 h-12 px-6 text-base",
+        )}
       >
         Choose {tier.name}
       </Link>

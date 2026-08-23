@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { getArtistProfile } from "@/lib/voices/membership/artist-profile-client";
 import { requireArtist } from "@/lib/voices/membership/session";
+import {
+  AccountPageIntro,
+  AccountSurface,
+} from "../components/account-surface";
 import ArtistProfileForm from "./artist-profile-form";
 
 export const metadata: Metadata = {
@@ -13,24 +17,22 @@ export default async function ArtistAccountPage() {
 
   return (
     <div>
-      <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-        Artist profile
-      </h1>
-      <p className="mt-2 max-w-2xl font-asap text-sm leading-relaxed text-voicesNext-cream/75">
-        Update the profile details shown on Voices. Artist name and programming
-        email are managed by the station team so the website stays aligned with
-        scheduling.
-      </p>
+      <AccountPageIntro
+        eyebrow="DJ console"
+        title="Artist profile"
+        description="Update the profile details shown on Voices. Artist name and programming email are managed by the station team so the website stays aligned with scheduling."
+      />
 
       {result.ok ? (
         <ArtistProfileForm profile={result.data} />
       ) : (
-        <div
+        <AccountSurface
           role="alert"
-          className="mt-8 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6 font-gabarito text-sm text-voicesNext-cream/90"
+          interactive={false}
+          className="mt-8 font-gabarito text-sm text-voicesNext-cream/90"
         >
           {result.message}
-        </div>
+        </AccountSurface>
       )}
     </div>
   );

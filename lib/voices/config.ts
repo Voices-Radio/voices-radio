@@ -21,6 +21,9 @@ export const VOICES_DEFAULT_FEATURED_LIMIT = 10;
 export const VOICES_APPLY_FOR_SHOW_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSdlV09iFlcP2_n6ldRsSUoeZclzJpb0AMY4F2rrXUpC7jueZQ/viewform";
 
+export const VOICES_MIXCLOUD_LIVE_URL =
+  "https://www.mixcloud.com/live/VoicesRadio/";
+
 export type VoicesLiveStationId = "kx" | "east";
 
 export type VoicesLiveStationConfig = {
@@ -71,4 +74,8 @@ export const voicesLiveStations: VoicesLiveStationConfig[] = [
 
 export function getVoicesLiveStation(id: VoicesLiveStationId) {
   return voicesLiveStations.find((station) => station.id === id);
+}
+
+export function getVoicesHeaderPlayerId(id: VoicesLiveStationId) {
+  return `voices-live-header:${id}`;
 }

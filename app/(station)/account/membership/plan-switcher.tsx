@@ -11,6 +11,8 @@ import {
 } from "./actions";
 import type { MembershipCadence } from "@/lib/voices/membership/types";
 import { formatMinorUnits } from "@/lib/voices/membership/format";
+import { accountSecondaryButtonClassName } from "../components/account-surface";
+import { cn } from "@/lib/utils";
 
 interface OtherTier {
   id: string;
@@ -35,7 +37,7 @@ export function PlanSwitcher({
       {otherTiers.map((tier) => (
         <div
           key={tier.id}
-          className="flex items-center justify-between rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3"
+          className="flex items-center justify-between gap-4 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 transition-[border-color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-voicesNext-orange/70 hover:bg-voicesNext-surface motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         >
           <div>
             <p className="font-gabarito text-sm font-bold text-voicesNext-cream">
@@ -47,14 +49,23 @@ export function PlanSwitcher({
             </p>
           </div>
           <ConfirmChangeDialog
-            triggerLabel={tier.direction === "upgrade" ? "Upgrade" : "Downgrade"}
-            triggerClassName="inline-flex h-10 items-center justify-center rounded-full border border-voicesNext-border px-4 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
-            title={`${tier.direction === "upgrade" ? "Upgrade" : "Downgrade"} to ${tier.name}`}
+            triggerLabel={
+              tier.direction === "upgrade" ? "Upgrade" : "Downgrade"
+            }
+            triggerClassName={cn(
+              accountSecondaryButtonClassName,
+              "h-10 px-4 text-sm",
+            )}
+            title={`${
+              tier.direction === "upgrade" ? "Upgrade" : "Downgrade"
+            } to ${tier.name}`}
             currency={currency}
             loadPreview={() =>
               previewChangeAction({ action: tier.direction, toTierId: tier.id })
             }
-            confirmLabel={`Confirm ${tier.direction === "upgrade" ? "upgrade" : "downgrade"}`}
+            confirmLabel={`Confirm ${
+              tier.direction === "upgrade" ? "upgrade" : "downgrade"
+            }`}
             onConfirm={async () => {
               const result =
                 tier.direction === "upgrade"
@@ -64,7 +75,10 @@ export function PlanSwitcher({
                 trackMembershipEvent(
                   tier.direction === "upgrade"
                     ? { name: "membership_upgraded", tierId: tier.id }
-                    : { name: "membership_downgrade_scheduled", tierId: tier.id },
+                    : {
+                        name: "membership_downgrade_scheduled",
+                        tierId: tier.id,
+                      },
                 );
               }
               return result;
@@ -91,13 +105,25 @@ export function CadenceSwitcher({
   return (
     <ConfirmChangeDialog
       triggerLabel={
-        targetCadence === "annual" ? "Switch to annual billing" : "Switch to monthly billing"
+        targetCadence === "annual"
+          ? "Switch to annual billing"
+          : "Switch to monthly billing"
       }
-      triggerClassName="inline-flex h-11 items-center justify-center rounded-full border border-voicesNext-border px-5 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
-      title={targetCadence === "annual" ? "Switch to annual billing" : "Switch to monthly billing"}
+      triggerClassName={cn(
+        accountSecondaryButtonClassName,
+        "h-11 px-5 text-sm",
+      )}
+      title={
+        targetCadence === "annual"
+          ? "Switch to annual billing"
+          : "Switch to monthly billing"
+      }
       currency={currency}
       loadPreview={() =>
-        previewChangeAction({ action: "change_cadence", toCadence: targetCadence })
+        previewChangeAction({
+          action: "change_cadence",
+          toCadence: targetCadence,
+        })
       }
       confirmLabel="Confirm change"
       onConfirm={async () => {

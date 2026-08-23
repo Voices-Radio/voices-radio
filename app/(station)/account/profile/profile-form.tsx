@@ -3,6 +3,12 @@
 import { useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import type { MembershipProfile } from "@/lib/voices/membership/schemas";
+import { cn } from "@/lib/utils";
+import {
+  accountFieldClassName,
+  accountPrimaryButtonClassName,
+  accountSurfaceClassName,
+} from "../components/account-surface";
 import { updateProfileAction, type ProfileState } from "./actions";
 
 const initialState: ProfileState = undefined;
@@ -26,7 +32,7 @@ function SaveButton() {
       type="submit"
       disabled={pending}
       aria-busy={pending}
-      className="inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange disabled:opacity-60"
+      className={cn(accountPrimaryButtonClassName, "h-11 px-6 text-sm")}
     >
       {pending ? "Saving…" : "Save changes"}
     </button>
@@ -50,7 +56,10 @@ export default function ProfileForm({
   }, [state]);
 
   return (
-    <form action={formAction} className="flex max-w-lg flex-col gap-5">
+    <form
+      action={formAction}
+      className={cn(accountSurfaceClassName, "flex max-w-2xl flex-col gap-5")}
+    >
       {state?.status && (
         <div
           ref={statusRef}
@@ -79,7 +88,7 @@ export default function ProfileForm({
           type="text"
           defaultValue={profile.displayName ?? ""}
           maxLength={80}
-          className="h-12 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+          className={accountFieldClassName}
         />
         <p className="font-asap text-xs text-voicesNext-cream/70">
           Shown on the supporter wall, if you opt in below.
@@ -91,7 +100,7 @@ export default function ProfileForm({
           type="checkbox"
           name="supporterWallOptIn"
           defaultChecked={profile.supporterWallOptIn}
-          className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+          className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background motion-reduce:transition-none"
         />
         List me on the public supporter wall.
       </label>
@@ -104,7 +113,7 @@ export default function ProfileForm({
           type="checkbox"
           name="marketingConsent"
           defaultChecked={profile.marketingConsent}
-          className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+          className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background motion-reduce:transition-none"
         />
         Send me Voices news and updates.
       </label>
@@ -136,7 +145,7 @@ export default function ProfileForm({
                 autoComplete={autoComplete}
                 defaultValue={profile.address?.[name] ?? ""}
                 maxLength={200}
-                className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+                className={cn(accountFieldClassName, "h-auto py-3")}
               />
             </div>
           ))}

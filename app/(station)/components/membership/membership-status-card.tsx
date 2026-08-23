@@ -13,6 +13,11 @@ import {
   formatMinorUnitsWithCadence,
 } from "@/lib/voices/membership/format";
 import type { MembershipState } from "@/lib/voices/membership/schemas";
+import {
+  accountPrimaryButtonClassName,
+  accountSecondaryButtonClassName,
+  accountSurfaceClassName,
+} from "../../account/components/account-surface";
 
 type StatusKey = NonNullable<MembershipState["status"]>;
 
@@ -65,7 +70,7 @@ export default function MembershipStatusCard({
 }) {
   if (!state.status) {
     return (
-      <div className="rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6">
+      <div className={accountSurfaceClassName}>
         <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
           You&rsquo;re not a member yet
         </h2>
@@ -75,7 +80,10 @@ export default function MembershipStatusCard({
         </p>
         <Link
           href="/join"
-          className="mt-4 inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface"
+          className={cn(
+            accountPrimaryButtonClassName,
+            "mt-4 h-11 px-5 text-sm",
+          )}
         >
           Join Voices
         </Link>
@@ -89,7 +97,7 @@ export default function MembershipStatusCard({
   const paidThroughAt = formatMembershipDate(state.paidThroughAt);
 
   return (
-    <div className="rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6">
+    <div className={accountSurfaceClassName}>
       {state.isFoundingMember && (
         <p className="mb-3 inline-flex w-fit items-center rounded-full bg-voicesNext-orangeButton px-3 py-1 font-asap text-[11px] font-bold uppercase tracking-[1px] text-white">
           Founding member · Voices · 2026
@@ -144,15 +152,21 @@ export default function MembershipStatusCard({
         <p className="mt-3 font-gabarito text-sm text-voicesNext-orangeText">
           There&rsquo;s a problem with your last payment.{" "}
           {state.paymentIssue.gracePeriodEndsAt &&
-            `Please update your payment method by ${formatMembershipDate(state.paymentIssue.gracePeriodEndsAt)}.`}
+            `Please update your payment method by ${formatMembershipDate(
+              state.paymentIssue.gracePeriodEndsAt,
+            )}.`}
         </p>
       )}
 
       {state.scheduledChange && (
         <p className="mt-3 font-gabarito text-sm text-voicesNext-cream/70">
           {state.scheduledChange.type === "downgrade"
-            ? `Switching to a lower tier on ${formatMembershipDate(state.scheduledChange.effectiveAt)}.`
-            : `Switching billing cadence on ${formatMembershipDate(state.scheduledChange.effectiveAt)}.`}
+            ? `Switching to a lower tier on ${formatMembershipDate(
+                state.scheduledChange.effectiveAt,
+              )}.`
+            : `Switching billing cadence on ${formatMembershipDate(
+                state.scheduledChange.effectiveAt,
+              )}.`}
         </p>
       )}
 
@@ -161,21 +175,21 @@ export default function MembershipStatusCard({
         {state.status === "grace" ? (
           <Link
             href="/account/membership"
-            className="inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface"
+            className={cn(accountPrimaryButtonClassName, "h-11 px-5 text-sm")}
           >
             Fix payment method
           </Link>
         ) : state.status === "expired" ? (
           <Link
             href="/join"
-            className="inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface"
+            className={cn(accountPrimaryButtonClassName, "h-11 px-5 text-sm")}
           >
             Rejoin Voices
           </Link>
         ) : (
           <Link
             href="/account/membership"
-            className="inline-flex h-11 items-center justify-center rounded-full border border-voicesNext-border px-5 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface"
+            className={cn(accountSecondaryButtonClassName, "h-11 px-5 text-sm")}
           >
             Manage membership
           </Link>

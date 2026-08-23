@@ -9,9 +9,15 @@ import {
   formatMinorUnits,
 } from "@/lib/voices/membership/format";
 import type { PreviewChangeResponse } from "@/lib/voices/membership/schemas";
+import { cn } from "@/lib/utils";
+import {
+  accountPrimaryButtonClassName,
+  accountSecondaryButtonClassName,
+} from "../../account/components/account-surface";
 
 type PreviewResult =
-  { ok: true; data: PreviewChangeResponse } | { ok: false; message: string };
+  | { ok: true; data: PreviewChangeResponse }
+  | { ok: false; message: string };
 
 type ConfirmResult = { ok: true } | { ok: false; message: string };
 
@@ -201,7 +207,10 @@ export default function ConfirmChangeDialog({
                       <Dialog.Close asChild>
                         <button
                           type="button"
-                          className="inline-flex h-11 items-center justify-center rounded-full border border-voicesNext-border px-5 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+                          className={cn(
+                            accountSecondaryButtonClassName,
+                            "h-11 px-5 text-sm",
+                          )}
                         >
                           Cancel
                         </button>
@@ -211,7 +220,10 @@ export default function ConfirmChangeDialog({
                         onClick={handleConfirm}
                         disabled={!preview?.ok || confirming}
                         aria-busy={confirming}
-                        className="inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange disabled:opacity-50"
+                        className={cn(
+                          accountPrimaryButtonClassName,
+                          "h-11 px-5 text-sm",
+                        )}
                       >
                         {confirming ? "Confirming…" : confirmLabel}
                       </button>

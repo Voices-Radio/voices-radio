@@ -1,10 +1,11 @@
 "use client";
 
-import { Pause, Play, Search, Video } from "lucide-react";
+import { Play, Search, Square, Video } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
+  getVoicesHeaderPlayerId,
   voicesLiveStations,
   type VoicesLiveStationConfig,
 } from "@/lib/voices/config";
@@ -134,11 +135,13 @@ function MobileStationControl({
           type="button"
           disabled={disabled}
           onClick={toggle}
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center disabled:opacity-45"
-          aria-label={playing ? `Pause ${station.label}` : `Play ${station.label}`}
+          className="disabled:opacity-45 inline-flex h-7 w-7 shrink-0 items-center justify-center"
+          aria-label={
+            playing ? `Pause ${station.label}` : `Play ${station.label}`
+          }
         >
           {playing ? (
-            <Pause aria-hidden="true" size={14} fill="currentColor" />
+            <Square aria-hidden="true" size={12} fill="currentColor" />
           ) : (
             <Play aria-hidden="true" size={14} fill="currentColor" />
           )}
@@ -158,11 +161,13 @@ function MobileStationControl({
           type="button"
           disabled={disabled}
           onClick={toggle}
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center disabled:opacity-45"
-          aria-label={playing ? `Pause ${station.label}` : `Play ${station.label}`}
+          className="disabled:opacity-45 inline-flex h-7 w-7 shrink-0 items-center justify-center"
+          aria-label={
+            playing ? `Pause ${station.label}` : `Play ${station.label}`
+          }
         >
           {playing ? (
-            <Pause aria-hidden="true" size={14} fill="currentColor" />
+            <Square aria-hidden="true" size={12} fill="currentColor" />
           ) : station.videoUrl ? (
             <Video aria-hidden="true" size={17} strokeWidth={2.2} />
           ) : (
@@ -225,6 +230,7 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
   const liveMetadata = useRadioCultLiveMetadata(station.id);
   const { audioRef, error, loading, playing, toggle } = useStationAudio(
     station.streamUrl,
+    getVoicesHeaderPlayerId(station.id),
   );
   const status = liveMetadata.status === "offAir" ? "OFF AIR" : "ON AIR";
 
@@ -256,7 +262,7 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
         }
       >
         {playing ? (
-          <Pause aria-hidden="true" size={14} fill="currentColor" />
+          <Square aria-hidden="true" size={12} fill="currentColor" />
         ) : (
           <Play aria-hidden="true" size={14} fill="currentColor" />
         )}

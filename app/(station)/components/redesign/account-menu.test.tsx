@@ -59,14 +59,14 @@ describe("getInitials", () => {
 });
 
 describe("AccountMenu", () => {
-  it("renders Sign in and Join for a signed-out visitor", async () => {
+  it("renders Sign in and Support Us for a signed-out visitor", async () => {
     mockSessionFetch(null);
     render(<AccountMenu />);
 
     expect(
       await screen.findByRole("link", { name: /sign in/i }),
     ).toHaveAttribute("href", "/sign-in?next=%2Fexplore");
-    expect(screen.getByRole("link", { name: /join/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /support us/i })).toHaveAttribute(
       "href",
       "/join",
     );

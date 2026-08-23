@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import Link from "next/link";
 import type { ArtistInvitation } from "@/lib/voices/membership/artist-invitations-client";
 import {
   claimArtistInvitationAction,
@@ -80,6 +81,9 @@ export default function ClaimArtistForm({
         : "existing",
   );
   const statusRef = useRef<HTMLDivElement>(null);
+  const forgotPasswordHref = `/forgot-password?email=${encodeURIComponent(
+    invitation.email,
+  )}&next=${encodeURIComponent(`/artists/claim/${token}`)}`;
 
   useEffect(() => {
     if (state?.status === "error") {
@@ -156,14 +160,26 @@ export default function ClaimArtistForm({
       )}
 
       {mode === "existing" && (
-        <Field
-          id="password"
-          name="password"
-          label="Existing account password"
-          type="password"
-          autoComplete="current-password"
-          required
-        />
+        <div className="flex flex-col gap-2">
+          <Field
+            id="password"
+            name="password"
+            label="Existing account password"
+            type="password"
+            autoComplete="current-password"
+            required
+          />
+          <p className="font-asap text-sm text-voicesNext-cream/70">
+            Forgot your password?{" "}
+            <Link
+              href={forgotPasswordHref}
+              className="font-gabarito font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
+            >
+              Reset it first
+            </Link>
+            , then return here to link this artist profile.
+          </p>
+        </div>
       )}
 
       {mode === "create" && (

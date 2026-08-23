@@ -16,6 +16,12 @@ import {
   lookupCapabilities,
 } from "@/lib/voices/membership/session";
 import MembershipStatusCard from "../components/membership/membership-status-card";
+import {
+  AccountPageIntro,
+  AccountSurface,
+  accountPrimaryButtonClassName,
+} from "./components/account-surface";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Your account",
@@ -58,10 +64,8 @@ function AccountNotice({
 function EmptyAccountState() {
   return (
     <div>
-      <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-        Your account
-      </h1>
-      <div className="mt-6 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6">
+      <AccountPageIntro eyebrow="Account desk" title="Your account" />
+      <AccountSurface className="mt-6">
         <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
           Nothing active yet
         </h2>
@@ -72,11 +76,14 @@ function EmptyAccountState() {
         </p>
         <Link
           href="/join"
-          className="mt-5 inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+          className={cn(
+            accountPrimaryButtonClassName,
+            "mt-5 h-11 px-5 text-sm",
+          )}
         >
           Join as a member
         </Link>
-      </div>
+      </AccountSurface>
     </div>
   );
 }
@@ -91,13 +98,12 @@ function EmptyAccountState() {
 function CapabilitiesUnavailableState() {
   return (
     <div>
-      <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-        Your account
-      </h1>
-      <div
+      <AccountPageIntro eyebrow="Account desk" title="Your account" />
+      <AccountSurface
+        interactive={false}
         role="alert"
         data-testid="capabilities-unavailable"
-        className="mt-6 rounded-voices-md border border-voicesNext-orange bg-voicesNext-surface p-6"
+        className="mt-6 border-voicesNext-orange"
       >
         <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
           We couldn&rsquo;t load your account
@@ -108,11 +114,14 @@ function CapabilitiesUnavailableState() {
         </p>
         <Link
           href="/account"
-          className="mt-5 inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+          className={cn(
+            accountPrimaryButtonClassName,
+            "mt-5 h-11 px-5 text-sm",
+          )}
         >
           Try again
         </Link>
-      </div>
+      </AccountSurface>
     </div>
   );
 }
@@ -158,9 +167,10 @@ export default async function AccountPage({
   return (
     <div>
       <AccountNotice missing={params.missing} artist={params.artist} />
-      <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-        {user?.firstName ? `Hi ${user.firstName}` : "Your account"}
-      </h1>
+      <AccountPageIntro
+        eyebrow="Account desk"
+        title={user?.firstName ? `Hi ${user.firstName}` : "Your account"}
+      />
 
       <div className="mt-6">
         {membershipResult.ok ? (
@@ -175,12 +185,13 @@ export default async function AccountPage({
             }
           />
         ) : (
-          <div
+          <AccountSurface
+            interactive={false}
             role="alert"
-            className="rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6 font-gabarito text-sm text-voicesNext-cream/90"
+            className="font-gabarito text-sm text-voicesNext-cream/90"
           >
             {membershipResult.message}
-          </div>
+          </AccountSurface>
         )}
       </div>
 
@@ -208,7 +219,7 @@ export default async function AccountPage({
                   <li key={benefit.id}>
                     <Link
                       href={`/benefits/${benefit.slug}`}
-                      className="flex items-center justify-between rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 font-gabarito text-sm text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange"
+                      className="flex items-center justify-between rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 font-gabarito text-sm text-voicesNext-cream transition-[border-color,color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-voicesNext-orange hover:bg-voicesNext-surface hover:text-voicesNext-orange motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                     >
                       {benefit.name}
                     </Link>

@@ -56,7 +56,7 @@ export function EastComingSoonCard() {
 export function EastComingSoonStrip() {
   return (
     <div
-      className="flex h-[34px] overflow-hidden border-b border-black last:border-b-0"
+      className="box-border flex h-[34px] overflow-hidden border-b border-black last:border-b-0"
       aria-label="Voices East coming late summer"
     >
       <div className="grid min-w-0 flex-1 grid-cols-[52px_1fr_auto] items-center gap-3 px-2">
@@ -72,7 +72,7 @@ export function EastComingSoonStrip() {
         </span>
       </div>
       <div
-        className="inline-flex h-[34px] w-[35px] shrink-0 items-center justify-center border-l border-black bg-voicesNext-orange text-voicesNext-cream"
+        className="inline-flex h-full w-[35px] shrink-0 items-center justify-center border-l border-black bg-voicesNext-orange text-voicesNext-cream"
         aria-hidden="true"
       >
         <Radio size={15} strokeWidth={2.2} />

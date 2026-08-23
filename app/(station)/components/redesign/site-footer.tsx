@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import MobileAppBadges from "./mobile-app-badges";
 
 export default function SiteFooter({
   supporterUrl,
@@ -15,13 +15,8 @@ export default function SiteFooter({
 
   return (
     <footer className="border-t border-voicesNext-border bg-black text-voicesNext-cream">
-      <div className="grid min-h-[240px] w-full content-start gap-[14px] px-[19px] py-6 md:min-h-[280px] md:grid-cols-[1fr_1fr_1fr] md:gap-10 md:px-0 md:py-[27px]">
-        <div className="space-y-3 md:space-y-5">
-          <p className="font-gabarito text-[16px] font-medium leading-none md:hidden">
-            Listen on the Voices app
-          </p>
-          <MobileAppBadges className="md:hidden" />
-
+      <div className="grid min-h-[170px] w-full gap-8 px-[19px] py-6 md:min-h-[190px] md:grid-cols-[1fr_auto_1fr] md:items-start md:gap-10 md:px-8 md:py-7">
+        <div className="space-y-4 text-left">
           <nav className="grid gap-1 font-gabarito text-[14px] font-medium leading-none md:gap-2 md:text-sm md:font-bold md:leading-normal">
             <p className="uppercase md:hidden">VOICES RADIO</p>
             <Link href="/about">About</Link>
@@ -30,18 +25,28 @@ export default function SiteFooter({
             <a href={contactHref}>Contact</a>
             <a href={ctaUrl}>Become a Supporter</a>
           </nav>
-        </div>
-
-        <div className="hidden space-y-4 md:block">
-          <p className="font-gabarito text-lg font-bold">
-            Listen on the Voices app
+          <p className="max-w-[240px] font-gabarito text-xs text-voicesNext-secondary">
+            © 2026 Voices Radio
           </p>
-          <MobileAppBadges />
         </div>
 
-        <p className="hidden self-end font-gabarito text-xs text-voicesNext-secondary md:block md:text-center">
-          © 2026 Voices Radio • Voices Radio is a non-profit community supported
-          station
+        <Link
+          href="/"
+          className="relative mx-auto block h-[46px] w-[145px] focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-black md:mt-1"
+          aria-label="Voices Radio home"
+        >
+          <Image
+            src="/voices-wordmark.svg"
+            alt=""
+            fill
+            sizes="145px"
+            className="object-contain"
+          />
+        </Link>
+
+        <p className="max-w-[340px] justify-self-start font-asap text-sm leading-snug text-voicesNext-secondary md:justify-self-end md:text-left">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+          posuere erat a ante venenatis dapibus posuere velit aliquet.
         </p>
       </div>
     </footer>

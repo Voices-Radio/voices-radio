@@ -2,12 +2,14 @@
 
 import { useRef, useState } from "react";
 import {
+  getVoicesHeaderPlayerId,
   getVoicesLiveStation,
+  VOICES_MIXCLOUD_LIVE_URL,
   type VoicesLiveStationId,
 } from "@/lib/voices/config";
 import type { HomeLiveStreamConfig } from "@/lib/voices/home";
 import type { VoicesShow } from "@/lib/voices/types";
-import { stopLiveAudio } from "@/hooks/use-station-audio";
+import { playLiveAudio, stopLiveAudio } from "@/hooks/use-station-audio";
 import { EastComingSoonCard } from "./east-coming-soon";
 import LiveStationCard from "./live-station-card";
 import RestreamVideoModal from "./restream-video-modal";
@@ -42,11 +44,13 @@ export default function LiveStack({
   eastShow,
   kxFallback,
   eastFallback,
+  mixcloudLiveUrl,
 }: {
   kxShow?: VoicesShow;
   eastShow?: VoicesShow;
   kxFallback?: HomeLiveStreamConfig;
   eastFallback?: HomeLiveStreamConfig;
+  mixcloudLiveUrl?: string;
 }) {
   const kxArtwork = getLiveArtwork(kxShow, kxFallback, "KX");
   const eastArtwork = getLiveArtwork(eastShow, eastFallback, "East");
@@ -74,6 +78,15 @@ export default function LiveStack({
     setVideoOpen(true);
   }
 
+  function listenLive(stationId: VoicesLiveStationId) {
+    const station = getVoicesLiveStation(stationId);
+    if (!station?.streamUrl || station.comingSoon) return;
+
+    setSelectedStation(stationId);
+    setVideoOpen(false);
+    playLiveAudio(getVoicesHeaderPlayerId(stationId));
+  }
+
   function handleVideoOpenChange(open: boolean) {
     setVideoOpen(open);
     if (!open) setSelectedStation(null);
@@ -90,9 +103,12 @@ export default function LiveStack({
           artwork={kxArtwork.src}
           artworkAlt={kxArtwork.alt}
           videoUrl={kxStation?.videoUrl}
+          watchLiveUrl={mixcloudLiveUrl ?? VOICES_MIXCLOUD_LIVE_URL}
+          canListenLive={Boolean(kxStation?.streamUrl)}
           selected={selectedStation === "kx"}
           onSelect={() => setSelectedStation("kx")}
           onWatchLive={() => watchLive("kx")}
+          onListenLive={() => listenLive("kx")}
         />
         {eastStation?.comingSoon ? (
           <EastComingSoonCard />
@@ -105,9 +121,11 @@ export default function LiveStack({
             artwork={eastArtwork.src}
             artworkAlt={eastArtwork.alt}
             videoUrl={eastStation?.videoUrl}
+            canListenLive={Boolean(eastStation?.streamUrl)}
             selected={selectedStation === "east"}
             onSelect={() => setSelectedStation("east")}
             onWatchLive={() => watchLive("east")}
+            onListenLive={() => listenLive("east")}
           />
         )}
       </div>

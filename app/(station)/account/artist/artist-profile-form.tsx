@@ -3,6 +3,13 @@
 import { useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import type { ArtistProfile } from "@/lib/voices/membership/schemas";
+import { cn } from "@/lib/utils";
+import {
+  accountFieldClassName,
+  accountPrimaryButtonClassName,
+  accountSurfaceClassName,
+  accountTextAreaClassName,
+} from "../components/account-surface";
 import { updateArtistProfileAction, type ArtistProfileState } from "./actions";
 import ImageField from "./image-field";
 import GenreTagInput from "./genre-tag-input";
@@ -17,7 +24,7 @@ function SaveButton() {
       type="submit"
       disabled={pending}
       aria-busy={pending}
-      className="inline-flex h-11 items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange disabled:opacity-60"
+      className={cn(accountPrimaryButtonClassName, "h-11 px-6 text-sm")}
     >
       {pending ? "Saving…" : "Save artist profile"}
     </button>
@@ -50,7 +57,7 @@ function TextField({
         name={name}
         type={type}
         defaultValue={defaultValue ?? ""}
-        className="h-12 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+        className={accountFieldClassName}
       />
     </div>
   );
@@ -72,7 +79,13 @@ export default function ArtistProfileForm({
   }, [state]);
 
   return (
-    <form action={formAction} className="mt-8 flex max-w-2xl flex-col gap-5">
+    <form
+      action={formAction}
+      className={cn(
+        accountSurfaceClassName,
+        "mt-8 flex max-w-3xl flex-col gap-5",
+      )}
+    >
       {state?.status && (
         <div
           ref={statusRef}
@@ -88,7 +101,7 @@ export default function ArtistProfileForm({
         </div>
       )}
 
-      <div className="grid gap-4 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-4 sm:grid-cols-2">
+      <div className="grid gap-4 rounded-voices-md border border-voicesNext-border bg-voicesNext-background p-4 sm:grid-cols-2">
         <div>
           <p className="font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/60">
             Artist name
@@ -121,7 +134,7 @@ export default function ArtistProfileForm({
           name="bio"
           defaultValue={profile.bio ?? ""}
           rows={6}
-          className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+          className={accountTextAreaClassName}
         />
       </div>
 

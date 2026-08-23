@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { getBenefits, getProfile } from "@/lib/voices/membership/membership-client";
+import {
+  getBenefits,
+  getProfile,
+} from "@/lib/voices/membership/membership-client";
+import {
+  AccountPageIntro,
+  AccountSurface,
+} from "../components/account-surface";
 import ProfileForm from "./profile-form";
 
 export const metadata: Metadata = {
@@ -14,22 +21,29 @@ export default async function AccountProfilePage() {
 
   if (!profileResult.ok) {
     return (
-      <div role="alert" className="rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6 font-gabarito text-sm text-voicesNext-cream/90">
+      <AccountSurface
+        role="alert"
+        interactive={false}
+        className="font-gabarito text-sm text-voicesNext-cream/90"
+      >
         {profileResult.message}
-      </div>
+      </AccountSurface>
     );
   }
 
   // Only prompt for a postal address when it's actually needed to fulfil a
   // benefit on the member's current tier (contract §9) — never by default.
   const showAddress =
-    benefitsResult.ok && benefitsResult.data.some((benefit) => benefit.requiresAddress);
+    benefitsResult.ok &&
+    benefitsResult.data.some((benefit) => benefit.requiresAddress);
 
   return (
     <div>
-      <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-        Your profile
-      </h1>
+      <AccountPageIntro
+        eyebrow="Member desk"
+        title="Your profile"
+        description="Set the details used for member recognition and benefit fulfilment."
+      />
       <div className="mt-6">
         <ProfileForm profile={profileResult.data} showAddress={showAddress} />
       </div>

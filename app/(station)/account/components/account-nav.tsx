@@ -47,7 +47,7 @@ export default function AccountNav({
   return (
     <nav
       aria-label="Account"
-      className="mb-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-voicesNext-border pb-4"
+      className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-3 border-b border-voicesNext-border pb-4"
     >
       {links.map((link) => {
         const active =
@@ -60,14 +60,14 @@ export default function AccountNav({
             href={link.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "font-gabarito text-sm font-bold uppercase tracking-wide transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange",
+              "relative rounded-full px-3 py-1.5 font-gabarito text-sm font-bold uppercase tracking-wide transition-[background-color,color,transform] duration-200 after:absolute after:inset-x-3 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-voicesNext-orange after:transition-transform after:duration-200 after:content-[''] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange motion-reduce:transition-none motion-reduce:after:transition-none motion-reduce:hover:translate-y-0",
               // orangeText, not orange — plain orange fails 4.5:1 as static
               // text here (axe-flagged; see tailwind.config.js). The
               // focus-visible ring above stays plain orange: rings are a
               // non-text 3:1 threshold, which it already clears.
               active
-                ? "text-voicesNext-orangeText"
-                : "text-voicesNext-cream/70 hover:text-voicesNext-cream",
+                ? "bg-voicesNext-surface text-voicesNext-orangeText after:scale-x-100"
+                : "text-voicesNext-cream/70 hover:bg-voicesNext-surface hover:text-voicesNext-cream hover:after:scale-x-100",
             )}
           >
             {link.label}
@@ -78,7 +78,7 @@ export default function AccountNav({
         <Link
           href={inArtistMode ? "/account" : "/account/artist"}
           onClick={() => persistAccountMode(inArtistMode ? "member" : "artist")}
-          className="rounded-full border border-voicesNext-border px-3 py-1 font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/80 transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange"
+          className="rounded-full border border-voicesNext-border px-3 py-1.5 font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/80 transition-[border-color,color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-voicesNext-orange hover:bg-voicesNext-surface hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         >
           {inArtistMode ? "Member Mode" : "DJ Mode"}
         </Link>
@@ -87,7 +87,7 @@ export default function AccountNav({
         type="button"
         onClick={handleSignOut}
         disabled={signingOut}
-        className="ml-auto font-gabarito text-sm font-bold uppercase tracking-wide text-voicesNext-cream/70 transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange disabled:opacity-60"
+        className="ml-auto rounded-full px-3 py-1.5 font-gabarito text-sm font-bold uppercase tracking-wide text-voicesNext-cream/70 transition-[background-color,color,transform] duration-200 hover:-translate-y-0.5 hover:bg-voicesNext-surface hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
       >
         {signingOut ? "Signing out…" : "Sign out"}
       </button>
