@@ -19,6 +19,18 @@ import type { VoicesShow, VoicesWebsiteRail } from "./types";
 const defaultRailDescription =
   "The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.";
 
+const retiredHomeRailKeys = new Set([
+  "latest_east",
+  "independent_label_market",
+  "voices_global_community",
+]);
+
+const retiredHomeRailTitles = new Set([
+  "latest on east",
+  "independent label market",
+  "voices global community",
+]);
+
 export type HomeFeatureImageFit = "cover" | "contain";
 
 type HomeFeatureItemBase = {
@@ -475,6 +487,13 @@ function getLiveStreamConfig(homePage: HomePage | null) {
   };
 }
 
+function isActiveHomeRail(rail: VoicesWebsiteRail) {
+  return (
+    !retiredHomeRailKeys.has(rail.key) &&
+    !retiredHomeRailTitles.has(rail.title.trim().toLowerCase())
+  );
+}
+
 export async function getHomeShowRails() {
   const rails = await getWebsiteRails();
   const byKey = new Map(rails.map((rail) => [rail.key, rail]));
@@ -503,14 +522,16 @@ export async function getHomePageContent(): Promise<HomePageContent> {
     getHomeFeatureItems(homePage, fallbackFeaturedShows),
     getCmsRails(homePage),
   ]);
-  const rails = cmsRails.length ? cmsRails : websiteRails;
+  const sourceRails = cmsRails.length ? cmsRails : websiteRails;
+  const rails = sourceRails.filter(isActiveHomeRail);
+  const sourceByKey = new Map(sourceRails.map((rail) => [rail.key, rail]));
   const byKey = new Map(rails.map((rail) => [rail.key, rail]));
 
   return {
     featuredItems,
     rails,
-    latestKx: byKey.get("latest_kx")?.shows ?? latestKx,
-    latestEast: byKey.get("latest_east")?.shows ?? latestEast,
+    latestKx: sourceByKey.get("latest_kx")?.shows ?? latestKx,
+    latestEast: sourceByKey.get("latest_east")?.shows ?? latestEast,
     byKey,
     liveStreams: getLiveStreamConfig(homePage),
     hasCmsHomePage: Boolean(homePage),

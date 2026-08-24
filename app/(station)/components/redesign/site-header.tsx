@@ -501,7 +501,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
         <BrandMark />
 
         <nav
-          className="ml-auto hidden items-center gap-5 md:flex lg:gap-7 xl:gap-10"
+          className="ml-auto hidden items-center gap-5 md:flex lg:gap-6 xl:gap-7"
           aria-label="Primary"
         >
           <Link
@@ -533,7 +533,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           </a>
         </nav>
 
-        <div className="ml-3 flex h-[54px] items-center gap-2 md:ml-4 md:h-[72px] lg:ml-7 lg:gap-3">
+        <div className="ml-3 flex h-[54px] items-center gap-2 md:ml-3 md:h-[72px] lg:ml-4 lg:gap-3">
           <div ref={searchContainerRef} className="relative">
             <form
               className="flex items-center justify-end"
