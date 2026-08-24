@@ -2,7 +2,10 @@
 
 import { Pause, Play, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { voicesLiveStations, type VoicesLiveStationConfig } from "@/lib/voices/config";
+import {
+  voicesLiveStations,
+  type VoicesLiveStationConfig,
+} from "@/lib/voices/config";
 import useRadioCultLiveMetadata from "@/hooks/use-radio-cult-live-metadata";
 import useStationAudio from "@/hooks/use-station-audio";
 import RestreamVideoModal from "./restream-video-modal";
@@ -17,7 +20,7 @@ function LiveStationPill({ station }: { station: VoicesLiveStationConfig }) {
     <div className="min-h-11 flex min-w-[245px] items-center justify-between gap-3 rounded-full border border-voicesNext-border bg-voicesNext-background px-3 md:min-w-[280px]">
       <audio ref={audioRef} src={station.streamUrl} preload="none" />
       <div className="min-w-0">
-        <p className="font-asap text-xs font-bold uppercase text-voicesNext-orange">
+        <p className="font-asap text-xs font-bold uppercase text-voicesNext-orangeText">
           {station.label}
         </p>
         <p className="truncate font-gabarito text-sm font-bold text-voicesNext-cream">
@@ -29,10 +32,12 @@ function LiveStationPill({ station }: { station: VoicesLiveStationConfig }) {
         onClick={toggle}
         disabled={!station.streamUrl || loading}
         className={cn(
-          "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-voicesNext-orange text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary",
+          "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-voicesNext-orange text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary",
           playing && "bg-voicesNext-cream",
         )}
-        aria-label={playing ? `Pause ${station.label}` : `Play ${station.label}`}
+        aria-label={
+          playing ? `Pause ${station.label}` : `Play ${station.label}`
+        }
       >
         {playing ? (
           <Pause aria-hidden="true" size={16} />
@@ -43,7 +48,7 @@ function LiveStationPill({ station }: { station: VoicesLiveStationConfig }) {
       <RestreamVideoModal
         label={station.label}
         videoUrl={station.videoUrl}
-        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-voicesNext-border text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-voicesNext-border text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
       >
         <Video aria-hidden="true" size={15} />
       </RestreamVideoModal>

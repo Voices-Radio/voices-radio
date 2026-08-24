@@ -31,7 +31,9 @@ export default function MixcloudArchivePlayer({
 
   if (!feedPath) return null;
 
-  const src = `https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=${encodeURIComponent(feedPath)}`;
+  const src = `https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=${encodeURIComponent(
+    feedPath,
+  )}`;
 
   return (
     <section
@@ -47,7 +49,7 @@ export default function MixcloudArchivePlayer({
         </p>
         <div className="absolute left-[63px] right-8 top-[59px] h-1 rounded-full bg-[#4d4d4d]">
           <div className="h-full w-1/3 rounded-full bg-voicesNext-orange" />
-          <span className="absolute left-[31%] top-1/2 size-[10px] -translate-y-1/2 rounded-full bg-voicesNext-orange" />
+          <span className="size-[10px] absolute left-[31%] top-1/2 -translate-y-1/2 rounded-full bg-voicesNext-orange" />
         </div>
         <span className="absolute left-[63px] top-[70px] font-asap text-[10px] leading-none text-voicesNext-cream">
           12:34
@@ -57,7 +59,7 @@ export default function MixcloudArchivePlayer({
         </span>
         <button
           type="button"
-          className="absolute right-3 top-3 inline-flex size-6 items-center justify-center text-voicesNext-cream"
+          className="size-6 absolute right-3 top-3 inline-flex items-center justify-center text-voicesNext-cream"
           aria-label="Close archive player"
           disabled
         >
@@ -65,7 +67,7 @@ export default function MixcloudArchivePlayer({
         </button>
       </div>
       <div className="hidden border-b border-voicesNext-border px-4 py-3 md:block">
-        <p className="font-asap text-xs font-bold uppercase text-voicesNext-orange">
+        <p className="font-asap text-xs font-bold uppercase text-voicesNext-orangeText">
           Listen back
         </p>
         <h2 className="font-gabarito text-lg font-bold text-voicesNext-cream">

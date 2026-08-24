@@ -10,7 +10,7 @@ export default async function ShowsPage() {
       : `${shows.length} matched public shows`;
 
   return (
-    <main>
+    <main id="main-content" className="scroll-mt-24">
       <PageHero
         eyebrow="Shows"
         title="Listen back"

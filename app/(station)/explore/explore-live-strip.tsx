@@ -155,7 +155,7 @@ function PlayerActions({ mobile = false }: { mobile?: boolean }) {
     >
       <ScheduleDialog
         classNames={cn(
-          "inline-flex h-full items-center justify-center gap-2 rounded-none bg-voicesNext-cream px-4 font-gabarito font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange",
+          "inline-flex h-full items-center justify-center gap-2 rounded-none bg-voicesNext-cream px-4 font-gabarito font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange",
           mobile ? "flex-1 text-[13px]" : "w-[118px] text-[13px]",
         )}
       />
@@ -241,7 +241,7 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
         disabled={!station.streamUrl || loading}
         onClick={toggle}
         className={cn(
-          "inline-flex h-[34px] w-[35px] shrink-0 items-center justify-center border-l border-black transition-colors hover:bg-voicesNext-background hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange disabled:cursor-not-allowed disabled:text-voicesNext-secondary",
+          "inline-flex h-[34px] w-[35px] shrink-0 items-center justify-center border-l border-black transition-colors hover:bg-voicesNext-background hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange disabled:cursor-not-allowed disabled:text-voicesNext-secondary",
           playing && "bg-voicesNext-background text-voicesNext-cream",
         )}
         aria-label={

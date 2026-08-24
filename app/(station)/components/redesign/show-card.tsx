@@ -39,10 +39,8 @@ export default function ShowCard({
     <Link
       href={`/shows/${show.id}`}
       className={cn(
-        "group block overflow-hidden border border-voicesNext-border bg-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-        rail
-          ? "h-[350px] w-[350px] shrink-0"
-          : "aspect-square w-full",
+        "group block overflow-hidden border border-voicesNext-border bg-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+        rail ? "h-[350px] w-[350px] shrink-0" : "aspect-square w-full",
       )}
       aria-label={`Open ${show.title}`}
     >
@@ -86,7 +84,7 @@ export default function ShowCard({
             <span className="inline-flex h-5 w-5 items-center justify-center text-voicesNext-cream">
               <Play aria-hidden="true" size={15} fill="currentColor" />
             </span>
-            <span className="font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orange">
+            <span className="font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orangeText">
               View details
             </span>
             <Bookmark

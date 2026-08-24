@@ -11,11 +11,11 @@ export default function PageHero({
     <section className="border-b border-voicesNext-border">
       <div className="mx-auto max-w-[1280px] px-4 py-10 md:px-8 md:py-16">
         {eyebrow && (
-          <p className="mb-4 font-asap text-sm font-bold uppercase text-voicesNext-orange">
+          <p className="mb-4 font-asap text-sm font-bold uppercase text-voicesNext-orangeText">
             {eyebrow}
           </p>
         )}
-        <h1 className="max-w-4xl font-outfit text-5xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-7xl">
+        <h1 className="text-balance max-w-4xl font-outfit text-5xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-7xl">
           {title}
         </h1>
         {description && (

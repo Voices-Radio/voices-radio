@@ -63,9 +63,7 @@ function getArtistLinks(artist: Awaited<ReturnType<typeof getArtist>>) {
   ].filter((link): link is { label: string; href: string } => Boolean(link));
 }
 
-export default async function ArtistDetailPage({
-  params,
-}: ArtistPageProps) {
+export default async function ArtistDetailPage({ params }: ArtistPageProps) {
   const { id } = await params;
   const artist = await getArtist(id).catch(() => null);
 
@@ -83,7 +81,7 @@ export default async function ArtistDetailPage({
   const mobileGenres = artist.genres.slice(0, 3);
 
   return (
-    <main>
+    <main id="main-content" className="scroll-mt-24">
       <div className="hidden md:block">
         <PageHero
           eyebrow="Artist"
@@ -108,9 +106,7 @@ export default async function ArtistDetailPage({
             <span className="bg-voicesNext-cream px-1 py-[3px]">
               {stationLabel}
             </span>
-            <span className="bg-voicesNext-cream px-1 py-[3px]">
-              Resident
-            </span>
+            <span className="bg-voicesNext-cream px-1 py-[3px]">Resident</span>
             <span className="bg-voicesNext-cream px-1 py-[3px]">
               {locationLabel}
             </span>
@@ -207,11 +203,7 @@ export default async function ArtistDetailPage({
       </section>
 
       <div className="md:hidden">
-        <ShowRail
-          title="Recent Episodes"
-          description=""
-          shows={shows}
-        />
+        <ShowRail title="Recent Episodes" description="" shows={shows} />
       </div>
       <SupporterBlock />
     </main>

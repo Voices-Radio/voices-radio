@@ -43,7 +43,10 @@ export default async function JoinPage({
   // visitor might not actually be charged.
   if (!tiersResult.ok) {
     return (
-      <main className="mx-auto max-w-[720px] px-4 py-16 text-center md:px-0">
+      <main
+        id="main-content"
+        className="mx-auto max-w-[720px] scroll-mt-24 px-4 py-16 text-center md:px-0"
+      >
         <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
           Pricing is temporarily unavailable
         </h1>
@@ -57,7 +60,10 @@ export default async function JoinPage({
   const tiers = mergeMembershipTiers(tiersResult.data, cmsTiers);
 
   return (
-    <main className="mx-auto max-w-[1120px] px-4 py-10 md:px-8 md:py-16">
+    <main
+      id="main-content"
+      className="mx-auto max-w-[1120px] scroll-mt-24 px-4 py-10 md:px-8 md:py-16"
+    >
       <header className="mb-10 flex flex-col gap-3 text-center md:mb-14">
         <h1 className="font-outfit text-4xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-6xl">
           {copy.join_heading}

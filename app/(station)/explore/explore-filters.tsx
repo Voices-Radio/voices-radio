@@ -57,14 +57,21 @@ function FilterPill({
     <button
       type="button"
       className={cn(
-        "inline-flex min-h-[31px] items-center justify-center rounded-full border border-voicesNext-cream px-[10px] py-1 font-asap text-[20px] font-bold uppercase leading-none transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[22px] md:min-h-0 md:px-4 md:py-0 md:text-[12px]",
+        "inline-flex min-h-[31px] items-center justify-center rounded-full border border-voicesNext-cream px-[10px] py-1 font-asap text-[20px] font-bold uppercase leading-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-[22px] md:min-h-0 md:px-4 md:py-0 md:text-[12px]",
         active
           ? "bg-voicesNext-cream text-voicesNext-background"
           : "text-voicesNext-cream hover:bg-voicesNext-cream hover:text-voicesNext-background",
+        // aria-disabled + pointer-events-none, not the disabled attribute:
+        // disabling the focused element mid-transition would drop focus to
+        // <body>, losing the keyboard user's place on every filter change.
+        disabled && "pointer-events-none opacity-60",
       )}
       aria-pressed={active}
-      disabled={disabled}
-      onClick={onClick}
+      aria-disabled={disabled || undefined}
+      onClick={() => {
+        if (disabled) return;
+        onClick();
+      }}
     >
       {children}
     </button>
@@ -152,7 +159,10 @@ export default function ExploreFilters({
   }
 
   return (
-    <section className="mx-auto max-w-[1280px] px-5 py-[19px] md:px-[60px] md:py-[34px]">
+    <section
+      className="mx-auto max-w-[1280px] px-5 py-[19px] md:px-[60px] md:py-[34px]"
+      aria-busy={isPending}
+    >
       <div className="relative">
         <div className="flex max-w-[348px] flex-wrap items-center gap-[7px] md:max-w-none md:gap-[9px]">
           <p className="w-full font-asap text-[12px] uppercase leading-none text-voicesNext-cream md:mr-[4px] md:w-auto md:text-[14px]">
@@ -161,15 +171,19 @@ export default function ExploreFilters({
           <button
             type="button"
             className={cn(
-              "inline-flex min-h-[31px] items-center justify-center gap-2 rounded-full border border-voicesNext-cream px-[10px] py-1 font-asap text-[20px] font-bold uppercase leading-none transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[22px] md:min-h-0 md:px-4 md:text-[12px]",
+              "inline-flex min-h-[31px] items-center justify-center gap-2 rounded-full border border-voicesNext-cream px-[10px] py-1 font-asap text-[20px] font-bold uppercase leading-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-[22px] md:min-h-0 md:px-4 md:text-[12px]",
               genres.length
                 ? "bg-voicesNext-cream text-voicesNext-background"
                 : "text-voicesNext-cream hover:bg-voicesNext-cream hover:text-voicesNext-background",
+              isPending && "pointer-events-none opacity-60",
             )}
             aria-expanded={genresOpen}
             aria-controls="explore-genre-list"
-            disabled={isPending}
-            onClick={() => setGenresOpen((open) => !open)}
+            aria-disabled={isPending || undefined}
+            onClick={() => {
+              if (isPending) return;
+              setGenresOpen((open) => !open);
+            }}
           >
             GENRES
             <ChevronDown
@@ -184,15 +198,19 @@ export default function ExploreFilters({
           <button
             type="button"
             className={cn(
-              "inline-flex min-h-[31px] items-center justify-center gap-2 rounded-full border border-voicesNext-cream px-[10px] py-1 font-asap text-[20px] font-bold uppercase leading-none transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:hidden",
+              "inline-flex min-h-[31px] items-center justify-center gap-2 rounded-full border border-voicesNext-cream px-[10px] py-1 font-asap text-[20px] font-bold uppercase leading-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:hidden",
               locations.length
                 ? "bg-voicesNext-cream text-voicesNext-background"
                 : "text-voicesNext-cream",
+              isPending && "pointer-events-none opacity-60",
             )}
             aria-expanded={locationsOpen}
             aria-controls="explore-location-list"
-            disabled={isPending}
-            onClick={() => setLocationsOpen((open) => !open)}
+            aria-disabled={isPending || undefined}
+            onClick={() => {
+              if (isPending) return;
+              setLocationsOpen((open) => !open);
+            }}
           >
             LOCATION
             <ChevronDown
@@ -234,9 +252,15 @@ export default function ExploreFilters({
           {hasActiveFilters && (
             <button
               type="button"
-              disabled={isPending}
-              onClick={clearFilters}
-              className="font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-secondary transition-colors hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+              aria-disabled={isPending || undefined}
+              onClick={() => {
+                if (isPending) return;
+                clearFilters();
+              }}
+              className={cn(
+                "font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-secondary transition-colors hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+                isPending && "pointer-events-none opacity-60",
+              )}
             >
               Clear
             </button>
@@ -244,13 +268,17 @@ export default function ExploreFilters({
           {(genresOpen || locationsOpen) && (
             <button
               type="button"
-              disabled={isPending}
+              aria-disabled={isPending || undefined}
               onClick={() => {
+                if (isPending) return;
                 setGenresOpen(false);
                 setLocationsOpen(false);
                 setExpandedGenre(null);
               }}
-              className="ml-auto rounded-full bg-voicesNext-orange px-2 py-1 font-asap text-[14px] font-bold uppercase leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:hidden"
+              className={cn(
+                "ml-auto rounded-full bg-voicesNext-orange px-2 py-1 font-asap text-[14px] font-bold uppercase leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:hidden",
+                isPending && "pointer-events-none opacity-60",
+              )}
             >
               Apply
             </button>
@@ -296,37 +324,45 @@ export default function ExploreFilters({
                     className={cn(
                       "inline-flex min-h-[35px] w-auto max-w-full items-center rounded-full border-2 border-voicesNext-cream text-left font-asap text-[18px] font-bold leading-none text-voicesNext-cream transition-colors",
                       active || hasActiveSubgenre
-                        ? "border-voicesNext-orange text-voicesNext-orange"
+                        ? "border-voicesNext-orange text-voicesNext-orangeText"
                         : "hover:border-voicesNext-orange hover:text-voicesNext-orange",
                     )}
                   >
                     <button
                       type="button"
-                      disabled={isPending}
-                      className="min-w-0 truncate py-[6px] pl-[13px] pr-[15px] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange"
+                      aria-disabled={isPending || undefined}
+                      className={cn(
+                        "min-w-0 truncate py-[6px] pl-[13px] pr-[15px] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange",
+                        isPending && "pointer-events-none opacity-60",
+                      )}
                       aria-pressed={active}
-                      onClick={() => updateGenres(toggleGenre(genres, genre))}
+                      onClick={() => {
+                        if (isPending) return;
+                        updateGenres(toggleGenre(genres, genre));
+                      }}
                     >
                       {genre}
                     </button>
                     <button
                       type="button"
-                      disabled={isPending}
+                      aria-disabled={isPending || undefined}
                       className={cn(
-                        "mr-[3px] inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center rounded-full border-2 border-current focus:outline-none focus:ring-2 focus:ring-voicesNext-orange",
+                        "mr-[3px] inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center rounded-full border-2 border-current focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange",
                         active &&
                           "bg-voicesNext-orange text-voicesNext-background",
+                        isPending && "pointer-events-none opacity-60",
                       )}
                       aria-label={`Toggle ${genre} subgenres`}
                       aria-expanded={isExpanded}
                       aria-controls={`explore-subgenres-${getGenreControlId(
                         genre,
                       )}`}
-                      onClick={() =>
+                      onClick={() => {
+                        if (isPending) return;
                         setExpandedGenre((current) =>
                           current === genre ? null : genre,
-                        )
-                      }
+                        );
+                      }}
                     >
                       <ChevronDown
                         className={cn(

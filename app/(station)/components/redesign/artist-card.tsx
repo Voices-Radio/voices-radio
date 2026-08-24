@@ -16,7 +16,7 @@ export default function ArtistCard({ artist }: { artist: VoicesArtist }) {
   return (
     <Link
       href={`/artists/${artist.id}`}
-      className="size-full group block overflow-hidden bg-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+      className="size-full group block overflow-hidden bg-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
       aria-label={`Open ${artist.name}`}
     >
       <div className="flex h-[30px] items-center justify-between bg-voicesNext-cream px-2 font-asap text-[14px] uppercase leading-none text-voicesNext-background">
@@ -42,14 +42,14 @@ export default function ArtistCard({ artist }: { artist: VoicesArtist }) {
             {artist.genres.slice(0, 4).map((genre) => (
               <span
                 key={genre}
-                className="h-[21px] rounded-full border border-voicesNext-orange px-2 py-1 font-asap text-[11px] font-bold uppercase leading-none text-voicesNext-orange"
+                className="h-[21px] rounded-full border border-voicesNext-orange px-2 py-1 font-asap text-[11px] font-bold uppercase leading-none text-voicesNext-orangeText"
               >
                 {genre}
               </span>
             ))}
           </div>
         )}
-        <div className="flex items-center justify-between font-asap text-[12px] font-bold text-voicesNext-orange">
+        <div className="flex items-center justify-between font-asap text-[12px] font-bold text-voicesNext-orangeText">
           <span>View profile</span>
           <span aria-hidden="true">♡</span>
         </div>

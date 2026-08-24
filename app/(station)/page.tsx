@@ -11,7 +11,10 @@ export default async function Home() {
     await getHomePageContent();
 
   return (
-    <main className="md:px-3 md:pt-3">
+    <main id="main-content" className="scroll-mt-24 md:px-3 md:pt-3">
+      <h1 className="sr-only">
+        Voices Radio — live community radio from London
+      </h1>
       <section className="grid w-full gap-5 bg-voicesNext-background md:min-h-[632px] md:grid-cols-[316px_minmax(0,1fr)] md:gap-0">
         <div className="order-1">
           <LiveStack

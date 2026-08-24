@@ -11,7 +11,9 @@
   --voices-color-accent-primary: #d34e24;
   --voices-color-status-live: #db1a1a;
   --voices-color-white: #ffffff;
-  --voices-color-border-subtle: #6f6a63;
+  /* Lightened from #6f6a63 (2.90:1 on background) to clear the 3:1
+     non-text minimum — keep in sync with tailwind.config.js voicesNext.border. */
+  --voices-color-border-subtle: #7e796f;
 
   --voices-space-2: 2px;
   --voices-space-4: 4px;
@@ -29,6 +31,27 @@
   --voices-radius-md: 20px;
   --voices-radius-lg: 40px;
   --voices-radius-full: 100px;
+}
+
+@layer base {
+  /* Removes the ~300ms double-tap-zoom delay on touch, and the default
+     gray/blue tap-flash — every interactive element already has its own
+     deliberate focus-visible ring, so the browser's tap highlight is
+     redundant rather than an a11y aid. */
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  /* Backport of Tailwind 3.4's text-balance utility — this project is
+     pinned to tailwindcss 3.3.3, which predates it. */
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
 .grid-template-navigation {
@@ -179,6 +202,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .voices-on-air-marquee,
   .voices-coming-soon-marquee,
   .voices-east-orbit,
   .voices-east-signal,

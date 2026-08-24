@@ -90,7 +90,7 @@ export default function RestreamVideoModal({
                 }}
               >
                 <motion.div
-                  className="fixed inset-0 z-[51] flex h-[100dvh] w-screen items-center justify-center bg-black/95 focus:outline-none"
+                  className="fixed inset-0 z-[51] flex h-[100dvh] w-screen items-center justify-center overscroll-contain bg-black/95 focus:outline-none"
                   initial={{
                     opacity: 0,
                     scale: shouldReduceMotion ? 1 : 0.985,
@@ -115,7 +115,7 @@ export default function RestreamVideoModal({
                   <Dialog.Title className="bg-black/65 absolute left-4 top-4 z-10 rounded-full px-4 py-2 font-asap text-sm font-bold uppercase tracking-wide text-voicesNext-cream backdrop-blur-sm md:left-6 md:top-6">
                     {label} live video
                   </Dialog.Title>
-                  <Dialog.Close className="bg-black/65 absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full text-voicesNext-cream backdrop-blur-sm transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange md:right-6 md:top-6">
+                  <Dialog.Close className="bg-black/65 absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full text-voicesNext-cream backdrop-blur-sm transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange md:right-6 md:top-6">
                     <X aria-hidden="true" size={22} />
                     <span className="sr-only">Close video player</span>
                   </Dialog.Close>

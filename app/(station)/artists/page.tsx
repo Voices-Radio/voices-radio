@@ -92,7 +92,7 @@ export default async function ArtistsPage() {
     kxArtists.length > 0 || eastArtists.length > 0;
 
   return (
-    <main>
+    <main id="main-content" className="scroll-mt-24">
       <FilterStrip />
       {hasExplicitStationGroups ? (
         <>

@@ -12,6 +12,12 @@ export default async function RedesignShell({
 
   return (
     <div className="min-h-screen bg-voicesNext-background px-2 text-voicesNext-cream md:px-0">
+      <a
+        href="#main-content"
+        className="sr-only z-[60] rounded-full bg-voicesNext-cream px-4 py-2 font-gabarito text-sm font-bold text-voicesNext-background focus:not-sr-only focus:fixed focus:left-2 focus:top-2"
+      >
+        Skip to content
+      </a>
       <SiteHeader
         settings={{
           applyLink: settings?.apply_link,

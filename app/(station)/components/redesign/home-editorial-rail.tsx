@@ -85,7 +85,9 @@ function getEventItem(event: EventPost): EditorialItem {
     imageAlt: event.artwork?.alt ?? event.title,
     href: event.ctaUrl || `/events/${event.slug.current}`,
     cta: event.ctaText || "View event",
-    meta: [formatDate(event.eventDate), event.venue].filter(Boolean).join(" / "),
+    meta: [formatDate(event.eventDate), event.venue]
+      .filter(Boolean)
+      .join(" / "),
   };
 }
 
@@ -107,10 +109,10 @@ export default function HomeEditorialRail({
     <section className="border-y border-voicesNext-border bg-voicesNext-background py-10 md:py-[42px]">
       <div className="mb-7 flex flex-col gap-3 px-4 md:flex-row md:items-end md:justify-between md:px-8">
         <div>
-          <p className="font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orange">
+          <p className="font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orangeText">
             CMS preview
           </p>
-          <h2 className="mt-2 font-gabarito text-[32px] font-bold leading-none text-voicesNext-cream md:text-[38px]">
+          <h2 className="text-balance mt-2 font-gabarito text-[32px] font-bold leading-none text-voicesNext-cream md:text-[38px]">
             From the community
           </h2>
         </div>
@@ -140,7 +142,7 @@ export default function HomeEditorialRail({
             </div>
 
             <div className="grid min-h-0 grid-rows-[auto_auto_1fr_auto] gap-3 p-4">
-              <p className="font-asap text-[11px] font-bold uppercase leading-none text-voicesNext-orange">
+              <p className="font-asap text-[11px] font-bold uppercase leading-none text-voicesNext-orangeText">
                 {item.meta || item.type}
               </p>
               <h3 className="line-clamp-2 font-gabarito text-[24px] font-bold leading-[1.02] text-voicesNext-cream">
@@ -151,7 +153,7 @@ export default function HomeEditorialRail({
               </p>
               <EditorialLink
                 href={item.href}
-                className="inline-flex h-9 w-fit items-center justify-center rounded-full bg-voicesNext-orange px-4 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface"
+                className="inline-flex h-9 w-fit items-center justify-center rounded-full bg-voicesNext-orange px-4 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface"
               >
                 {item.cta}
               </EditorialLink>

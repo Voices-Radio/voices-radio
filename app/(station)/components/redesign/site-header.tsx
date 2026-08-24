@@ -1,5 +1,6 @@
 "use client";
 
+import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronDown, Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -116,29 +117,29 @@ function MobileHeaderArtwork() {
     <>
       <Link
         href="/"
-        className="relative block h-[45px] w-[57px] justify-self-start focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+        className="block h-[45px] w-[57px] justify-self-start focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         aria-label="Voices Radio home"
       >
         <Image
           src="/voices.svg"
           alt=""
-          fill
-          sizes="57px"
-          className="object-contain [filter:brightness(0)_saturate(100%)_invert(40%)_sepia(91%)_saturate(1164%)_hue-rotate(345deg)_brightness(91%)_contrast(91%)]"
+          width={57}
+          height={45}
+          className="h-[45px] w-[57px] object-contain [filter:brightness(0)_saturate(100%)_invert(40%)_sepia(91%)_saturate(1164%)_hue-rotate(345deg)_brightness(91%)_contrast(91%)]"
           priority
         />
       </Link>
       <Link
         href="/"
-        className="relative block h-[35px] w-[102px] justify-self-center focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+        className="block h-[35px] w-[102px] justify-self-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         aria-label="Voices Radio home"
       >
         <Image
           src="/voices-wordmark.svg"
           alt=""
-          fill
-          sizes="102px"
-          className="object-contain"
+          width={102}
+          height={35}
+          className="h-[35px] w-[102px] object-contain"
           priority
         />
       </Link>
@@ -201,7 +202,7 @@ function CollaborateDropdown({ pathname }: { pathname: string }) {
     >
       <button
         type="button"
-        className="voices-nav-link inline-flex items-center gap-1 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]"
+        className="voices-nav-link inline-flex items-center gap-1 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background lg:text-[21px]"
         data-active={active}
         aria-expanded={open}
         aria-haspopup="menu"
@@ -228,8 +229,8 @@ function CollaborateDropdown({ pathname }: { pathname: string }) {
               href={link.href}
               role="menuitem"
               className={cn(
-                "block px-3 py-3 font-gabarito text-[16px] font-bold leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-surface hover:text-voicesNext-orange focus:bg-voicesNext-surface focus:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange",
-                isActive(pathname, link.href) && "text-voicesNext-orange",
+                "block px-3 py-3 font-gabarito text-[16px] font-bold leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-surface hover:text-voicesNext-orange focus:outline-none focus-visible:bg-voicesNext-surface focus-visible:text-voicesNext-orange focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange",
+                isActive(pathname, link.href) && "text-voicesNext-orangeText",
               )}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
               onClick={() => setOpen(false)}
@@ -279,7 +280,7 @@ function MobileAccountLinks({
         <Link
           href={`/sign-in?next=${encodeURIComponent(pathname || "/")}`}
           onClick={onNavigate}
-          className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+          className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         >
           Sign in
         </Link>
@@ -297,7 +298,7 @@ function MobileAccountLinks({
           key={link.href}
           href={link.href}
           onClick={onNavigate}
-          className="flex items-center gap-3 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+          className="flex items-center gap-3 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         >
           {index === 0 && (
             <span
@@ -314,7 +315,7 @@ function MobileAccountLinks({
         type="button"
         onClick={handleSignOut}
         disabled={signingOut}
-        className="text-left font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream/70 transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background disabled:opacity-60"
+        className="text-left font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream/70 transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background disabled:opacity-60"
       >
         {signingOut ? "Signing out…" : "Sign out"}
       </button>
@@ -364,22 +365,9 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
       document.body.style.overflow = "";
     };
   }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open]);
+  // Escape-to-close, focus trap, and focus restore to whichever hamburger
+  // button opened the menu are handled by Dialog.Content below — no manual
+  // keydown listener needed here.
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -495,7 +483,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
         <MobileHeaderArtwork />
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center justify-self-end text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+          className="inline-flex h-11 w-11 items-center justify-center justify-self-end text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
           onClick={() => {
             setSearchOpen(false);
             setOpen(true);
@@ -518,7 +506,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
         >
           <Link
             href="/"
-            className="voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]"
+            className="voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background lg:text-[21px]"
             data-active={isActive(pathname, "/")}
             aria-current={isActive(pathname, "/") ? "page" : undefined}
           >
@@ -527,7 +515,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           <Link
             href="/explore"
             className={cn(
-              "voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]",
+              "voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background lg:text-[21px]",
             )}
             data-active={isActive(pathname, "/explore")}
             aria-current={isActive(pathname, "/explore") ? "page" : undefined}
@@ -539,7 +527,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
             href={shopLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]"
+            className="voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background lg:text-[21px]"
           >
             Shop
           </a>
@@ -559,6 +547,9 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                 id="site-search"
                 ref={searchInputRef}
                 type="search"
+                name="site-search"
+                autoComplete="off"
+                spellCheck={false}
                 value={searchQuery}
                 tabIndex={searchOpen ? 0 : -1}
                 aria-hidden={!searchOpen}
@@ -570,9 +561,9 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                     setSearchOpen(false);
                   }
                 }}
-                placeholder="Search"
+                placeholder="Search shows, artists…"
                 className={cn(
-                  "h-9 min-w-0 border border-voicesNext-border bg-voicesNext-background px-3 font-gabarito text-sm font-bold text-voicesNext-cream outline-none transition-all duration-200 placeholder:text-voicesNext-secondary focus:border-voicesNext-orange focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-10",
+                  "h-9 min-w-0 border border-voicesNext-border bg-voicesNext-background px-3 font-gabarito text-sm font-bold text-voicesNext-cream outline-none transition-[width,margin-right,padding-left,padding-right,border-color,opacity] duration-200 placeholder:text-voicesNext-secondary focus-visible:border-voicesNext-orange focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-10",
                   searchOpen
                     ? "mr-2 w-[52vw] max-w-[260px] opacity-100 md:w-[220px] lg:w-[280px]"
                     : "pointer-events-none mr-0 w-0 border-transparent px-0 opacity-0",
@@ -580,7 +571,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
               />
               <button
                 type="button"
-                className="inline-flex h-[54px] w-10 shrink-0 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[72px] md:w-11"
+                className="inline-flex h-[54px] w-10 shrink-0 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-[72px] md:w-11"
                 onClick={handleSearchButtonClick}
                 aria-label={searchButtonLabel}
                 aria-expanded={searchOpen}
@@ -614,7 +605,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
 
                 {searchReady && searchLoading && !searchResults && (
                   <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
-                    Searching...
+                    Searching…
                   </p>
                 )}
 
@@ -658,7 +649,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                               <li key={`${section.key}-${item.id}`}>
                                 <Link
                                   href={item.url}
-                                  className="block px-2 py-2 transition-colors hover:bg-voicesNext-surface focus:bg-voicesNext-surface focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange"
+                                  className="block px-2 py-2 transition-colors hover:bg-voicesNext-surface focus:outline-none focus-visible:bg-voicesNext-surface focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange"
                                   onClick={() => setSearchOpen(false)}
                                 >
                                   <span className="block truncate font-gabarito text-sm font-bold text-voicesNext-cream">
@@ -684,7 +675,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           <AccountMenu />
           <button
             type="button"
-            className="inline-flex h-[54px] w-10 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background md:h-[72px] md:w-11"
+            className="inline-flex h-[54px] w-10 items-center justify-center text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-[72px] md:w-11"
             onClick={() => {
               setSearchOpen(false);
               setOpen(true);
@@ -698,72 +689,157 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
         </div>
       </div>
 
-      {open && (
-        <div
-          id="site-navigation-menu"
-          className="min-h-dvh fixed inset-0 z-50 bg-voicesNext-background text-voicesNext-cream"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-        >
-          <div className="min-h-dvh flex flex-col md:hidden">
-            <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-[14px] py-[7px]">
-              <MobileHeaderArtwork />
-              <button
-                type="button"
-                className="inline-flex h-12 w-12 items-center justify-center justify-self-end font-gabarito text-[36px] font-medium leading-none text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-                onClick={() => setOpen(false)}
-                aria-label="Close menu"
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Portal>
+          <Dialog.Content
+            id="site-navigation-menu"
+            className="min-h-dvh fixed inset-0 z-50 overscroll-contain bg-voicesNext-background text-voicesNext-cream focus:outline-none"
+            aria-label="Navigation menu"
+            aria-describedby={undefined}
+          >
+            <div className="min-h-dvh flex flex-col md:hidden">
+              <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-[14px] py-[7px]">
+                <MobileHeaderArtwork />
+                <button
+                  type="button"
+                  className="inline-flex h-12 w-12 items-center justify-center justify-self-end font-gabarito text-[36px] font-medium leading-none text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close menu"
+                >
+                  <X aria-hidden="true" size={26} strokeWidth={3} />
+                </button>
+              </div>
+
+              <nav
+                className="mt-[70px] flex flex-col gap-[25px] px-6"
+                aria-label="Menu"
               >
-                <X aria-hidden="true" size={26} strokeWidth={3} />
-              </button>
+                <Link
+                  href="/"
+                  className={cn(
+                    "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+                    isActive(pathname, "/")
+                      ? "text-voicesNext-orange"
+                      : "text-voicesNext-cream",
+                  )}
+                  aria-current={isActive(pathname, "/") ? "page" : undefined}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/explore"
+                  className={cn(
+                    "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+                    isActive(pathname, "/explore") ||
+                      isActive(pathname, "/artists")
+                      ? "text-voicesNext-orange"
+                      : "text-voicesNext-cream",
+                  )}
+                  aria-current={
+                    isActive(pathname, "/explore") ? "page" : undefined
+                  }
+                >
+                  Discover
+                </Link>
+                <div className="flex flex-col gap-3">
+                  <p className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
+                    Collaborate
+                  </p>
+                  {collaborateLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+                        isActive(pathname, link.href)
+                          ? "text-voicesNext-orange"
+                          : "text-voicesNext-cream",
+                      )}
+                      aria-current={
+                        isActive(pathname, link.href) ? "page" : undefined
+                      }
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+                <a
+                  href={shopLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                >
+                  Shop
+                </a>
+                <Link
+                  href="/about"
+                  className={cn(
+                    "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+                    isActive(pathname, "/about")
+                      ? "text-voicesNext-orange"
+                      : "text-voicesNext-cream",
+                  )}
+                >
+                  About
+                </Link>
+                <Link
+                  href="/support"
+                  className={cn(
+                    "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+                    isActive(pathname, "/support")
+                      ? "text-voicesNext-orange"
+                      : "text-voicesNext-cream",
+                  )}
+                >
+                  Support Us
+                </Link>
+                <a
+                  href={contactLink}
+                  className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                >
+                  Contact
+                </a>
+              </nav>
+
+              <MobileAccountLinks
+                pathname={pathname}
+                onNavigate={() => setOpen(false)}
+              />
+
+              <div className="mt-auto">
+                <div className="px-[23px] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+                  <a
+                    href={supporterLink}
+                    className="inline-flex h-14 w-full items-center justify-center rounded-full bg-voicesNext-orange px-6 font-gabarito text-[20px] font-medium text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                  >
+                    Become a Supporter
+                  </a>
+                </div>
+              </div>
             </div>
 
-            <nav
-              className="mt-[70px] flex flex-col gap-[25px] px-6"
-              aria-label="Menu"
-            >
-              <Link
-                href="/"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-                  isActive(pathname, "/")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-                aria-current={isActive(pathname, "/") ? "page" : undefined}
-              >
-                Home
-              </Link>
-              <Link
-                href="/explore"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-                  isActive(pathname, "/explore") ||
-                    isActive(pathname, "/artists")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-                aria-current={
-                  isActive(pathname, "/explore") ? "page" : undefined
-                }
-              >
-                Discover
-              </Link>
-              <div className="flex flex-col gap-3">
-                <p className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
-                  Collaborate
-                </p>
-                {collaborateLinks.map((link) => (
+            <div className="min-h-dvh hidden px-2 py-0 md:block md:px-3">
+              <div className="flex items-center justify-between">
+                <BrandMark />
+                <button
+                  type="button"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-voicesNext-border text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close menu"
+                >
+                  <X aria-hidden="true" size={24} />
+                </button>
+              </div>
+
+              <nav className="mt-12 flex flex-col gap-7" aria-label="Menu">
+                {desktopMenuLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    onClick={() => setOpen(false)}
                     className={cn(
-                      "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-                      isActive(pathname, link.href)
-                        ? "text-voicesNext-orange"
-                        : "text-voicesNext-cream",
+                      "font-gabarito text-3xl font-bold text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+                      isActive(pathname, link.href) && "text-voicesNext-orange",
                     )}
                     aria-current={
                       isActive(pathname, link.href) ? "page" : undefined
@@ -772,126 +848,42 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                     {link.label}
                   </Link>
                 ))}
-              </div>
-              <a
-                href={shopLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-              >
-                Shop
-              </a>
-              <Link
-                href="/about"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-                  isActive(pathname, "/about")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-              >
-                About
-              </Link>
-              <Link
-                href="/support"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-                  isActive(pathname, "/support")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-              >
-                Support Us
-              </Link>
-              <a
-                href={contactLink}
-                className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-              >
-                Contact
-              </a>
-            </nav>
+              </nav>
 
-            <MobileAccountLinks
-              pathname={pathname}
-              onNavigate={() => setOpen(false)}
-            />
-
-            <div className="mt-auto">
-              <div className="px-[23px] pb-6">
-                <a
-                  href={supporterLink}
-                  className="inline-flex h-14 w-full items-center justify-center rounded-full bg-voicesNext-orange px-6 font-gabarito text-[20px] font-medium text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-                >
-                  Become a Supporter
-                </a>
+              <div className="mt-16 flex flex-wrap gap-4 font-gabarito text-sm font-bold uppercase text-voicesNext-secondary">
+                {settings.contactLink && (
+                  <a
+                    href={settings.contactLink}
+                    className="transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                  >
+                    Contact
+                  </a>
+                )}
+                {settings.instagramLink && (
+                  <a
+                    href={settings.instagramLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                  >
+                    Instagram
+                  </a>
+                )}
+                {settings.mixcloudLink && (
+                  <a
+                    href={settings.mixcloudLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                  >
+                    Mixcloud
+                  </a>
+                )}
               </div>
             </div>
-          </div>
-
-          <div className="min-h-dvh hidden px-2 py-0 md:block md:px-3">
-            <div className="flex items-center justify-between">
-              <BrandMark />
-              <button
-                type="button"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-voicesNext-border text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-                onClick={() => setOpen(false)}
-                aria-label="Close menu"
-              >
-                <X aria-hidden="true" size={24} />
-              </button>
-            </div>
-
-            <nav className="mt-12 flex flex-col gap-7" aria-label="Menu">
-              {desktopMenuLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "font-gabarito text-3xl font-bold text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-                    isActive(pathname, link.href) && "text-voicesNext-orange",
-                  )}
-                  aria-current={
-                    isActive(pathname, link.href) ? "page" : undefined
-                  }
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-
-            <div className="mt-16 flex flex-wrap gap-4 font-gabarito text-sm font-bold uppercase text-voicesNext-secondary">
-              {settings.contactLink && (
-                <a
-                  href={settings.contactLink}
-                  className="transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-                >
-                  Contact
-                </a>
-              )}
-              {settings.instagramLink && (
-                <a
-                  href={settings.instagramLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-                >
-                  Instagram
-                </a>
-              )}
-              {settings.mixcloudLink && (
-                <a
-                  href={settings.mixcloudLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
-                >
-                  Mixcloud
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </header>
   );
 }

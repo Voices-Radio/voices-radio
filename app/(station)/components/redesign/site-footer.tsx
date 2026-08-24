@@ -32,15 +32,15 @@ export default function SiteFooter({
 
         <Link
           href="/"
-          className="relative mx-auto block h-[46px] w-[145px] focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-black md:mt-1"
+          className="mx-auto block h-[46px] w-[145px] focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-black md:mt-1"
           aria-label="Voices Radio home"
         >
           <Image
             src="/voices-wordmark.svg"
             alt=""
-            fill
-            sizes="145px"
-            className="object-contain"
+            width={145}
+            height={46}
+            className="h-[46px] w-[145px] object-contain"
           />
         </Link>
 

@@ -25,7 +25,10 @@ export default async function AccountLayout({
     // (app/(station)/page.tsx, explore, about, collaborate…), and without one
     // screen-reader users have no skip-to-content target anywhere under
     // /account.
-    <main className="mx-auto max-w-[960px] px-4 py-10 md:px-8 md:py-16">
+    <main
+      id="main-content"
+      className="mx-auto max-w-[960px] scroll-mt-24 px-4 py-10 md:px-8 md:py-16"
+    >
       <AccountNav capabilities={capabilities?.capabilities ?? []} />
       {children}
     </main>

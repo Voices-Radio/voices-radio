@@ -59,3 +59,13 @@ coverage/
 
 # Playwright transform cache (content-hashed, regenerated per run)
 playwright-transform-cache-501/
+
+# Claude Code: downloaded skill artifacts (reproducible from skills-lock.json,
+# which stays tracked; .claude/skills/* are symlinks into .agents/skills/)
+# and machine-local settings
+.agents/
+.claude/skills/
+.claude/settings.local.json
+
+# Session scratch: planning/audit notes, not shipped deliverables
+/tasks/

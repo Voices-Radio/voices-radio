@@ -38,6 +38,7 @@ const asapCondensed = Asap_Condensed({
 
 export const viewport: Viewport = {
   themeColor: "#161616",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({

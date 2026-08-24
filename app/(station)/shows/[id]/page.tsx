@@ -59,9 +59,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ShowDetailPage({
-  params,
-}: ShowPageProps) {
+export default async function ShowDetailPage({ params }: ShowPageProps) {
   const { id } = await params;
   const show = await getShow(id);
 
@@ -82,7 +80,7 @@ export default async function ShowDetailPage({
   const genres = show.genres.slice(0, 3);
 
   return (
-    <main>
+    <main id="main-content" className="scroll-mt-24">
       <div className="hidden md:block">
         <PageHero
           eyebrow={show.platform ?? "Archive"}

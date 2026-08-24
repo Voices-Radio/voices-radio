@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Play } from "lucide-react";
+import { Pause, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
@@ -135,6 +135,9 @@ export default function HomeFeaturePanel({
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [autoSlideResetKey, setAutoSlideResetKey] = useState(0);
+  const [manuallyPaused, setManuallyPaused] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isFocusWithin, setIsFocusWithin] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   const item = featureItems[activeIndex] ?? featureItems[0];
   const stationLabel =
@@ -148,6 +151,15 @@ export default function HomeFeaturePanel({
       ? item.show.genres.slice(0, 3)
       : [item.label];
   const hasMultipleItems = featureItems.length > 1;
+  // Reduced-motion users get a static slide (no forced motion); everyone
+  // else can still pause explicitly, or implicitly by hovering/focusing
+  // inside the carousel — matches "autoplay >5s needs pause/stop" guidance.
+  const isAutoPlaying =
+    hasMultipleItems &&
+    !shouldReduceMotion &&
+    !manuallyPaused &&
+    !isHovering &&
+    !isFocusWithin;
 
   function showPrevious() {
     setDirection(-1);
@@ -171,7 +183,7 @@ export default function HomeFeaturePanel({
   }, [activeIndex, featureItems.length]);
 
   useEffect(() => {
-    if (!hasMultipleItems) return;
+    if (!isAutoPlaying) return;
 
     const interval = window.setInterval(() => {
       setDirection(1);
@@ -181,10 +193,20 @@ export default function HomeFeaturePanel({
     }, AUTO_SLIDE_DELAY_MS);
 
     return () => window.clearInterval(interval);
-  }, [autoSlideResetKey, featureItems.length, hasMultipleItems]);
+  }, [autoSlideResetKey, featureItems.length, isAutoPlaying]);
 
   return (
-    <section className="relative h-[388px] overflow-hidden bg-voicesNext-background md:h-[632px]">
+    <section
+      className="relative h-[388px] overflow-hidden bg-voicesNext-background md:h-[632px]"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      onFocus={() => setIsFocusWithin(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setIsFocusWithin(false);
+        }
+      }}
+    >
       <div className="absolute inset-x-1 top-0 h-[377px] overflow-hidden rounded-[4px] md:inset-x-0 md:h-[632px] md:rounded-none md:border-2 md:border-voicesNext-cream">
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
@@ -218,11 +240,11 @@ export default function HomeFeaturePanel({
 
             <FeatureLink
               href={item.href}
-              className="absolute bottom-[25px] left-0 block w-[320px] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-cream md:hidden"
+              className="absolute bottom-[25px] left-0 block w-[320px] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream md:hidden"
             >
-              <h1 className="truncate font-gabarito text-[24px] font-bold leading-none">
+              <h2 className="truncate font-gabarito text-[24px] font-bold leading-none">
                 {item.title}
-              </h1>
+              </h2>
               <div className="mt-3 flex flex-wrap items-center gap-[7px] font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orange">
                 {genres.map((genre) => (
                   <span
@@ -239,7 +261,7 @@ export default function HomeFeaturePanel({
               <div className="relative grid min-h-[122px] grid-cols-[110px_minmax(0,1fr)] items-stretch text-voicesNext-cream md:min-h-[132px] md:grid-cols-[120px_minmax(0,1fr)]">
                 <FeatureLink
                   href={item.href}
-                  className="group/feature-cta grid grid-rows-[38px_1fr] border-r-2 border-t-2 border-voicesNext-cream bg-voicesNext-background/30 font-outfit text-[18px] font-black uppercase leading-none tracking-[1px] transition-[background-color,color,box-shadow] duration-300 hover:bg-voicesNext-cream hover:text-voicesNext-background hover:shadow-[0_0_36px_rgba(248,239,224,0.36)] focus:bg-voicesNext-cream focus:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-cream md:text-[20px]"
+                  className="group/feature-cta grid grid-rows-[38px_1fr] border-r-2 border-t-2 border-voicesNext-cream bg-voicesNext-background/30 font-outfit text-[18px] font-black uppercase leading-none tracking-[1px] transition-[background-color,color,box-shadow] duration-300 hover:bg-voicesNext-cream hover:text-voicesNext-background hover:shadow-[0_0_36px_rgba(248,239,224,0.36)] focus:outline-none focus-visible:bg-voicesNext-cream focus-visible:text-voicesNext-background focus-visible:ring-2 focus-visible:ring-voicesNext-cream md:text-[20px]"
                 >
                   <span className="flex items-center justify-center">
                     {item.cta}
@@ -255,9 +277,9 @@ export default function HomeFeaturePanel({
                 </FeatureLink>
 
                 <div className="min-w-0 px-4 py-[13px] [text-shadow:0_1px_8px_rgba(0,0,0,0.75)] md:px-5">
-                  <h1 className="line-clamp-2 font-gabarito text-[25px] font-bold leading-none md:text-[30px]">
+                  <h2 className="line-clamp-2 font-gabarito text-[25px] font-bold leading-none md:text-[30px]">
                     {item.title}
-                  </h1>
+                  </h2>
                   <div className="mt-4 flex flex-wrap items-center gap-[7px] font-asap text-[12px] font-bold uppercase leading-none">
                     {genres.map((genre) => (
                       <span
@@ -279,15 +301,12 @@ export default function HomeFeaturePanel({
       </div>
 
       {hasMultipleItems && (
-        <div className="absolute bottom-0 left-1/2 flex h-2 -translate-x-1/2 items-center gap-1 md:hidden">
+        <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-1 md:hidden">
           {featureItems.map((featureItem, index) => (
             <button
               key={featureItem.id}
               type="button"
-              className={cn(
-                "rounded-full bg-voicesNext-cream transition-all",
-                index === activeIndex ? "size-2" : "size-1.5 opacity-70",
-              )}
+              className="flex h-6 w-6 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
               onClick={() => {
                 setDirection(index > activeIndex ? 1 : -1);
                 setAutoSlideResetKey((resetKey) => resetKey + 1);
@@ -295,27 +314,75 @@ export default function HomeFeaturePanel({
               }}
               aria-label={`Show featured item ${index + 1}`}
               aria-current={index === activeIndex}
-            />
+            >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "size-2 rounded-full bg-voicesNext-cream transition-[transform,opacity] duration-200",
+                  index === activeIndex
+                    ? "scale-100 opacity-100"
+                    : "scale-75 opacity-70",
+                )}
+              />
+            </button>
           ))}
+          {!shouldReduceMotion && (
+            <button
+              type="button"
+              className="ml-1 flex h-6 w-6 items-center justify-center text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+              onClick={() => setManuallyPaused((paused) => !paused)}
+              aria-label={
+                manuallyPaused
+                  ? "Play featured slideshow"
+                  : "Pause featured slideshow"
+              }
+              aria-pressed={manuallyPaused}
+            >
+              {manuallyPaused ? (
+                <Play aria-hidden="true" size={12} fill="currentColor" />
+              ) : (
+                <Pause aria-hidden="true" size={12} fill="currentColor" />
+              )}
+            </button>
+          )}
         </div>
       )}
 
-      <div className="absolute bottom-0 right-5 hidden h-[22px] w-[70px] items-center justify-center gap-3 font-asap text-[12px] font-bold leading-none text-voicesNext-cream md:flex">
+      <div className="absolute bottom-0 right-5 hidden h-[22px] w-auto items-center justify-center gap-3 font-asap text-[12px] font-bold leading-none text-voicesNext-cream md:flex">
         <button
           type="button"
-          className="inline-flex h-5 w-3 items-center justify-center transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-cream disabled:cursor-default disabled:text-voicesNext-cream/40"
+          className="inline-flex h-5 w-3 items-center justify-center transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream disabled:cursor-default disabled:text-voicesNext-cream/40"
           onClick={showPrevious}
           disabled={!hasMultipleItems}
           aria-label="Show previous featured post"
         >
           <span aria-hidden="true">‹</span>
         </button>
-        <span className="min-w-[24px] text-center">
+        {hasMultipleItems && !shouldReduceMotion && (
+          <button
+            type="button"
+            className="inline-flex h-5 w-5 items-center justify-center transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream"
+            onClick={() => setManuallyPaused((paused) => !paused)}
+            aria-label={
+              manuallyPaused
+                ? "Play featured slideshow"
+                : "Pause featured slideshow"
+            }
+            aria-pressed={manuallyPaused}
+          >
+            {manuallyPaused ? (
+              <Play aria-hidden="true" size={11} fill="currentColor" />
+            ) : (
+              <Pause aria-hidden="true" size={11} fill="currentColor" />
+            )}
+          </button>
+        )}
+        <span className="min-w-[24px] text-center tabular-nums">
           {activeIndex + 1}/{featureItems.length}
         </span>
         <button
           type="button"
-          className="inline-flex h-5 w-3 items-center justify-center transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-cream disabled:cursor-default disabled:text-voicesNext-cream/40"
+          className="inline-flex h-5 w-3 items-center justify-center transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream disabled:cursor-default disabled:text-voicesNext-cream/40"
           onClick={showNext}
           disabled={!hasMultipleItems}
           aria-label="Show next featured post"

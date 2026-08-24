@@ -131,7 +131,7 @@ export default function LiveStationCard({
         type="button"
         disabled={!cardInteractive}
         onClick={onSelect}
-        className="absolute inset-0 z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange disabled:cursor-not-allowed"
+        className="absolute inset-0 z-20 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange disabled:cursor-not-allowed"
         aria-label={
           cardInteractive
             ? `Show ${station} live actions`
@@ -142,7 +142,7 @@ export default function LiveStationCard({
       {station === "KX" && (
         <div
           className={cn(
-            "pointer-events-none absolute left-1/2 top-1/2 z-30 hidden w-[210px] -translate-x-1/2 translate-y-2 flex-col gap-2 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:flex",
+            "pointer-events-none absolute left-1/2 top-1/2 z-30 hidden w-[210px] -translate-x-1/2 translate-y-2 flex-col gap-2 opacity-0 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:flex",
             showKxLiveActions &&
               "pointer-events-auto -translate-y-1/2 opacity-100",
           )}
@@ -152,7 +152,7 @@ export default function LiveStationCard({
             target="_blank"
             rel="noopener noreferrer"
             tabIndex={showKxLiveActions ? 0 : -1}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-voicesNext-cream px-5 font-gabarito text-sm font-bold text-voicesNext-background shadow-lg transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-voicesNext-cream px-5 font-gabarito text-sm font-bold text-voicesNext-background shadow-lg transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
             aria-label="Watch Voices live on Mixcloud"
           >
             <ExternalLink aria-hidden="true" size={15} strokeWidth={2.6} />
@@ -163,7 +163,7 @@ export default function LiveStationCard({
             disabled={!canListenLive}
             tabIndex={showKxLiveActions ? 0 : -1}
             onClick={onListenLive}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-voicesNext-orange px-5 font-gabarito text-sm font-bold text-voicesNext-cream shadow-lg transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-voicesNext-orange px-5 font-gabarito text-sm font-bold text-voicesNext-cream shadow-lg transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary"
             aria-label="Listen to Voices KX live"
           >
             <Radio aria-hidden="true" size={15} strokeWidth={2.6} />
@@ -176,7 +176,7 @@ export default function LiveStationCard({
         disabled={!showWatchLive}
         onClick={onWatchLive}
         className={cn(
-          "absolute left-1/2 top-1/2 z-30 inline-flex -translate-x-1/2 translate-y-2 items-center justify-center rounded-full bg-voicesNext-cream px-5 py-2 font-gabarito text-sm font-bold text-voicesNext-background opacity-0 shadow-lg transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
+          "absolute left-1/2 top-1/2 z-30 inline-flex -translate-x-1/2 translate-y-2 items-center justify-center rounded-full bg-voicesNext-cream px-5 py-2 font-gabarito text-sm font-bold text-voicesNext-background opacity-0 shadow-lg transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
           showWatchLive && "pointer-events-auto -translate-y-1/2 opacity-100",
         )}
         aria-label={`Watch ${station} live video`}

@@ -28,7 +28,7 @@ export default async function CollaboratePage() {
   const contactLink = settings?.contact_link || CONTACT_FALLBACK_URL;
 
   return (
-    <main>
+    <main id="main-content" className="scroll-mt-24">
       <section className="border-b border-voicesNext-border">
         <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-12 md:grid-cols-[minmax(0,1fr)_360px] md:px-8 md:py-20">
           <div>

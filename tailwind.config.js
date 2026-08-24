@@ -143,7 +143,10 @@ module.exports = {
           live: "#DB1A1A",
           secondary: "#999999",
           white: "#FFFFFF",
-          border: "#6F6A63",
+          // Lightened from the original #6F6A63 (2.90:1 on background, 2.43:1
+          // on surface — under the 3:1 non-text minimum for borders/UI
+          // components) to clear 3:1 against both dark surfaces.
+          border: "#7E796F",
         },
         accent: "#ed675d", // Same as voices.red for consistency
       },

@@ -19,10 +19,10 @@ export default async function AboutPage() {
 
   if (!about) {
     return (
-      <main>
-        <section className="relative aspect-[4/3] md:aspect-[4/2] bg-slate-800 flex items-center justify-center">
-          <div className="text-white text-center">
-            <h1 className="text-2xl font-bold mb-4">About Voices Radio</h1>
+      <main id="main-content" className="scroll-mt-24">
+        <section className="relative flex aspect-[4/3] items-center justify-center bg-slate-800 md:aspect-[4/2]">
+          <div className="text-center text-white">
+            <h1 className="mb-4 text-2xl font-bold">About Voices Radio</h1>
             <p>Content loading...</p>
           </div>
         </section>
@@ -30,14 +30,15 @@ export default async function AboutPage() {
     );
   }
 
-  const bookings = about.bookings
-    ?.flatMap((block) => block.children)
-    .map((span) => (span as PortableTextSpan)?.text)
-    .filter(is.string)
-    .sort() || [];
+  const bookings =
+    about.bookings
+      ?.flatMap((block) => block.children)
+      .map((span) => (span as PortableTextSpan)?.text)
+      .filter(is.string)
+      .sort() || [];
 
   return (
-    <main>
+    <main id="main-content" className="scroll-mt-24">
       <section className="relative aspect-[4/3] md:aspect-[4/2]">
         <Image
           alt=""
