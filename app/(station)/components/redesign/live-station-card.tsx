@@ -142,7 +142,7 @@ export default function LiveStationCard({
       {station === "KX" && (
         <div
           className={cn(
-            "pointer-events-none absolute left-1/2 top-1/2 z-30 hidden w-[210px] -translate-x-1/2 translate-y-2 flex-col gap-2 opacity-0 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:flex",
+            "pointer-events-none absolute left-1/2 top-1/2 z-30 flex w-[150px] -translate-x-1/2 translate-y-2 flex-col gap-2 opacity-0 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:w-[210px]",
             showKxLiveActions &&
               "pointer-events-auto -translate-y-1/2 opacity-100",
           )}
@@ -152,7 +152,7 @@ export default function LiveStationCard({
             target="_blank"
             rel="noopener noreferrer"
             tabIndex={showKxLiveActions ? 0 : -1}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-voicesNext-cream px-5 font-gabarito text-sm font-bold text-voicesNext-background shadow-lg transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-full bg-voicesNext-cream px-3 font-gabarito text-xs font-bold text-voicesNext-background shadow-lg transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-10 md:gap-2 md:px-5 md:text-sm"
             aria-label="Watch Voices live on Mixcloud"
           >
             <ExternalLink aria-hidden="true" size={15} strokeWidth={2.6} />
@@ -163,7 +163,7 @@ export default function LiveStationCard({
             disabled={!canListenLive}
             tabIndex={showKxLiveActions ? 0 : -1}
             onClick={onListenLive}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-voicesNext-orange px-5 font-gabarito text-sm font-bold text-voicesNext-cream shadow-lg transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary"
+            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-full bg-voicesNext-orange px-3 font-gabarito text-xs font-bold text-voicesNext-cream shadow-lg transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary md:h-10 md:gap-2 md:px-5 md:text-sm"
             aria-label="Listen to Voices KX live"
           >
             <Radio aria-hidden="true" size={15} strokeWidth={2.6} />

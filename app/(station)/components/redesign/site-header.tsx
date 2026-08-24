@@ -61,15 +61,15 @@ const searchSections: SearchSection[] = [
 const desktopMenuLinks = [
   { href: "/", label: "Home" },
   { href: "/blog", label: "Blog" },
-  { href: "/podcast", label: "Podcast Studio" },
-  { href: "/agency", label: "Agency" },
+  { href: "/podcast", label: "Podcast Studio", opensInNewTab: true },
+  { href: "/agency", label: "Agency", opensInNewTab: true },
   { href: "/collaborate", label: "Partner with Us" },
   { href: "/support", label: "Support Us" },
 ];
 
 const collaborateLinks = [
-  { href: "/podcast", label: "Podcast Studio" },
-  { href: "/agency", label: "Agency" },
+  { href: "/podcast", label: "Podcast Studio", opensInNewTab: true },
+  { href: "/agency", label: "Agency", opensInNewTab: true },
   { href: "/collaborate", label: "Partner with Us" },
 ];
 
@@ -150,10 +150,10 @@ function MobileHeaderArtwork() {
 function MobileOnAirTicker() {
   return (
     <div className="h-[19px] overflow-hidden bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary md:hidden">
-      <div className="voices-on-air-marquee flex h-full w-max items-center gap-[6px] px-1">
-        {Array.from({ length: 24 }).map((_, index) => (
+      <div className="flex h-full w-max items-center gap-[6px] px-1">
+        {Array.from({ length: 14 }).map((_, index) => (
           <span key={index} className="flex shrink-0 items-center gap-[6px]">
-            <span>{index < 12 ? "On air" : "Live now"}</span>
+            <span>On air</span>
             <span className="size-2 rounded-full bg-voicesNext-live" />
           </span>
         ))}
@@ -227,6 +227,8 @@ function CollaborateDropdown({ pathname }: { pathname: string }) {
             <Link
               key={link.href}
               href={link.href}
+              target={link.opensInNewTab ? "_blank" : undefined}
+              rel={link.opensInNewTab ? "noopener noreferrer" : undefined}
               role="menuitem"
               className={cn(
                 "block px-3 py-3 font-gabarito text-[16px] font-bold leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-surface hover:text-voicesNext-orange focus:outline-none focus-visible:bg-voicesNext-surface focus-visible:text-voicesNext-orange focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange",
@@ -479,7 +481,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
 
   return (
     <header className="sticky top-0 z-40 -mx-2 bg-voicesNext-background md:mx-0">
-      <div className="grid min-h-[64px] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-[#4b4b4b] via-[#343434] to-voicesNext-background px-[17px] pb-[7px] pt-[max(7px,env(safe-area-inset-top))] md:hidden">
+      <div className="grid min-h-[calc(64px+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-[#4b4b4b] via-[#343434] to-voicesNext-background px-[17px] pb-[7px] pt-[calc(7px+env(safe-area-inset-top))] md:hidden">
         <MobileHeaderArtwork />
         <button
           type="button"
@@ -501,7 +503,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
         <BrandMark />
 
         <nav
-          className="ml-auto hidden items-center gap-5 md:flex lg:gap-6 xl:gap-7"
+          className="ml-auto hidden items-center gap-6 md:flex lg:gap-7 xl:gap-8"
           aria-label="Primary"
         >
           <Link
@@ -522,7 +524,6 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           >
             Explore
           </Link>
-          <CollaborateDropdown pathname={pathname} />
           <a
             href={shopLink}
             target="_blank"
@@ -531,6 +532,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           >
             Shop
           </a>
+          <CollaborateDropdown pathname={pathname} />
         </nav>
 
         <div className="ml-3 flex h-[54px] items-center gap-2 md:ml-3 md:h-[72px] lg:ml-4 lg:gap-3">
@@ -698,7 +700,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
             aria-describedby={undefined}
           >
             <div className="min-h-dvh flex flex-col md:hidden">
-              <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center px-[14px] py-[7px]">
+              <div className="grid min-h-[calc(60px+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center px-[14px] pb-[7px] pt-[calc(7px+env(safe-area-inset-top))]">
                 <MobileHeaderArtwork />
                 <button
                   type="button"
@@ -741,6 +743,14 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                 >
                   Discover
                 </Link>
+                <a
+                  href={shopLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                >
+                  Shop
+                </a>
                 <div className="flex flex-col gap-3">
                   <p className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
                     Collaborate
@@ -749,6 +759,10 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                     <Link
                       key={link.href}
                       href={link.href}
+                      target={link.opensInNewTab ? "_blank" : undefined}
+                      rel={
+                        link.opensInNewTab ? "noopener noreferrer" : undefined
+                      }
                       onClick={() => setOpen(false)}
                       className={cn(
                         "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
@@ -764,14 +778,6 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                     </Link>
                   ))}
                 </div>
-                <a
-                  href={shopLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-                >
-                  Shop
-                </a>
                 <Link
                   href="/about"
                   className={cn(
@@ -837,6 +843,8 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                   <Link
                     key={link.href}
                     href={link.href}
+                    target={link.opensInNewTab ? "_blank" : undefined}
+                    rel={link.opensInNewTab ? "noopener noreferrer" : undefined}
                     className={cn(
                       "font-gabarito text-3xl font-bold text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
                       isActive(pathname, link.href) && "text-voicesNext-orange",

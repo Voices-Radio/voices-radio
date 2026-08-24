@@ -79,7 +79,6 @@
 .voices-nav-link {
   position: relative;
   display: inline-flex;
-  min-width: 76px;
   justify-content: center;
   color: var(--voices-color-text-primary);
   transition: color 180ms ease;

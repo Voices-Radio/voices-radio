@@ -42,6 +42,7 @@ const categoryTiles = [
     description: "Studio bookings and production",
     index: "04",
     tag: "Studio",
+    opensInNewTab: true,
   },
   {
     label: "Agency",
@@ -49,6 +50,7 @@ const categoryTiles = [
     description: "Programming and talent curation",
     index: "05",
     tag: "Curation",
+    opensInNewTab: true,
   },
 ];
 
@@ -142,6 +144,8 @@ function CategoryTiles() {
           <Link
             key={tile.label}
             href={tile.href}
+            target={tile.opensInNewTab ? "_blank" : undefined}
+            rel={tile.opensInNewTab ? "noopener noreferrer" : undefined}
             className="group grid min-h-[162px] grid-rows-[auto_1fr_auto] bg-voicesNext-background p-4 transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange md:min-h-[196px] md:p-5"
           >
             <span className="flex items-center justify-between gap-3 font-asap text-[10px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary transition-colors group-hover:text-voicesNext-background/60">
