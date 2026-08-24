@@ -301,35 +301,56 @@ export default function HomeFeaturePanel({
       </div>
 
       {hasMultipleItems && (
-        <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-1 md:hidden">
-          {featureItems.map((featureItem, index) => (
-            <button
-              key={featureItem.id}
-              type="button"
-              className="flex h-6 w-6 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-              onClick={() => {
-                setDirection(index > activeIndex ? 1 : -1);
-                setAutoSlideResetKey((resetKey) => resetKey + 1);
-                setActiveIndex(index);
-              }}
-              aria-label={`Show featured item ${index + 1}`}
-              aria-current={index === activeIndex}
-            >
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "size-2 rounded-full bg-voicesNext-cream transition-[transform,opacity] duration-200",
-                  index === activeIndex
-                    ? "scale-100 opacity-100"
-                    : "scale-75 opacity-70",
-                )}
-              />
-            </button>
-          ))}
+        <div className="absolute bottom-0 left-1/2 flex h-9 -translate-x-1/2 items-center overflow-hidden rounded-t-[4px] border border-b-0 border-voicesNext-cream/75 bg-voicesNext-background/80 font-asap text-[11px] font-bold leading-none text-voicesNext-cream backdrop-blur-sm md:hidden">
+          <button
+            type="button"
+            className="inline-flex h-full w-9 items-center justify-center border-r border-voicesNext-cream/45 transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
+            onClick={showPrevious}
+            aria-label="Show previous featured post"
+          >
+            <span aria-hidden="true">‹</span>
+          </button>
+          <span className="min-w-[38px] px-2 text-center tabular-nums">
+            {activeIndex + 1}/{featureItems.length}
+          </span>
+          <button
+            type="button"
+            className="inline-flex h-full w-9 items-center justify-center border-l border-voicesNext-cream/45 transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
+            onClick={showNext}
+            aria-label="Show next featured post"
+          >
+            <span aria-hidden="true">›</span>
+          </button>
+          <div className="flex h-full items-center border-l border-voicesNext-cream/45 px-1">
+            {featureItems.map((featureItem, index) => (
+              <button
+                key={featureItem.id}
+                type="button"
+                className="flex h-8 w-5 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
+                onClick={() => {
+                  setDirection(index > activeIndex ? 1 : -1);
+                  setAutoSlideResetKey((resetKey) => resetKey + 1);
+                  setActiveIndex(index);
+                }}
+                aria-label={`Show featured item ${index + 1}`}
+                aria-current={index === activeIndex}
+              >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "size-1.5 rounded-full bg-voicesNext-cream transition-[transform,opacity] duration-200",
+                    index === activeIndex
+                      ? "scale-100 opacity-100"
+                      : "scale-75 opacity-55",
+                  )}
+                />
+              </button>
+            ))}
+          </div>
           {!shouldReduceMotion && (
             <button
               type="button"
-              className="ml-1 flex h-6 w-6 items-center justify-center text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+              className="flex h-full w-9 items-center justify-center border-l border-voicesNext-cream/45 text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
               onClick={() => setManuallyPaused((paused) => !paused)}
               aria-label={
                 manuallyPaused

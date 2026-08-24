@@ -1,6 +1,7 @@
 "use client";
 
 import { MessageCircle, Play, Square, Video } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   getVoicesHeaderPlayerId,
@@ -16,65 +17,71 @@ import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
 
 function MobileStationControl({
   station,
-  align = "left",
 }: {
   station: VoicesLiveStationConfig;
-  align?: "left" | "right";
 }) {
   const liveMetadata = useRadioCultLiveMetadata(station.id);
   const { audioRef, loading, playing, toggle } = useStationAudio(
     station.streamUrl,
+    getVoicesHeaderPlayerId(station.id),
   );
   const disabled = !station.streamUrl || loading || station.comingSoon;
+  const title = station.comingSoon
+    ? "Coming soon"
+    : liveMetadata.title || station.title;
+  const status = station.comingSoon
+    ? "Tuning"
+    : liveMetadata.status === "offAir"
+      ? "Off air"
+      : "On air";
 
   return (
-    <div className="flex h-7 min-w-0 flex-1 items-center justify-between overflow-hidden bg-voicesNext-cream px-1 text-voicesNext-background">
+    <div className="grid min-h-[52px] min-w-0 grid-cols-[minmax(0,1fr)_32px] items-stretch overflow-hidden bg-voicesNext-cream text-voicesNext-background">
       <audio ref={audioRef} src={station.streamUrl} preload="none" />
-      {align === "right" && (
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={toggle}
-          className="disabled:opacity-45 inline-flex h-7 w-7 shrink-0 items-center justify-center"
-          aria-label={
-            playing ? `Pause ${station.label}` : `Play ${station.label}`
-          }
+      <div className="min-w-0 px-2 py-[7px]">
+        <div className="flex items-center gap-1">
+          <span className="font-outfit text-[20px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
+            {station.label}
+          </span>
+          <span className="inline-flex min-w-0 items-center gap-1 font-asap text-[8px] font-bold uppercase leading-none tracking-[0.8px] text-[#443f3f]/65">
+            {status}
+            <span
+              className={cn(
+                "size-1.5 rounded-full",
+                station.comingSoon
+                  ? "voices-east-tuning-dot bg-voicesNext-orange"
+                  : "bg-voicesNext-live",
+              )}
+            />
+          </span>
+        </div>
+        <p
+          className="mt-1 truncate font-outfit text-[11px] font-medium uppercase leading-none tracking-[0.8px] text-[#443f3f]"
+          title={title}
         >
-          {playing ? (
-            <Square aria-hidden="true" size={12} fill="currentColor" />
-          ) : (
-            <Play aria-hidden="true" size={14} fill="currentColor" />
-          )}
-        </button>
-      )}
-      <span
+          {title}
+        </p>
+      </div>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={toggle}
         className={cn(
-          "min-w-0 truncate font-outfit text-[20px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]",
-          align === "right" && "ml-auto",
+          "inline-flex h-full w-full shrink-0 items-center justify-center border-l border-voicesNext-background transition-colors hover:bg-voicesNext-background hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange disabled:cursor-not-allowed disabled:text-[#443f3f]/35",
+          playing && "bg-voicesNext-background text-voicesNext-cream",
         )}
-        title={liveMetadata.title || station.title}
+        aria-label={
+          playing ? `Pause ${station.label}` : `Play ${station.label}`
+        }
       >
-        {station.label}
-      </span>
-      {align === "left" && (
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={toggle}
-          className="disabled:opacity-45 inline-flex h-7 w-7 shrink-0 items-center justify-center"
-          aria-label={
-            playing ? `Pause ${station.label}` : `Play ${station.label}`
-          }
-        >
-          {playing ? (
-            <Square aria-hidden="true" size={12} fill="currentColor" />
-          ) : station.videoUrl ? (
-            <Video aria-hidden="true" size={17} strokeWidth={2.2} />
-          ) : (
-            <Play aria-hidden="true" size={14} fill="currentColor" />
-          )}
-        </button>
-      )}
+        {playing ? (
+          <Square aria-hidden="true" size={12} fill="currentColor" />
+        ) : station.videoUrl ? (
+          <Video aria-hidden="true" size={16} strokeWidth={2.2} />
+        ) : (
+          <Play aria-hidden="true" size={14} fill="currentColor" />
+        )}
+      </button>
     </div>
   );
 }
@@ -86,11 +93,11 @@ function MobileLiveControls() {
 
   return (
     <div
-      className="flex h-7 divide-x divide-voicesNext-background md:hidden"
+      className="grid grid-cols-2 border-b border-voicesNext-background bg-voicesNext-cream md:hidden [&>*+*]:border-l [&>*+*]:border-voicesNext-background"
       aria-label="Mobile live controls"
     >
       <MobileStationControl station={kxStation} />
-      <MobileStationControl station={eastStation} align="right" />
+      <MobileStationControl station={eastStation} />
     </div>
   );
 }
@@ -109,7 +116,7 @@ function ScheduleContextItems({ mobile = false }: { mobile?: boolean }) {
       className={cn(
         "grid min-w-0 text-voicesNext-background",
         mobile
-          ? "grid-cols-3 divide-x divide-voicesNext-background"
+          ? "grid-cols-3 divide-x divide-voicesNext-background border-b border-voicesNext-background"
           : "h-full flex-1 grid-cols-3 divide-x divide-black",
       )}
       aria-label="KX schedule context"
@@ -120,7 +127,7 @@ function ScheduleContextItems({ mobile = false }: { mobile?: boolean }) {
           className={cn(
             "min-w-0 px-2",
             mobile
-              ? "py-2"
+              ? "min-h-[56px] py-[9px]"
               : "flex flex-col justify-center px-3 lg:px-4 xl:px-5",
           )}
         >
@@ -130,7 +137,7 @@ function ScheduleContextItems({ mobile = false }: { mobile?: boolean }) {
           <p
             className={cn(
               "mt-1 truncate font-outfit font-black uppercase leading-none tracking-[1px] text-[#443f3f]",
-              mobile ? "text-[11px]" : "text-[12px] lg:text-[13px]",
+              mobile ? "text-[12px]" : "text-[12px] lg:text-[13px]",
             )}
             title={item.value}
           >
@@ -148,7 +155,7 @@ function PlayerActions({ mobile = false }: { mobile?: boolean }) {
       className={cn(
         "flex shrink-0 divide-x divide-black",
         mobile
-          ? "h-10 border-t border-voicesNext-background"
+          ? "h-11 divide-voicesNext-background"
           : "h-full border-l border-black",
       )}
       aria-label="Player actions"
@@ -159,18 +166,16 @@ function PlayerActions({ mobile = false }: { mobile?: boolean }) {
           mobile ? "flex-1 text-[13px]" : "w-[118px] text-[13px]",
         )}
       />
-      <button
-        type="button"
-        disabled
+      <Link
+        href="/chat"
         className={cn(
-          "text-[#443f3f]/45 inline-flex h-full cursor-not-allowed items-center justify-center gap-2 bg-voicesNext-cream px-4 font-gabarito font-bold uppercase leading-none",
+          "inline-flex h-full items-center justify-center gap-2 bg-voicesNext-cream px-4 font-gabarito font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange",
           mobile ? "flex-1 text-[13px]" : "w-[104px] text-[13px]",
         )}
-        aria-label="Chat coming soon"
       >
         <MessageCircle aria-hidden="true" size={15} strokeWidth={2.4} />
         Chat
-      </button>
+      </Link>
     </div>
   );
 }

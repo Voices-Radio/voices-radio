@@ -478,8 +478,8 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   }
 
   return (
-    <header className="sticky top-0 z-40 bg-voicesNext-background">
-      <div className="grid h-[60px] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-[#444] to-voicesNext-background to-[80%] px-[9px] py-[7px] md:hidden">
+    <header className="sticky top-0 z-40 -mx-2 bg-voicesNext-background md:mx-0">
+      <div className="grid min-h-[64px] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-[#4b4b4b] via-[#343434] to-voicesNext-background px-[17px] pb-[7px] pt-[max(7px,env(safe-area-inset-top))] md:hidden">
         <MobileHeaderArtwork />
         <button
           type="button"
