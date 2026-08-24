@@ -6,17 +6,18 @@ import Link from "next/link";
 const CONTACT_FALLBACK_URL = "mailto:info@voicesradio.co.uk";
 
 export const metadata: Metadata = {
-  title: "Collaborate",
-  description: "Work with Voices Radio, contact the team, or apply for a show.",
+  title: "Partner with Us",
+  description:
+    "Partner with Voices Radio on programming, community projects, brand work, and show ideas.",
   openGraph: {
-    title: "Collaborate | Voices Radio",
+    title: "Partner with Us | Voices Radio",
     description:
-      "Work with Voices Radio, contact the team, or apply for a show.",
+      "Partner with Voices Radio on programming, community projects, brand work, and show ideas.",
   },
   twitter: {
-    title: "Collaborate | Voices Radio",
+    title: "Partner with Us | Voices Radio",
     description:
-      "Work with Voices Radio, contact the team, or apply for a show.",
+      "Partner with Voices Radio on programming, community projects, brand work, and show ideas.",
   },
   alternates: { canonical: "/collaborate" },
 };
@@ -32,14 +33,14 @@ export default async function CollaboratePage() {
         <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-12 md:grid-cols-[minmax(0,1fr)_360px] md:px-8 md:py-20">
           <div>
             <p className="mb-4 font-asap text-sm font-bold uppercase text-voicesNext-orange">
-              Collaborate
+              Partner with Us
             </p>
             <h1 className="max-w-4xl font-outfit text-5xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-7xl">
-              Work with Voices
+              Build with Voices
             </h1>
             <p className="mt-6 max-w-2xl font-gabarito text-lg leading-relaxed text-voicesNext-cream">
-              For partnerships, programming, creative projects, and show
-              applications, use the links here to reach the right place.
+              For partnerships, programming, community projects, and creative
+              ideas, use this page to reach the right part of the Voices team.
             </p>
           </div>
 
@@ -56,7 +57,7 @@ export default async function CollaboratePage() {
               href={contactLink}
               className="inline-flex h-14 items-center justify-center border border-voicesNext-cream px-6 font-gabarito text-lg font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
             >
-              Contact the team
+              Start a partnership conversation
             </a>
           </div>
         </div>
@@ -70,11 +71,11 @@ export default async function CollaboratePage() {
           },
           {
             title: "Partnerships",
-            copy: "Start a conversation about community projects, brand work, or station collaborations.",
+            copy: "Start a conversation about community projects, brand work, venue programming, or station collaborations.",
           },
           {
             title: "Studio",
-            copy: "For podcast production and studio bookings, use the existing Podcast Studio page.",
+            copy: "For podcast production and studio bookings, head to the Podcast Studio page.",
             href: "/podcast",
           },
         ].map((item) => (

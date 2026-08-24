@@ -1,7 +1,6 @@
 "use client";
 
-import ScheduleDialog from "@/app/components/schedule/dialog";
-import { Search, X } from "lucide-react";
+import { ChevronDown, Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -62,8 +61,15 @@ const desktopMenuLinks = [
   { href: "/", label: "Home" },
   { href: "/blog", label: "Blog" },
   { href: "/podcast", label: "Podcast Studio" },
-  { href: "/collaborate", label: "Collaborate" },
+  { href: "/agency", label: "Agency" },
+  { href: "/collaborate", label: "Partner with Us" },
   { href: "/support", label: "Support Us" },
+];
+
+const collaborateLinks = [
+  { href: "/podcast", label: "Podcast Studio" },
+  { href: "/agency", label: "Agency" },
+  { href: "/collaborate", label: "Partner with Us" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -151,6 +157,88 @@ function MobileOnAirTicker() {
           </span>
         ))}
       </div>
+    </div>
+  );
+}
+
+function CollaborateDropdown({ pathname }: { pathname: string }) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const active = collaborateLinks.some((link) => isActive(pathname, link.href));
+
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
+      <button
+        type="button"
+        className="voices-nav-link inline-flex items-center gap-1 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]"
+        data-active={active}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-controls="collaborate-menu"
+        onClick={() => setOpen((value) => !value)}
+      >
+        Collaborate
+        <ChevronDown
+          aria-hidden="true"
+          className={cn("size-4 transition-transform", open && "rotate-180")}
+          strokeWidth={3}
+        />
+      </button>
+
+      {open && (
+        <div
+          id="collaborate-menu"
+          role="menu"
+          className="absolute left-1/2 top-full z-50 mt-5 w-[220px] -translate-x-1/2 border border-voicesNext-border bg-voicesNext-background p-2 shadow-2xl"
+        >
+          {collaborateLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              role="menuitem"
+              className={cn(
+                "block px-3 py-3 font-gabarito text-[16px] font-bold leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-surface hover:text-voicesNext-orange focus:bg-voicesNext-surface focus:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange",
+                isActive(pathname, link.href) && "text-voicesNext-orange",
+              )}
+              aria-current={isActive(pathname, link.href) ? "page" : undefined}
+              onClick={() => setOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -436,7 +524,6 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           >
             Home
           </Link>
-          <ScheduleDialog classNames="voices-nav-link bg-transparent p-0 font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]" />
           <Link
             href="/explore"
             className={cn(
@@ -447,16 +534,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           >
             Explore
           </Link>
-          <Link
-            href="/collaborate"
-            className="voices-nav-link font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background lg:text-[21px]"
-            data-active={isActive(pathname, "/collaborate")}
-            aria-current={
-              isActive(pathname, "/collaborate") ? "page" : undefined
-            }
-          >
-            Collaborate
-          </Link>
+          <CollaborateDropdown pathname={pathname} />
           <a
             href={shopLink}
             target="_blank"
@@ -657,7 +735,6 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
               >
                 Home
               </Link>
-              <ScheduleDialog classNames="bg-transparent p-0 text-left font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background" />
               <Link
                 href="/explore"
                 className={cn(
@@ -673,6 +750,29 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
               >
                 Discover
               </Link>
+              <div className="flex flex-col gap-3">
+                <p className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
+                  Collaborate
+                </p>
+                {collaborateLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
+                      isActive(pathname, link.href)
+                        ? "text-voicesNext-orange"
+                        : "text-voicesNext-cream",
+                    )}
+                    aria-current={
+                      isActive(pathname, link.href) ? "page" : undefined
+                    }
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
               <a
                 href={shopLink}
                 target="_blank"
@@ -691,17 +791,6 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                 )}
               >
                 About
-              </Link>
-              <Link
-                href="/services"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background",
-                  isActive(pathname, "/services")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-              >
-                Work with us
               </Link>
               <Link
                 href="/support"

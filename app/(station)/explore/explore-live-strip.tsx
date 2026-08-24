@@ -1,118 +1,18 @@
 "use client";
 
-import { Play, Search, Square, Video } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { MessageCircle, Play, Square, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   getVoicesHeaderPlayerId,
   voicesLiveStations,
   type VoicesLiveStationConfig,
 } from "@/lib/voices/config";
+import { getScheduleContext } from "@/lib/voices/schedule-context";
 import useRadioCultLiveMetadata from "@/hooks/use-radio-cult-live-metadata";
 import useStationAudio from "@/hooks/use-station-audio";
+import useWeekInfo from "@/hooks/use-week-info";
+import ScheduleDialog from "@/app/components/schedule/dialog";
 import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
-
-function DiscoveryTabs({ pathname }: { pathname: string }) {
-  const activeSection = pathname.startsWith("/artists") ? "artists" : "shows";
-
-  return (
-    <nav
-      className="flex min-h-[68px] flex-1 items-center px-4 md:px-[60px] lg:px-[70px]"
-      aria-label="Explore sections"
-    >
-      <div className="flex items-center gap-7 font-gabarito text-[20px] font-bold">
-        <Link
-          href="/explore"
-          className={cn(
-            "relative",
-            activeSection !== "shows" && "text-voicesNext-secondary",
-          )}
-          aria-current={activeSection === "shows" ? "page" : undefined}
-        >
-          Shows
-          {activeSection === "shows" && (
-            <span className="absolute -bottom-[22px] left-0 h-[2px] w-[57px] bg-voicesNext-orange" />
-          )}
-        </Link>
-        <Link
-          href="/artists"
-          className={cn(
-            "relative",
-            activeSection !== "artists" && "text-voicesNext-secondary",
-          )}
-          aria-current={activeSection === "artists" ? "page" : undefined}
-        >
-          Artists
-          {activeSection === "artists" && (
-            <span className="absolute -bottom-[22px] left-0 h-[2px] w-[60px] bg-voicesNext-orange" />
-          )}
-        </Link>
-        <span className="text-voicesNext-secondary" aria-disabled="true">
-          Series
-        </span>
-      </div>
-    </nav>
-  );
-}
-
-function MobileDiscoveryNav({ pathname }: { pathname: string }) {
-  const activeSection = pathname.startsWith("/artists") ? "hosts" : "discover";
-
-  return (
-    <div className="bg-voicesNext-background px-[10px] pb-8 pt-2 md:hidden">
-      <nav
-        className="relative flex h-[60px] items-center gap-[22px] px-4 font-gabarito text-[18px] font-bold"
-        aria-label="Explore sections"
-      >
-        <Link
-          href="/explore"
-          className={cn(
-            "relative",
-            activeSection !== "discover" && "text-voicesNext-secondary",
-          )}
-          aria-current={activeSection === "discover" ? "page" : undefined}
-        >
-          Discover
-          {activeSection === "discover" && (
-            <span className="absolute -bottom-[13px] left-0 h-[2px] w-full bg-voicesNext-orange" />
-          )}
-        </Link>
-        <Link
-          href="/artists"
-          className={cn(
-            "relative",
-            activeSection !== "hosts" && "text-voicesNext-secondary",
-          )}
-          aria-current={activeSection === "hosts" ? "page" : undefined}
-        >
-          Hosts
-          {activeSection === "hosts" && (
-            <span className="absolute -bottom-[13px] left-0 h-[2px] w-full bg-voicesNext-orange" />
-          )}
-        </Link>
-        <span className="text-voicesNext-secondary" aria-disabled="true">
-          Series
-        </span>
-      </nav>
-      <form action="/explore" className="px-[10px]" role="search">
-        <label htmlFor="mobile-discover-search" className="sr-only">
-          Search hosts, shows, genres
-        </label>
-        <div className="flex h-11 w-full items-center gap-3 rounded-full border border-voicesNext-cream px-4">
-          <Search aria-hidden="true" size={14} strokeWidth={2.2} />
-          <input
-            id="mobile-discover-search"
-            name="search"
-            type="search"
-            placeholder="Search hosts, shows, genres..."
-            className="min-w-0 flex-1 bg-transparent font-asap text-[14px] text-voicesNext-cream outline-none placeholder:text-voicesNext-secondary"
-          />
-        </div>
-      </form>
-    </div>
-  );
-}
 
 function MobileStationControl({
   station,
@@ -195,14 +95,100 @@ function MobileLiveControls() {
   );
 }
 
-export default function ExploreLiveStrip() {
-  const pathname = usePathname();
-  const showDiscoveryTabs = pathname === "/explore" || pathname === "/artists";
+function ScheduleContextItems({ mobile = false }: { mobile?: boolean }) {
+  const { data } = useWeekInfo();
+  const context = getScheduleContext(data, "kx");
+  const items = [
+    { label: "Previous", value: context.previous },
+    { label: "Now", value: context.current },
+    { label: "Next", value: context.next },
+  ];
 
+  return (
+    <div
+      className={cn(
+        "grid min-w-0 text-voicesNext-background",
+        mobile
+          ? "grid-cols-3 divide-x divide-voicesNext-background"
+          : "h-full flex-1 grid-cols-3 divide-x divide-black",
+      )}
+      aria-label="KX schedule context"
+    >
+      {items.map((item) => (
+        <div
+          key={item.label}
+          className={cn(
+            "min-w-0 px-2",
+            mobile
+              ? "py-2"
+              : "flex flex-col justify-center px-3 lg:px-4 xl:px-5",
+          )}
+        >
+          <p className="font-asap text-[9px] font-bold uppercase leading-none tracking-[1px] text-[#443f3f]/70 md:text-[10px]">
+            {item.label}
+          </p>
+          <p
+            className={cn(
+              "mt-1 truncate font-outfit font-black uppercase leading-none tracking-[1px] text-[#443f3f]",
+              mobile ? "text-[11px]" : "text-[12px] lg:text-[13px]",
+            )}
+            title={item.value}
+          >
+            {item.value}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PlayerActions({ mobile = false }: { mobile?: boolean }) {
+  return (
+    <div
+      className={cn(
+        "flex shrink-0 divide-x divide-black",
+        mobile
+          ? "h-10 border-t border-voicesNext-background"
+          : "h-full border-l border-black",
+      )}
+      aria-label="Player actions"
+    >
+      <ScheduleDialog
+        classNames={cn(
+          "inline-flex h-full items-center justify-center gap-2 rounded-none bg-voicesNext-cream px-4 font-gabarito font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange",
+          mobile ? "flex-1 text-[13px]" : "w-[118px] text-[13px]",
+        )}
+      />
+      <button
+        type="button"
+        disabled
+        className={cn(
+          "text-[#443f3f]/45 inline-flex h-full cursor-not-allowed items-center justify-center gap-2 bg-voicesNext-cream px-4 font-gabarito font-bold uppercase leading-none",
+          mobile ? "flex-1 text-[13px]" : "w-[104px] text-[13px]",
+        )}
+        aria-label="Chat coming soon"
+      >
+        <MessageCircle aria-hidden="true" size={15} strokeWidth={2.4} />
+        Chat
+      </button>
+    </div>
+  );
+}
+
+function MobileSchedulePanel() {
+  return (
+    <div className="border-b border-voicesNext-background bg-voicesNext-cream md:hidden">
+      <ScheduleContextItems mobile />
+      <PlayerActions mobile />
+    </div>
+  );
+}
+
+export default function ExploreLiveStrip() {
   return (
     <section aria-label="Live player">
       <MobileLiveControls />
-      {showDiscoveryTabs && <MobileDiscoveryNav pathname={pathname} />}
+      <MobileSchedulePanel />
       <div className="hidden w-full flex-col border-y border-black bg-voicesNext-cream text-voicesNext-background md:flex md:h-[68px] md:flex-row">
         <div className="flex border-b border-black md:border-b-0 md:border-r">
           <div className="flex w-[70px] shrink-0 items-center justify-center border-r border-black px-2">
@@ -220,7 +206,8 @@ export default function ExploreLiveStrip() {
             )}
           </div>
         </div>
-        {showDiscoveryTabs && <DiscoveryTabs pathname={pathname} />}
+        <ScheduleContextItems />
+        <PlayerActions />
       </div>
     </section>
   );

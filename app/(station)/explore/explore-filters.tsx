@@ -11,10 +11,7 @@ import {
 } from "./explore-options";
 import { useExploreFilterTransition } from "./explore-filter-transition";
 
-const stationOptions = [
-  { label: "KX", value: "kx" },
-  { label: "EAST", value: "east" },
-];
+const stationOptions = [{ label: "KX", value: "kx" }];
 
 const locationOptions = [
   { label: "LONDON", value: "london" },
@@ -175,13 +172,13 @@ export default function ExploreFilters({
             onClick={() => setGenresOpen((open) => !open)}
           >
             GENRES
-              <ChevronDown
-                aria-hidden="true"
-                className={cn(
-                  "size-[15px] shrink-0 transition-transform md:size-3",
-                  genresOpen && "rotate-180",
-                )}
-              />
+            <ChevronDown
+              aria-hidden="true"
+              className={cn(
+                "size-[15px] md:size-3 shrink-0 transition-transform",
+                genresOpen && "rotate-180",
+              )}
+            />
           </button>
 
           <button
@@ -308,9 +305,7 @@ export default function ExploreFilters({
                       disabled={isPending}
                       className="min-w-0 truncate py-[6px] pl-[13px] pr-[15px] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange"
                       aria-pressed={active}
-                      onClick={() =>
-                        updateGenres(toggleGenre(genres, genre))
-                      }
+                      onClick={() => updateGenres(toggleGenre(genres, genre))}
                     >
                       {genre}
                     </button>
@@ -324,7 +319,9 @@ export default function ExploreFilters({
                       )}
                       aria-label={`Toggle ${genre} subgenres`}
                       aria-expanded={isExpanded}
-                      aria-controls={`explore-subgenres-${getGenreControlId(genre)}`}
+                      aria-controls={`explore-subgenres-${getGenreControlId(
+                        genre,
+                      )}`}
                       onClick={() =>
                         setExpandedGenre((current) =>
                           current === genre ? null : genre,
@@ -354,9 +351,7 @@ export default function ExploreFilters({
                             active={active || subgenreActive}
                             disabled={isPending}
                             onClick={() =>
-                              updateGenres(
-                                toggleGenre(genres, genre, subgenre),
-                              )
+                              updateGenres(toggleGenre(genres, genre, subgenre))
                             }
                           >
                             {subgenre}

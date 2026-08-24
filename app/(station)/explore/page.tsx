@@ -1,21 +1,44 @@
 import Link from "next/link";
-import ExploreFilters from "./explore-filters";
-import { exploreGenreOptions, isGenreKey } from "./explore-options";
-import ExploreShowSection from "./explore-show-section";
-import {
-  ExploreFilterTransitionProvider,
-  ExploreResultsTransition,
-} from "./explore-filter-transition";
+import ShowCard from "../components/redesign/show-card";
 import SupporterBlock from "../components/redesign/supporter-block";
 import { getShows } from "@/lib/voices/api";
-import { matchesStationOrLocation } from "@/lib/voices/normalizers";
 import { getGenreAliases } from "@/lib/voices/genre-taxonomy";
 import type { VoicesShow } from "@/lib/voices/types";
+import {
+  exploreGenreOptions,
+  exploreGenreTaxonomy,
+  isGenreKey,
+} from "./explore-options";
 
 type ExploreSearchParams = Record<string, string | string[] | undefined>;
 
-const stationFilters = ["kx", "east"] as const;
-const locationFilters = ["london", "world"] as const;
+const categoryTiles = [
+  {
+    label: "Music",
+    href: "/explore?category=music",
+    description: "Recent KX shows and mixes",
+  },
+  {
+    label: "Artists",
+    href: "/artists",
+    description: "Hosts and selectors",
+  },
+  {
+    label: "Blogs",
+    href: "/blog",
+    description: "Stories from the station",
+  },
+  {
+    label: "Podcast",
+    href: "/podcast",
+    description: "Studio bookings and production",
+  },
+  {
+    label: "Agency",
+    href: "/agency",
+    description: "Programming and talent curation",
+  },
+];
 
 function getParamArray(
   searchParams: ExploreSearchParams | undefined,
@@ -24,6 +47,14 @@ function getParamArray(
   const value = searchParams?.[key];
   if (!value) return [];
   return Array.isArray(value) ? value : [value];
+}
+
+function getSingleParam(
+  searchParams: ExploreSearchParams | undefined,
+  key: string,
+) {
+  const value = searchParams?.[key];
+  return Array.isArray(value) ? value[0] : value;
 }
 
 function normalizeFilterValue(value: string) {
@@ -46,34 +77,8 @@ function matchesGenres(show: VoicesShow, selectedGenres: string[]) {
   });
 }
 
-function matchesSelectedLocations(
-  show: VoicesShow,
-  selectedLocations: string[],
-) {
-  if (!selectedLocations.length) return true;
-
-  return selectedLocations.some((location) =>
-    show.locationTags.includes(location),
-  );
-}
-
-function matchesSectionStation(show: VoicesShow, station: "kx" | "east") {
-  return matchesStationOrLocation(show, station);
-}
-
-function matchesSectionWithFallback(
-  show: VoicesShow,
-  station: "kx" | "east",
-  index: number,
-) {
-  const hasStationMatch =
-    matchesSectionStation(show, "kx") || matchesSectionStation(show, "east");
-
-  if (hasStationMatch) {
-    return matchesSectionStation(show, station);
-  }
-
-  return station === (index % 2 === 0 ? "kx" : "east");
+function isKxExploreShow(show: VoicesShow) {
+  return show.station !== "east" && !show.locationTags.includes("east");
 }
 
 function sortShows(shows: VoicesShow[]) {
@@ -85,29 +90,147 @@ function sortShows(shows: VoicesShow[]) {
   });
 }
 
-function GenreBlock() {
+function ExploreTabs({ activeTab }: { activeTab: "explore" | "genres" }) {
   return (
-    <section className="mx-auto max-w-[1180px] bg-voicesNext-surface px-4 py-[43px] text-center md:px-[202px]">
-      <h2 className="font-gabarito text-[24px] font-bold uppercase text-voicesNext-cream">
-        Discover Shows By Genre
-      </h2>
-      <div className="mt-8 flex flex-wrap justify-center gap-4">
-        {exploreGenreOptions.map((genre) => (
+    <nav
+      className="mx-auto flex max-w-[1280px] items-center gap-8 px-4 py-8 font-gabarito text-[24px] font-bold md:px-[70px] md:py-12 md:text-[34px]"
+      aria-label="Explore mode"
+    >
+      <Link
+        href="/explore"
+        className={
+          activeTab === "explore"
+            ? "text-voicesNext-orange"
+            : "text-voicesNext-secondary"
+        }
+        aria-current={activeTab === "explore" ? "page" : undefined}
+      >
+        Explore
+      </Link>
+      <Link
+        href="/explore?tab=genres"
+        className={
+          activeTab === "genres"
+            ? "text-voicesNext-orange"
+            : "text-voicesNext-secondary"
+        }
+        aria-current={activeTab === "genres" ? "page" : undefined}
+      >
+        Genres
+      </Link>
+    </nav>
+  );
+}
+
+function CategoryTiles() {
+  return (
+    <section className="mx-auto max-w-[1280px] px-4 pb-12 md:px-[70px] md:pb-20">
+      <div className="grid gap-px bg-voicesNext-border md:grid-cols-5">
+        {categoryTiles.map((tile) => (
           <Link
-            key={genre}
-            href={`/explore?genre=${encodeURIComponent(genre)}`}
-            className="rounded-full border border-voicesNext-cream px-2 py-2 font-asap text-[16px] font-bold leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface"
+            key={tile.label}
+            href={tile.href}
+            className="group min-h-[178px] bg-voicesNext-background p-5 transition-colors hover:bg-voicesNext-surface focus:outline-none focus:ring-2 focus:ring-inset focus:ring-voicesNext-orange md:min-h-[220px] md:p-6"
           >
-            {genre}
+            <span className="font-outfit text-[28px] font-black uppercase leading-none tracking-[1px] text-voicesNext-cream transition-colors group-hover:text-voicesNext-orange md:text-[34px]">
+              {tile.label}
+            </span>
+            <span className="mt-4 block max-w-[180px] font-asap text-[13px] leading-snug text-voicesNext-secondary md:text-[14px]">
+              {tile.description}
+            </span>
           </Link>
         ))}
       </div>
-      <Link
-        href="/explore"
-        className="mt-8 inline-flex font-gabarito text-[16px] font-medium uppercase text-voicesNext-cream"
-      >
-        Browse All Genres
-      </Link>
+    </section>
+  );
+}
+
+function MusicGrid({
+  shows,
+  selectedGenres,
+}: {
+  shows: VoicesShow[];
+  selectedGenres: string[];
+}) {
+  const title = selectedGenres.length
+    ? selectedGenres[selectedGenres.length - 1]
+    : "Music";
+
+  return (
+    <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-4 md:mb-[30px]">
+        <div>
+          <h1 className="font-gabarito text-[24px] font-bold leading-none text-voicesNext-cream md:text-[34px]">
+            {title}
+          </h1>
+          <p className="mt-2 font-asap text-[13px] leading-tight text-voicesNext-secondary md:text-[14px]">
+            The latest Voices KX shows.
+          </p>
+        </div>
+        {selectedGenres.length > 0 && (
+          <Link
+            href="/explore?tab=genres"
+            className="inline-flex rounded-full border border-voicesNext-cream px-4 py-2 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+          >
+            Change genre
+          </Link>
+        )}
+      </div>
+
+      {shows.length > 0 ? (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {shows.map((show, index) => (
+            <ShowCard key={show.id} show={show} priority={index < 4} />
+          ))}
+        </div>
+      ) : (
+        <div className="border border-voicesNext-border p-6 font-gabarito text-voicesNext-secondary">
+          No KX shows match this genre yet.
+        </div>
+      )}
+    </section>
+  );
+}
+
+function GenresScreen() {
+  return (
+    <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
+      <div className="grid gap-px bg-voicesNext-border md:grid-cols-2 xl:grid-cols-3">
+        {exploreGenreOptions.map((primary) => (
+          <article
+            key={primary}
+            className="bg-voicesNext-background p-5 md:p-6"
+          >
+            <Link
+              href={`/explore?category=music&genre=${encodeURIComponent(
+                primary,
+              )}`}
+              className="inline-flex font-outfit text-[24px] font-black uppercase leading-none tracking-[1px] text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+            >
+              {primary}
+            </Link>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {Object.keys(exploreGenreTaxonomy[primary] ?? {}).map(
+                (subgenre) => {
+                  const genreKey = `${primary} > ${subgenre}`;
+
+                  return (
+                    <Link
+                      key={genreKey}
+                      href={`/explore?category=music&genre=${encodeURIComponent(
+                        genreKey,
+                      )}`}
+                      className="rounded-full border border-voicesNext-border px-3 py-2 font-asap text-[11px] font-bold uppercase leading-none text-voicesNext-secondary transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+                    >
+                      {subgenre}
+                    </Link>
+                  );
+                },
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
@@ -118,88 +241,41 @@ export default async function ExplorePage({
   searchParams?: Promise<ExploreSearchParams>;
 }) {
   const resolvedSearchParams = await searchParams;
+  const activeTab =
+    getSingleParam(resolvedSearchParams, "tab") === "genres"
+      ? "genres"
+      : "explore";
   const selectedGenres = getParamArray(resolvedSearchParams, "genre").filter(
     isGenreKey,
   );
-  const selectedStations = getParamArray(
-    resolvedSearchParams,
-    "station",
-  ).filter((station) =>
-    stationFilters.includes(station as (typeof stationFilters)[number]),
-  );
-  const selectedLocations = getParamArray(
-    resolvedSearchParams,
-    "location",
-  ).filter((location) =>
-    locationFilters.includes(location as (typeof locationFilters)[number]),
-  );
+  const category = getSingleParam(resolvedSearchParams, "category");
+  const showMusicGrid = category === "music" || selectedGenres.length > 0;
 
-  const shows = await getShows({ genres: selectedGenres, limit: 100 });
-  const filteredShows = sortShows(
+  const shows = showMusicGrid
+    ? await getShows({
+        genres: selectedGenres,
+        limit: 100,
+      })
+    : [];
+  const visibleShows = sortShows(
     shows.filter(
-      (show) =>
-        matchesGenres(show, selectedGenres) &&
-        matchesSelectedLocations(show, selectedLocations),
+      (show) => isKxExploreShow(show) && matchesGenres(show, selectedGenres),
     ),
-  );
-
-  const visibleSections = (
-    selectedStations.length ? selectedStations : [...stationFilters]
-  ).filter((station): station is "kx" | "east" =>
-    stationFilters.includes(station as (typeof stationFilters)[number]),
-  );
-
-  const sectionCopy = {
-    kx: {
-      title: "Voices KX",
-      description: "Browse shows from our Kings Cross studio.",
-    },
-    east: {
-      title: "Voices EAST",
-      description: "Browse shows from our Hackney Wick studio.",
-    },
-  };
-
-  const hasActiveFilters =
-    selectedGenres.length > 0 ||
-    selectedStations.length > 0 ||
-    selectedLocations.length > 0;
+  ).slice(0, 16);
 
   return (
     <main>
-      <ExploreFilterTransitionProvider>
-        <ExploreFilters
-          selectedGenres={selectedGenres}
-          selectedStations={selectedStations}
-          selectedLocations={selectedLocations}
-        />
-        <ExploreResultsTransition>
-          <div className="space-y-16 pb-16 md:space-y-[86px] md:pb-[96px]">
-            {visibleSections.map((station) => {
-              const sectionShows = filteredShows.filter((show, index) =>
-                matchesSectionWithFallback(show, station, index),
-              );
-
-              return (
-                <ExploreShowSection
-                  key={station}
-                  title={sectionCopy[station].title}
-                  description={sectionCopy[station].description}
-                  shows={sectionShows}
-                  emptyMessage={
-                    hasActiveFilters
-                      ? "No shows match these filters yet."
-                      : "No matched shows are available for this section yet."
-                  }
-                />
-              );
-            })}
-          </div>
-        </ExploreResultsTransition>
-      </ExploreFilterTransitionProvider>
-      <div className="px-4 py-10 md:px-[50px]">
-        <GenreBlock />
-      </div>
+      <ExploreTabs activeTab={activeTab} />
+      {activeTab === "genres" ? (
+        <GenresScreen />
+      ) : (
+        <>
+          <CategoryTiles />
+          {showMusicGrid && (
+            <MusicGrid shows={visibleShows} selectedGenres={selectedGenres} />
+          )}
+        </>
+      )}
       <SupporterBlock />
     </main>
   );
