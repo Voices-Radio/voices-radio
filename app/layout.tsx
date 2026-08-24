@@ -37,10 +37,7 @@ const asapCondensed = Asap_Condensed({
 });
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(max-width: 767px)", color: "#4b4b4b" },
-    { media: "(min-width: 768px)", color: "#161616" },
-  ],
+  themeColor: "#4b4b4b",
   colorScheme: "dark",
   viewportFit: "cover",
 };
@@ -53,7 +50,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-black antialiased ${kinfolk.variable} ${inter.variable} ${gabarito.variable} ${outfit.variable} ${asapCondensed.variable}`}
+      className={`antialiased ${kinfolk.variable} ${inter.variable} ${gabarito.variable} ${outfit.variable} ${asapCondensed.variable}`}
     >
       <body>
         {children}
