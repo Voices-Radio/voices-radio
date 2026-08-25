@@ -84,9 +84,6 @@ export default function ShowCard({
             <span className="inline-flex h-5 w-5 items-center justify-center text-voicesNext-cream">
               <Play aria-hidden="true" size={15} fill="currentColor" />
             </span>
-            <span className="font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orangeText">
-              View details
-            </span>
             <Bookmark
               aria-hidden="true"
               className="mb-[-2px] h-5 w-5 text-voicesNext-secondary"

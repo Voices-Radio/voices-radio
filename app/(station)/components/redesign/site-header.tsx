@@ -117,15 +117,15 @@ function MobileHeaderArtwork() {
     <>
       <Link
         href="/"
-        className="block h-[45px] w-[57px] justify-self-start focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+        className="block h-[45px] w-[45px] justify-self-start focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         aria-label="Voices Radio home"
       >
         <Image
-          src="/voices.svg"
+          src="/VOICESLOGO_LIGHTBOX.png"
           alt=""
-          width={57}
+          width={45}
           height={45}
-          className="h-[45px] w-[57px] object-contain [filter:brightness(0)_saturate(100%)_invert(40%)_sepia(91%)_saturate(1164%)_hue-rotate(345deg)_brightness(91%)_contrast(91%)]"
+          className="h-[45px] w-[45px] object-contain"
           priority
         />
       </Link>

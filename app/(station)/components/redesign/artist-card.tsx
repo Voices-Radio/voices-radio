@@ -49,8 +49,7 @@ export default function ArtistCard({ artist }: { artist: VoicesArtist }) {
             ))}
           </div>
         )}
-        <div className="flex items-center justify-between font-asap text-[12px] font-bold text-voicesNext-orangeText">
-          <span>View profile</span>
+        <div className="flex items-center justify-end font-asap text-[12px] font-bold text-voicesNext-orangeText">
           <span aria-hidden="true">♡</span>
         </div>
       </div>

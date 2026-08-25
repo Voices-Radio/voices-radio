@@ -5,16 +5,16 @@ export default function BrandMark() {
   return (
     <Link
       href="/"
-      className="group block h-9 w-[114px] focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-[46px] md:w-[145px]"
+      className="group block h-12 w-12 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-14 md:w-14"
       aria-label="Voices Radio home"
     >
       <Image
         aria-hidden="true"
-        src="/voices-wordmark.svg"
+        src="/VOICESLOGO_LIGHTBOX.png"
         alt=""
-        width={145}
-        height={46}
-        className="h-9 w-[114px] object-contain md:h-[46px] md:w-[145px]"
+        width={56}
+        height={56}
+        className="h-12 w-12 object-contain md:h-14 md:w-14"
         priority
       />
       <span className="sr-only">Voices</span>
