@@ -2,30 +2,39 @@
 
 import { cn } from "@/lib/utils";
 import * as Dialog from "@radix-ui/react-dialog";
+import type { ReactNode } from "react";
+import type { VoicesLiveStationId } from "@/lib/voices/config";
 import ScheduleList from "./list";
 
 export default function ScheduleDialog({
   classNames = "",
+  children = "Schedule",
+  label,
+  initialStation,
 }: {
   classNames?: string;
+  children?: ReactNode;
+  label?: string;
+  initialStation?: VoicesLiveStationId;
 }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button
+          aria-label={label}
           className={cn(
             "rounded-full bg-black text-white focus:outline-none",
             classNames,
           )}
         >
-          Schedule
+          {children}
         </button>
       </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 overflow-y-auto bg-black/20 backdrop-blur-xl">
           <Dialog.Content className="relative flex min-h-full flex-col focus:outline-none">
-            <ScheduleList />
+            <ScheduleList initialStation={initialStation} />
 
             <div className="sticky bottom-6 flex justify-center pb-6">
               <Dialog.Close asChild>

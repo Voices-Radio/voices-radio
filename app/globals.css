@@ -11,6 +11,8 @@
   --voices-color-accent-primary: #d34e24;
   --voices-color-status-live: #db1a1a;
   --voices-color-white: #ffffff;
+  /* Keep in sync with SAFE_AREA_COLOR in lib/design-tokens.js — CSS can't
+     import that module, so this one has to be updated by hand. */
   --voices-mobile-safe-area-background: #4b4b4b;
   /* Lightened from #6f6a63 (2.90:1 on background) to clear the 3:1
      non-text minimum — keep in sync with tailwind.config.js voicesNext.border. */
@@ -155,6 +157,16 @@
   animation: voices-east-tuning-dot 1.3s ease-in-out infinite;
 }
 
+.voices-schedule-pulse {
+  animation: voices-schedule-pulse 3.6s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.voices-chat-bubble {
+  animation: voices-chat-bubble 3.2s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
 @keyframes voices-east-orbit {
   0% {
     opacity: 0;
@@ -206,13 +218,49 @@
   }
 }
 
+/* Calendar icon on the mobile live strips: a slow, low-contrast pulse that
+   reads as "there's something here" without competing with the live dot. */
+@keyframes voices-schedule-pulse {
+  0%,
+  100% {
+    opacity: 0.68;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+/* Chat icon on the mobile live strips: a gentle bob, as if the bubble is
+   surfacing. Paired with the calendar pulse but deliberately off-tempo. */
+@keyframes voices-chat-bubble {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: translateY(1px) scale(0.94);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(-1.5px) scale(1.06);
+  }
+
+  70% {
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .voices-on-air-marquee,
   .voices-coming-soon-marquee,
   .voices-east-orbit,
   .voices-east-signal,
   .voices-east-tease,
-  .voices-east-tuning-dot {
+  .voices-east-tuning-dot,
+  .voices-schedule-pulse,
+  .voices-chat-bubble {
     animation: none;
   }
 }

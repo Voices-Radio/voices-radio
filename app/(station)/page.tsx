@@ -16,7 +16,7 @@ export default async function Home() {
         Voices Radio — live community radio from London
       </h1>
       <section className="grid w-full gap-5 bg-voicesNext-background md:min-h-[632px] md:grid-cols-[316px_minmax(0,1fr)] md:gap-0">
-        <div className="order-1">
+        <div className="order-1 hidden md:block">
           <LiveStack
             kxShow={latestKx[0]}
             eastShow={latestEast[0]}

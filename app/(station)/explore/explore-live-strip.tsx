@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle, Play, Square, Video } from "lucide-react";
+import { CalendarDays, MessageCircle, Play, Square, Video } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
@@ -14,6 +14,14 @@ import useStationAudio from "@/hooks/use-station-audio";
 import useWeekInfo from "@/hooks/use-week-info";
 import ScheduleDialog from "@/app/components/schedule/dialog";
 import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
+
+/**
+ * Shared skin for the three icon buttons on the right of each mobile strip.
+ * They sit full-height in a ~52px row, so the 38/44px widths clear WCAG 2.5.8's
+ * 24x24 minimum target size comfortably.
+ */
+const mobileActionClassName =
+  "inline-flex h-full shrink-0 items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange";
 
 function MobileStationControl({
   station,
@@ -32,22 +40,22 @@ function MobileStationControl({
   const status = station.comingSoon
     ? "Tuning"
     : liveMetadata.status === "offAir"
-      ? "Off air"
-      : "On air";
+    ? "Off air"
+    : "On air";
 
   return (
-    <div className="grid min-h-[52px] min-w-0 grid-cols-[minmax(0,1fr)_32px] items-stretch overflow-hidden bg-voicesNext-cream text-voicesNext-background">
+    <div className="grid min-h-[52px] min-w-0 grid-cols-[minmax(0,1fr)_auto] items-stretch overflow-hidden bg-voicesNext-cream text-voicesNext-background">
       <audio ref={audioRef} src={station.streamUrl} preload="none" />
       <div className="min-w-0 px-2 py-[7px]">
         <div className="flex items-center gap-1">
           <span className="font-outfit text-[20px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
             {station.label}
           </span>
-          <span className="inline-flex min-w-0 items-center gap-1 font-asap text-[8px] font-bold uppercase leading-none tracking-[0.8px] text-[#443f3f]/65">
+          <span className="text-[#443f3f]/65 inline-flex min-w-0 items-center gap-1 font-asap text-[8px] font-bold uppercase leading-none tracking-[0.8px]">
             {status}
             <span
               className={cn(
-                "size-1.5 rounded-full",
+                "h-1.5 w-1.5 rounded-full",
                 station.comingSoon
                   ? "voices-east-tuning-dot bg-voicesNext-orange"
                   : "bg-voicesNext-live",
@@ -62,26 +70,62 @@ function MobileStationControl({
           {title}
         </p>
       </div>
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={toggle}
-        className={cn(
-          "inline-flex h-full w-full shrink-0 items-center justify-center border-l border-voicesNext-background transition-colors hover:bg-voicesNext-background hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange disabled:cursor-not-allowed disabled:text-[#443f3f]/35",
-          playing && "bg-voicesNext-background text-voicesNext-cream",
-        )}
-        aria-label={
-          playing ? `Pause ${station.label}` : `Play ${station.label}`
-        }
-      >
-        {playing ? (
-          <Square aria-hidden="true" size={12} fill="currentColor" />
-        ) : station.videoUrl ? (
-          <Video aria-hidden="true" size={16} strokeWidth={2.2} />
-        ) : (
-          <Play aria-hidden="true" size={14} fill="currentColor" />
-        )}
-      </button>
+      <div className="flex divide-x divide-voicesNext-background border-l border-voicesNext-background">
+        <ScheduleDialog
+          label={`Open ${station.label} schedule`}
+          initialStation={station.id}
+          classNames={cn(
+            mobileActionClassName,
+            "w-[38px] rounded-none bg-voicesNext-cream text-[#443f3f] hover:bg-voicesNext-background hover:text-voicesNext-cream",
+          )}
+        >
+          <CalendarDays
+            aria-hidden="true"
+            className="voices-schedule-pulse"
+            size={16}
+            strokeWidth={2.2}
+          />
+        </ScheduleDialog>
+        <Link
+          href="/chat"
+          aria-label="Open chat"
+          className={cn(
+            mobileActionClassName,
+            "w-[38px] bg-voicesNext-cream text-[#443f3f] hover:bg-voicesNext-background hover:text-voicesNext-cream",
+          )}
+        >
+          <MessageCircle
+            aria-hidden="true"
+            className="voices-chat-bubble"
+            size={16}
+            strokeWidth={2.2}
+          />
+        </Link>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={toggle}
+          className={cn(
+            mobileActionClassName,
+            // Disabled keeps a faint tint rather than falling back to plain
+            // cream — East stays disabled until launch, and a fully cream cell
+            // reads as an empty gap rather than an inactive control.
+            "w-[44px] bg-voicesNext-orangeButton text-voicesNext-cream hover:bg-voicesNext-background disabled:cursor-not-allowed disabled:bg-[#443f3f]/[0.12] disabled:text-[#443f3f]/40",
+            playing && "bg-voicesNext-background text-voicesNext-cream",
+          )}
+          aria-label={
+            playing ? `Pause ${station.label}` : `Play ${station.label}`
+          }
+        >
+          {playing ? (
+            <Square aria-hidden="true" size={12} fill="currentColor" />
+          ) : station.videoUrl ? (
+            <Video aria-hidden="true" size={16} strokeWidth={2.2} />
+          ) : (
+            <Play aria-hidden="true" size={14} fill="currentColor" />
+          )}
+        </button>
+      </div>
     </div>
   );
 }
@@ -93,7 +137,7 @@ function MobileLiveControls() {
 
   return (
     <div
-      className="grid grid-cols-2 border-b border-voicesNext-background bg-voicesNext-cream md:hidden [&>*+*]:border-l [&>*+*]:border-voicesNext-background"
+      className="flex flex-col border-b border-voicesNext-background bg-voicesNext-cream md:hidden [&>*+*]:border-t [&>*+*]:border-voicesNext-background"
       aria-label="Mobile live controls"
     >
       <MobileStationControl station={kxStation} />
@@ -102,7 +146,7 @@ function MobileLiveControls() {
   );
 }
 
-function ScheduleContextItems({ mobile = false }: { mobile?: boolean }) {
+function ScheduleContextItems() {
   const { data } = useWeekInfo();
   const context = getScheduleContext(data, "kx");
   const items = [
@@ -113,32 +157,19 @@ function ScheduleContextItems({ mobile = false }: { mobile?: boolean }) {
 
   return (
     <div
-      className={cn(
-        "grid min-w-0 text-voicesNext-background",
-        mobile
-          ? "grid-cols-3 divide-x divide-voicesNext-background border-b border-voicesNext-background"
-          : "h-full flex-1 grid-cols-3 divide-x divide-black",
-      )}
+      className="grid h-full min-w-0 flex-1 grid-cols-3 divide-x divide-black text-voicesNext-background"
       aria-label="KX schedule context"
     >
       {items.map((item) => (
         <div
           key={item.label}
-          className={cn(
-            "min-w-0 px-2",
-            mobile
-              ? "min-h-[56px] py-[9px]"
-              : "flex flex-col justify-center px-3 lg:px-4 xl:px-5",
-          )}
+          className="flex min-w-0 flex-col justify-center px-3 lg:px-4 xl:px-5"
         >
           <p className="font-asap text-[9px] font-bold uppercase leading-none tracking-[1px] text-[#443f3f]/70 md:text-[10px]">
             {item.label}
           </p>
           <p
-            className={cn(
-              "mt-1 truncate font-outfit font-black uppercase leading-none tracking-[1px] text-[#443f3f]",
-              mobile ? "text-[12px]" : "text-[12px] lg:text-[13px]",
-            )}
+            className="mt-1 truncate font-outfit text-[12px] font-black uppercase leading-none tracking-[1px] text-[#443f3f] lg:text-[13px]"
             title={item.value}
           >
             {item.value}
@@ -149,29 +180,16 @@ function ScheduleContextItems({ mobile = false }: { mobile?: boolean }) {
   );
 }
 
-function PlayerActions({ mobile = false }: { mobile?: boolean }) {
+function PlayerActions() {
   return (
     <div
-      className={cn(
-        "flex shrink-0 divide-x divide-black",
-        mobile
-          ? "h-11 divide-voicesNext-background"
-          : "h-full border-l border-black",
-      )}
+      className="flex h-full shrink-0 divide-x divide-black border-l border-black"
       aria-label="Player actions"
     >
-      <ScheduleDialog
-        classNames={cn(
-          "inline-flex h-full items-center justify-center gap-2 rounded-none bg-voicesNext-cream px-4 font-gabarito font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange",
-          mobile ? "flex-1 text-[13px]" : "w-[118px] text-[13px]",
-        )}
-      />
+      <ScheduleDialog classNames="inline-flex h-full w-[118px] items-center justify-center gap-2 rounded-none bg-voicesNext-cream px-4 font-gabarito text-[13px] font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange" />
       <Link
         href="/chat"
-        className={cn(
-          "inline-flex h-full items-center justify-center gap-2 bg-voicesNext-cream px-4 font-gabarito font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange",
-          mobile ? "flex-1 text-[13px]" : "w-[104px] text-[13px]",
-        )}
+        className="inline-flex h-full w-[104px] items-center justify-center gap-2 bg-voicesNext-cream px-4 font-gabarito text-[13px] font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange"
       >
         <MessageCircle aria-hidden="true" size={15} strokeWidth={2.4} />
         Chat
@@ -180,20 +198,10 @@ function PlayerActions({ mobile = false }: { mobile?: boolean }) {
   );
 }
 
-function MobileSchedulePanel() {
-  return (
-    <div className="border-b border-voicesNext-background bg-voicesNext-cream md:hidden">
-      <ScheduleContextItems mobile />
-      <PlayerActions mobile />
-    </div>
-  );
-}
-
 export default function ExploreLiveStrip() {
   return (
     <section aria-label="Live player">
       <MobileLiveControls />
-      <MobileSchedulePanel />
       <div className="hidden w-full flex-col border-y border-black bg-voicesNext-cream text-voicesNext-background md:flex md:h-[68px] md:flex-row">
         <div className="flex border-b border-black md:border-b-0 md:border-r">
           <div className="flex w-[70px] shrink-0 items-center justify-center border-r border-black px-2">
@@ -238,7 +246,7 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
         </span>
         <span className="inline-flex items-center gap-2 font-asap text-[10px] uppercase tracking-[1px]">
           {status}
-          <span className="size-2 rounded-full bg-voicesNext-live" />
+          <span className="h-2 w-2 rounded-full bg-voicesNext-live" />
         </span>
       </div>
       <button

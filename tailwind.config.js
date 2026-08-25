@@ -1,4 +1,5 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
+const { SAFE_AREA_COLOR } = require("./lib/design-tokens");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -147,6 +148,9 @@ module.exports = {
           // on surface — under the 3:1 non-text minimum for borders/UI
           // components) to clear 3:1 against both dark surfaces.
           border: "#7E796F",
+          // Solid colour behind the iPhone Dynamic Island / status bar —
+          // see lib/design-tokens.js for the other places this must match.
+          safeArea: SAFE_AREA_COLOR,
         },
         accent: "#ed675d", // Same as voices.red for consistency
       },

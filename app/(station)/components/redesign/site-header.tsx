@@ -481,7 +481,19 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
 
   return (
     <header className="sticky top-0 z-40 -mx-2 bg-voicesNext-background md:mx-0">
-      <div className="grid min-h-[calc(64px+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-[#4b4b4b] via-[#343434] to-voicesNext-background px-[17px] pb-[7px] pt-[calc(7px+env(safe-area-inset-top))] md:hidden">
+      {/*
+        Solid colour behind the Dynamic Island / status bar. Kept as its own
+        box rather than folded into the gradient below: stretching that
+        gradient across the safe-area inset (~59px on Dynamic Island phones)
+        diluted #4b4b4b down to near-black by the time it reached the visible
+        island area. `env(safe-area-inset-top)` collapses to 0 outside iOS
+        Safari, so this is a no-op there.
+      */}
+      <div
+        aria-hidden="true"
+        className="h-[env(safe-area-inset-top)] bg-voicesNext-safeArea md:hidden"
+      />
+      <div className="grid min-h-[64px] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-voicesNext-safeArea via-[#343434] to-voicesNext-background px-[17px] pb-[7px] pt-[7px] md:hidden">
         <MobileHeaderArtwork />
         <button
           type="button"

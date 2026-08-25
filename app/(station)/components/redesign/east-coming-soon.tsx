@@ -68,7 +68,7 @@ export function EastComingSoonStrip() {
         </span>
         <span className="inline-flex items-center gap-2 font-asap text-[10px] font-bold uppercase tracking-[1px]">
           Tuning
-          <span className="voices-east-tuning-dot size-2 rounded-full bg-voicesNext-orange" />
+          <span className="voices-east-tuning-dot h-2 w-2 rounded-full bg-voicesNext-orange" />
         </span>
       </div>
       <div
