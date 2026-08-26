@@ -1,6 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type PanInfo,
+} from "framer-motion";
 import { Pause, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +14,14 @@ import { cn } from "@/lib/utils";
 import type { HomeFeatureItem } from "@/lib/voices/home";
 
 const AUTO_SLIDE_DELAY_MS = 7000;
+// Distance × velocity has to clear this before a drag release counts as an
+// intentional swipe rather than an incidental nudge — framer-motion's own
+// carousel recipe.
+const SWIPE_CONFIDENCE_THRESHOLD = 8000;
+
+function swipePower(offset: number, velocity: number) {
+  return Math.abs(offset) * velocity;
+}
 
 const fallbackItem: HomeFeatureItem = {
   id: "fallback",
@@ -138,6 +151,7 @@ export default function HomeFeaturePanel({
   const [manuallyPaused, setManuallyPaused] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   const item = featureItems[activeIndex] ?? featureItems[0];
   const stationLabel =
@@ -154,12 +168,16 @@ export default function HomeFeaturePanel({
   // Reduced-motion users get a static slide (no forced motion); everyone
   // else can still pause explicitly, or implicitly by hovering/focusing
   // inside the carousel — matches "autoplay >5s needs pause/stop" guidance.
+  // isDragging keeps a swipe in progress from racing the auto-advance timer:
+  // the interval effect below simply can't fire mid-drag, so a user's swipe
+  // always wins over an auto-slide that would have landed at the same time.
   const isAutoPlaying =
     hasMultipleItems &&
     !shouldReduceMotion &&
     !manuallyPaused &&
     !isHovering &&
-    !isFocusWithin;
+    !isFocusWithin &&
+    !isDragging;
 
   function showPrevious() {
     setDirection(-1);
@@ -225,6 +243,19 @@ export default function HomeFeaturePanel({
             transition={{
               duration: shouldReduceMotion ? 0.18 : 0.58,
               ease: [0.22, 1, 0.36, 1],
+            }}
+            drag={hasMultipleItems ? "x" : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.7}
+            onDragStart={() => setIsDragging(true)}
+            onDragEnd={(_event, info: PanInfo) => {
+              setIsDragging(false);
+              const swipe = swipePower(info.offset.x, info.velocity.x);
+              if (swipe < -SWIPE_CONFIDENCE_THRESHOLD) {
+                showNext();
+              } else if (swipe > SWIPE_CONFIDENCE_THRESHOLD) {
+                showPrevious();
+              }
             }}
           >
             <FeatureImage item={item} priority={activeIndex === 0} />
@@ -301,32 +332,13 @@ export default function HomeFeaturePanel({
       </div>
 
       {hasMultipleItems && (
-        <div className="absolute bottom-0 left-1/2 flex h-9 -translate-x-1/2 items-center overflow-hidden rounded-t-[4px] border border-b-0 border-voicesNext-cream/75 bg-voicesNext-background/80 font-asap text-[11px] font-bold leading-none text-voicesNext-cream backdrop-blur-sm md:hidden">
-          <button
-            type="button"
-            className="inline-flex h-full w-9 items-center justify-center border-r border-voicesNext-cream/45 transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
-            onClick={showPrevious}
-            aria-label="Show previous featured post"
-          >
-            <span aria-hidden="true">‹</span>
-          </button>
-          <span className="min-w-[38px] px-2 text-center tabular-nums">
-            {activeIndex + 1}/{featureItems.length}
-          </span>
-          <button
-            type="button"
-            className="inline-flex h-full w-9 items-center justify-center border-l border-voicesNext-cream/45 transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
-            onClick={showNext}
-            aria-label="Show next featured post"
-          >
-            <span aria-hidden="true">›</span>
-          </button>
-          <div className="flex h-full items-center border-l border-voicesNext-cream/45 px-1">
+        <div className="absolute inset-x-0 bottom-2 flex items-center justify-center gap-2 [text-shadow:0_1px_4px_rgba(0,0,0,0.8)] md:hidden">
+          <div className="flex items-center gap-1">
             {featureItems.map((featureItem, index) => (
               <button
                 key={featureItem.id}
                 type="button"
-                className="flex h-8 w-5 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
+                className="flex h-6 w-4 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
                 onClick={() => {
                   setDirection(index > activeIndex ? 1 : -1);
                   setAutoSlideResetKey((resetKey) => resetKey + 1);
@@ -338,35 +350,42 @@ export default function HomeFeaturePanel({
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "size-1.5 rounded-full bg-voicesNext-cream transition-[transform,opacity] duration-200",
+                    "size-1.5 rounded-full bg-voicesNext-cream shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-[transform,opacity] duration-200",
                     index === activeIndex
-                      ? "scale-100 opacity-100"
-                      : "scale-75 opacity-55",
+                      ? "scale-125 opacity-100"
+                      : "opacity-55 scale-75",
                   )}
                 />
               </button>
             ))}
           </div>
-          {!shouldReduceMotion && (
-            <button
-              type="button"
-              className="flex h-full w-9 items-center justify-center border-l border-voicesNext-cream/45 text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
-              onClick={() => setManuallyPaused((paused) => !paused)}
-              aria-label={
-                manuallyPaused
-                  ? "Play featured slideshow"
-                  : "Pause featured slideshow"
-              }
-              aria-pressed={manuallyPaused}
-            >
-              {manuallyPaused ? (
-                <Play aria-hidden="true" size={12} fill="currentColor" />
-              ) : (
-                <Pause aria-hidden="true" size={12} fill="currentColor" />
-              )}
-            </button>
-          )}
+          <span
+            className="font-asap text-[11px] font-bold tabular-nums leading-none text-voicesNext-cream"
+            aria-live="polite"
+          >
+            {activeIndex + 1}/{featureItems.length}
+          </span>
         </div>
+      )}
+
+      {hasMultipleItems && !shouldReduceMotion && (
+        <button
+          type="button"
+          className="absolute bottom-2 right-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-voicesNext-background/60 text-voicesNext-cream backdrop-blur-sm transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream md:hidden"
+          onClick={() => setManuallyPaused((paused) => !paused)}
+          aria-label={
+            manuallyPaused
+              ? "Play featured slideshow"
+              : "Pause featured slideshow"
+          }
+          aria-pressed={manuallyPaused}
+        >
+          {manuallyPaused ? (
+            <Play aria-hidden="true" size={14} fill="currentColor" />
+          ) : (
+            <Pause aria-hidden="true" size={14} fill="currentColor" />
+          )}
+        </button>
       )}
 
       <div className="absolute bottom-0 right-5 hidden h-[22px] w-auto items-center justify-center gap-3 font-asap text-[12px] font-bold leading-none text-voicesNext-cream md:flex">

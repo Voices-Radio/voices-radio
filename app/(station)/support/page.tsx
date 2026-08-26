@@ -43,7 +43,7 @@ export default async function SupportPage() {
       {/* Radio stays open / benefits */}
       <section
         id="what-membership-funds"
-        className="border-b border-voicesNext-border py-12"
+        className="scroll-mt-[calc(env(safe-area-inset-top)+95px)] border-b border-voicesNext-border py-12 md:scroll-mt-[90px]"
       >
         <h2 className="font-gabarito text-2xl font-bold text-voicesNext-cream md:text-3xl">
           {copy.support_radio_stays_open_heading}

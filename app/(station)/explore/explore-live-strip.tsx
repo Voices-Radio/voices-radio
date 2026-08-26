@@ -137,7 +137,7 @@ function MobileLiveControls() {
 
   return (
     <div
-      className="flex flex-col border-b border-voicesNext-background bg-voicesNext-cream md:hidden [&>*+*]:border-t [&>*+*]:border-voicesNext-background"
+      className="mb-4 flex flex-col border-b border-voicesNext-background bg-voicesNext-cream md:hidden [&>*+*]:border-t [&>*+*]:border-voicesNext-background"
       aria-label="Mobile live controls"
     >
       <MobileStationControl station={kxStation} />

@@ -64,6 +64,7 @@ const desktopMenuLinks = [
   { href: "/podcast", label: "Podcast Studio", opensInNewTab: true },
   { href: "/agency", label: "Agency", opensInNewTab: true },
   { href: "/collaborate", label: "Partner with Us" },
+  { href: "/about", label: "About Us" },
   { href: "/support", label: "Support Us" },
 ];
 
@@ -753,7 +754,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                     isActive(pathname, "/explore") ? "page" : undefined
                   }
                 >
-                  Discover
+                  Explore
                 </Link>
                 <a
                   href={shopLink}
@@ -799,7 +800,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                       : "text-voicesNext-cream",
                   )}
                 >
-                  About
+                  About Us
                 </Link>
                 <Link
                   href="/support"
@@ -826,7 +827,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
               />
 
               <div className="mt-auto">
-                <div className="px-[23px] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+                <div className="px-[23px] pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6">
                   <a
                     href={supporterLink}
                     className="inline-flex h-14 w-full items-center justify-center rounded-full bg-voicesNext-orange px-6 font-gabarito text-[20px] font-medium text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"

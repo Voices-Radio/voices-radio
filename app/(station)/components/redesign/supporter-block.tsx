@@ -10,7 +10,7 @@ export default function SupporterBlock({
   // apply-to-host-a-show form) — see site-header.tsx for the same fix.
   const ctaUrl = supporterUrl || "/join";
   const ctaClassName =
-    "inline-flex h-[52px] w-full max-w-[228px] items-center justify-center rounded-full px-6 font-gabarito text-[20px] font-medium text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface md:text-base md:font-bold";
+    "inline-flex min-h-[52px] w-full max-w-[228px] items-center justify-center rounded-full px-6 py-2 text-center font-gabarito text-[20px] font-medium leading-tight text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface md:text-base md:font-bold";
 
   return (
     <section className="flex justify-center py-10 md:block md:border-y md:border-voicesNext-border md:bg-voicesNext-surface md:py-0">
@@ -21,13 +21,13 @@ export default function SupporterBlock({
           </p>
         </div>
 
-        <div className="h-[139px] w-[125px] md:hidden">
+        <div className="relative h-[125px] w-[125px] md:hidden">
           <Image
-            src="/voices.svg"
+            src="/VOICESLOGO_LIGHTBOX.png"
             alt=""
-            width={125}
-            height={139}
-            className="h-[139px] w-[125px] object-contain [filter:brightness(0)_saturate(100%)_invert(40%)_sepia(91%)_saturate(1164%)_hue-rotate(345deg)_brightness(91%)_contrast(91%)]"
+            fill
+            sizes="125px"
+            className="object-contain"
           />
         </div>
 
