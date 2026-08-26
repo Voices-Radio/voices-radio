@@ -2,15 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function SiteFooter({
-  supporterUrl,
   contactUrl,
 }: {
-  supporterUrl?: string | null;
   contactUrl?: string | null;
 }) {
-  // Falls back to /join, not VOICES_APPLY_FOR_SHOW_URL (that's the
-  // apply-to-host-a-show form) — see site-header.tsx for the same fix.
-  const ctaUrl = supporterUrl || "/join";
+  // Always the membership signup page — not settings.apply_link, which is
+  // the CMS "Apply Link" field (the radio show submission Google Form).
+  // See site-header.tsx for the same fix.
+  const ctaUrl = "/join";
   const contactHref = contactUrl || "/chat";
 
   return (

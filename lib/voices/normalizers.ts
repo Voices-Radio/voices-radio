@@ -1,4 +1,5 @@
 import { enhanceArtworkUrl, resolveShowArtwork } from "./artwork";
+import { buildArchiveMedia } from "./archive-media";
 import type {
   VoicesArtist,
   VoicesArtistRaw,
@@ -112,6 +113,26 @@ export function normalizeShow(
   const archiveUrl = raw.url ?? raw.mixcloudUrl ?? raw.soundcloudUrl ?? undefined;
   const mixcloudUrl =
     raw.mixcloudUrl ?? (isMixcloudUrl(raw.url) ? raw.url : undefined) ?? undefined;
+  const artwork = resolveShowArtwork({
+    showTitle: raw.title,
+    showImageUrl,
+    artistName: artist?.name,
+    artistImageUrl: artist?.imageUrl,
+  });
+  const archiveMedia = buildArchiveMedia({
+    showId: raw._id,
+    title: raw.title,
+    artwork,
+    artistName: artist?.name,
+    duration: raw.duration,
+    platform: raw.platform,
+    mixcloudUrl: raw.mixcloudUrl,
+    soundcloudUrl: raw.soundcloudUrl,
+    mixcloudKey: raw.mixcloudKey,
+    soundcloudId: raw.soundcloudId,
+    platformId: raw.platform_id,
+    url: raw.url,
+  });
 
   return {
     id: raw._id,
@@ -120,12 +141,7 @@ export function normalizeShow(
     date: raw.show_date ?? raw.date ?? raw.upload_date ?? undefined,
     duration: raw.duration ?? undefined,
     imageUrl: showImageUrl,
-    artwork: resolveShowArtwork({
-      showTitle: raw.title,
-      showImageUrl,
-      artistName: artist?.name,
-      artistImageUrl: artist?.imageUrl,
-    }),
+    artwork,
     artist,
     artistId,
     genres,
@@ -133,7 +149,8 @@ export function normalizeShow(
     station,
     locationTags,
     platform: raw.platform,
-    archiveUrl,
+    archiveUrl: archiveMedia?.externalUrl ?? archiveUrl,
+    archiveMedia,
     mixcloudUrl,
     soundcloudUrl: raw.soundcloudUrl ?? undefined,
     matchingStatus: raw.matching_status,

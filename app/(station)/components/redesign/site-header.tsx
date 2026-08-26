@@ -16,7 +16,6 @@ import { useSessionUser } from "./use-session-user";
 const SHOP_FALLBACK_URL = "https://shop.voicesradio.co.uk/";
 
 type HeaderSettings = {
-  applyLink?: string;
   contactLink?: string;
   storeLink?: string;
   instagramLink?: string;
@@ -340,11 +339,13 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const shopLink = settings.storeLink || SHOP_FALLBACK_URL;
-  // Falls back to /join, not VOICES_APPLY_FOR_SHOW_URL (that's the
-  // apply-to-host-a-show form) — a "Become a Supporter" button that isn't
-  // explicitly configured in Sanity should still go somewhere related to
-  // becoming a supporter.
-  const supporterLink = settings.applyLink || "/join";
+  // Always the membership signup page. settings.applyLink is the CMS
+  // "Apply Link" field (VOICES_APPLY_FOR_SHOW_URL, the radio show
+  // submission Google Form) — it's a required field so it's always
+  // populated, meaning a `settings.applyLink || "/join"` fallback here
+  // would never actually fall back and "Become a Supporter" would always
+  // open the show-submission form instead of the join page.
+  const supporterLink = "/join";
   const contactLink = settings.contactLink || "/chat";
   const trimmedSearchQuery = searchQuery.trim();
   const searchReady = trimmedSearchQuery.length >= 2;

@@ -3,10 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageHero from "../../components/redesign/page-hero";
+import ArchivePlayPanel from "../../components/redesign/archive-play-panel";
 import ShowRail from "../../components/redesign/show-rail";
 import SupporterBlock from "../../components/redesign/supporter-block";
 import { getShow, getShowsForArtist } from "@/lib/voices/api";
-import MixcloudArchivePlayer from "../../components/redesign/mixcloud-archive-player";
 
 type ShowPageProps = {
   params: Promise<{ id: string }>;
@@ -140,11 +140,9 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
           </p>
         )}
 
-        {show.mixcloudUrl && (
-          <div className="mx-auto mt-6 max-w-[365px]">
-            <MixcloudArchivePlayer title={show.title} url={show.mixcloudUrl} />
-          </div>
-        )}
+        <div className="mx-auto mt-6 max-w-[365px]">
+          <ArchivePlayPanel media={show.archiveMedia} />
+        </div>
       </section>
 
       <section className="mx-auto hidden max-w-[1280px] gap-8 px-4 py-10 md:grid md:grid-cols-[minmax(0,420px)_1fr] md:px-8">
@@ -203,19 +201,7 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
               {show.artist.name}
             </Link>
           )}
-          {show.mixcloudUrl && (
-            <MixcloudArchivePlayer title={show.title} url={show.mixcloudUrl} />
-          )}
-          {show.archiveUrl && (
-            <a
-              href={show.archiveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex rounded-full bg-voicesNext-orange px-5 py-3 font-asap text-sm font-bold uppercase text-voicesNext-background"
-            >
-              Open archive source
-            </a>
-          )}
+          <ArchivePlayPanel media={show.archiveMedia} />
         </div>
       </section>
 

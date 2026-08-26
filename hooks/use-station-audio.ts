@@ -2,21 +2,25 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
-const STOP_EVENT = "voices:stop-live-audio";
-const PLAY_EVENT = "voices:play-live-audio";
+export const LIVE_AUDIO_STOP_EVENT = "voices:stop-live-audio";
+export const LIVE_AUDIO_PLAY_EVENT = "voices:play-live-audio";
 
 export function stopLiveAudio(playerId?: string) {
   if (typeof window === "undefined") return;
 
   window.dispatchEvent(
-    new CustomEvent(STOP_EVENT, { detail: playerId ? { playerId } : {} }),
+    new CustomEvent(LIVE_AUDIO_STOP_EVENT, {
+      detail: playerId ? { playerId } : {},
+    }),
   );
 }
 
 export function playLiveAudio(playerId: string) {
   if (typeof window === "undefined") return;
 
-  window.dispatchEvent(new CustomEvent(PLAY_EVENT, { detail: { playerId } }));
+  window.dispatchEvent(
+    new CustomEvent(LIVE_AUDIO_PLAY_EVENT, { detail: { playerId } }),
+  );
 }
 
 export default function useStationAudio(
@@ -58,9 +62,10 @@ export default function useStationAudio(
       setLoading(false);
     }
 
-    window.addEventListener(STOP_EVENT, stopOtherAudio);
+    window.addEventListener(LIVE_AUDIO_STOP_EVENT, stopOtherAudio);
 
-    return () => window.removeEventListener(STOP_EVENT, stopOtherAudio);
+    return () =>
+      window.removeEventListener(LIVE_AUDIO_STOP_EVENT, stopOtherAudio);
   }, [resolvedPlayerId]);
 
   useEffect(() => {
@@ -71,9 +76,10 @@ export default function useStationAudio(
       void play();
     }
 
-    window.addEventListener(PLAY_EVENT, playRequestedAudio);
+    window.addEventListener(LIVE_AUDIO_PLAY_EVENT, playRequestedAudio);
 
-    return () => window.removeEventListener(PLAY_EVENT, playRequestedAudio);
+    return () =>
+      window.removeEventListener(LIVE_AUDIO_PLAY_EVENT, playRequestedAudio);
   }, [play, resolvedPlayerId]);
 
   async function toggle() {

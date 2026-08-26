@@ -101,6 +101,22 @@ export interface VoicesArtwork {
   source: "show" | "artist" | "fallback";
 }
 
+export type VoicesArchiveProvider = VoicesPlatform;
+
+export interface VoicesArchiveMedia {
+  id: string;
+  provider: VoicesArchiveProvider;
+  title: string;
+  sourceUrl: string;
+  embedUrl: string;
+  externalUrl: string;
+  artwork: VoicesArtwork;
+  artistName?: string;
+  duration?: number;
+  providerId?: string;
+  providerKey?: string;
+}
+
 export interface VoicesShow {
   id: string;
   title: string;
@@ -117,6 +133,7 @@ export interface VoicesShow {
   locationTags: VoicesLocationTag[];
   platform?: VoicesPlatform;
   archiveUrl?: string;
+  archiveMedia?: VoicesArchiveMedia;
   mixcloudUrl?: string;
   soundcloudUrl?: string;
   matchingStatus?: VoicesMatchingStatus;
