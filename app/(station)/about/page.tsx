@@ -39,7 +39,7 @@ export default async function AboutPage() {
 
   return (
     <main id="main-content" className="scroll-mt-24">
-      <section className="relative aspect-[4/3] md:aspect-[4/2]">
+      <section className="relative aspect-[4/3] md:aspect-[4/2] md:max-h-[calc(100svh-142px)]">
         <Image
           alt=""
           blurDataURL={about.hero_image.lqip}
@@ -57,7 +57,7 @@ export default async function AboutPage() {
       </section>
 
       <section
-        className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20"
+        className="relative overflow-hidden bg-voices-beige px-6 py-12 text-black md:px-8 md:py-20"
         id="how-we-got-here"
       >
         <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">
@@ -116,7 +116,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
+      <section className="relative overflow-hidden bg-voices-beige px-6 py-12 text-black md:px-8 md:py-20">
         <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">
           <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
             {about.our_values_heading}
@@ -155,7 +155,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
+      <section className="relative overflow-hidden bg-voices-beige px-6 py-12 text-black md:px-8 md:py-20">
         <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">
           <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
             {about.community_heading}

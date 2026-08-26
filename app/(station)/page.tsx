@@ -56,7 +56,7 @@ export default async function Home() {
                 stations. If you&apos;re passionate about sharing your ideas,
                 apply to join our community of radio presenters, hosts and DJs.
               </span>
-              <span className="hidden md:inline">Voices picks</span>
+              <span className="hidden md:inline">Apply for a show!</span>
             </h2>
             <a
               href={VOICES_APPLY_FOR_SHOW_URL}

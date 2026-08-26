@@ -481,7 +481,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   }
 
   return (
-    <header className="sticky top-0 z-40 -mx-2 bg-voicesNext-background md:mx-0">
+    <header className="sticky top-0 z-40 -mx-2 bg-voicesNext-safeArea md:mx-0 md:bg-voicesNext-background">
       {/*
         Solid colour behind the Dynamic Island / status bar. Kept as its own
         box rather than folded into the gradient below: stretching that
@@ -492,7 +492,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
       */}
       <div
         aria-hidden="true"
-        className="h-[env(safe-area-inset-top)] bg-voicesNext-safeArea md:hidden"
+        className="h-[env(safe-area-inset-top,0px)] bg-voicesNext-safeArea md:hidden"
       />
       <div className="grid min-h-[64px] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-voicesNext-safeArea via-[#343434] to-voicesNext-background px-[17px] pb-[7px] pt-[7px] md:hidden">
         <MobileHeaderArtwork />

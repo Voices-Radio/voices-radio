@@ -63,7 +63,7 @@ export function EastComingSoonStrip() {
         <span className="font-outfit text-[19px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
           East
         </span>
-        <span className="voices-east-tease truncate font-outfit text-[13px] font-medium uppercase leading-none tracking-[1px] text-[#443f3f]">
+        <span className="voices-east-tease truncate font-outfit text-[13px] leading-none tracking-[1px] text-[#443f3f]">
           Coming soon · Late summer
         </span>
         <span className="inline-flex items-center gap-2 font-asap text-[10px] font-bold uppercase tracking-[1px]">
@@ -72,7 +72,7 @@ export function EastComingSoonStrip() {
         </span>
       </div>
       <div
-        className="inline-flex h-full w-[35px] shrink-0 items-center justify-center border-l border-black bg-voicesNext-orange text-voicesNext-cream"
+        className="inline-flex h-[34px] w-[35px] shrink-0 items-center justify-center border-l border-black bg-voicesNext-orange text-voicesNext-cream"
         aria-hidden="true"
       >
         <Radio size={15} strokeWidth={2.2} />

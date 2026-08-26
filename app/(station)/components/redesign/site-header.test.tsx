@@ -22,6 +22,18 @@ beforeEach(() => {
 });
 
 describe("SiteHeader", () => {
+  it("lets iOS Safari sample the safe-area tint from the mobile header shell", () => {
+    const { container } = render(<SiteHeader settings={{}} />);
+
+    const header = container.querySelector("header");
+    const safeAreaStrip = header?.querySelector("[aria-hidden='true']");
+
+    expect(header).toHaveClass("bg-voicesNext-safeArea");
+    expect(header).toHaveClass("md:bg-voicesNext-background");
+    expect(safeAreaStrip).toHaveClass("h-[env(safe-area-inset-top,0px)]");
+    expect(safeAreaStrip).toHaveClass("bg-voicesNext-safeArea");
+  });
+
   it("orders the desktop nav with Shop before Collaborate and keeps actions tight", () => {
     const { container } = render(<SiteHeader settings={{}} />);
 

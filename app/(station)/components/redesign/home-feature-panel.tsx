@@ -260,12 +260,12 @@ export default function HomeFeaturePanel({
           >
             <FeatureImage item={item} priority={activeIndex === 0} />
 
-            <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background md:inset-x-0 md:top-0 md:flex-row md:items-start md:justify-between md:gap-0 md:text-[18px]">
-              <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[104px] md:border-b-2 md:border-r-2 md:border-voicesNext-cream md:bg-voicesNext-orange md:px-4 md:py-[9px] md:text-center md:text-voicesNext-cream">
-                {stationLabel}
-              </span>
-              <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[124px] md:border-b-2 md:border-l-2 md:border-voicesNext-cream md:px-4 md:py-[9px] md:text-center">
+            <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background md:text-[18px]">
+              <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[124px] md:px-4 md:py-[9px] md:text-center">
                 {locationLabel}
+              </span>
+              <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[124px] md:px-4 md:py-[9px] md:text-center">
+                {stationLabel}
               </span>
             </div>
 
