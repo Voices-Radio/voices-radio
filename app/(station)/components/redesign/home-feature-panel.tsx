@@ -271,7 +271,7 @@ export default function HomeFeaturePanel({
 
             <FeatureLink
               href={item.href}
-              className="absolute bottom-[25px] left-0 block w-[320px] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream md:hidden"
+              className="absolute bottom-[32px] left-0 block w-[320px] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream md:hidden"
             >
               <h2 className="truncate font-gabarito text-[24px] font-bold leading-none">
                 {item.title}
@@ -329,64 +329,77 @@ export default function HomeFeaturePanel({
             </div>
           </motion.div>
         </AnimatePresence>
-      </div>
 
-      {hasMultipleItems && (
-        <div className="absolute inset-x-0 bottom-2 flex items-center justify-center gap-2 [text-shadow:0_1px_4px_rgba(0,0,0,0.8)] md:hidden">
-          <div className="flex items-center gap-1">
-            {featureItems.map((featureItem, index) => (
+        {/* Mobile transport row: dots · counter · play/pause read as one
+            cluster, in the same order as the desktop row below. It lives
+            inside the image frame rather than the section so `bottom` is
+            measured against the artwork — the frame's overflow-hidden then
+            makes it impossible for a control to hang off the bottom edge.
+            The wrapper is pointer-events-none so a swipe across the bottom
+            band still reaches the draggable slide; only the controls
+            themselves take pointer events. */}
+        {hasMultipleItems && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-1 flex items-center justify-center gap-2 [text-shadow:0_1px_4px_rgba(0,0,0,0.8)] md:hidden">
+            <div className="pointer-events-auto flex items-center gap-1">
+              {featureItems.map((featureItem, index) => (
+                <button
+                  key={featureItem.id}
+                  type="button"
+                  className="flex h-6 w-4 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
+                  onClick={() => {
+                    setDirection(index > activeIndex ? 1 : -1);
+                    setAutoSlideResetKey((resetKey) => resetKey + 1);
+                    setActiveIndex(index);
+                  }}
+                  aria-label={`Show featured item ${index + 1}`}
+                  aria-current={index === activeIndex}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      // h-/w- rather than `size-`: this project is on Tailwind
+                      // 3.3, which predates the `size-*` utility, so `size-1.5`
+                      // silently generated nothing and the dots rendered 0x0.
+                      "h-1.5 w-1.5 rounded-full bg-voicesNext-cream shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-[transform,opacity] duration-200",
+                      index === activeIndex
+                        ? "scale-125 opacity-100"
+                        : "opacity-55 scale-75",
+                    )}
+                  />
+                </button>
+              ))}
+            </div>
+            <span
+              className="font-asap text-[11px] font-bold tabular-nums leading-none text-voicesNext-cream"
+              aria-live="polite"
+            >
+              {activeIndex + 1}/{featureItems.length}
+            </span>
+            {!shouldReduceMotion && (
               <button
-                key={featureItem.id}
                 type="button"
-                className="flex h-6 w-4 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
-                onClick={() => {
-                  setDirection(index > activeIndex ? 1 : -1);
-                  setAutoSlideResetKey((resetKey) => resetKey + 1);
-                  setActiveIndex(index);
-                }}
-                aria-label={`Show featured item ${index + 1}`}
-                aria-current={index === activeIndex}
+                // No chrome behind the glyph — a drop-shadow (not text-shadow;
+                // this is an SVG) gives it the same legibility treatment the
+                // dots and counter already use over arbitrary artwork.
+                className="pointer-events-auto inline-flex h-6 w-6 items-center justify-center text-voicesNext-cream transition-colors [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.7))] focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream active:text-voicesNext-orange"
+                onClick={() => setManuallyPaused((paused) => !paused)}
+                aria-label={
+                  manuallyPaused
+                    ? "Play featured slideshow"
+                    : "Pause featured slideshow"
+                }
+                aria-pressed={manuallyPaused}
               >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "size-1.5 rounded-full bg-voicesNext-cream shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-[transform,opacity] duration-200",
-                    index === activeIndex
-                      ? "scale-125 opacity-100"
-                      : "opacity-55 scale-75",
-                  )}
-                />
+                {manuallyPaused ? (
+                  <Play aria-hidden="true" size={12} fill="currentColor" />
+                ) : (
+                  <Pause aria-hidden="true" size={12} fill="currentColor" />
+                )}
               </button>
-            ))}
+            )}
           </div>
-          <span
-            className="font-asap text-[11px] font-bold tabular-nums leading-none text-voicesNext-cream"
-            aria-live="polite"
-          >
-            {activeIndex + 1}/{featureItems.length}
-          </span>
-        </div>
-      )}
-
-      {hasMultipleItems && !shouldReduceMotion && (
-        <button
-          type="button"
-          className="absolute bottom-2 right-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-voicesNext-background/60 text-voicesNext-cream backdrop-blur-sm transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream md:hidden"
-          onClick={() => setManuallyPaused((paused) => !paused)}
-          aria-label={
-            manuallyPaused
-              ? "Play featured slideshow"
-              : "Pause featured slideshow"
-          }
-          aria-pressed={manuallyPaused}
-        >
-          {manuallyPaused ? (
-            <Play aria-hidden="true" size={14} fill="currentColor" />
-          ) : (
-            <Pause aria-hidden="true" size={14} fill="currentColor" />
-          )}
-        </button>
-      )}
+        )}
+      </div>
 
       <div className="absolute bottom-0 right-5 hidden h-[22px] w-auto items-center justify-center gap-3 font-asap text-[12px] font-bold leading-none text-voicesNext-cream md:flex">
         <button

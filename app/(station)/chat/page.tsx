@@ -1,4 +1,4 @@
-import Chatango from "./components/chatango";
+import Chatango from "./chatango";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
