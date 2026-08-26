@@ -1,18 +1,16 @@
-import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import GenreBrowser from "../components/redesign/genre-browser";
 import ShowCard from "../components/redesign/show-card";
 import SupporterBlock from "../components/redesign/supporter-block";
 import { getShows } from "@/lib/voices/api";
-import { getGenreAliases } from "@/lib/voices/genre-taxonomy";
-import type { VoicesShow } from "@/lib/voices/types";
+import { matchesGenreKeys } from "@/lib/voices/genre-taxonomy";
 import {
-  exploreGenreOptions,
-  exploreGenreTaxonomy,
-  getGenreKey,
-  isGenreKey,
-} from "./explore-options";
-
-type ExploreSearchParams = Record<string, string | string[] | undefined>;
+  getParamArray,
+  getSingleParam,
+  type VoicesSearchParams,
+} from "@/lib/voices/search-params";
+import type { VoicesShow } from "@/lib/voices/types";
+import { isGenreKey } from "./explore-options";
 
 const categoryTiles = [
   {
@@ -53,43 +51,6 @@ const categoryTiles = [
     opensInNewTab: true,
   },
 ];
-
-function getParamArray(
-  searchParams: ExploreSearchParams | undefined,
-  key: string,
-) {
-  const value = searchParams?.[key];
-  if (!value) return [];
-  return Array.isArray(value) ? value : [value];
-}
-
-function getSingleParam(
-  searchParams: ExploreSearchParams | undefined,
-  key: string,
-) {
-  const value = searchParams?.[key];
-  return Array.isArray(value) ? value[0] : value;
-}
-
-function normalizeFilterValue(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[’']/g, "")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
-
-function matchesGenres(show: VoicesShow, selectedGenres: string[]) {
-  if (!selectedGenres.length) return true;
-  const showGenres = show.genres.map(normalizeFilterValue).filter(Boolean);
-  if (!showGenres.length) return false;
-
-  return selectedGenres.some((genre) => {
-    const targets = getGenreAliases(genre).map(normalizeFilterValue);
-    return targets.some((target) => showGenres.includes(target));
-  });
-}
 
 function isKxExploreShow(show: VoicesShow) {
   return show.station !== "east" && !show.locationTags.includes("east");
@@ -214,61 +175,10 @@ function MusicGrid({
   );
 }
 
-function GenresScreen() {
-  return (
-    <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
-      <div className="max-w-[760px] space-y-3 md:space-y-4">
-        {exploreGenreOptions.map((genre) => (
-          <details key={genre} className="group w-full">
-            <summary className="inline-flex min-h-[35px] w-auto max-w-full cursor-pointer list-none items-center rounded-full border-2 border-voicesNext-cream text-left font-asap text-[18px] font-bold leading-none text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background [&::-webkit-details-marker]:hidden">
-              <span className="min-w-0 truncate py-[6px] pl-[13px] pr-[15px]">
-                {genre}
-              </span>
-              <span
-                aria-hidden="true"
-                className="mr-[3px] inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center rounded-full border-2 border-current"
-              >
-                <ChevronDown className="size-[15px] stroke-[4px] transition-transform group-open:rotate-180" />
-              </span>
-            </summary>
-            <div className="mt-3 flex flex-wrap gap-2 pl-4">
-              <Link
-                href={`/explore?category=music&genre=${encodeURIComponent(
-                  genre,
-                )}`}
-                className="inline-flex min-h-[31px] items-center justify-center rounded-full border border-voicesNext-orange bg-voicesNext-cream px-[10px] py-1 font-asap text-[16px] font-bold uppercase leading-none text-voicesNext-orange transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-[22px] md:min-h-0 md:px-4 md:py-0 md:text-[12px]"
-              >
-                All
-              </Link>
-              {Object.keys(exploreGenreTaxonomy[genre] ?? {}).map(
-                (subgenre) => {
-                  const key = getGenreKey(genre, subgenre);
-
-                  return (
-                    <Link
-                      key={key}
-                      href={`/explore?category=music&genre=${encodeURIComponent(
-                        key,
-                      )}`}
-                      className="inline-flex min-h-[31px] items-center justify-center rounded-full border border-voicesNext-cream px-[10px] py-1 font-asap text-[16px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-[22px] md:min-h-0 md:px-4 md:py-0 md:text-[12px]"
-                    >
-                      {subgenre}
-                    </Link>
-                  );
-                },
-              )}
-            </div>
-          </details>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams?: Promise<ExploreSearchParams>;
+  searchParams?: Promise<VoicesSearchParams>;
 }) {
   const resolvedSearchParams = await searchParams;
   const activeTab =
@@ -289,7 +199,7 @@ export default async function ExplorePage({
     : [];
   const visibleShows = sortShows(
     shows.filter(
-      (show) => isKxExploreShow(show) && matchesGenres(show, selectedGenres),
+      (show) => isKxExploreShow(show) && matchesGenreKeys(show.genres, selectedGenres),
     ),
   ).slice(0, 16);
 
@@ -297,7 +207,11 @@ export default async function ExplorePage({
     <main id="main-content" className="scroll-mt-24">
       <ExploreTabs activeTab={activeTab} />
       {activeTab === "genres" ? (
-        <GenresScreen />
+        <GenreBrowser
+          buildHref={(genreKey) =>
+            `/explore?category=music&genre=${encodeURIComponent(genreKey)}`
+          }
+        />
       ) : (
         <>
           {!showMusicGrid && <CategoryTiles />}

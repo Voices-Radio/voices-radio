@@ -202,7 +202,7 @@ export default function ExploreLiveStrip() {
   return (
     <section aria-label="Live player">
       <MobileLiveControls />
-      <div className="hidden w-full flex-col border-y border-black bg-voicesNext-cream text-voicesNext-background md:flex md:h-[68px] md:flex-row">
+      <div className="hidden w-full flex-col border-y border-black bg-voicesNext-cream text-voicesNext-background md:flex md:h-[70px] md:flex-row">
         <div className="flex border-b border-black md:border-b-0 md:border-r">
           <div className="flex w-[70px] shrink-0 items-center justify-center border-r border-black px-2">
             <p className="font-outfit text-[15px] font-black uppercase tracking-[1px]">

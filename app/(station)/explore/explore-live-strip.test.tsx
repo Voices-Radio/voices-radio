@@ -84,3 +84,16 @@ describe("ExploreLiveStrip mobile controls", () => {
     expect(within(mobileControls()).queryByText("Previous")).toBeNull();
   });
 });
+
+describe("ExploreLiveStrip desktop controls", () => {
+  it("reserves room for two 34px station rows plus the player borders", () => {
+    const { container } = render(<ExploreLiveStrip />);
+
+    const desktopPlayer = container.querySelector(
+      'section[aria-label="Live player"] > div.hidden',
+    );
+
+    expect(desktopPlayer).toHaveClass("md:h-[70px]");
+    expect(desktopPlayer?.className).not.toContain("md:h-[68px]");
+  });
+});

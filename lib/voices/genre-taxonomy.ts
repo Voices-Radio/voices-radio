@@ -42,3 +42,28 @@ export function getGenreRegexPatterns(keys: string[]) {
     (alias) => `^${alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
   );
 }
+
+export function normalizeGenreValue(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[’']/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+export function matchesGenreKeys(
+  itemGenres: string[],
+  selectedKeys: string[],
+) {
+  if (!selectedKeys.length) return true;
+
+  const normalized = itemGenres.map(normalizeGenreValue).filter(Boolean);
+  if (!normalized.length) return false;
+
+  return selectedKeys.some((key) =>
+    getGenreAliases(key)
+      .map(normalizeGenreValue)
+      .some((alias) => normalized.includes(alias)),
+  );
+}
