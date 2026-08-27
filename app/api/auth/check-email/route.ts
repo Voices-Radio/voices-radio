@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { backendCheckEmail } from "@/lib/voices/membership/auth-client";
+import {
+  AUTH_RATE_LIMITS,
+  enforceRateLimit,
+} from "@/lib/voices/rate-limit";
 
 const checkEmailSchema = z.object({
   email: z.string().trim().email(),
 });
 
 export async function POST(request: NextRequest) {
+  const limited = await enforceRateLimit(request, AUTH_RATE_LIMITS.checkEmail);
+  if (limited) return limited;
+
   const body = await request.json().catch(() => null);
   const parsed = checkEmailSchema.safeParse(body);
 

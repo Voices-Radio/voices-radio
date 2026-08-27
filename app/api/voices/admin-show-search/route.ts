@@ -1,4 +1,5 @@
 import { VOICES_API_BASE_URL } from "@/lib/voices/config";
+import { requireStudioUser } from "@/lib/voices/studio-auth";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +22,12 @@ async function readJsonResponse(response: Response) {
 }
 
 export async function GET(request: Request) {
+  // Gate BEFORE touching the admin token: this route lends a server-side
+  // credential to its caller, so an unauthenticated caller must never get
+  // far enough to spend it.
+  const unauthorized = await requireStudioUser(request);
+  if (unauthorized) return unauthorized;
+
   const token = process.env.VOICES_API_ADMIN_TOKEN;
 
   if (!token) {

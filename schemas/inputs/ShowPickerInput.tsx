@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { ObjectInputProps } from "sanity";
-import { PatchEvent, set, unset } from "sanity";
+import { PatchEvent, set, unset, useClient } from "sanity";
+import { studioAuthHeaders } from "./studio-auth-headers";
+
+const API_VERSION = "2023-06-21";
 
 type ShowPickerValue = {
   showId?: string;
@@ -98,6 +101,7 @@ export default function ShowPickerInput(
   props: ObjectInputProps<ShowPickerValue>,
 ) {
   const { value, onChange } = props;
+  const client = useClient({ apiVersion: API_VERSION });
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -134,7 +138,7 @@ export default function ShowPickerInput(
       try {
         const response = await fetch(
           `/api/voices/admin-show-search?${params.toString()}`,
-          { headers: { Accept: "application/json" } },
+          { headers: studioAuthHeaders(client, { Accept: "application/json" }) },
         );
         const payload = await readShowSearchResponse(response);
 
@@ -168,7 +172,7 @@ export default function ShowPickerInput(
     return () => {
       cancelled = true;
     };
-  }, [debouncedQuery, page]);
+  }, [client, debouncedQuery, page]);
 
   const selectedLabel = useMemo(() => {
     if (!value?.showId) return "No show selected";

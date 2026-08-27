@@ -61,10 +61,15 @@ export async function POST(req: Request) {
       revalidated: [...Array.from(pathsToInvalidate)],
     });
   } catch (err) {
-    return NextResponse.json({
-      success: false,
-      message: err instanceof Error ? err.message : "Unknown error",
-    });
+    // Log the detail server-side only. Returning err.message leaked internals
+    // to an unauthenticated caller, and the 200 status made Sanity record a
+    // failed revalidation as a success instead of retrying it.
+    console.error("Sanity revalidate failed:", err);
+
+    return NextResponse.json(
+      { success: false, message: "Revalidation failed." },
+      { status: 500 },
+    );
   }
 }
 

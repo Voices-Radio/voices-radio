@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { backendLogin } from "@/lib/voices/membership/auth-client";
+import {
+  AUTH_RATE_LIMITS,
+  enforceRateLimit,
+} from "@/lib/voices/rate-limit";
 import { setSessionCookies } from "@/lib/voices/membership/session";
 
 const loginSchema = z.object({
@@ -9,6 +13,9 @@ const loginSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const limited = await enforceRateLimit(request, AUTH_RATE_LIMITS.login);
+  if (limited) return limited;
+
   const body = await request.json().catch(() => null);
   const parsed = loginSchema.safeParse(body);
 

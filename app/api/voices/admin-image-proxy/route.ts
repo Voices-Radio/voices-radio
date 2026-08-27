@@ -1,3 +1,4 @@
+import { requireStudioUser } from "@/lib/voices/studio-auth";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -66,6 +67,11 @@ async function readLimitedBody(response: Response) {
 }
 
 export async function GET(request: Request) {
+  // SSRF controls below are sound, but an unauthenticated fetch primitive is
+  // still an open proxy and bandwidth amplifier. Studio users only.
+  const unauthorized = await requireStudioUser(request);
+  if (unauthorized) return unauthorized;
+
   const incomingUrl = new URL(request.url);
   const imageUrl = parseImageUrl(incomingUrl.searchParams.get("url"));
 

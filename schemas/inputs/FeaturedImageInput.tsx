@@ -4,6 +4,7 @@ import { Button, Card, Spinner, Stack, Text } from "@sanity/ui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ImageValue, ObjectInputProps, Path } from "sanity";
 import { PatchEvent, set, useClient, useFormValue } from "sanity";
+import { studioAuthHeaders } from "./studio-auth-headers";
 import { enhanceArtworkUrl } from "@/lib/voices/artwork";
 
 type FeaturedImageValue = ImageValue & {
@@ -198,7 +199,7 @@ export default function FeaturedImageInput(
           `/api/voices/admin-image-proxy?url=${encodeURIComponent(
             sourceUrl,
           )}`,
-          { headers: { Accept: "image/*" } },
+          { headers: studioAuthHeaders(client, { Accept: "image/*" }) },
         );
         const blob = await readProxyResponse(response);
         const asset = await client.assets.upload("image", blob, {
