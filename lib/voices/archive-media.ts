@@ -91,10 +91,12 @@ function buildMixcloudUrl(feedPath: string) {
 }
 
 function buildMixcloudEmbedUrl(feedPath: string) {
+  // `mini=1` renders Mixcloud's compact 60px-tall control bar (no cover art),
+  // and dropping `light=1` keeps the widget on its dark theme so it sits flush
+  // with the dark MiniPlayer instead of showing a white strip beneath it.
   const params = new URLSearchParams({
     hide_cover: "1",
     mini: "1",
-    light: "1",
     feed: feedPath,
   });
 
@@ -213,9 +215,10 @@ export function buildArchiveMedia({
 
   if (!feedPath) return undefined;
 
-  const sourceUrl = mixcloudSource && isMixcloudUrl(mixcloudSource)
-    ? mixcloudSource
-    : buildMixcloudUrl(feedPath);
+  const sourceUrl =
+    mixcloudSource && isMixcloudUrl(mixcloudSource)
+      ? mixcloudSource
+      : buildMixcloudUrl(feedPath);
 
   return {
     id: showId,

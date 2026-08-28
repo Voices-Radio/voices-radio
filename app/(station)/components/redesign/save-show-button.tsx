@@ -49,11 +49,14 @@ export default function SaveShowButton({
     const previous = status;
     applyStatus(showId, { saved: true, listIds: previous.listIds });
     try {
-      const response = await fetch(`/api/favourites/${encodeURIComponent(showId)}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ listIds: [] }),
-      });
+      const response = await fetch(
+        `/api/favourites/${encodeURIComponent(showId)}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ listIds: [] }),
+        },
+      );
       if (!response.ok) throw new Error("save failed");
       const payload = await response.json();
       applyStatus(showId, { saved: true, listIds: payload.listIds ?? [] });
@@ -99,23 +102,31 @@ export default function SaveShowButton({
         onClick={handleClick}
         disabled={pending}
         aria-pressed={status.saved}
-        aria-label={status.saved ? `Manage lists for ${title}` : `Save ${title}`}
+        aria-label={
+          status.saved ? `Manage lists for ${title}` : `Save ${title}`
+        }
         className={cn(
           // p-3/-m-3 grows the tap target to 44px (WCAG 2.5.5) without
           // shifting the visible 20px icon or the row's own layout — the
           // padding claims the extra space, the equal negative margin
           // gives it straight back.
-          "-m-3 flex h-11 w-11 items-center justify-center p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange disabled:cursor-wait",
+          // Named group (not the bare `group` ShowCard's outer <article>
+          // already claims for its artwork-scale hover) so this button's
+          // own hover/focus can drive the icon below without also lighting
+          // up — or being lit up by — the card's unrelated group-hover.
+          "group/save -m-3 flex h-11 w-11 items-center justify-center p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange disabled:cursor-wait",
           className,
         )}
       >
         <Bookmark
           aria-hidden="true"
           className={cn(
-            "mb-[-2px] h-5 w-5 transition-colors",
+            // Same light-up idiom as the Home feature CTAs (Read/Listen):
+            // a colour shift plus a soft glow on hover/focus, no transform.
+            "mb-[-2px] h-5 w-5 transition-[color,filter] duration-300 group-hover/save:drop-shadow-[0_0_8px_rgba(211,78,36,0.65)] group-focus-visible/save:drop-shadow-[0_0_8px_rgba(211,78,36,0.65)]",
             status.saved
               ? "fill-voicesNext-orange text-voicesNext-orange"
-              : "text-voicesNext-secondary",
+              : "text-voicesNext-secondary group-hover/save:text-voicesNext-orange group-focus-visible/save:text-voicesNext-orange",
           )}
           strokeWidth={1.8}
         />

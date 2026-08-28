@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { getSettings } from "@/sanity.client";
 import ExploreLiveStrip from "../../explore/explore-live-strip";
 import ArchiveMiniPlayer from "./archive-mini-player";
+import ArchiveMiniPlayerBoundary from "./archive-mini-player-boundary";
 import { ArchivePlayerProvider } from "./archive-player-context";
 import { FavouritesProvider } from "./favourites-context";
 import SaveIntentReplay from "./save-intent-replay";
@@ -36,7 +37,9 @@ export default async function RedesignShell({
           <ExploreLiveStrip />
           {children}
           <SiteFooter contactUrl={settings?.contact_link} />
-          <ArchiveMiniPlayer />
+          <ArchiveMiniPlayerBoundary>
+            <ArchiveMiniPlayer />
+          </ArchiveMiniPlayerBoundary>
           {/* useSearchParams() inside requires its own Suspense boundary
               so it never opts the rest of this (otherwise static) shell
               into client-only rendering. */}

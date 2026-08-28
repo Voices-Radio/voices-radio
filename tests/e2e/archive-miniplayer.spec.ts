@@ -14,11 +14,11 @@ type RawShow = {
 function hasArchive(show: RawShow) {
   return Boolean(
     show.mixcloudUrl ||
-      show.mixcloudKey ||
-      show.soundcloudUrl ||
-      show.soundcloudId ||
-      (show.platform === "mixcloud" && show.url) ||
-      (show.platform === "soundcloud" && show.url),
+    show.mixcloudKey ||
+    show.soundcloudUrl ||
+    show.soundcloudId ||
+    (show.platform === "mixcloud" && show.url) ||
+    (show.platform === "soundcloud" && show.url),
   );
 }
 
@@ -30,11 +30,46 @@ async function findArchivedShowId(request: APIRequestContext) {
 
   const payload = (await response.json()) as RawShow[];
   const show = payload.find(
-    (item) => item._id && item.matching_status === "matched" && hasArchive(item),
+    (item) =>
+      item._id && item.matching_status === "matched" && hasArchive(item),
   );
 
   return show?._id;
 }
+
+test("closing the MiniPlayer right after opening it never throws a client-side exception", async ({
+  page,
+  request,
+}) => {
+  // Regression test for a real bug: closing the MiniPlayer shortly after
+  // opening it could unmount ArchiveWidgetHost while its widget setup was
+  // still in flight, and the unbind/off cleanup then threw
+  // ("Cannot read properties of undefined (reading 'off')") because the
+  // widget/iframe wasn't fully wired up yet — uncaught, that bubbled to
+  // (station)'s error.tsx and blanked the whole page. Sweeps a handful of
+  // delays because the failure is timing-dependent, not deterministic on
+  // any single click sequence.
+  const showId = await findArchivedShowId(request);
+
+  test.skip(!showId, "No public archived show returned by the Voices API.");
+  if (!showId) return;
+
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+
+  for (const delayMs of [0, 150, 300, 450, 600]) {
+    await page.goto(`/shows/${showId}`);
+    await page.getByRole("button", { name: /listen back/i }).click();
+    await page.waitForTimeout(delayMs);
+    await page.getByRole("button", { name: /close archive player/i }).click();
+    await expect(
+      page.getByRole("region", { name: /archive mini player/i }),
+    ).toHaveCount(0);
+    await expect(page.getByText(/application error/i)).toHaveCount(0);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
 
 test("archive MiniPlayer persists across navigation and stops when live starts", async ({
   page,
@@ -109,7 +144,9 @@ for (const viewport of [
     expect(box).not.toBeNull();
     expect(Math.ceil(box?.width ?? 0)).toBeLessThanOrEqual(viewport.width);
 
-    await miniPlayer.getByRole("button", { name: /close archive player/i }).click();
+    await miniPlayer
+      .getByRole("button", { name: /close archive player/i })
+      .click();
     await expect(miniPlayer).toHaveCount(0);
   });
 }

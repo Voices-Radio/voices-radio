@@ -17,13 +17,7 @@ import {
 import type { VoicesArchiveMedia } from "@/lib/voices/types";
 
 export type ArchivePlayerStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "playing"
-  | "paused"
-  | "ended"
-  | "error";
+  "idle" | "loading" | "ready" | "playing" | "paused" | "ended" | "error";
 
 export type ArchivePlayerCommand = {
   id: number;
@@ -54,8 +48,9 @@ type ArchivePlayerContextValue = {
   isActiveArchive: (media?: VoicesArchiveMedia) => boolean;
 };
 
-const ArchivePlayerContext =
-  createContext<ArchivePlayerContextValue | null>(null);
+const ArchivePlayerContext = createContext<ArchivePlayerContextValue | null>(
+  null,
+);
 
 export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
   const [activeMedia, setActiveMedia] = useState<
@@ -132,6 +127,39 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
     };
   }, [stopArchive]);
 
+  // Each setter is its own useCallback (identity fixed for the provider's
+  // lifetime, not just per-render) so that ArchiveWidgetHost's command effect
+  // — which depends on onError — doesn't re-fire on every status/progress
+  // change and replay a stale "play" command over a widget the user just
+  // paused natively.
+  const setReady = useCallback(
+    () => setStatus((current) => (current === "loading" ? "ready" : current)),
+    [],
+  );
+  const setPlaying = useCallback(() => {
+    setStatus("playing");
+    setErrorState(undefined);
+  }, []);
+  const setPaused = useCallback(
+    () => setStatus((current) => (current === "idle" ? current : "paused")),
+    [],
+  );
+  const setEnded = useCallback(() => setStatus("ended"), []);
+  const setError = useCallback((message?: string) => {
+    setStatus("error");
+    setErrorState(message ?? "Archive player unavailable");
+  }, []);
+  const setProgress = useCallback(
+    (nextProgress: ArchiveProgress) =>
+      setProgressState((current) => ({ ...current, ...nextProgress })),
+    [],
+  );
+  const isActiveArchive = useCallback(
+    (media?: VoicesArchiveMedia) =>
+      Boolean(media && activeMedia && media.id === activeMedia.id),
+    [activeMedia],
+  );
+
   const value = useMemo<ArchivePlayerContextValue>(
     () => ({
       activeMedia,
@@ -143,31 +171,28 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
       toggleArchive,
       pauseArchive,
       stopArchive,
-      setReady: () =>
-        setStatus((current) => (current === "loading" ? "ready" : current)),
-      setPlaying: () => {
-        setStatus("playing");
-        setErrorState(undefined);
-      },
-      setPaused: () =>
-        setStatus((current) => (current === "idle" ? current : "paused")),
-      setEnded: () => setStatus("ended"),
-      setError: (message) => {
-        setStatus("error");
-        setErrorState(message ?? "Archive player unavailable");
-      },
-      setProgress: (nextProgress) =>
-        setProgressState((current) => ({ ...current, ...nextProgress })),
-      isActiveArchive: (media) =>
-        Boolean(media && activeMedia && media.id === activeMedia.id),
+      setReady,
+      setPlaying,
+      setPaused,
+      setEnded,
+      setError,
+      setProgress,
+      isActiveArchive,
     }),
     [
       activeMedia,
       command,
       error,
+      isActiveArchive,
       pauseArchive,
       playArchive,
       progress,
+      setEnded,
+      setError,
+      setPaused,
+      setPlaying,
+      setProgress,
+      setReady,
       status,
       stopArchive,
       toggleArchive,
@@ -185,7 +210,9 @@ export function useArchivePlayer() {
   const context = useContext(ArchivePlayerContext);
 
   if (!context) {
-    throw new Error("useArchivePlayer must be used inside ArchivePlayerProvider");
+    throw new Error(
+      "useArchivePlayer must be used inside ArchivePlayerProvider",
+    );
   }
 
   return context;

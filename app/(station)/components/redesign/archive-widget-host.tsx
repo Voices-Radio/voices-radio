@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useScript } from "@/hooks/use-script";
+import { cn } from "@/lib/utils";
 import type { VoicesArchiveMedia } from "@/lib/voices/types";
 import type { ArchivePlayerCommand } from "./archive-player-context";
 
@@ -93,6 +94,13 @@ export default function ArchiveWidgetHost({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const widgetRef = useRef<MixcloudWidget | SoundCloudWidget | null>(null);
   const readyRef = useRef(false);
+  // Id of the last command actually applied to the widget. Distinct from
+  // readyRef: this guards against re-applying the *same* command when the
+  // command-effect below re-runs for an unrelated reason (e.g. a caller
+  // passing a fresh callback identity) — without it, a stale "play" gets
+  // replayed over a widget the user just paused natively via the provider's
+  // own on-widget controls.
+  const appliedCommandIdRef = useRef<number | undefined>(undefined);
   const commandRef = useLatest(command);
   const callbacksRef = useLatest({
     onReady,
@@ -149,23 +157,39 @@ export default function ArchiveWidgetHost({
           widget.events.error.on(handleError);
           widget.events.progress.on(handleProgress);
 
-          if (commandRef.current?.action === "play") {
+          if (
+            commandRef.current?.action === "play" &&
+            appliedCommandIdRef.current !== commandRef.current.id
+          ) {
+            appliedCommandIdRef.current = commandRef.current.id;
             return widget.play();
           }
 
           return undefined;
         })
         .catch(() => {
-          if (!cancelled) callbacksRef.current.onError("Mixcloud player failed");
+          if (!cancelled)
+            callbacksRef.current.onError("Mixcloud player failed");
         });
 
       return () => {
         cancelled = true;
-        widget.events.play.off(handlePlay);
-        widget.events.pause.off(handlePause);
-        widget.events.ended.off(handleEnded);
-        widget.events.error.off(handleError);
-        widget.events.progress.off(handleProgress);
+        widgetRef.current = null;
+        readyRef.current = false;
+        // Mixcloud's widget talks to the iframe's contentWindow via
+        // postMessage. If the iframe has already been removed from the DOM
+        // (e.g. the mini player was closed) that window is gone and off()
+        // can throw — swallow it, the listeners are moot once the iframe is
+        // gone anyway.
+        try {
+          widget.events.play.off(handlePlay);
+          widget.events.pause.off(handlePause);
+          widget.events.ended.off(handleEnded);
+          widget.events.error.off(handleError);
+          widget.events.progress.off(handleProgress);
+        } catch {
+          // iframe already torn down — nothing left to unbind.
+        }
       };
     }
 
@@ -186,7 +210,11 @@ export default function ArchiveWidgetHost({
         callbacksRef.current.onProgress({ duration: duration / 1000 }),
       );
 
-      if (commandRef.current?.action === "play") {
+      if (
+        commandRef.current?.action === "play" &&
+        appliedCommandIdRef.current !== commandRef.current.id
+      ) {
+        appliedCommandIdRef.current = commandRef.current.id;
         widget.play();
       }
     };
@@ -202,8 +230,7 @@ export default function ArchiveWidgetHost({
           : undefined;
 
         callbacksRef.current.onProgress({
-          position:
-            typeof position === "number" ? position / 1000 : undefined,
+          position: typeof position === "number" ? position / 1000 : undefined,
           duration: duration / 1000,
         });
       });
@@ -217,42 +244,74 @@ export default function ArchiveWidgetHost({
     widget.bind(events.PLAY_PROGRESS, handleProgress);
 
     return () => {
-      widget.unbind(events.READY);
-      widget.unbind(events.PLAY);
-      widget.unbind(events.PAUSE);
-      widget.unbind(events.FINISH);
-      widget.unbind(events.ERROR);
-      widget.unbind(events.PLAY_PROGRESS);
+      widgetRef.current = null;
+      readyRef.current = false;
+      // Same rationale as the Mixcloud branch above: the SoundCloud widget
+      // posts unbind messages to the iframe's contentWindow, which is gone
+      // once the iframe has already been removed (closing the mini player
+      // unmounts this host before this cleanup runs) — that throw is what
+      // surfaced as the client-side exception on the show page.
+      try {
+        widget.unbind(events.READY);
+        widget.unbind(events.PLAY);
+        widget.unbind(events.PAUSE);
+        widget.unbind(events.FINISH);
+        widget.unbind(events.ERROR);
+        widget.unbind(events.PLAY_PROGRESS);
+      } catch {
+        // iframe already torn down — nothing left to unbind.
+      }
     };
   }, [callbacksRef, commandRef, media.provider, scriptStatus]);
 
   useEffect(() => {
     if (!command || !readyRef.current || !widgetRef.current) return;
+    // Deduped by command id, not just presence: without this, the effect
+    // re-running for any unrelated reason (a caller passing a fresh
+    // onError/onProgress identity, e.g.) would re-apply the same stale
+    // "play" over a widget the user just paused via its own native
+    // controls, making native pause look broken.
+    if (appliedCommandIdRef.current === command.id) return;
 
+    appliedCommandIdRef.current = command.id;
     const widget = widgetRef.current;
 
     if (command.action === "play") {
       const result = widget.play();
       if (result instanceof Promise) {
-        result.catch(() => onError("Archive playback failed"));
+        result.catch(() =>
+          callbacksRef.current.onError("Archive playback failed"),
+        );
       }
       return;
     }
 
     const result = widget.pause();
     if (result instanceof Promise) {
-      result.catch(() => onError("Archive pause failed"));
+      result.catch(() => callbacksRef.current.onError("Archive pause failed"));
     }
-  }, [command, onError]);
+  }, [callbacksRef, command]);
+
+  // Mixcloud's `mini=1` widget is a fixed 60px control bar. Pinning the iframe
+  // to that height (rather than stretching it to fill the host column) is what
+  // stops the empty strip appearing under the player; the surrounding column
+  // background fills any remaining space. SoundCloud's classic player has no
+  // such fixed size, so it keeps filling the column.
+  const isMixcloud = media.provider === "mixcloud";
 
   return (
-    <iframe
-      key={media.embedUrl}
-      ref={iframeRef}
-      title={`${media.title} ${media.provider} player`}
-      src={media.embedUrl}
-      className="h-full min-h-[60px] w-full border-0 bg-voicesNext-background"
-      allow="autoplay"
-    />
+    <div className="flex h-full w-full items-center justify-center overflow-hidden bg-voicesNext-background">
+      <iframe
+        key={media.embedUrl}
+        ref={iframeRef}
+        title={`${media.title} ${media.provider} player`}
+        src={media.embedUrl}
+        className={cn(
+          "w-full border-0 bg-voicesNext-background",
+          isMixcloud ? "h-[60px]" : "h-full min-h-[60px]",
+        )}
+        allow="autoplay"
+      />
+    </div>
   );
 }

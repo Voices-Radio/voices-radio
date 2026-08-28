@@ -10,7 +10,6 @@ import {
   AccountSurface,
   accountFieldClassName,
   accountPrimaryButtonClassName,
-  accountSurfaceStaticClassName,
 } from "../account/components/account-surface";
 import { signInAction, type SignInState } from "./actions";
 
@@ -34,44 +33,6 @@ function SubmitButton() {
   );
 }
 
-function SignInPass({ intent }: { intent?: AccountIntent }) {
-  const rows = [
-    [
-      "Session",
-      intent === "artist"
-        ? "Artist console"
-        : intent === "member"
-        ? "Member desk"
-        : "Account desk",
-    ],
-    ["Security", "Private access"],
-    ["After sign in", "Your saved workspace"],
-  ];
-
-  return (
-    <aside className={cn(accountSurfaceStaticClassName, "self-start md:mt-14")}>
-      <p className="font-gabarito text-xs font-bold uppercase tracking-[1.6px] text-voicesNext-orangeText">
-        Backstage pass
-      </p>
-      <div className="mt-5 space-y-4">
-        {rows.map(([label, value]) => (
-          <div
-            key={label}
-            className="border-b border-voicesNext-border/70 pb-3 last:border-b-0 last:pb-0"
-          >
-            <p className="font-gabarito text-[11px] font-bold uppercase tracking-[1.2px] text-voicesNext-cream/50">
-              {label}
-            </p>
-            <p className="mt-1 font-gabarito text-sm font-bold text-voicesNext-cream">
-              {value}
-            </p>
-          </div>
-        ))}
-      </div>
-    </aside>
-  );
-}
-
 export default function SignInForm({
   next,
   intent,
@@ -85,14 +46,14 @@ export default function SignInForm({
     intent === "artist"
       ? "Artist sign in"
       : intent === "member"
-      ? "Member sign in"
-      : "Sign in";
+        ? "Member sign in"
+        : "Sign in";
   const description =
     intent === "artist"
       ? "Sign in to manage your Voices artist profile."
       : intent === "member"
-      ? "Sign in to manage your Voices membership."
-      : "Sign in to manage your Voices account.";
+        ? "Sign in to manage your Voices membership."
+        : "Sign in to manage your Voices account.";
   const forgotPasswordHref = `/forgot-password${
     next ? `?next=${encodeURIComponent(next)}` : ""
   }`;
@@ -104,7 +65,7 @@ export default function SignInForm({
   }, [state]);
 
   return (
-    <div className="mx-auto grid max-w-[980px] gap-6 px-4 py-12 md:grid-cols-[minmax(0,1fr)_320px] md:px-8 md:py-16">
+    <div className="mx-auto w-full max-w-[520px] px-4 py-12 md:px-8 md:py-16">
       <div>
         <AccountPageIntro
           eyebrow="Voices account"
@@ -237,7 +198,6 @@ export default function SignInForm({
           </Link>
         </p>
       </div>
-      <SignInPass intent={intent} />
     </div>
   );
 }

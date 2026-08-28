@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Pause, Play } from "lucide-react";
+import { Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { VoicesArchiveMedia } from "@/lib/voices/types";
 import { useArchivePlayer } from "./archive-player-context";
@@ -56,10 +56,10 @@ export default function ArchivePlayPanel({
             {unavailable
               ? "This show does not have a playable Mixcloud or SoundCloud archive yet."
               : playing
-              ? "Playing in the MiniPlayer"
-              : active
-              ? "Paused in the MiniPlayer"
-              : "Start listening and keep it playing while you browse."}
+                ? "Playing in the MiniPlayer"
+                : active
+                  ? "Paused in the MiniPlayer"
+                  : "Start listening and keep it playing while you browse."}
           </p>
           {active && status === "error" && error && (
             <p className="mt-2 font-asap text-sm text-voicesNext-orangeText">
@@ -74,10 +74,12 @@ export default function ArchivePlayPanel({
             onClick={handleClick}
             disabled={unavailable}
             className={cn(
-              "inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-background/70",
+              "min-h-11 inline-flex items-center justify-center gap-2 rounded-full bg-voicesNext-orangeButton px-5 font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-background/70",
               playing && "bg-voicesNext-cream text-voicesNext-background",
             )}
-            aria-label={media ? `${label} ${media.title}` : "Archive unavailable"}
+            aria-label={
+              media ? `${label} ${media.title}` : "Archive unavailable"
+            }
           >
             {playing ? (
               <Pause aria-hidden="true" size={16} fill="currentColor" />
@@ -86,17 +88,6 @@ export default function ArchivePlayPanel({
             )}
             {label}
           </button>
-          {media && (
-            <a
-              href={media.externalUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-voicesNext-border px-4 font-asap text-xs font-bold uppercase text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface"
-            >
-              <ExternalLink aria-hidden="true" size={14} />
-              Open source
-            </a>
-          )}
         </div>
       </div>
     </section>

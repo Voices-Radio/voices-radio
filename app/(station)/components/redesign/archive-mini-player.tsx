@@ -47,16 +47,16 @@ export default function ArchiveMiniPlayer() {
       : 0;
   const statusText =
     status === "error"
-      ? error ?? "Archive player unavailable"
+      ? (error ?? "Archive player unavailable")
       : status === "loading"
-      ? "Loading player"
-      : status === "playing"
-      ? "Playing"
-      : status === "paused"
-      ? "Paused"
-      : status === "ended"
-      ? "Ended"
-      : "Ready";
+        ? "Loading player"
+        : status === "playing"
+          ? "Playing"
+          : status === "paused"
+            ? "Paused"
+            : status === "ended"
+              ? "Ended"
+              : "Ready";
 
   return (
     <section
@@ -86,7 +86,7 @@ export default function ArchiveMiniPlayer() {
               {activeMedia.artistName ?? "Voices Radio"}
             </p>
             <div
-              className="mt-2 h-1 overflow-hidden rounded-full bg-voicesNext-border/45"
+              className="bg-voicesNext-border/45 mt-2 h-1 overflow-hidden rounded-full"
               aria-hidden="true"
             >
               <div
@@ -138,7 +138,7 @@ export default function ArchiveMiniPlayer() {
           </div>
         </div>
 
-        <div className="h-[74px] bg-voicesNext-background md:h-[96px]">
+        <div className="h-[64px] bg-voicesNext-background md:h-[96px]">
           <ArchiveWidgetHost
             media={activeMedia}
             command={command}

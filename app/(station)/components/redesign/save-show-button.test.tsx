@@ -116,19 +116,27 @@ describe("SaveShowButton — signed in, not yet saved", () => {
   });
 
   it("rolls the optimistic update back when the save request fails", async () => {
-    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      if (url.includes("/api/auth/session")) {
-        return new Response(JSON.stringify({ user: SIGNED_IN_USER }), { status: 200 });
-      }
-      if (url.includes("/api/favourites/status")) {
-        return new Response(JSON.stringify({ statuses: {} }), { status: 200 });
-      }
-      if (url === `/api/favourites/${SHOW_ID}` && init?.method === "PUT") {
-        return new Response(JSON.stringify({ message: "nope" }), { status: 500 });
-      }
-      return new Response(JSON.stringify({}), { status: 200 });
-    });
+    const fetchMock = vi.fn(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (url.includes("/api/auth/session")) {
+          return new Response(JSON.stringify({ user: SIGNED_IN_USER }), {
+            status: 200,
+          });
+        }
+        if (url.includes("/api/favourites/status")) {
+          return new Response(JSON.stringify({ statuses: {} }), {
+            status: 200,
+          });
+        }
+        if (url === `/api/favourites/${SHOW_ID}` && init?.method === "PUT") {
+          return new Response(JSON.stringify({ message: "nope" }), {
+            status: 500,
+          });
+        }
+        return new Response(JSON.stringify({}), { status: 200 });
+      },
+    );
     vi.stubGlobal("fetch", fetchMock);
     const user = userEvent.setup();
 
@@ -146,6 +154,34 @@ describe("SaveShowButton — signed in, not yet saved", () => {
     // Rolls back to unsaved once the PUT rejects.
     await waitFor(() =>
       expect(button).toHaveAttribute("aria-pressed", "false"),
+    );
+  });
+});
+
+describe("SaveShowButton — hover affordance", () => {
+  it("lights the bookmark icon up on hover/focus via a scoped named group", async () => {
+    const fetchMock = mockFetch({ user: null });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <FavouritesProvider>
+        <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+      </FavouritesProvider>,
+    );
+
+    const button = await screen.findByRole("button", {
+      name: /save late night sessions/i,
+    });
+    const icon = button.querySelector("svg");
+
+    // Named group, not the bare `group` ShowCard's own hover already
+    // claims — this button's icon must react to *its own* hover/focus only.
+    expect(button.className).toMatch(/\bgroup\/save\b/);
+    expect(icon?.getAttribute("class")).toMatch(
+      /group-hover\/save:text-voicesNext-orange/,
+    );
+    expect(icon?.getAttribute("class")).toMatch(
+      /group-hover\/save:drop-shadow-/,
     );
   });
 });
@@ -172,7 +208,9 @@ describe("SaveShowButton — signed in, already saved", () => {
 
     await user.click(button);
 
-    expect(await screen.findByRole("dialog", { name: /save to/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("dialog", { name: /save to/i }),
+    ).toBeInTheDocument();
     // Clicking again must never have fired a DELETE — only the sheet
     // (which the user hasn't acted on yet) can remove a saved show.
     expect(
