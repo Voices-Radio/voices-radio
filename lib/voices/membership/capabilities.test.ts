@@ -29,8 +29,11 @@ function capabilities(values: AccountCapabilities["capabilities"]) {
 
 describe("accountLinksForCapabilities", () => {
   it("shows member links for member-only accounts", () => {
-    expect(accountLinksForCapabilities(["member"]).map((link) => link.label)).toEqual([
+    expect(
+      accountLinksForCapabilities(["member"]).map((link) => link.label),
+    ).toEqual([
       "Dashboard",
+      "Favourites",
       "Membership",
       "Benefits",
       "Redemptions",
@@ -38,16 +41,22 @@ describe("accountLinksForCapabilities", () => {
     ]);
   });
 
-  it("shows only the artist link for artist-only accounts", () => {
+  it("shows only the artist link, plus Favourites, for artist-only accounts", () => {
     expect(accountLinksForCapabilities(["artist"])).toEqual([
       { href: "/account/artist", label: "Artist" },
+      { href: "/account/favourites", label: "Favourites" },
     ]);
   });
 
   it("shows both identities for dual-capability accounts", () => {
-    expect(accountLinksForCapabilities(["artist", "member"]).map((link) => link.label)).toEqual([
+    expect(
+      accountLinksForCapabilities(["artist", "member"]).map(
+        (link) => link.label,
+      ),
+    ).toEqual([
       "Dashboard",
       "Artist",
+      "Favourites",
       "Membership",
       "Benefits",
       "Redemptions",
@@ -55,9 +64,12 @@ describe("accountLinksForCapabilities", () => {
     ]);
   });
 
-  it("shows a single account overview link for neither-capability accounts", () => {
+  it("shows Favourites alongside the account overview link for neither-capability accounts", () => {
+    // Favourites is a plain-account feature — it isn't gated on member or
+    // artist capability, only on requireSession() at the layout level.
     expect(accountLinksForCapabilities([])).toEqual([
       { href: "/account", label: "Account" },
+      { href: "/account/favourites", label: "Favourites" },
     ]);
   });
 });
@@ -77,7 +89,9 @@ describe("accountHomeDecision", () => {
   });
 
   it("honours the persisted artist mode for dual-capability accounts", () => {
-    expect(accountHomeDecision(capabilities(["artist", "member"]), "artist")).toEqual({
+    expect(
+      accountHomeDecision(capabilities(["artist", "member"]), "artist"),
+    ).toEqual({
       kind: "redirect",
       href: "/account/artist",
     });

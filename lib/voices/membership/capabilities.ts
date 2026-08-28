@@ -35,9 +35,7 @@ export interface AccountCapabilities {
 export type AccountIntent = AccountCapability;
 export type AccountMode = "artist" | "member";
 export type AccountHomeDecision =
-  | { kind: "member" }
-  | { kind: "empty" }
-  | { kind: "redirect"; href: string };
+  { kind: "member" } | { kind: "empty" } | { kind: "redirect"; href: string };
 
 export function hasCapability(
   capabilities: AccountCapabilities | null | undefined,
@@ -119,13 +117,21 @@ export function accountLinksForCapabilities(
   const hasMember = values.includes("member");
   const hasArtist = values.includes("artist");
 
+  // Favourites is a plain-account feature, not gated on member or artist
+  // capability — anyone who cleared requireSession() in
+  // app/(station)/account/layout.tsx can save shows, so the link always
+  // appears rather than being folded into either capability-specific block.
   if (!hasMember && !hasArtist) {
-    return [{ href: "/account", label: "Account" }];
+    return [
+      { href: "/account", label: "Account" },
+      { href: "/account/favourites", label: "Favourites" },
+    ];
   }
 
   return [
     ...(hasMember ? [{ href: "/account", label: "Dashboard" }] : []),
     ...(hasArtist ? [{ href: "/account/artist", label: "Artist" }] : []),
+    { href: "/account/favourites", label: "Favourites" },
     ...(hasMember
       ? [
           { href: "/account/membership", label: "Membership" },

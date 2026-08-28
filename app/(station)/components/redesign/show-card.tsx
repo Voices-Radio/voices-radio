@@ -1,8 +1,9 @@
-import { Bookmark, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { VoicesShow } from "@/lib/voices/types";
+import SaveShowButton from "./save-show-button";
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
@@ -36,15 +37,27 @@ export default function ShowCard({
     : "London";
 
   return (
-    <Link
-      href={`/shows/${show.id}`}
+    <article
       className={cn(
-        "group block overflow-hidden border border-voicesNext-border bg-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+        "group relative overflow-hidden border border-voicesNext-border bg-voicesNext-background",
         rail ? "h-[350px] w-[350px] shrink-0" : "aspect-square w-full",
       )}
-      aria-label={`Open ${show.title}`}
     >
-      <article className="flex h-full flex-col">
+      {/*
+        Stretched-link: covers the whole card so the card stays clickable
+        everywhere, while the save button below sits as a sibling — not a
+        descendant — so it can be its own <button> without nesting one
+        interactive element inside another. group-hover on the image below
+        still fires from anywhere in the card because :hover is determined
+        by paint geometry, not by which element handles the pointer event.
+      */}
+      <Link
+        href={`/shows/${show.id}`}
+        aria-label={`Open ${show.title}`}
+        className="absolute inset-0 z-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+      />
+
+      <div className="pointer-events-none flex h-full flex-col">
         <div className="flex h-[30px] shrink-0 items-center justify-between bg-voicesNext-cream px-2 font-outfit text-[20px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
           <span>{stationLabel}</span>
           <span>{locationLabel}</span>
@@ -84,14 +97,14 @@ export default function ShowCard({
             <span className="inline-flex h-5 w-5 items-center justify-center text-voicesNext-cream">
               <Play aria-hidden="true" size={15} fill="currentColor" />
             </span>
-            <Bookmark
-              aria-hidden="true"
-              className="mb-[-2px] h-5 w-5 text-voicesNext-secondary"
-              strokeWidth={1.8}
+            <SaveShowButton
+              showId={show.id}
+              title={show.title}
+              className="pointer-events-auto relative z-10"
             />
           </div>
         </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   );
 }
