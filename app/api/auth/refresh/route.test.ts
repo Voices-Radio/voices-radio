@@ -99,3 +99,28 @@ describe("GET /api/auth/refresh", () => {
     );
   });
 });
+
+describe("GET /api/auth/refresh — open redirect", () => {
+  /**
+   * Regression for the backslash bypass: `/\evil.com` passed the old
+   * prefix-based guard and `new URL(next, request.url)` resolved it to
+   * https://evil.com/, handing an unauthenticated caller an off-site redirect
+   * from our own domain.
+   */
+  it.each(["/\\evil.com", "/\\/evil.com", "//evil.com", "https://evil.com"])(
+    "never redirects off-origin for next=%j",
+    async (next) => {
+      vi.mocked(getRefreshToken).mockResolvedValue("live-refresh-token");
+      vi.mocked(refreshTokens).mockResolvedValue({
+        token: "new-access",
+        refreshToken: "new-refresh",
+      });
+
+      const response = await GET(requestWithNext(next));
+      const location = new URL(response.headers.get("location") ?? "");
+
+      expect(location.origin).toBe("https://staging.voicesradio.co.uk");
+      expect(location.href).not.toContain("evil.com");
+    },
+  );
+});

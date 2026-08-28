@@ -30,12 +30,26 @@ export const AUTH_RATE_LIMITS = {
   checkEmail: { name: "check-email", limit: 20, window: "10 m" },
 } as const satisfies Record<string, RateLimitRule>;
 
+/**
+ * Limits for unauthenticated endpoints that aren't auth, but do real work per
+ * request. These are abuse ceilings, not usage budgets — set well above what a
+ * person can generate so they never bite a real visitor.
+ */
+export const PUBLIC_RATE_LIMITS = {
+  // Each call fans out to two Sanity queries plus one upstream API request.
+  // The search box debounces at 250ms, so a fast typist mid-query produces a
+  // handful per minute; 60 leaves a wide margin over that.
+  search: { name: "search", limit: 60, window: "1 m" },
+  // Sanity's webhook fires on publish. Bounded because the route buffers a
+  // request body before it can verify the signature.
+  revalidate: { name: "revalidate", limit: 60, window: "1 m" },
+} as const satisfies Record<string, RateLimitRule>;
+
 function getRedis() {
   // Vercel's Upstash marketplace integration injects KV_REST_API_* while a
   // database provisioned directly in the Upstash console gives UPSTASH_*.
   // Accept either so the limiter activates regardless of how it was set up.
-  const url =
-    process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
   const token =
     process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 
@@ -46,6 +60,38 @@ function getRedis() {
 
 const redis = getRedis();
 let warnedAboutMissingRedis = false;
+
+/**
+ * Escalates the missing-Redis warning in production.
+ *
+ * Fail-open (see above) is the right call for availability, but it means an
+ * unconfigured production deploy looks completely healthy while login,
+ * register and check-email all run unthrottled — and check-email is an account
+ * enumeration oracle. One `console.warn` among Vercel's normal build chatter is
+ * not proportionate to that. This makes the gap findable by searching logs for
+ * a fixed string.
+ *
+ * Deliberately NOT a thrown error: taking the whole site down over a missing
+ * optional credential is a worse outcome than the abuse it would prevent, and
+ * a boot failure at go-live is the wrong moment to discover it. Promote to a
+ * throw once Upstash is provisioned and this can never legitimately be unset.
+ */
+function reportMissingRedis() {
+  if (warnedAboutMissingRedis) return;
+  warnedAboutMissingRedis = true;
+
+  if (process.env.NEXT_PUBLIC_SITE_ENV === "production") {
+    console.error(
+      "RATE_LIMITING_DISABLED_IN_PRODUCTION: no UPSTASH_REDIS_REST_URL/_TOKEN " +
+        "or KV_REST_API_URL/_TOKEN is set. Auth endpoints are unthrottled.",
+    );
+    return;
+  }
+
+  console.warn(
+    "Rate limiting is DISABLED: UPSTASH_REDIS_REST_URL / _TOKEN are not set.",
+  );
+}
 
 // One limiter per rule, built once per process rather than per request.
 const limiters = new Map<string, Ratelimit>();
@@ -68,18 +114,33 @@ function getLimiter(rule: RateLimitRule) {
 }
 
 /**
- * Vercel sets x-forwarded-for; the left-most entry is the real client. Falls
- * back to a shared bucket rather than skipping the limit entirely, so a
- * missing header can't be used to opt out.
+ * Identifies the caller for bucketing purposes.
+ *
+ * Order matters, and the obvious order is wrong. `x-forwarded-for` is a
+ * PASS-THROUGH header: a caller sets their own value and the platform appends
+ * the observed IP rather than replacing what arrived. Reading the left-most
+ * entry therefore reads attacker-controlled input — send
+ * `x-forwarded-for: <random>` on each request and every limit below becomes a
+ * fresh bucket, which defeats the point of having them.
+ *
+ * `x-real-ip` is written by the edge from the actual TCP peer, so it is the
+ * one to trust. XFF stays as a fallback for environments that only set that,
+ * and an absent header falls into a single shared bucket rather than skipping
+ * the limit, so stripping headers can't be used to opt out either.
+ *
+ * Exported for tests.
  */
-function getClientIp(request: Request) {
+export function getClientIp(request: Request) {
+  const realIp = request.headers.get("x-real-ip")?.trim();
+  if (realIp) return realIp;
+
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     const first = forwarded.split(",")[0]?.trim();
     if (first) return first;
   }
 
-  return request.headers.get("x-real-ip")?.trim() || "unknown";
+  return "unknown";
 }
 
 /**
@@ -89,12 +150,7 @@ export async function enforceRateLimit(request: Request, rule: RateLimitRule) {
   const limiter = getLimiter(rule);
 
   if (!limiter) {
-    if (!warnedAboutMissingRedis) {
-      warnedAboutMissingRedis = true;
-      console.warn(
-        "Rate limiting is DISABLED: UPSTASH_REDIS_REST_URL / _TOKEN are not set.",
-      );
-    }
+    reportMissingRedis();
     return null;
   }
 

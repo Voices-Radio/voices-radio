@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { safeInternalPathOrUndefined } from "@/lib/voices/membership/paths";
 import { backendResetPassword } from "@/lib/voices/membership/auth-client";
 
 const schema = z
@@ -27,11 +28,6 @@ export type ResetPasswordState =
       fieldErrors?: Partial<Record<"password" | "confirmPassword", string>>;
     }
   | undefined;
-
-function safeInternalPath(value: string | undefined) {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) return undefined;
-  return value;
-}
 
 export async function resetPasswordAction(
   _prevState: ResetPasswordState,
@@ -75,7 +71,7 @@ export async function resetPasswordAction(
     };
   }
 
-  const next = safeInternalPath(parsed.data.next);
+  const next = safeInternalPathOrUndefined(parsed.data.next);
 
   return {
     status: "success",

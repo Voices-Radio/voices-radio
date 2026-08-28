@@ -23,7 +23,34 @@ const SANITY_API_VERSION = "v2021-06-07";
 // don't issue one users/me round-trip per keystroke. Failures are never cached
 // — a revoked token must stop working promptly.
 const VALIDATION_TTL_MS = 60_000;
+
+// Cap + sweep so the cache can't grow without bound. Entries were only ever
+// evicted on lookup, so a token validated once and never seen again stayed for
+// the life of the process.
+const MAX_CACHED_TOKENS = 500;
 const validatedTokens = new Map<string, number>();
+
+/**
+ * Cache key. Hashing means a memory dump or an accidental log of this Map
+ * doesn't hand over usable Sanity credentials — the raw bearer token never
+ * becomes a long-lived key.
+ */
+async function tokenCacheKey(token: string) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(token),
+  );
+
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function sweepExpired(now: number) {
+  for (const [key, expiresAt] of validatedTokens) {
+    if (expiresAt <= now) validatedTokens.delete(key);
+  }
+}
 
 function readBearerToken(request: Request): string | null {
   const header = request.headers.get("authorization");
@@ -33,20 +60,39 @@ function readBearerToken(request: Request): string | null {
   return token.length > 0 ? token : null;
 }
 
-function isCachedValid(token: string) {
-  const expiresAt = validatedTokens.get(token);
+function isCachedValid(key: string) {
+  const expiresAt = validatedTokens.get(key);
   if (expiresAt === undefined) return false;
 
   if (expiresAt <= Date.now()) {
-    validatedTokens.delete(token);
+    validatedTokens.delete(key);
     return false;
   }
 
   return true;
 }
 
+function rememberValid(key: string) {
+  const now = Date.now();
+
+  if (validatedTokens.size >= MAX_CACHED_TOKENS) {
+    sweepExpired(now);
+
+    // Still full after sweeping means genuine churn, not stale entries. Drop
+    // the oldest insertion (Map preserves insertion order) rather than letting
+    // the Map grow.
+    if (validatedTokens.size >= MAX_CACHED_TOKENS) {
+      const oldest = validatedTokens.keys().next().value;
+      if (oldest !== undefined) validatedTokens.delete(oldest);
+    }
+  }
+
+  validatedTokens.set(key, now + VALIDATION_TTL_MS);
+}
+
 async function isValidStudioToken(token: string) {
-  if (isCachedValid(token)) return true;
+  const cacheKey = await tokenCacheKey(token);
+  if (isCachedValid(cacheKey)) return true;
 
   try {
     const response = await fetch(
@@ -62,7 +108,7 @@ async function isValidStudioToken(token: string) {
     const payload = await response.json().catch(() => null);
     if (!payload?.id) return false;
 
-    validatedTokens.set(token, Date.now() + VALIDATION_TTL_MS);
+    rememberValid(cacheKey);
     return true;
   } catch (error) {
     console.error("Sanity Studio token validation failed:", error);

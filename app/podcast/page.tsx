@@ -950,14 +950,14 @@ const PodcastPage = () => {
               </div>
               <div className="h-80 overflow-hidden rounded-xl bg-slate-100 shadow-lg">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.5!2d-0.125!3d51.535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b5a1234567890%3A0x1234567890abcdef!2sLewis%20Cubitt%20Walk%2C%20London%20N1C%204DY%2C%20UK!5e0!3m2!1sen!2suk!4v1234567890123!5m2!1sen!2suk"
+                  src="https://www.google.com/maps?q=Mare+Street+Market+Kings+Cross%2C+Lewis+Cubitt+Square%2C+London+N1C+4DY&output=embed"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Voices Studio Location - Lewis Cubitt Walk, King's Cross"
+                  title="Map: Voices Podcast Studio, Mare Street Market Kings Cross, Lewis Cubitt Square, London N1C 4DY"
                   className="h-full w-full"
                 ></iframe>
               </div>

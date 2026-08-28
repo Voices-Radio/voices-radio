@@ -3,14 +3,13 @@ import GenreBrowser from "../components/redesign/genre-browser";
 import ShowCard from "../components/redesign/show-card";
 import SupporterBlock from "../components/redesign/supporter-block";
 import { getShows } from "@/lib/voices/api";
-import { matchesGenreKeys } from "@/lib/voices/genre-taxonomy";
+import { isGenreKey, matchesGenreKeys } from "@/lib/voices/genre-taxonomy";
 import {
   getParamArray,
   getSingleParam,
   type VoicesSearchParams,
 } from "@/lib/voices/search-params";
 import type { VoicesShow } from "@/lib/voices/types";
-import { isGenreKey } from "./explore-options";
 
 const categoryTiles = [
   {

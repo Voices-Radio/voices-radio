@@ -75,6 +75,10 @@ export function middleware(request: NextRequest) {
  *    token via requireStudioUser(). Those requests set their own
  *    `Authorization: Bearer …` header, which replaces the browser's basic-auth
  *    header, so they can never satisfy this check.
+ *  - `api/csp-report` — browser-generated CSP violation reports, which carry no
+ *    basic-auth credentials. Gating them would 401 every report on staging,
+ *    which is precisely the environment the Report-Only policy exists to
+ *    gather evidence from. The route stores nothing and only logs.
  *
  * Everything else under /api IS gated: previously the matcher excluded `api`
  * wholesale, which left every API route on staging publicly reachable.
@@ -85,6 +89,6 @@ export function middleware(request: NextRequest) {
  */
 export const config = {
   matcher: [
-    "/((?!api/revalidate|api/voices|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|css|js|map|woff|woff2|ttf|otf|eot|mp3|mp4|webm)$).*)",
+    "/((?!api/revalidate|api/voices|api/csp-report|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|css|js|map|woff|woff2|ttf|otf|eot|mp3|mp4|webm)$).*)",
   ],
 };

@@ -19,12 +19,21 @@ const contentSecurityPolicy = [
   "media-src 'self' blob: https:",
   "connect-src 'self' https: wss:",
   "worker-src 'self' blob:",
-  "frame-src 'self' https://www.mixcloud.com https://player.mixcloud.com https://w.soundcloud.com https://player.restream.io https://www.youtube.com",
+  "frame-src 'self' https://www.mixcloud.com https://player.mixcloud.com https://w.soundcloud.com https://player.restream.io https://www.youtube.com https://www.google.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
+  // Without a report target the Report-Only policy above collects NOTHING —
+  // browsers evaluate it and discard the result. report-uri is deprecated but
+  // still the only directive Safari honours; report-to is the modern one. Ship
+  // both so the sample isn't skewed by browser choice.
+  "report-uri /api/csp-report",
+  "report-to csp-endpoint",
 ].join("; ");
+
+/** Names the group that `report-to` above refers to. */
+const reportingEndpoints = "csp-endpoint=\"/api/csp-report\"";
 
 const securityHeaders = [
   {
@@ -38,6 +47,7 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), payment=()",
   },
+  { key: "Reporting-Endpoints", value: reportingEndpoints },
   { key: "Content-Security-Policy-Report-Only", value: contentSecurityPolicy },
 ];
 

@@ -12,7 +12,11 @@ import { startCheckout } from "@/lib/voices/membership/start-checkout";
 export async function GET(request: NextRequest) {
   const tierId = request.nextUrl.searchParams.get("tier") ?? undefined;
   const cadence = request.nextUrl.searchParams.get("cadence") ?? undefined;
-  const returnTo = `/join/checkout?tier=${tierId ?? ""}&cadence=${cadence ?? ""}`;
+  // Encode: these are raw query params, and interpolating them unescaped lets
+  // a crafted `tier` inject extra params into the path we hand to requireSession.
+  const returnTo = `/join/checkout?tier=${encodeURIComponent(
+    tierId ?? "",
+  )}&cadence=${encodeURIComponent(cadence ?? "")}`;
 
   await requireSession(returnTo);
 

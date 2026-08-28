@@ -6,6 +6,7 @@ export default function ChatLink({ style = {} }: { style?: CSSProperties }) {
     <Link
       href="/chat"
       target="_blank"
+      rel="noopener noreferrer"
       className="relative mr-7 inline-flex justify-self-start rounded-full bg-white px-4 py-1.5 text-mobile-inter-small lg:hidden"
       style={style}
     >

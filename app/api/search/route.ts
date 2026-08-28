@@ -1,4 +1,8 @@
 import { VOICES_API_BASE_URL } from "@/lib/voices/config";
+import {
+  enforceRateLimit,
+  PUBLIC_RATE_LIMITS,
+} from "@/lib/voices/rate-limit";
 import { client } from "@/sanity.client";
 import { groq } from "next-sanity";
 import { NextResponse } from "next/server";
@@ -152,6 +156,11 @@ async function fetchWebsiteSearchSafe(query: string, limit: number) {
 }
 
 export async function GET(request: Request) {
+  // Unauthenticated, and every call fans out to two Sanity queries plus an
+  // upstream request — cheap to send, not cheap to serve.
+  const limited = await enforceRateLimit(request, PUBLIC_RATE_LIMITS.search);
+  if (limited) return limited;
+
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q")?.trim() ?? "";
   const limit = getLimit(searchParams.get("limit"));

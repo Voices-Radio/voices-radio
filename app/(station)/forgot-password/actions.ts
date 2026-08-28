@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { safeInternalPathOrUndefined } from "@/lib/voices/membership/paths";
 import {
   backendCheckEmail,
   backendForgotPassword,
@@ -29,11 +30,6 @@ export type ForgotPasswordState =
       fieldErrors?: Partial<Record<"email", string>>;
     }
   | undefined;
-
-function safeInternalPath(value: string | undefined) {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) return undefined;
-  return value;
-}
 
 export async function forgotPasswordAction(
   _prevState: ForgotPasswordState,
@@ -76,7 +72,7 @@ export async function forgotPasswordAction(
     };
   }
 
-  const next = safeInternalPath(parsed.data.next);
+  const next = safeInternalPathOrUndefined(parsed.data.next);
 
   return {
     status: "success",
