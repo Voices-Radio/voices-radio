@@ -1,8 +1,8 @@
-import { Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { VoicesShow } from "@/lib/voices/types";
+import ArchiveTilePlayButton from "./archive-tile-play-button";
 import SaveShowButton from "./save-show-button";
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
@@ -94,9 +94,10 @@ export default function ShowCard({
             ))}
           </div>
           <div className="flex items-end justify-between gap-3">
-            <span className="inline-flex h-5 w-5 items-center justify-center text-voicesNext-cream">
-              <Play aria-hidden="true" size={15} fill="currentColor" />
-            </span>
+            <ArchiveTilePlayButton
+              media={show.archiveMedia}
+              title={show.title}
+            />
             <SaveShowButton
               showId={show.id}
               title={show.title}

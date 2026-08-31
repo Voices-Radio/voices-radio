@@ -6,6 +6,7 @@ import { getAccessToken } from "./session";
 import { describeMembershipError } from "./errors";
 import {
   tiersResponseSchema,
+  supportersResponseSchema,
   membershipStateSchema,
   benefitsResponseSchema,
   redemptionsResponseSchema,
@@ -74,6 +75,53 @@ export async function getTiers(): Promise<
       ok: false,
       code: "NETWORK_ERROR",
       message: "Pricing is temporarily unavailable. Please try again shortly.",
+    };
+  }
+}
+
+/**
+ * Public read — no session required. Backs the homepage supporter wall.
+ * Unlike getTiers, this is decorative rather than pricing-critical, so it
+ * rides Next's data cache (revalidate: 300s, matching the backend's own
+ * cacheMiddleware TTL) instead of "no-store" — the homepage shouldn't make
+ * a live backend round-trip per visitor just to render a name carousel.
+ * Failure is silent by design: the caller renders the supporter strip
+ * without the wall rather than letting a backend blip break the homepage.
+ */
+export async function getSupporters(): Promise<MembershipResult<string[]>> {
+  try {
+    const response = await fetch(
+      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/membership/supporters`,
+      { next: { revalidate: 300 } },
+    );
+
+    if (!response.ok) {
+      const { code, message } = await describeErrorResponse(response);
+      return { ok: false, code, message };
+    }
+
+    const payload = await response.json().catch(() => null);
+    const parsed = supportersResponseSchema.safeParse(payload);
+    if (!parsed.success) {
+      console.error(
+        "Voices supporters response failed validation:",
+        parsed.error.flatten(),
+      );
+      return {
+        ok: false,
+        code: "INVALID_RESPONSE",
+        message: "Supporter wall is temporarily unavailable.",
+      };
+    }
+
+    return { ok: true, data: parsed.data.supporters.map((s) => s.name) };
+  } catch (error) {
+    if (isNextControlFlowError(error)) throw error;
+    console.error("Voices getSupporters failed:", error);
+    return {
+      ok: false,
+      code: "NETWORK_ERROR",
+      message: "Supporter wall is temporarily unavailable.",
     };
   }
 }

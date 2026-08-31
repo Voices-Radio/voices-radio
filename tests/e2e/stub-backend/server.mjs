@@ -20,6 +20,11 @@ const TIERS = [
   { id: "patron", name: "Patron", monthlyPriceMinor: 3000, annualPriceMinor: 30000, currency: "gbp", mostPopular: false, sortOrder: 4 },
 ];
 
+// Public supporter-wall fixture (GET /api/membership/supporters). Kept
+// empty by default — e2e/staging specs that exercise the homepage don't
+// assert on wall content, only that the strip itself still renders.
+const SUPPORTERS = [];
+
 const PENDING_RECONCILIATION_MS = 1500;
 
 /** @type {Map<string, {_id: string, email: string, password: string, firstName: string, lastName: string}>} */
@@ -478,8 +483,13 @@ const server = createServer(async (req, res) => {
       return sendJson(res, 200, { tiers: TIERS });
     }
 
+    if (pathname === "/api/membership/supporters" && req.method === "GET") {
+      return sendJson(res, 200, { supporters: SUPPORTERS });
+    }
+
     const userId = userFromAuth(req);
-    const requiresAuth = pathname.startsWith("/api/membership") && pathname !== "/api/membership/tiers";
+    const PUBLIC_MEMBERSHIP_PATHS = ["/api/membership/tiers", "/api/membership/supporters"];
+    const requiresAuth = pathname.startsWith("/api/membership") && !PUBLIC_MEMBERSHIP_PATHS.includes(pathname);
     if (requiresAuth && !userId) {
       return sendError(res, 401, "UNAUTHENTICATED", "Sign in required.");
     }

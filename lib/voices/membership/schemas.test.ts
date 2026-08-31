@@ -3,6 +3,7 @@ import {
   benefitsResponseSchema,
   membershipProfileSchema,
   membershipStateSchema,
+  supportersResponseSchema,
   tiersResponseSchema,
 } from "./schemas";
 
@@ -50,6 +51,33 @@ describe("tiersResponseSchema", () => {
   it("rejects a response with no tiers array at all", () => {
     expect(tiersResponseSchema.safeParse({}).success).toBe(false);
     expect(tiersResponseSchema.safeParse(null).success).toBe(false);
+  });
+});
+
+describe("supportersResponseSchema", () => {
+  it("accepts a well-formed supporters response", () => {
+    const result = supportersResponseSchema.safeParse({
+      supporters: [{ name: "Ada" }, { name: "Grace" }],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts an empty supporters list", () => {
+    expect(supportersResponseSchema.safeParse({ supporters: [] }).success).toBe(
+      true,
+    );
+  });
+
+  it("rejects a supporter entry with no name", () => {
+    const result = supportersResponseSchema.safeParse({
+      supporters: [{}],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a response with no supporters array at all", () => {
+    expect(supportersResponseSchema.safeParse({}).success).toBe(false);
+    expect(supportersResponseSchema.safeParse(null).success).toBe(false);
   });
 });
 

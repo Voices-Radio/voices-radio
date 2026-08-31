@@ -43,6 +43,13 @@ export const tiersResponseSchema = z.object({
   tiers: z.array(membershipTierApiSchema),
 });
 
+// Backs the homepage supporter wall (membership-client.ts getSupporters).
+// Deliberately just { name } — the backend endpoint never returns anything
+// that could link a name back to an account.
+export const supportersResponseSchema = z.object({
+  supporters: z.array(z.object({ name: z.string() })),
+});
+
 export const checkoutResponseSchema = z.object({
   checkoutUrl: z.string().url(),
   sessionId: z.string(),

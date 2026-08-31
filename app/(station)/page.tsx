@@ -4,11 +4,16 @@ import ShowRail from "./components/redesign/show-rail";
 import SupporterBlock from "./components/redesign/supporter-block";
 import { getHomePageContent } from "@/lib/voices/home";
 import { VOICES_APPLY_FOR_SHOW_URL } from "@/lib/voices/config";
+import { getSupporters } from "@/lib/voices/membership/membership-client";
 import Image from "next/image";
 
 export default async function Home() {
   const { featuredItems, latestKx, latestEast, rails, liveStreams } =
     await getHomePageContent();
+  // Fails soft — a failed/unavailable request renders the supporter strip
+  // exactly as it looked before the wall existed, never breaks the homepage.
+  const supportersResult = await getSupporters();
+  const supporterNames = supportersResult.ok ? supportersResult.data : [];
 
   return (
     <main id="main-content" className="scroll-mt-24 md:px-3 md:pt-3">
@@ -79,7 +84,7 @@ export default async function Home() {
         />
       ))}
 
-      <SupporterBlock />
+      <SupporterBlock supporterNames={supporterNames} />
     </main>
   );
 }

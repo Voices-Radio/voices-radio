@@ -5,8 +5,14 @@ vi.mock("./session", () => ({
 }));
 
 const { getAccessToken } = await import("./session");
-const { getBenefits, getMembership, getProfile, getRedemptions, getTiers } =
-  await import("./membership-client");
+const {
+  getBenefits,
+  getMembership,
+  getProfile,
+  getRedemptions,
+  getSupporters,
+  getTiers,
+} = await import("./membership-client");
 
 function mockFetchOnce(response: Response) {
   const fn = vi.fn(
@@ -111,6 +117,81 @@ describe("getTiers", () => {
     );
 
     await expect(getTiers()).rejects.toBe(controlFlowError);
+  });
+});
+
+describe("getSupporters", () => {
+  it("fetches without an Authorization header — the wall is public", async () => {
+    const fetchMock = mockFetchOnce(
+      new Response(JSON.stringify({ supporters: [{ name: "Ada" }] }), {
+        status: 200,
+      }),
+    );
+
+    const result = await getSupporters();
+
+    expect(result).toEqual({ ok: true, data: ["Ada"] });
+    const [, init] = fetchMock.mock.calls[0];
+    expect((init as RequestInit)?.headers).toBeUndefined();
+    expect(getAccessToken).not.toHaveBeenCalled();
+  });
+
+  it("returns just the names, flattened out of the {name} envelope", async () => {
+    mockFetchOnce(
+      new Response(
+        JSON.stringify({ supporters: [{ name: "Ada" }, { name: "Grace" }] }),
+        { status: 200 },
+      ),
+    );
+
+    const result = await getSupporters();
+    expect(result).toEqual({ ok: true, data: ["Ada", "Grace"] });
+  });
+
+  it("returns INVALID_RESPONSE, not a thrown error, when the payload fails schema validation", async () => {
+    mockFetchOnce(
+      new Response(JSON.stringify({ supporters: [{}] }), { status: 200 }),
+    );
+
+    const result = await getSupporters();
+    expect(result).toMatchObject({ ok: false, code: "INVALID_RESPONSE" });
+  });
+
+  it("maps a non-ok response to a failure result rather than throwing", async () => {
+    mockFetchOnce(
+      new Response(JSON.stringify({ error: { code: "INTERNAL" } }), {
+        status: 500,
+      }),
+    );
+
+    const result = await getSupporters();
+    expect(result.ok).toBe(false);
+  });
+
+  it("returns NETWORK_ERROR rather than throwing when fetch itself rejects", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("network down");
+      }),
+    );
+
+    const result = await getSupporters();
+    expect(result).toMatchObject({ ok: false, code: "NETWORK_ERROR" });
+  });
+
+  it("rethrows a Next.js control-flow error instead of swallowing it", async () => {
+    const controlFlowError = Object.assign(new Error("DYNAMIC_SERVER_USAGE"), {
+      digest: "DYNAMIC_SERVER_USAGE",
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw controlFlowError;
+      }),
+    );
+
+    await expect(getSupporters()).rejects.toBe(controlFlowError);
   });
 });
 
