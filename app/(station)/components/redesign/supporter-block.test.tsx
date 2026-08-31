@@ -20,6 +20,34 @@ describe("SupporterBlock", () => {
     expect(queryByTestId("supporter-wall")).toBeNull();
   });
 
+  it("always renders the supporter pitch copy, at every breakpoint", () => {
+    const { container } = render(<SupporterBlock />);
+    expect(container.textContent).toContain(
+      "completely independent radio supporting local and international creatives",
+    );
+  });
+
+  it("falls back to the support-impact list when there is no wall to show", () => {
+    const { getByText, queryByTestId } = render(
+      <SupporterBlock supporterNames={[]} />,
+    );
+    expect(queryByTestId("supporter-wall")).toBeNull();
+    expect(getByText(/what your support keeps on air/i)).toBeInTheDocument();
+  });
+
+  it("shows the wall instead of the impact list once there are names", () => {
+    const { getByTestId, queryByText } = render(
+      <SupporterBlock supporterNames={["Ada"]} />,
+    );
+    expect(getByTestId("supporter-wall")).toBeInTheDocument();
+    expect(queryByText(/what your support keeps on air/i)).toBeNull();
+  });
+
+  it("always renders the decorative signal meter", () => {
+    const { getByTestId } = render(<SupporterBlock />);
+    expect(getByTestId("support-signal-meter")).toBeInTheDocument();
+  });
+
   it("renders the supporter wall row when there are opted-in names", () => {
     const { getByTestId } = render(
       <SupporterBlock supporterNames={["Ada", "Grace"]} />,

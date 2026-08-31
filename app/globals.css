@@ -252,6 +252,46 @@
   }
 }
 
+/* Supporter strip "signal meter": a small equaliser that reads as the
+   station's output level — supporters are what keep the needle up. Each bar
+   runs the same bounce at its own tempo/phase; under reduced motion the bars
+   freeze at their CSS heights, still legible as a level meter. */
+.voices-signal-bar {
+  animation: voices-signal-bar 1s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.voices-signal-bar-2 {
+  animation-delay: 0.18s;
+  animation-duration: 1.3s;
+}
+
+.voices-signal-bar-3 {
+  animation-delay: 0.42s;
+  animation-duration: 0.9s;
+}
+
+.voices-signal-bar-4 {
+  animation-delay: 0.12s;
+  animation-duration: 1.15s;
+}
+
+.voices-signal-bar-5 {
+  animation-delay: 0.33s;
+  animation-duration: 1.05s;
+}
+
+@keyframes voices-signal-bar {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .voices-on-air-marquee,
   .voices-coming-soon-marquee,
@@ -260,7 +300,8 @@
   .voices-east-tease,
   .voices-east-tuning-dot,
   .voices-schedule-pulse,
-  .voices-chat-bubble {
+  .voices-chat-bubble,
+  .voices-signal-bar {
     animation: none;
   }
 }

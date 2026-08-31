@@ -64,7 +64,7 @@ export default function SupporterWall({ names }: { names: string[] }) {
 
   return (
     <div ref={containerRef} className="w-full">
-      <p className="mb-3 text-center font-gabarito text-[13px] font-bold uppercase leading-[19px] tracking-wide text-white">
+      <p className="mb-3 font-gabarito text-[13px] font-bold uppercase leading-[19px] tracking-wide text-white">
         Supported by
       </p>
 
@@ -72,10 +72,7 @@ export default function SupporterWall({ names }: { names: string[] }) {
           stand-in) is hidden from assistive tech; the sr-only list below it
           is the one real, non-duplicated reading of the names. */}
       {reducedMotion ? (
-        <div
-          aria-hidden="true"
-          className="flex flex-wrap justify-center gap-x-2 gap-y-1 px-4"
-        >
+        <div aria-hidden="true" className="flex flex-wrap gap-x-2 gap-y-1">
           {order.map((name, index) => (
             <span
               key={`${name}-${index}`}
@@ -90,7 +87,10 @@ export default function SupporterWall({ names }: { names: string[] }) {
           ))}
         </div>
       ) : (
-        <div aria-hidden="true">
+        <div
+          aria-hidden="true"
+          className="[mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]"
+        >
           <Marquee gradient={false} pauseOnHover speed={35} autoFill>
             <div className="mr-8 inline-flex items-center gap-3 whitespace-nowrap">
               {order.map((name, index) => (

@@ -1,6 +1,7 @@
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, focusRingOnSurface } from "@/lib/utils";
 import SupporterWall from "./supporter-wall";
+import SupportImpactList from "./support-impact-list";
+import SupportSignalMeter from "./support-signal-meter";
 
 export default function SupporterBlock({
   supporterUrl,
@@ -12,54 +13,59 @@ export default function SupporterBlock({
   // Falls back to /join, not VOICES_APPLY_FOR_SHOW_URL (that's the
   // apply-to-host-a-show form) — see site-header.tsx for the same fix.
   const ctaUrl = supporterUrl || "/join";
-  const ctaClassName =
-    "inline-flex min-h-[52px] w-full max-w-[228px] items-center justify-center rounded-full px-6 py-2 text-center font-gabarito text-[20px] font-medium leading-tight text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface md:text-base md:font-bold";
+  const hasWall = supporterNames.length > 0;
 
   return (
-    // flex-col (rather than the row default) so the supporter-wall row below
-    // can stack under the grid on mobile too — with zero or one visible
-    // children (today, or whenever supporterNames is empty) this is
-    // indistinguishable from the previous row-based layout.
-    <section className="flex flex-col justify-center py-10 md:block md:border-y md:border-voicesNext-border md:bg-voicesNext-surface md:py-0">
-      <div className="grid min-h-[302px] w-[calc(100vw-16px)] max-w-[377px] items-center justify-items-center gap-[45px] overflow-hidden bg-voicesNext-surface px-16 py-[33px] md:min-h-[280px] md:w-full md:max-w-none md:grid-cols-[1fr_auto_1fr] md:justify-items-stretch md:gap-8 md:px-0 md:py-0">
-        <div className="relative hidden min-h-[46px] md:block md:min-h-[280px]">
-          <p className="font-gabarito text-[16px] font-bold uppercase leading-[19px] text-white md:absolute md:left-[37px] md:top-[27px] md:h-[19px] md:w-[106px]">
-            Voices Radio
+    <section className="border-y border-voicesNext-border bg-voicesNext-surface">
+      <div className="mx-auto grid max-w-[1080px] gap-8 px-5 py-12 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:items-center md:gap-12 md:px-8 md:py-14">
+        {/* Message: eyebrow -> headline -> copy -> CTA, left-anchored so
+            nothing floats in dead space. */}
+        <div className="flex flex-col">
+          <p className="flex items-center gap-2 font-asap text-[13px] font-bold uppercase tracking-[0.14em] text-voicesNext-orangeText">
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 rounded-full bg-voicesNext-orange"
+            />
+            Listener-funded · Non-profit
           </p>
+
+          <h2 className="mt-3 font-outfit text-[28px] font-black uppercase leading-[0.95] text-voicesNext-cream md:text-[38px]">
+            Become a Supporter
+          </h2>
+
+          <p className="mt-4 max-w-[44ch] font-gabarito text-[15px] leading-relaxed text-voicesNext-cream md:text-base">
+            Voices Radio is a completely independent radio supporting local and
+            international creatives. With a small monthly contribution, you can
+            help keep Voices sustainable and receive supporter perks.
+          </p>
+
+          <div className="mt-6 flex flex-col items-start gap-2">
+            <a
+              href={ctaUrl}
+              className={cn(
+                "inline-flex min-h-[44px] items-center justify-center rounded-full bg-voicesNext-orangeButton px-7 font-gabarito text-[16px] font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background",
+                focusRingOnSurface,
+              )}
+            >
+              Become a Supporter
+            </a>
+            <p className="font-gabarito text-[13px] text-voicesNext-secondary">
+              Cancel anytime · funds the station, not shareholders
+            </p>
+          </div>
         </div>
 
-        <div className="relative h-[125px] w-[125px] md:hidden">
-          <Image
-            src="/VOICESLOGO_LIGHTBOX.png"
-            alt=""
-            fill
-            sizes="125px"
-            className="object-contain"
-          />
-        </div>
-
-        <a
-          href={ctaUrl}
-          className={cn(
-            ctaClassName,
-            "bg-voicesNext-orange hover:bg-voicesNext-cream hover:text-voicesNext-background",
+        {/* Signal readout: an inset "hardware" panel that always carries
+            content — the live supporter wall, or what support pays for. */}
+        <div className="flex flex-col gap-3 overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-background p-4 md:p-5">
+          <SupportSignalMeter />
+          {hasWall ? (
+            <SupporterWall names={supporterNames} />
+          ) : (
+            <SupportImpactList />
           )}
-        >
-          Become a Supporter
-        </a>
-
-        <p className="hidden max-w-[333px] font-gabarito text-[16px] font-bold leading-tight text-voicesNext-cream md:block md:justify-self-end">
-          Voices Radio is a completely independent radio supporting local and
-          international creatives. With a small monthly contribution, you can
-          help keep Voices sustainable and receive supporter perks.
-        </p>
-      </div>
-
-      {supporterNames.length > 0 ? (
-        <div className="mt-8 w-full px-4 md:mt-0 md:border-t md:border-voicesNext-border md:bg-voicesNext-surface md:px-0 md:py-6">
-          <SupporterWall names={supporterNames} />
         </div>
-      ) : null}
+      </div>
     </section>
   );
 }
