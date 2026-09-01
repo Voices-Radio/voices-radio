@@ -1,9 +1,12 @@
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import GenreBrowser from "../components/redesign/genre-browser";
+import GenreFilterChips from "../components/redesign/genre-filter-chips";
 import ShowCard from "../components/redesign/show-card";
 import SupporterBlock from "../components/redesign/supporter-block";
 import { getShows } from "@/lib/voices/api";
-import { isGenreKey, matchesGenreKeys } from "@/lib/voices/genre-taxonomy";
+import { buildGenreHref, toggleGenre } from "@/lib/voices/genre-filter";
+import { isGenreKey, matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
 import {
   getParamArray,
   getSingleParam,
@@ -127,6 +130,21 @@ function CategoryTiles() {
   );
 }
 
+const MUSIC_BASE_PATH = "/explore";
+const MUSIC_EXTRA_PARAMS = { category: "music" } as const;
+
+function musicSummary(selectedGenres: string[], showCount: number) {
+  const shows = `${showCount} ${showCount === 1 ? "show" : "shows"}`;
+
+  if (!selectedGenres.length) return "The latest Voices KX shows.";
+
+  const genres = `${selectedGenres.length} ${
+    selectedGenres.length === 1 ? "genre" : "genres"
+  }`;
+
+  return `${genres} · ${shows}`;
+}
+
 function MusicGrid({
   shows,
   selectedGenres,
@@ -134,30 +152,51 @@ function MusicGrid({
   shows: VoicesShow[];
   selectedGenres: string[];
 }) {
-  const title = selectedGenres.length
-    ? selectedGenres[selectedGenres.length - 1]
-    : "Music";
+  const buildToggleHref = (genreKey: string) =>
+    buildGenreHref(
+      MUSIC_BASE_PATH,
+      toggleGenre(selectedGenres, genreKey),
+      MUSIC_EXTRA_PARAMS,
+    );
 
   return (
     <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4 md:mb-[30px]">
-        <div>
-          <h1 className="font-gabarito text-[24px] font-bold leading-none text-voicesNext-cream md:text-[34px]">
-            {title}
-          </h1>
-          <p className="mt-2 font-asap text-[13px] leading-tight text-voicesNext-secondary md:text-[14px]">
-            The latest Voices KX shows.
-          </p>
-        </div>
-        {selectedGenres.length > 0 && (
-          <Link
-            href="/explore?tab=genres"
-            className="inline-flex rounded-full border border-voicesNext-cream px-4 py-2 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-          >
-            Change genre
-          </Link>
-        )}
+      <div className="mb-5 md:mb-[30px]">
+        <h1 className="font-gabarito text-[24px] font-bold leading-none text-voicesNext-cream md:text-[34px]">
+          Music
+        </h1>
+        <p
+          className="mt-2 font-asap text-[13px] leading-tight text-voicesNext-secondary md:text-[14px]"
+          aria-live="polite"
+        >
+          {musicSummary(selectedGenres, shows.length)}
+        </p>
       </div>
+
+      <GenreFilterChips
+        genres={selectedGenres}
+        basePath={MUSIC_BASE_PATH}
+        extraParams={MUSIC_EXTRA_PARAMS}
+      />
+
+      <details
+        className="group mb-6 md:mb-8"
+        open={selectedGenres.length === 0}
+      >
+        <summary className="inline-flex min-h-[35px] w-auto cursor-pointer list-none items-center gap-2 rounded-full border border-voicesNext-cream py-[6px] pl-4 pr-3 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background [&::-webkit-details-marker]:hidden">
+          {selectedGenres.length ? "Add another genre" : "Filter by genre"}
+          <ChevronDown
+            aria-hidden="true"
+            className="size-[14px] stroke-[3px] transition-transform group-open:rotate-180"
+          />
+        </summary>
+        <div className="mt-4">
+          <GenreBrowser
+            selectedGenres={selectedGenres}
+            buildToggleHref={buildToggleHref}
+          />
+        </div>
+      </details>
 
       {shows.length > 0 ? (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -167,7 +206,9 @@ function MusicGrid({
         </div>
       ) : (
         <div className="border border-voicesNext-border p-6 font-gabarito text-voicesNext-secondary">
-          No KX shows match this genre yet.
+          {selectedGenres.length > 1
+            ? "No KX shows match all of these genres. Remove a filter to broaden your search."
+            : "No KX shows match this genre yet."}
         </div>
       )}
     </section>
@@ -198,7 +239,9 @@ export default async function ExplorePage({
     : [];
   const visibleShows = sortShows(
     shows.filter(
-      (show) => isKxExploreShow(show) && matchesGenreKeys(show.genres, selectedGenres),
+      (show) =>
+        isKxExploreShow(show) &&
+        matchesAllGenreKeys(show.genres, selectedGenres),
     ),
   ).slice(0, 16);
 
@@ -206,11 +249,18 @@ export default async function ExplorePage({
     <main id="main-content" className="scroll-mt-24">
       <ExploreTabs activeTab={activeTab} />
       {activeTab === "genres" ? (
-        <GenreBrowser
-          buildHref={(genreKey) =>
-            `/explore?category=music&genre=${encodeURIComponent(genreKey)}`
-          }
-        />
+        <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
+          <GenreBrowser
+            selectedGenres={selectedGenres}
+            buildToggleHref={(genreKey) =>
+              buildGenreHref(
+                MUSIC_BASE_PATH,
+                toggleGenre(selectedGenres, genreKey),
+                MUSIC_EXTRA_PARAMS,
+              )
+            }
+          />
+        </section>
       ) : (
         <>
           {!showMusicGrid && <CategoryTiles />}

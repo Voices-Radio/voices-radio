@@ -113,4 +113,25 @@ describe("resolvePostLoginPath", () => {
       }),
     ).toBe("/account/artist?missing=member");
   });
+
+  it("lands a plain member sign-in on the profile page", () => {
+    expect(
+      resolvePostLoginPath({ capabilities: capabilities(["member"]) }),
+    ).toBe("/account/profile");
+  });
+
+  it("still lands artist-only accounts on the artist profile", () => {
+    expect(
+      resolvePostLoginPath({ capabilities: capabilities(["artist"]) }),
+    ).toBe("/account/artist");
+  });
+
+  it("lets an explicit safe next path win over the profile default", () => {
+    expect(
+      resolvePostLoginPath({
+        next: "/account/membership",
+        capabilities: capabilities(["member"]),
+      }),
+    ).toBe("/account/membership");
+  });
 });

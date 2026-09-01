@@ -107,6 +107,11 @@ export function resolvePostLoginPath({
       : `${defaultAccountPathForCapabilities(capabilities)}?missing=member`;
   }
 
+  // A plain sign-in (no deep-link `next`, no artist/member door) lands the
+  // member on their profile rather than the account overview or wherever
+  // they happened to be when they clicked "Sign in".
+  if (hasCapability(capabilities, "member")) return "/account/profile";
+
   return defaultAccountPathForCapabilities(capabilities);
 }
 

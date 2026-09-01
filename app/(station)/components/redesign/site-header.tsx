@@ -117,29 +117,29 @@ function MobileHeaderArtwork() {
     <>
       <Link
         href="/"
-        className="block h-[45px] w-[45px] justify-self-start focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+        className="block h-[37px] w-[37px] justify-self-start focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         aria-label="Voices Radio home"
       >
         <Image
           src="/VOICESLOGO_LIGHTBOX.png"
           alt=""
-          width={45}
-          height={45}
-          className="h-[45px] w-[45px] object-contain"
+          width={37}
+          height={37}
+          className="h-[37px] w-[37px] object-contain"
           priority
         />
       </Link>
       <Link
         href="/"
-        className="block h-[35px] w-[102px] justify-self-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+        className="block h-[28px] w-[82px] justify-self-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         aria-label="Voices Radio home"
       >
         <Image
           src="/voices-wordmark.svg"
           alt=""
-          width={102}
-          height={35}
-          className="h-[35px] w-[102px] object-contain"
+          width={82}
+          height={28}
+          className="h-[28px] w-[82px] object-contain"
           priority
         />
       </Link>
@@ -149,7 +149,7 @@ function MobileHeaderArtwork() {
 
 function MobileOnAirTicker() {
   return (
-    <div className="h-[19px] overflow-hidden bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary md:hidden">
+    <div className="h-[15px] overflow-hidden bg-voicesNext-background font-outfit text-[9px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary md:hidden">
       <div className="flex h-full w-max items-center gap-[6px] px-1">
         {Array.from({ length: 14 }).map((_, index) => (
           <span key={index} className="flex shrink-0 items-center gap-[6px]">
@@ -280,7 +280,7 @@ function MobileAccountLinks({
     return (
       <div className="mt-6 px-6">
         <Link
-          href={`/sign-in?next=${encodeURIComponent(pathname || "/")}`}
+          href="/sign-in"
           onClick={onNavigate}
           className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         >
@@ -495,11 +495,11 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
         aria-hidden="true"
         className="h-[env(safe-area-inset-top,0px)] bg-voicesNext-safeArea md:hidden"
       />
-      <div className="grid min-h-[64px] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-voicesNext-safeArea via-[#343434] to-voicesNext-background px-[17px] pb-[7px] pt-[7px] md:hidden">
+      <div className="grid min-h-[50px] grid-cols-[1fr_auto_1fr] items-center bg-gradient-to-b from-voicesNext-safeArea via-[#343434] to-voicesNext-background px-[17px] pb-[4px] pt-[4px] md:hidden">
         <MobileHeaderArtwork />
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center justify-self-end text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+          className="inline-flex h-10 w-10 items-center justify-center justify-self-end text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
           onClick={() => {
             setSearchOpen(false);
             setOpen(true);
@@ -714,7 +714,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
             aria-describedby={undefined}
           >
             <div className="min-h-dvh flex flex-col md:hidden">
-              <div className="grid min-h-[calc(60px+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center px-[14px] pb-[7px] pt-[calc(7px+env(safe-area-inset-top))]">
+              <div className="grid min-h-[calc(48px+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center px-[14px] pb-[4px] pt-[calc(4px+env(safe-area-inset-top))]">
                 <MobileHeaderArtwork />
                 <button
                   type="button"

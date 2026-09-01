@@ -28,13 +28,11 @@ export function getInitials(user: VoicesSessionUser): string | null {
   return null;
 }
 
-function SignedOutLinks({ pathname }: { pathname: string }) {
-  const nextParam = encodeURIComponent(pathname || "/");
-
+function SignedOutLinks() {
   return (
     <div className="flex items-center gap-3 lg:gap-4">
       <Link
-        href={`/sign-in?next=${nextParam}`}
+        href="/sign-in"
         className={cn(
           "font-gabarito text-sm font-bold text-voicesNext-cream transition-colors hover:text-voicesNext-orange",
           focusRingClasses,
@@ -213,7 +211,6 @@ function AccountAvatarMenu({
  */
 export default function AccountMenu() {
   const { user, status, signOut } = useSessionUser();
-  const pathname = usePathname();
 
   if (status === "loading") {
     // Reserves roughly the signed-in avatar's footprint so the common case
@@ -232,6 +229,6 @@ export default function AccountMenu() {
   return user ? (
     <AccountAvatarMenu user={user} onSignOut={signOut} />
   ) : (
-    <SignedOutLinks pathname={pathname ?? "/"} />
+    <SignedOutLinks />
   );
 }

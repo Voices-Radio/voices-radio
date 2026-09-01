@@ -75,6 +75,22 @@ describe("SupporterWall", () => {
     ).toBeTruthy();
   });
 
+  it("renders five marquee rows so the strip reads as a wall, not a line", () => {
+    render(<SupporterWall names={["Ada", "Grace", "Katherine"]} />);
+    expect(screen.getAllByTestId("marquee-mock")).toHaveLength(5);
+  });
+
+  it("gives every row the full name list, so one supporter still fills all five rows", () => {
+    render(<SupporterWall names={["Ada"]} />);
+    const rows = screen.getAllByTestId("marquee-mock");
+    for (const row of rows) {
+      expect(
+        row.querySelectorAll('[data-testid="supporter-name"]'),
+      ).toHaveLength(1);
+      expect(row.textContent).toContain("Ada");
+    }
+  });
+
   it("renders a static (non-marquee) list under prefers-reduced-motion", () => {
     mockMatchMedia(true);
     const { container } = render(<SupporterWall names={["Ada", "Grace"]} />);

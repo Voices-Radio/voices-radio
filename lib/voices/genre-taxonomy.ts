@@ -52,7 +52,12 @@ export function normalizeGenreValue(value: string) {
     .trim();
 }
 
-export function matchesGenreKeys(
+/**
+ * True when `itemGenres` matches EVERY selected key (AND / intersection).
+ * A key matches when any of its taxonomy aliases is present on the item.
+ * An empty selection matches everything; an item with no genres matches nothing.
+ */
+export function matchesAllGenreKeys(
   itemGenres: string[],
   selectedKeys: string[],
 ) {
@@ -61,7 +66,7 @@ export function matchesGenreKeys(
   const normalized = itemGenres.map(normalizeGenreValue).filter(Boolean);
   if (!normalized.length) return false;
 
-  return selectedKeys.some((key) =>
+  return selectedKeys.every((key) =>
     getGenreAliases(key)
       .map(normalizeGenreValue)
       .some((alias) => normalized.includes(alias)),

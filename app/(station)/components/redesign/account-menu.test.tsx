@@ -39,14 +39,17 @@ afterEach(() => {
 describe("getInitials", () => {
   it("combines first and last initials when both are present", () => {
     expect(
-      getInitials({ _id: "1", email: null, firstName: "Jack", lastName: "Onslow" }),
+      getInitials({
+        _id: "1",
+        email: null,
+        firstName: "Jack",
+        lastName: "Onslow",
+      }),
     ).toBe("JO");
   });
 
   it("falls back to just the first name's initial", () => {
-    expect(
-      getInitials({ _id: "1", email: null, firstName: "Jack" }),
-    ).toBe("J");
+    expect(getInitials({ _id: "1", email: null, firstName: "Jack" })).toBe("J");
   });
 
   it("falls back to the email's first letter when no name is set", () => {
@@ -65,7 +68,7 @@ describe("AccountMenu", () => {
 
     expect(
       await screen.findByRole("link", { name: /sign in/i }),
-    ).toHaveAttribute("href", "/sign-in?next=%2Fexplore");
+    ).toHaveAttribute("href", "/sign-in");
     expect(screen.getByRole("link", { name: /support us/i })).toHaveAttribute(
       "href",
       "/join",
@@ -94,9 +97,7 @@ describe("AccountMenu", () => {
       "Redemptions",
       "Profile",
     ]) {
-      expect(
-        screen.getByRole("menuitem", { name: label }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("menuitem", { name: label })).toBeInTheDocument();
     }
     expect(
       screen.getByRole("menuitem", { name: /sign out/i }),

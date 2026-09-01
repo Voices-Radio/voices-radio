@@ -1,8 +1,11 @@
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import ArtistCard from "../components/redesign/artist-card";
 import GenreBrowser from "../components/redesign/genre-browser";
+import GenreFilterChips from "../components/redesign/genre-filter-chips";
 import { getArtists } from "@/lib/voices/api";
-import { isGenreKey, matchesGenreKeys } from "@/lib/voices/genre-taxonomy";
+import { buildGenreHref, toggleGenre } from "@/lib/voices/genre-filter";
+import { isGenreKey, matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
 import { matchesStationOrLocation } from "@/lib/voices/normalizers";
 import {
   getParamArray,
@@ -12,13 +15,10 @@ import {
 import type { VoicesArtist } from "@/lib/voices/types";
 
 const COLLAPSED_LIMIT = 9;
+const ARTISTS_BASE_PATH = "/artists";
 
 function sortArtists(artists: VoicesArtist[]) {
   return [...artists].sort((a, b) => a.name.localeCompare(b.name));
-}
-
-function buildGenreHref(genreKey: string) {
-  return `/artists?genre=${encodeURIComponent(genreKey)}`;
 }
 
 function ArtistTabs({ activeTab }: { activeTab: "artists" | "genres" }) {
@@ -70,12 +70,10 @@ function ArtistSection({
 }) {
   if (!artists.length) return null;
 
-  const visibleArtists = expanded
-    ? artists
-    : artists.slice(0, COLLAPSED_LIMIT);
-  const expandParams = new URLSearchParams();
-  selectedGenres.forEach((genre) => expandParams.append("genre", genre));
-  expandParams.set("expand", sectionKey);
+  const visibleArtists = expanded ? artists : artists.slice(0, COLLAPSED_LIMIT);
+  const expandHref = `${buildGenreHref(ARTISTS_BASE_PATH, selectedGenres, {
+    expand: sectionKey,
+  })}#${sectionKey}`;
 
   return (
     <section
@@ -91,19 +89,9 @@ function ArtistSection({
             {description}
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          {selectedGenres.length > 0 && (
-            <Link
-              href="/artists?tab=genres"
-              className="inline-flex rounded-full border border-voicesNext-cream px-4 py-2 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-            >
-              Change genre
-            </Link>
-          )}
-          <span className="font-asap text-[16px] font-bold lowercase text-voicesNext-cream">
-            a → z
-          </span>
-        </div>
+        <span className="font-asap text-[16px] font-bold lowercase text-voicesNext-cream">
+          a → z
+        </span>
       </div>
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {visibleArtists.map((artist) => (
@@ -115,7 +103,7 @@ function ArtistSection({
       {!expanded && artists.length > COLLAPSED_LIMIT && (
         <div className="mt-10 text-center">
           <Link
-            href={`/artists?${expandParams.toString()}#${sectionKey}`}
+            href={expandHref}
             className="inline-flex rounded-full border border-voicesNext-cream px-[17px] py-1 font-asap text-[16px] font-bold uppercase text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
           >
             Load More
@@ -140,12 +128,19 @@ export default async function ArtistsPage({
     isGenreKey,
   );
   const expand = getSingleParam(resolvedSearchParams, "expand");
+  const buildToggleHref = (genreKey: string) =>
+    buildGenreHref(ARTISTS_BASE_PATH, toggleGenre(selectedGenres, genreKey));
 
   if (activeTab === "genres") {
     return (
       <main id="main-content" className="scroll-mt-24">
         <ArtistTabs activeTab="genres" />
-        <GenreBrowser buildHref={buildGenreHref} />
+        <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
+          <GenreBrowser
+            selectedGenres={selectedGenres}
+            buildToggleHref={buildToggleHref}
+          />
+        </section>
       </main>
     );
   }
@@ -157,18 +152,46 @@ export default async function ArtistsPage({
 
   if (selectedGenres.length > 0) {
     const filteredArtists = activeArtists.filter((artist) =>
-      matchesGenreKeys(artist.genres, selectedGenres),
+      matchesAllGenreKeys(artist.genres, selectedGenres),
     );
-    const genreLabel = selectedGenres[selectedGenres.length - 1];
+    const singleGenre = selectedGenres.length === 1;
+    const genreLabel = singleGenre
+      ? selectedGenres[0]
+      : `${selectedGenres.length} genres`;
 
     return (
       <main id="main-content" className="scroll-mt-24">
         <ArtistTabs activeTab="artists" />
+        <section className="mx-auto max-w-[1280px] px-4 pt-10 md:px-[70px] md:pt-[54px]">
+          <GenreFilterChips
+            genres={selectedGenres}
+            basePath={ARTISTS_BASE_PATH}
+          />
+          <details className="group" open={false}>
+            <summary className="inline-flex min-h-[35px] w-auto cursor-pointer list-none items-center gap-2 rounded-full border border-voicesNext-cream py-[6px] pl-4 pr-3 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background [&::-webkit-details-marker]:hidden">
+              Add another genre
+              <ChevronDown
+                aria-hidden="true"
+                className="size-[14px] stroke-[3px] transition-transform group-open:rotate-180"
+              />
+            </summary>
+            <div className="mt-4">
+              <GenreBrowser
+                selectedGenres={selectedGenres}
+                buildToggleHref={buildToggleHref}
+              />
+            </div>
+          </details>
+        </section>
         {filteredArtists.length > 0 ? (
           <ArtistSection
             sectionKey="genre"
             title={genreLabel}
-            description="Voices artists, presenters and hosts in this genre."
+            description={
+              singleGenre
+                ? "Voices artists, presenters and hosts in this genre."
+                : "Voices artists, presenters and hosts in all of these genres."
+            }
             artists={filteredArtists}
             expanded={expand === "genre"}
             selectedGenres={selectedGenres}
@@ -181,14 +204,9 @@ export default async function ArtistsPage({
               </h1>
             </div>
             <div className="border border-voicesNext-border p-6 font-gabarito text-voicesNext-secondary">
-              No artists match this genre yet.{" "}
-              <Link
-                href="/artists?tab=genres"
-                className="underline hover:text-voicesNext-cream"
-              >
-                Choose another genre
-              </Link>
-              .
+              {singleGenre
+                ? "No artists match this genre yet."
+                : "No artists match all of these genres. Remove a filter to broaden your search."}
             </div>
           </section>
         )}

@@ -15,8 +15,25 @@ function shuffle<T>(items: readonly T[]): T[] {
   return next;
 }
 
+// The strip is five marquee rows deep. Each row shows the same names
+// rotated by a different offset so a single-supporter station still fills
+// every row, and a longer list never lines up into vertical columns.
+const ROW_COUNT = 5;
+
+// Per-row speeds/directions are deliberately uneven — five identical
+// marquees read as one moving block rather than a wall of names.
+const ROW_SPEEDS = [34, 27, 41, 30, 37];
+
+function toRows(names: readonly string[], rowCount: number): string[][] {
+  return Array.from({ length: rowCount }, (_, row) => {
+    const offset = Math.floor((names.length * row) / rowCount);
+    return [...names.slice(offset), ...names.slice(0, offset)];
+  });
+}
+
 /**
- * A continuously-scrolling carousel of supporter recognition names (set via
+ * A five-row, continuously-scrolling wall of supporter recognition names
+ * (set via
  * "List me on the public supporter wall" in /account/profile). Renders
  * nothing when there are no opted-in names — the caller (supporter-block)
  * falls back to its unchanged today's-markup in that case.
@@ -89,24 +106,33 @@ export default function SupporterWall({ names }: { names: string[] }) {
       ) : (
         <div
           aria-hidden="true"
-          className="[mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]"
+          className="flex flex-col gap-1 [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]"
         >
-          <Marquee gradient={false} pauseOnHover speed={35} autoFill>
-            <div className="mr-8 inline-flex items-center gap-3 whitespace-nowrap">
-              {order.map((name, index) => (
-                <span
-                  key={`${name}-${index}`}
-                  data-testid="supporter-name"
-                  className="inline-flex items-center gap-3 font-gabarito text-[15px] font-medium text-voicesNext-cream"
-                >
-                  {name}
-                  <span className="text-voicesNext-orange" aria-hidden="true">
-                    ·
+          {toRows(order, ROW_COUNT).map((row, rowIndex) => (
+            <Marquee
+              key={`row-${rowIndex}`}
+              gradient={false}
+              pauseOnHover
+              speed={ROW_SPEEDS[rowIndex % ROW_SPEEDS.length]}
+              direction={rowIndex % 2 === 1 ? "right" : "left"}
+              autoFill
+            >
+              <div className="mr-8 inline-flex items-center gap-3 whitespace-nowrap">
+                {row.map((name, index) => (
+                  <span
+                    key={`${name}-${index}`}
+                    data-testid="supporter-name"
+                    className="inline-flex items-center gap-3 font-gabarito text-[15px] font-medium leading-[26px] text-voicesNext-cream"
+                  >
+                    {name}
+                    <span className="text-voicesNext-orange" aria-hidden="true">
+                      ·
+                    </span>
                   </span>
-                </span>
-              ))}
-            </div>
-          </Marquee>
+                ))}
+              </div>
+            </Marquee>
+          ))}
         </div>
       )}
 
