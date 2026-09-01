@@ -171,18 +171,20 @@ export default function LiveStationCard({
           </button>
         </div>
       )}
-      <button
-        type="button"
-        disabled={!showWatchLive}
-        onClick={onWatchLive}
-        className={cn(
-          "absolute left-1/2 top-1/2 z-30 inline-flex -translate-x-1/2 translate-y-2 items-center justify-center rounded-full bg-voicesNext-cream px-5 py-2 font-gabarito text-sm font-bold text-voicesNext-background opacity-0 shadow-lg transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
-          showWatchLive && "pointer-events-auto -translate-y-1/2 opacity-100",
-        )}
-        aria-label={`Watch ${station} live video`}
-      >
-        Watch live
-      </button>
+      {station !== "KX" && (
+        <button
+          type="button"
+          disabled={!showWatchLive}
+          onClick={onWatchLive}
+          className={cn(
+            "pointer-events-none absolute left-1/2 top-1/2 z-30 inline-flex -translate-x-1/2 translate-y-2 items-center justify-center rounded-full bg-voicesNext-cream px-5 py-2 font-gabarito text-sm font-bold text-voicesNext-background opacity-0 shadow-lg transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+            showWatchLive && "pointer-events-auto -translate-y-1/2 opacity-100",
+          )}
+          aria-label={`Watch ${station} live video`}
+        >
+          Watch live
+        </button>
+      )}
     </article>
   );
 }

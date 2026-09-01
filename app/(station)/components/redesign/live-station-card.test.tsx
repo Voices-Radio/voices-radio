@@ -65,5 +65,11 @@ describe("LiveStationCard", () => {
 
     expect(onListenLive).toHaveBeenCalledTimes(1);
     expect(onWatchLive).not.toHaveBeenCalled();
+
+    // The video overlay button must not render on KX cards: it sits dead-centre
+    // of the card and would swallow clicks aimed at the Listen live button.
+    expect(
+      screen.queryByRole("button", { name: /watch kx live video/i, hidden: true }),
+    ).toBeNull();
   });
 });
