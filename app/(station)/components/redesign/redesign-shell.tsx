@@ -4,6 +4,7 @@ import ExploreLiveStrip from "../../explore/explore-live-strip";
 import ArchiveMiniPlayer from "./archive-mini-player";
 import ArchiveMiniPlayerBoundary from "./archive-mini-player-boundary";
 import { ArchivePlayerProvider } from "./archive-player-context";
+import ArchivePlayerSpacer from "./archive-player-spacer";
 import { FavouritesProvider } from "./favourites-context";
 import SaveIntentReplay from "./save-intent-replay";
 import SiteFooter from "./site-footer";
@@ -37,6 +38,7 @@ export default async function RedesignShell({
           <ExploreLiveStrip />
           {children}
           <SiteFooter contactUrl={settings?.contact_link} />
+          <ArchivePlayerSpacer />
           <ArchiveMiniPlayerBoundary>
             <ArchiveMiniPlayer />
           </ArchiveMiniPlayerBoundary>

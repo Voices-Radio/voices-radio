@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useScript } from "@/hooks/use-script";
-import { cn } from "@/lib/utils";
 import type { VoicesArchiveMedia } from "@/lib/voices/types";
 import type { ArchivePlayerCommand } from "./archive-player-context";
 
@@ -26,6 +25,8 @@ type MixcloudWidget = {
   ready: Promise<void>;
   play: () => Promise<void>;
   pause: () => Promise<void>;
+  /** Position in seconds. */
+  seek: (position: number) => Promise<boolean>;
   getPosition: () => Promise<number>;
   getDuration: () => Promise<number>;
   events: {
@@ -42,6 +43,8 @@ type SoundCloudWidget = {
   unbind: (eventName: string) => void;
   play: () => void;
   pause: () => void;
+  /** Position in milliseconds, unlike Mixcloud's seconds. */
+  seekTo: (milliseconds: number) => void;
   getDuration: (callback: (duration: number) => void) => void;
   getPosition: (callback: (position: number) => void) => void;
 };
@@ -64,6 +67,12 @@ declare global {
 
 const MIXCLOUD_WIDGET_API = "https://widget.mixcloud.com/media/js/widgetApi.js";
 const SOUNDCLOUD_WIDGET_API = "https://w.soundcloud.com/player/api.js";
+
+function isMixcloudWidget(
+  widget: MixcloudWidget | SoundCloudWidget,
+): widget is MixcloudWidget {
+  return typeof (widget as MixcloudWidget).seek === "function";
+}
 
 function isPlayProgressPayload(
   payload: unknown,
@@ -276,6 +285,23 @@ export default function ArchiveWidgetHost({
     appliedCommandIdRef.current = command.id;
     const widget = widgetRef.current;
 
+    if (command.action === "seek") {
+      // Seeking is the one command whose shape differs between providers:
+      // Mixcloud takes seconds and returns a promise, SoundCloud takes
+      // milliseconds and returns nothing. Neither starts playback, so a seek
+      // while paused stays paused.
+      const position = command.position ?? 0;
+
+      if (isMixcloudWidget(widget)) {
+        widget
+          .seek(position)
+          .catch(() => callbacksRef.current.onError("Archive seek failed"));
+      } else {
+        widget.seekTo(Math.round(position * 1000));
+      }
+      return;
+    }
+
     if (command.action === "play") {
       const result = widget.play();
       if (result instanceof Promise) {
@@ -292,24 +318,27 @@ export default function ArchiveWidgetHost({
     }
   }, [callbacksRef, command]);
 
-  // Mixcloud's `mini=1` widget is a fixed 60px control bar. Pinning the iframe
-  // to that height (rather than stretching it to fill the host column) is what
-  // stops the empty strip appearing under the player; the surrounding column
-  // background fills any remaining space. SoundCloud's classic player has no
-  // such fixed size, so it keeps filling the column.
-  const isMixcloud = media.provider === "mixcloud";
-
+  // The provider widget is the audio engine, not a control surface: it renders
+  // its own play button, which stacked a second, off-brand transport directly
+  // under ours in the mini player. It stays mounted and painted — just moved
+  // out of view.
+  //
+  // Deliberately NOT display:none, visibility:hidden, or zero-size: all three
+  // can suspend iframe media or stop the SoundCloud widget initialising at all.
+  // Real dimensions (SoundCloud needs them), zero opacity, off the z-stack, and
+  // inert to pointer, tab order and assistive tech.
   return (
-    <div className="flex h-full w-full items-center justify-center overflow-hidden bg-voicesNext-background">
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed bottom-0 left-0 -z-10 h-[60px] w-[320px] overflow-hidden opacity-0"
+    >
       <iframe
         key={media.embedUrl}
         ref={iframeRef}
+        tabIndex={-1}
         title={`${media.title} ${media.provider} player`}
         src={media.embedUrl}
-        className={cn(
-          "w-full border-0 bg-voicesNext-background",
-          isMixcloud ? "h-[60px]" : "h-full min-h-[60px]",
-        )}
+        className="h-[60px] w-full border-0 bg-voicesNext-background"
         allow="autoplay"
       />
     </div>

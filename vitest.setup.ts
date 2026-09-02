@@ -37,3 +37,16 @@ vi.mock("@/env", () => ({
     NEXT_PUBLIC_SITE_URL: "https://staging.voicesradio.co.uk",
   },
 }));
+
+// jsdom implements no ResizeObserver. ArchiveMiniPlayer uses one to publish
+// its measured height as a CSS variable for ArchivePlayerSpacer; without a
+// stub, simply rendering the mini player throws. Layout measurement isn't
+// meaningful under jsdom (every box is 0x0), so a no-op stub is the honest
+// shim here — the behaviour it drives is covered by the Playwright e2e run.
+if (typeof globalThis.ResizeObserver === "undefined") {
+  globalThis.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+}

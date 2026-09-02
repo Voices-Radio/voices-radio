@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -21,7 +22,9 @@ export type ArchivePlayerStatus =
 
 export type ArchivePlayerCommand = {
   id: number;
-  action: "play" | "pause";
+  action: "play" | "pause" | "seek";
+  /** Target position in seconds. Only set for "seek". */
+  position?: number;
 };
 
 type ArchiveProgress = {
@@ -38,6 +41,7 @@ type ArchivePlayerContextValue = {
   playArchive: (media: VoicesArchiveMedia) => void;
   toggleArchive: () => void;
   pauseArchive: () => void;
+  seekArchive: (position: number) => void;
   stopArchive: () => void;
   setReady: () => void;
   setPlaying: () => void;
@@ -60,15 +64,19 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
   const [command, setCommand] = useState<ArchivePlayerCommand | undefined>();
   const [progress, setProgressState] = useState<ArchiveProgress>({});
   const [error, setErrorState] = useState<string | undefined>();
-  const [commandId, setCommandId] = useState(0);
+  // A ref, not state: the id only ever exists to let ArchiveWidgetHost dedupe
+  // commands it has already applied. Held as state it had to be bumped from
+  // inside a setState updater that also called setCommand — an impure updater
+  // React is free to invoke twice, which would issue the command twice.
+  const commandIdRef = useRef(0);
 
-  const issueCommand = useCallback((action: ArchivePlayerCommand["action"]) => {
-    setCommandId((nextId) => {
-      const id = nextId + 1;
-      setCommand({ id, action });
-      return id;
-    });
-  }, []);
+  const issueCommand = useCallback(
+    (action: ArchivePlayerCommand["action"], position?: number) => {
+      commandIdRef.current += 1;
+      setCommand({ id: commandIdRef.current, action, position });
+    },
+    [],
+  );
 
   const stopArchive = useCallback(() => {
     setActiveMedia(undefined);
@@ -98,6 +106,24 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
     setStatus((current) => (current === "idle" ? current : "paused"));
     issueCommand("pause");
   }, [activeMedia, issueCommand]);
+
+  const seekArchive = useCallback(
+    (position: number) => {
+      if (!activeMedia) return;
+
+      const duration = progress.duration ?? activeMedia.duration;
+      if (!duration) return;
+
+      const clamped = Math.min(Math.max(0, position), duration);
+
+      // Move the readout straight away rather than waiting for the widget's
+      // next progress event — at up to a second's latency the thumb would
+      // otherwise snap back under the user's finger before catching up.
+      setProgressState((current) => ({ ...current, position: clamped }));
+      issueCommand("seek", clamped);
+    },
+    [activeMedia, issueCommand, progress.duration],
+  );
 
   const toggleArchive = useCallback(() => {
     if (!activeMedia) return;
@@ -170,6 +196,7 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
       playArchive,
       toggleArchive,
       pauseArchive,
+      seekArchive,
       stopArchive,
       setReady,
       setPlaying,
@@ -187,6 +214,7 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
       pauseArchive,
       playArchive,
       progress,
+      seekArchive,
       setEnded,
       setError,
       setPaused,

@@ -2,7 +2,9 @@
 
 import { ExternalLink, Pause, Play, X } from "lucide-react";
 import Image from "next/image";
+import { useCallback, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { formatShowDisplayTitle } from "@/lib/voices/show-title";
 import ArchiveWidgetHost from "./archive-widget-host";
 import { useArchivePlayer } from "./archive-player-context";
 
@@ -20,6 +22,47 @@ function providerLabel(provider: "mixcloud" | "soundcloud") {
   return provider === "mixcloud" ? "Mixcloud" : "SoundCloud";
 }
 
+const PLAYER_HEIGHT_VAR = "--archive-player-height";
+
+/**
+ * Publishes the bar's measured height so ArchivePlayerSpacer can reserve
+ * exactly that much room at the end of the page.
+ *
+ * Measured rather than shared as a constant: the bar's height moves with its
+ * own content, the loaded font metrics and the iOS safe-area inset, and a
+ * hardcoded number in a second file silently drifts out of sync the next time
+ * any of those change — which is how page content ended up under the bar in
+ * the first place.
+ */
+function usePublishedPlayerHeight() {
+  const observerRef = useRef<ResizeObserver | null>(null);
+
+  // A callback ref, not useEffect: this component returns null until a show is
+  // loaded, so an effect with empty deps would run once against a section that
+  // does not exist yet and never re-run when the bar finally mounts.
+  return useCallback((node: HTMLElement | null) => {
+    const root = document.documentElement;
+
+    observerRef.current?.disconnect();
+    observerRef.current = null;
+
+    if (!node) {
+      root.style.removeProperty(PLAYER_HEIGHT_VAR);
+      return;
+    }
+
+    const observer = new ResizeObserver(([entry]) => {
+      root.style.setProperty(
+        PLAYER_HEIGHT_VAR,
+        `${Math.ceil(entry.target.getBoundingClientRect().height)}px`,
+      );
+    });
+
+    observer.observe(node);
+    observerRef.current = observer;
+  }, []);
+}
+
 export default function ArchiveMiniPlayer() {
   const {
     activeMedia,
@@ -33,18 +76,50 @@ export default function ArchiveMiniPlayer() {
     setPlaying,
     setProgress,
     setReady,
+    seekArchive,
     stopArchive,
     toggleArchive,
   } = useArchivePlayer();
+  const sectionRef = usePublishedPlayerHeight();
+  // Position held while a drag is in flight, so incoming progress events don't
+  // yank the thumb out from under the user's finger mid-scrub.
+  const [scrub, setScrub] = useState<number | null>(null);
+  const scrubbingRef = useRef(false);
 
   if (!activeMedia) return null;
 
   const playing = status === "playing" || status === "loading";
   const duration = progress.duration ?? activeMedia.duration;
+  const displayPosition = scrub ?? progress.position ?? 0;
   const progressPercent =
-    duration && progress.position
-      ? Math.min(100, Math.max(0, (progress.position / duration) * 100))
+    duration && displayPosition
+      ? Math.min(100, Math.max(0, (displayPosition / duration) * 100))
       : 0;
+
+  function commitScrub(value: number) {
+    scrubbingRef.current = false;
+    setScrub(null);
+    seekArchive(value);
+  }
+
+  function handleScrubChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const next = Number(event.target.value);
+
+    // Dragging reports continuously; committing every step would flood the
+    // widget with postMessage seeks. Keyboard input arrives without a pointer
+    // gesture, so it commits straight away.
+    if (scrubbingRef.current) {
+      setScrub(next);
+      return;
+    }
+
+    commitScrub(next);
+  }
+
+  function handleScrubRelease(event: React.PointerEvent<HTMLInputElement>) {
+    if (!scrubbingRef.current) return;
+    commitScrub(Number(event.currentTarget.value));
+  }
   const statusText =
     status === "error"
       ? (error ?? "Archive player unavailable")
@@ -60,42 +135,77 @@ export default function ArchiveMiniPlayer() {
 
   return (
     <section
+      ref={sectionRef}
       className="fixed inset-x-0 bottom-0 z-40 px-2 pb-[max(8px,env(safe-area-inset-bottom))] md:px-4 md:pb-4"
       aria-label="Archive mini player"
     >
-      <div className="mx-auto max-w-[1280px] overflow-hidden border border-voicesNext-border bg-voicesNext-background shadow-[0_-16px_40px_rgba(0,0,0,0.38)] md:grid md:grid-cols-[minmax(0,1fr)_minmax(360px,450px)] md:items-stretch">
-        <div className="grid min-h-[88px] grid-cols-[64px_minmax(0,1fr)_auto] items-center gap-3 border-b border-voicesNext-border bg-voicesNext-surface p-2 md:min-h-[96px] md:border-b-0 md:border-r md:p-3">
-          <div className="relative h-16 w-16 overflow-hidden rounded-voices-xs bg-voicesNext-background">
+      {/* One row at every breakpoint. The provider widget used to occupy a
+          second column here, which is what stacked two play buttons on top of
+          each other — it is now mounted off-screen by ArchiveWidgetHost. */}
+      <div className="mx-auto max-w-[1280px] overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-background shadow-[0_-16px_40px_rgba(0,0,0,0.38)]">
+        <div className="grid min-h-[80px] grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-3 bg-voicesNext-surface p-3">
+          <div className="relative h-14 w-14 overflow-hidden rounded-voices-xs bg-voicesNext-background">
             <Image
               src={activeMedia.artwork.src}
               alt=""
               fill
-              sizes="64px"
+              sizes="56px"
               className="object-cover"
             />
           </div>
 
           <div className="min-w-0">
-            <p className="font-asap text-[11px] font-bold uppercase leading-none text-voicesNext-orangeText">
-              {providerLabel(activeMedia.provider)} archive · {statusText}
+            <p className="font-asap text-[11px] font-bold uppercase leading-none tracking-[0.12em] text-voicesNext-orangeText">
+              {statusText}
             </p>
             <h2 className="mt-1 truncate font-gabarito text-[16px] font-bold leading-tight text-voicesNext-cream md:text-[18px]">
-              {activeMedia.title}
+              {formatShowDisplayTitle(activeMedia.title)}
             </h2>
             <p className="mt-1 truncate font-asap text-[12px] leading-none text-voicesNext-secondary">
               {activeMedia.artistName ?? "Voices Radio"}
             </p>
-            <div
-              className="bg-voicesNext-border/45 mt-2 h-1 overflow-hidden rounded-full"
-              aria-hidden="true"
-            >
+            {/* The provider widget carried the only seek bar; now that it is
+                hidden, this one has to do the job. A transparent native range
+                input sits over the painted track so the control keeps native
+                keyboard, touch and screen-reader behaviour while the visuals
+                stay on the system's tokens. */}
+            <div className="relative mt-2 flex h-1 items-center">
+              <input
+                type="range"
+                min={0}
+                max={duration ?? 0}
+                step={1}
+                value={displayPosition}
+                disabled={!duration}
+                onChange={handleScrubChange}
+                onPointerDown={() => {
+                  scrubbingRef.current = true;
+                }}
+                onPointerUp={handleScrubRelease}
+                onPointerCancel={handleScrubRelease}
+                aria-label="Seek"
+                aria-valuetext={`${formatTime(displayPosition)} of ${formatTime(duration)}`}
+                // Inset stretches the hit area to 24px without thickening the
+                // 4px visual track (WCAG 2.2 target size).
+                className="peer absolute -inset-y-[10px] inset-x-0 z-10 w-full cursor-pointer appearance-none bg-transparent opacity-0 disabled:cursor-not-allowed"
+              />
               <div
-                className="h-full rounded-full bg-voicesNext-orange"
-                style={{ width: `${progressPercent}%` }}
+                aria-hidden="true"
+                className="bg-voicesNext-border/45 h-1 w-full overflow-hidden rounded-full transition-colors peer-hover:bg-voicesNext-border/70 peer-focus-visible:ring-2 peer-focus-visible:ring-voicesNext-orange peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-voicesNext-surface"
+              >
+                <div
+                  className="h-full rounded-full bg-voicesNext-orange"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <span
+                aria-hidden="true"
+                className="size-2 pointer-events-none absolute -translate-x-1/2 rounded-full bg-voicesNext-cream transition-transform peer-hover:scale-125 peer-focus-visible:scale-125 peer-disabled:hidden"
+                style={{ left: `${progressPercent}%` }}
               />
             </div>
-            <p className="mt-1 font-asap text-[10px] leading-none text-voicesNext-secondary">
-              {formatTime(progress.position)}
+            <p className="mt-2 font-asap text-[10px] leading-none text-voicesNext-secondary">
+              {formatTime(displayPosition)}
               {duration ? ` / ${formatTime(duration)}` : ""}
             </p>
           </div>
@@ -105,7 +215,14 @@ export default function ArchiveMiniPlayer() {
               href={activeMedia.externalUrl}
               target="_blank"
               rel="noreferrer"
-              className="hidden h-10 w-10 items-center justify-center rounded-full border border-voicesNext-border text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange md:inline-flex"
+              className={cn(
+                // Provider naming survives here and nowhere else: this names a
+                // destination, not a status. Normally desktop-only to keep the
+                // mobile row uncrowded — but it is the recovery path when the
+                // embedded widget fails, so it appears on mobile in that state.
+                "hidden h-10 w-10 items-center justify-center rounded-full border border-voicesNext-border text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange md:inline-flex",
+                status === "error" && "inline-flex",
+              )}
               aria-label={`Open ${activeMedia.title} on ${providerLabel(
                 activeMedia.provider,
               )}`}
@@ -138,18 +255,16 @@ export default function ArchiveMiniPlayer() {
           </div>
         </div>
 
-        <div className="h-[64px] bg-voicesNext-background md:h-[96px]">
-          <ArchiveWidgetHost
-            media={activeMedia}
-            command={command}
-            onReady={setReady}
-            onPlay={setPlaying}
-            onPause={setPaused}
-            onEnded={setEnded}
-            onError={setError}
-            onProgress={setProgress}
-          />
-        </div>
+        <ArchiveWidgetHost
+          media={activeMedia}
+          command={command}
+          onReady={setReady}
+          onPlay={setPlaying}
+          onPause={setPaused}
+          onEnded={setEnded}
+          onError={setError}
+          onProgress={setProgress}
+        />
       </div>
     </section>
   );

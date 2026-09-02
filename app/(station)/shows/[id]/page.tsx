@@ -7,6 +7,7 @@ import ArchivePlayPanel from "../../components/redesign/archive-play-panel";
 import ShowRail from "../../components/redesign/show-rail";
 import SupporterBlock from "../../components/redesign/supporter-block";
 import { getShow, getShowsForArtist } from "@/lib/voices/api";
+import { formatShowDisplayTitle } from "@/lib/voices/show-title";
 
 type ShowPageProps = {
   params: Promise<{ id: string }>;
@@ -46,14 +47,15 @@ export async function generateMetadata({
     return { title: "Show not found" };
   }
 
+  const title = formatShowDisplayTitle(show.title);
+
   return {
-    title: `${show.title} | Voices Radio`,
-    description:
-      show.description || `Listen back to ${show.title} on Voices Radio.`,
+    title: `${title} | Voices Radio`,
+    description: show.description || `Listen back to ${title} on Voices Radio.`,
     openGraph: {
-      title: show.title,
+      title,
       description:
-        show.description || `Listen back to ${show.title} on Voices Radio.`,
+        show.description || `Listen back to ${title} on Voices Radio.`,
       images: [{ url: show.artwork.src }],
     },
   };
@@ -78,70 +80,97 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
     ? "WORLD"
     : "LONDON";
   const genres = show.genres.slice(0, 3);
+  // The raw title trails the date and station name; both already have their own
+  // place on this page, so the heading carries the show name alone.
+  const displayTitle = formatShowDisplayTitle(show.title);
 
   return (
     <main id="main-content" className="scroll-mt-24">
       <div className="hidden md:block">
         <PageHero
-          eyebrow={show.platform ?? "Archive"}
-          title={show.title}
+          eyebrow={`${stationLabel} · ${locationLabel}`}
+          title={displayTitle}
           description={show.artist?.name ?? "Voices Radio"}
         />
       </div>
 
-      <section className="px-1 pt-5 md:hidden">
-        <div className="relative h-[388px]">
-          <div className="relative h-[377px] overflow-hidden rounded-[4px]">
-            <Image
-              src={show.artwork.src}
-              alt={show.artwork.alt}
-              fill
-              sizes="calc(100vw - 8px)"
-              className="object-cover"
-            />
-            <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background">
-              <span className="bg-voicesNext-cream px-1 py-[2px]">
-                {stationLabel}
-              </span>
-              <span className="bg-voicesNext-cream px-1 py-[2px]">
-                {locationLabel}
-              </span>
-            </div>
-            <div className="absolute bottom-[25px] left-0 w-[320px] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream">
-              <h1 className="truncate font-gabarito text-[24px] font-bold leading-none">
-                {show.title}
-              </h1>
-              {genres.length > 0 && (
-                <div className="mt-3 flex flex-wrap items-center gap-[7px] font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orange">
-                  {genres.map((genre) => (
-                    <span
-                      key={genre}
-                      className="rounded-full bg-voicesNext-cream px-2 py-1"
-                    >
-                      {genre}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="absolute bottom-0 left-1/2 flex h-2 -translate-x-1/2 items-center gap-1">
-            <span className="size-1 rounded-full bg-voicesNext-cream/70" />
-            <span className="size-1.5 rounded-full bg-voicesNext-cream/80" />
-            <span className="size-2 rounded-full bg-voicesNext-cream" />
-            <span className="size-1.5 rounded-full bg-voicesNext-cream/80" />
-            <span className="size-1 rounded-full bg-voicesNext-cream/70" />
+      {/* Mobile: the artwork is the sleeve and everything under it is the
+          tape label. The artwork runs full-bleed (-mx-2 cancels the shell's
+          px-2) so it reads as deliberately edge-to-edge, while every text
+          element sits on one px-5 gutter that matches SupporterBlock further
+          down the page. */}
+      <section className="md:hidden">
+        <div className="relative -mx-2 aspect-square">
+          <Image
+            src={show.artwork.src}
+            alt={show.artwork.alt}
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover"
+          />
+          {/* Cream station/location chips: the system's "paper label on
+              hardware" motif, and the only thing that sits on the artwork. */}
+          <div className="absolute right-3 top-3 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background">
+            <span className="bg-voicesNext-cream px-1.5 py-[3px]">
+              {stationLabel}
+            </span>
+            <span className="bg-voicesNext-cream px-1.5 py-[3px]">
+              {locationLabel}
+            </span>
           </div>
         </div>
 
-        {show.description && (
-          <p className="mx-auto mt-5 max-w-[365px] font-asap text-[16px] leading-normal text-voicesNext-cream">
-            {show.description}
-          </p>
-        )}
+        <div className="px-5 pt-6">
+          <h1 className="text-balance font-outfit text-[28px] font-black uppercase leading-[0.95] text-voicesNext-cream">
+            {displayTitle}
+          </h1>
 
-        <div className="mx-auto mt-6 max-w-[365px]">
-          <ArchivePlayPanel media={show.archiveMedia} />
+          {show.artist && (
+            <Link
+              href={`/artists/${show.artist.id}`}
+              className="mt-2 inline-flex min-h-[44px] items-center font-gabarito text-base font-bold text-voicesNext-cream underline decoration-voicesNext-border underline-offset-4 transition-colors hover:decoration-voicesNext-orange"
+            >
+              {show.artist.name}
+            </Link>
+          )}
+
+          {/* Transmission line — reads like a tape spine, and puts date and
+              duration on mobile, where they were previously absent. */}
+          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 font-asap text-[12px] font-bold uppercase tracking-[0.12em] text-voicesNext-secondary">
+            <span>{stationLabel}</span>
+            <span aria-hidden="true">·</span>
+            <span>{locationLabel}</span>
+            <span aria-hidden="true">·</span>
+            <span>{formatDate(show.date)}</span>
+            {duration && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{duration}</span>
+              </>
+            )}
+          </p>
+
+          <ArchivePlayPanel media={show.archiveMedia} className="mt-5" />
+
+          {show.description && (
+            <p className="mt-6 font-gabarito text-base leading-relaxed text-voicesNext-cream">
+              {show.description}
+            </p>
+          )}
+
+          {genres.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-2">
+              {genres.map((genre) => (
+                <span
+                  key={genre}
+                  className="inline-flex min-h-[36px] items-center rounded-full border border-voicesNext-border px-3 font-asap text-[12px] font-bold uppercase tracking-[0.08em] text-voicesNext-secondary"
+                >
+                  {genre}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -163,8 +192,10 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
               <dd className="mt-1">{formatDate(show.date)}</dd>
             </div>
             <div>
-              <dt className="text-voicesNext-secondary">Platform</dt>
-              <dd className="mt-1">{show.platform ?? "Archive"}</dd>
+              <dt className="text-voicesNext-secondary">Station</dt>
+              <dd className="mt-1">
+                {stationLabel} · {locationLabel}
+              </dd>
             </div>
             {duration && (
               <div>
@@ -201,7 +232,10 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
               {show.artist.name}
             </Link>
           )}
-          <ArchivePlayPanel media={show.archiveMedia} />
+          <ArchivePlayPanel
+            media={show.archiveMedia}
+            className="max-w-[320px]"
+          />
         </div>
       </section>
 
