@@ -23,8 +23,13 @@ export default function ArchiveTilePlayButton({
   media?: VoicesArchiveMedia;
   title: string;
 }) {
-  const { activeMedia, isActiveArchive, playArchive, status, toggleArchive } =
-    useArchivePlayer();
+  const {
+    activeMedia,
+    isActiveArchive,
+    isPlaying,
+    playArchive,
+    toggleArchive,
+  } = useArchivePlayer();
 
   if (!media) {
     return (
@@ -36,7 +41,7 @@ export default function ArchiveTilePlayButton({
 
   const playable = media;
   const active = isActiveArchive(playable);
-  const playing = active && (status === "playing" || status === "loading");
+  const playing = active && isPlaying;
 
   function handleClick(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();

@@ -32,9 +32,17 @@ type ArchiveProgress = {
   duration?: number;
 };
 
+/** What the user has asked the transport to do. See `intent` below. */
+type ArchivePlayerIntent = "play" | "pause";
+
 type ArchivePlayerContextValue = {
   activeMedia?: VoicesArchiveMedia;
   status: ArchivePlayerStatus;
+  /**
+   * Whether every transport button should render as "pause". Derived from
+   * intent, not status — see the comment on `intent` in the provider.
+   */
+  isPlaying: boolean;
   command?: ArchivePlayerCommand;
   progress: ArchiveProgress;
   error?: string;
@@ -61,6 +69,13 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
     VoicesArchiveMedia | undefined
   >();
   const [status, setStatus] = useState<ArchivePlayerStatus>("idle");
+  // What the user asked for, as distinct from what the widget has managed to
+  // do yet. The widget fires its own "ready" event somewhere between the tap
+  // and the first play event, and deriving "is it playing?" from status alone
+  // meant every transport button flipped back to Play for that whole
+  // buffering window (pause → play → pause). Intent only moves on a user
+  // action or a real transport event from the widget.
+  const [intent, setIntent] = useState<ArchivePlayerIntent>("pause");
   const [command, setCommand] = useState<ArchivePlayerCommand | undefined>();
   const [progress, setProgressState] = useState<ArchiveProgress>({});
   const [error, setErrorState] = useState<string | undefined>();
@@ -81,6 +96,7 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
   const stopArchive = useCallback(() => {
     setActiveMedia(undefined);
     setStatus("idle");
+    setIntent("pause");
     setCommand(undefined);
     setProgressState({});
     setErrorState(undefined);
@@ -91,6 +107,7 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
       stopLiveAudio();
       setActiveMedia(media);
       setStatus("loading");
+      setIntent("play");
       setErrorState(undefined);
       setProgressState({
         duration: media.duration,
@@ -103,6 +120,7 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
   const pauseArchive = useCallback(() => {
     if (!activeMedia) return;
 
+    setIntent("pause");
     setStatus((current) => (current === "idle" ? current : "paused"));
     issueCommand("pause");
   }, [activeMedia, issueCommand]);
@@ -128,14 +146,17 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
   const toggleArchive = useCallback(() => {
     if (!activeMedia) return;
 
-    if (status === "playing" || status === "loading") {
+    // Reads intent, not status, so the button can never disagree with its own
+    // label: whatever the icon says is exactly what the tap does.
+    if (intent === "play") {
       pauseArchive();
       return;
     }
 
+    setIntent("play");
     setStatus("loading");
     issueCommand("play");
-  }, [activeMedia, issueCommand, pauseArchive, status]);
+  }, [activeMedia, intent, issueCommand, pauseArchive]);
 
   useEffect(() => {
     function stopForLiveAudio(event: Event) {
@@ -162,16 +183,26 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
     () => setStatus((current) => (current === "loading" ? "ready" : current)),
     [],
   );
+  //
+  // These four are the widget's real transport events, so they are also the
+  // only things besides a user action that may move intent — that is how a
+  // pause triggered from the provider's own controls still reaches our button.
+  // setReady is deliberately absent: readiness is not a transport event.
   const setPlaying = useCallback(() => {
+    setIntent("play");
     setStatus("playing");
     setErrorState(undefined);
   }, []);
-  const setPaused = useCallback(
-    () => setStatus((current) => (current === "idle" ? current : "paused")),
-    [],
-  );
-  const setEnded = useCallback(() => setStatus("ended"), []);
+  const setPaused = useCallback(() => {
+    setIntent("pause");
+    setStatus((current) => (current === "idle" ? current : "paused"));
+  }, []);
+  const setEnded = useCallback(() => {
+    setIntent("pause");
+    setStatus("ended");
+  }, []);
   const setError = useCallback((message?: string) => {
+    setIntent("pause");
     setStatus("error");
     setErrorState(message ?? "Archive player unavailable");
   }, []);
@@ -190,6 +221,7 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
     () => ({
       activeMedia,
       status,
+      isPlaying: intent === "play",
       command,
       progress,
       error,
@@ -210,6 +242,7 @@ export function ArchivePlayerProvider({ children }: { children: ReactNode }) {
       activeMedia,
       command,
       error,
+      intent,
       isActiveArchive,
       pauseArchive,
       playArchive,

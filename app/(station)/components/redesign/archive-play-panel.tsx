@@ -33,10 +33,16 @@ export default function ArchivePlayPanel({
   media?: VoicesArchiveMedia;
   className?: string;
 }) {
-  const { error, isActiveArchive, playArchive, status, toggleArchive } =
-    useArchivePlayer();
+  const {
+    error,
+    isActiveArchive,
+    isPlaying,
+    playArchive,
+    status,
+    toggleArchive,
+  } = useArchivePlayer();
   const active = isActiveArchive(media);
-  const playing = active && (status === "playing" || status === "loading");
+  const playing = active && isPlaying;
   const unavailable = !media;
   const duration = formatDuration(media?.duration);
 
@@ -92,7 +98,10 @@ export default function ArchivePlayPanel({
       )}
 
       {active && status === "error" && error && (
-        <p className="font-asap text-sm text-voicesNext-orangeText" role="alert">
+        <p
+          className="font-asap text-sm text-voicesNext-orangeText"
+          role="alert"
+        >
           {error}
         </p>
       )}

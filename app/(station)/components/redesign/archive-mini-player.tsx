@@ -23,6 +23,12 @@ function providerLabel(provider: "mixcloud" | "soundcloud") {
 }
 
 const PLAYER_HEIGHT_VAR = "--archive-player-height";
+/**
+ * Diameter of the seek thumb in px. Must match the `h-3 w-3` below — which is
+ * deliberately not `size-3`: that utility landed in Tailwind 3.4 and this
+ * project is on 3.3, so it compiles to nothing and the thumb renders 0x0.
+ */
+const THUMB_SIZE = 12;
 
 /**
  * Publishes the bar's measured height so ArchivePlayerSpacer can reserve
@@ -68,6 +74,7 @@ export default function ArchiveMiniPlayer() {
     activeMedia,
     command,
     error,
+    isPlaying,
     progress,
     status,
     setEnded,
@@ -88,13 +95,16 @@ export default function ArchiveMiniPlayer() {
 
   if (!activeMedia) return null;
 
-  const playing = status === "playing" || status === "loading";
+  const playing = isPlaying;
   const duration = progress.duration ?? activeMedia.duration;
   const displayPosition = scrub ?? progress.position ?? 0;
   const progressPercent =
     duration && displayPosition
       ? Math.min(100, Math.max(0, (displayPosition / duration) * 100))
       : 0;
+  // Pulls the thumb's travel in by half its own width at each end, so it sits
+  // fully inside the track at 0% and 100% instead of half outside it.
+  const thumbOffset = `calc(${progressPercent}% + ${(THUMB_SIZE * (50 - progressPercent)) / 100}px)`;
 
   function commitScrub(value: number) {
     scrubbingRef.current = false;
@@ -120,13 +130,18 @@ export default function ArchiveMiniPlayer() {
     if (!scrubbingRef.current) return;
     commitScrub(Number(event.currentTarget.value));
   }
+  // The button follows intent, but this line stays honest about the widget: it
+  // reads "Loading player" for the whole gap between the tap and the first play
+  // event, however the widget describes itself in between. Claiming "Playing"
+  // optimistically would lie in exactly the case that matters — a mobile
+  // browser refusing the play.
   const statusText =
     status === "error"
       ? (error ?? "Archive player unavailable")
-      : status === "loading"
-        ? "Loading player"
-        : status === "playing"
-          ? "Playing"
+      : status === "playing"
+        ? "Playing"
+        : playing
+          ? "Loading player"
           : status === "paused"
             ? "Paused"
             : status === "ended"
@@ -198,10 +213,14 @@ export default function ArchiveMiniPlayer() {
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
+              {/* Orange, because at 0% there is no orange fill yet and a cream
+                  dot half-clipped on the track's left edge read as nothing at
+                  all. The surface-coloured ring keeps it legible once it is
+                  sitting on the fill it leads. */}
               <span
                 aria-hidden="true"
-                className="size-2 pointer-events-none absolute -translate-x-1/2 rounded-full bg-voicesNext-cream transition-transform peer-hover:scale-125 peer-focus-visible:scale-125 peer-disabled:hidden"
-                style={{ left: `${progressPercent}%` }}
+                className="pointer-events-none absolute h-3 w-3 -translate-x-1/2 rounded-full bg-voicesNext-orange ring-2 ring-voicesNext-surface transition-transform peer-hover:scale-110 peer-focus-visible:scale-110 peer-disabled:hidden"
+                style={{ left: thumbOffset }}
               />
             </div>
             <p className="mt-2 font-asap text-[10px] leading-none text-voicesNext-secondary">

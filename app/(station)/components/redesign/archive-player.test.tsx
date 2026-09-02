@@ -63,6 +63,32 @@ function renderSeekablePlayer() {
   );
 }
 
+/** Stands in for the widget events ArchiveWidgetHost normally forwards. */
+function WidgetProbe() {
+  const { setPaused, setReady } = useArchivePlayer();
+
+  return (
+    <>
+      <button type="button" onClick={setReady}>
+        widget ready
+      </button>
+      <button type="button" onClick={setPaused}>
+        widget pause
+      </button>
+    </>
+  );
+}
+
+function renderPlayerWithWidgetEvents() {
+  return render(
+    <ArchivePlayerProvider>
+      <ArchivePlayPanel media={media} />
+      <ArchiveMiniPlayer />
+      <WidgetProbe />
+    </ArchivePlayerProvider>,
+  );
+}
+
 function renderUnavailablePlayer() {
   return render(
     <ArchivePlayerProvider>
@@ -151,6 +177,48 @@ describe("archive player controls", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /pause archive/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("holds both transports on pause while the widget reports ready mid-play", async () => {
+    const user = userEvent.setup();
+    renderPlayerWithWidgetEvents();
+
+    await user.click(
+      screen.getByRole("button", { name: /listen back guest mix/i }),
+    );
+    // The widget binds to its iframe somewhere between the tap and the first
+    // play event. That is not a transport event, so nothing may flip back to
+    // Play for the buffering window.
+    await user.click(screen.getByRole("button", { name: /widget ready/i }));
+
+    expect(
+      screen.getByRole("button", { name: /^pause archive$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^pause guest mix$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /resume guest mix/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("returns both transports to play when the widget reports a pause", async () => {
+    const user = userEvent.setup();
+    renderPlayerWithWidgetEvents();
+
+    await user.click(
+      screen.getByRole("button", { name: /listen back guest mix/i }),
+    );
+    // A real pause — including one triggered from the provider's own on-widget
+    // controls — still has to reach our buttons.
+    await user.click(screen.getByRole("button", { name: /widget pause/i }));
+
+    expect(
+      screen.getByRole("button", { name: /^play archive$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^resume guest mix$/i }),
     ).toBeInTheDocument();
   });
 

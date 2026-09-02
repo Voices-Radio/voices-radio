@@ -121,7 +121,10 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
           </div>
         </div>
 
-        <div className="px-5 pt-6">
+        {/* pb-10 is the section's closing space: the genre chips are the last
+            element here, and without it SupporterBlock's top rule lands
+            directly on them. */}
+        <div className="px-5 pb-10 pt-6">
           <h1 className="text-balance font-outfit text-[28px] font-black uppercase leading-[0.95] text-voicesNext-cream">
             {displayTitle}
           </h1>
