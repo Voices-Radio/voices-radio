@@ -25,8 +25,25 @@ type FieldErrors = Partial<
   Record<"email" | "password" | "firstName" | "lastName", string>
 >;
 
+/**
+ * What the visitor typed, echoed back so an error doesn't cost them the form.
+ * Password is deliberately absent — re-populating a password field means
+ * putting the plaintext back into the HTML on every failed attempt.
+ */
+export type CreateAccountValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  newsletters: boolean;
+};
+
 export type CreateAccountState =
-  | { status: "error"; formError?: string; fieldErrors?: FieldErrors }
+  | {
+      status: "error";
+      formError?: string;
+      fieldErrors?: FieldErrors;
+      values: CreateAccountValues;
+    }
   | { status: "verify_email"; email: string }
   | { status: "checkout_error"; message: string }
   | undefined;
@@ -35,6 +52,15 @@ export async function createAccountAction(
   _prevState: CreateAccountState,
   formData: FormData,
 ): Promise<CreateAccountState> {
+  // Captured from the raw FormData before validation runs, so the visitor's
+  // input survives even the failures that never reach a parsed value.
+  const values: CreateAccountValues = {
+    firstName: String(formData.get("firstName") ?? ""),
+    lastName: String(formData.get("lastName") ?? ""),
+    email: String(formData.get("email") ?? ""),
+    newsletters: formData.get("newsletters") === "on",
+  };
+
   const parsed = schema.safeParse({
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
@@ -64,6 +90,7 @@ export async function createAccountAction(
       status: "error",
       fieldErrors,
       formError: "Please fix the errors below.",
+      values,
     };
   }
 
@@ -84,6 +111,7 @@ export async function createAccountAction(
       formError:
         registerResult.payload?.message ||
         "We couldn't create your account. Please try again.",
+      values,
     };
   }
 

@@ -85,8 +85,37 @@ describe("createAccountAction", () => {
     expect(state).toEqual({
       status: "error",
       formError: "An account with this email already exists.",
+      values: {
+        firstName: validFields.firstName,
+        lastName: validFields.lastName,
+        email: validFields.email,
+        newsletters: false,
+      },
     });
     expect(backendLogin).not.toHaveBeenCalled();
+  });
+
+  it("echoes back what was typed so a rejected submit doesn't empty the form", async () => {
+    const state = await createAccountAction(
+      undefined,
+      formData({
+        firstName: "Ada",
+        lastName: "Lovelace",
+        email: "ada@example.test",
+        password: "short",
+        newsletters: "on",
+      }),
+    );
+
+    if (state?.status !== "error") throw new Error("expected error state");
+    expect(state.values).toEqual({
+      firstName: "Ada",
+      lastName: "Lovelace",
+      email: "ada@example.test",
+      newsletters: true,
+    });
+    // The password is the one field deliberately not returned.
+    expect(state.values).not.toHaveProperty("password");
   });
 
   it("falls back to a check-your-email state when registration succeeds but login is rejected (unverified email)", async () => {

@@ -5,13 +5,29 @@ export function uniqueEmail(prefix: string): string {
 }
 
 /**
+ * Waits for /join/complete to reconcile, then takes the explicit exit.
+ *
+ * The poller used to redirect to /account on its own; it now holds a
+ * confirmation naming the tier and the next payment, so every journey that
+ * ends in checkout has to click through it.
+ */
+export async function finishMembershipConfirmation(page: Page): Promise<void> {
+  await expect(page).toHaveURL(/\/join\/complete/);
+  await expect(
+    page.getByRole("link", { name: /go to your account/i }),
+  ).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("link", { name: /go to your account/i }).click();
+  await expect(page).toHaveURL(/\/account$/);
+}
+
+/**
  * Drives the full new-member journey against the stub backend (see
  * tests/e2e/stub-backend/server.mjs): pick a tier on /join, create an
- * account, follow the stub's fake-Stripe redirect, and wait for
- * /join/complete's poller to reconcile onto the dashboard. Used as setup
- * by specs that need a signed-in member with an active membership rather
- * than re-testing the checkout journey itself (see checkout.spec.ts for
- * that).
+ * account, follow the stub's fake-Stripe redirect, wait for
+ * /join/complete's poller to reconcile, and click through to the dashboard.
+ * Used as setup by specs that need a signed-in member with an active
+ * membership rather than re-testing the checkout journey itself (see
+ * checkout.spec.ts for that).
  */
 export async function joinAsNewMember(
   page: Page,
@@ -34,7 +50,7 @@ export async function joinAsNewMember(
   await page.getByLabel("Password").fill("correcthorsebattery");
   await page.getByRole("button", { name: /create account/i }).click();
 
-  await expect(page).toHaveURL(/\/account$/, { timeout: 15_000 });
+  await finishMembershipConfirmation(page);
 
   return { email };
 }

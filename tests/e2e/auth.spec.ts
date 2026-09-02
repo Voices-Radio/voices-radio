@@ -65,4 +65,35 @@ test.describe("/join/create-account", () => {
       page.getByText(/member membership, billed annual/i),
     ).toBeVisible();
   });
+
+  // React resets uncontrolled inputs once a form action settles, so before the
+  // action echoed the submitted values back, a single short password wiped the
+  // visitor's name and email too. Asserted in a real browser because the reset
+  // is React DOM behaviour that jsdom does not reproduce.
+  test("keeps name, email and consent after a failed submit", async ({
+    page,
+  }) => {
+    await page.goto("/join/create-account");
+
+    await page.getByLabel(/^first name$/i).fill("Ada");
+    await page.getByLabel(/^last name$/i).fill("Lovelace");
+    await page.getByLabel(/^email$/i).fill("ada@example.test");
+    await page.getByRole("checkbox", { name: /voices news/i }).check();
+    // Too short — fails validation without ever reaching the backend.
+    await page.getByLabel(/^password$/i).fill("short");
+
+    await page.getByRole("button", { name: /create account/i }).click();
+
+    await expect(page.getByTestId("form-error")).toBeVisible();
+    await expect(page.getByText(/8 characters/i)).toBeVisible();
+
+    await expect(page.getByLabel(/^first name$/i)).toHaveValue("Ada");
+    await expect(page.getByLabel(/^last name$/i)).toHaveValue("Lovelace");
+    await expect(page.getByLabel(/^email$/i)).toHaveValue("ada@example.test");
+    await expect(
+      page.getByRole("checkbox", { name: /voices news/i }),
+    ).toBeChecked();
+    // Never echoed back — re-populating it would put the plaintext in the HTML.
+    await expect(page.getByLabel(/^password$/i)).toHaveValue("");
+  });
 });

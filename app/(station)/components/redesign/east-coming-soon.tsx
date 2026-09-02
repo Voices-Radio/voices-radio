@@ -59,7 +59,7 @@ export function EastComingSoonStrip() {
       className="box-border flex h-[34px] overflow-hidden border-b border-black last:border-b-0"
       aria-label="Voices East coming late summer"
     >
-      <div className="grid min-w-0 flex-1 grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-3 px-2">
+      <div className="grid min-w-0 flex-1 grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-5 px-2">
         <span className="font-outfit text-[19px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
           East
         </span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, MessageCircle, Play, Square, Video } from "lucide-react";
+import { CalendarDays, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
@@ -14,6 +14,7 @@ import useStationAudio from "@/hooks/use-station-audio";
 import useWeekInfo from "@/hooks/use-week-info";
 import ScheduleDialog from "@/app/components/schedule/dialog";
 import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
+import StationPlayButton from "../components/redesign/station-play-button";
 
 /**
  * Shared skin for the three icon buttons on the right of each mobile strip.
@@ -29,19 +30,24 @@ function MobileStationControl({
   station: VoicesLiveStationConfig;
 }) {
   const liveMetadata = useRadioCultLiveMetadata(station.id);
-  const { audioRef, loading, playing, toggle } = useStationAudio(
+  const { audioRef, error, loading, playing, toggle } = useStationAudio(
     station.streamUrl,
     getVoicesHeaderPlayerId(station.id),
   );
-  const disabled = !station.streamUrl || loading || station.comingSoon;
+  const unavailable = !station.streamUrl || Boolean(station.comingSoon);
+  // A failed stream used to be silent here — `error` wasn't read at all, so
+  // the button simply returned to idle and the listener had no way to tell a
+  // dropped stream from a mis-tap. The desktop row has always shown this.
   const title = station.comingSoon
     ? "Coming soon"
-    : liveMetadata.title || station.title;
+    : error
+      ? "Stream unavailable"
+      : liveMetadata.title || station.title;
   const status = station.comingSoon
     ? "Tuning"
     : liveMetadata.status === "offAir"
-    ? "Off air"
-    : "On air";
+      ? "Off air"
+      : "On air";
 
   return (
     <div className="grid min-h-[52px] min-w-0 grid-cols-[minmax(0,1fr)_auto] items-stretch overflow-hidden bg-voicesNext-cream text-voicesNext-background">
@@ -101,10 +107,14 @@ function MobileStationControl({
             strokeWidth={2.2}
           />
         </Link>
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={toggle}
+        <StationPlayButton
+          label={station.label}
+          playing={playing}
+          loading={loading}
+          error={error}
+          unavailable={unavailable}
+          onToggle={toggle}
+          iconSize={14}
           className={cn(
             mobileActionClassName,
             // Disabled keeps a faint tint rather than falling back to plain
@@ -113,18 +123,7 @@ function MobileStationControl({
             "w-[44px] bg-voicesNext-orangeButton text-voicesNext-cream hover:bg-voicesNext-background disabled:cursor-not-allowed disabled:bg-[#443f3f]/[0.12] disabled:text-[#443f3f]/40",
             playing && "bg-voicesNext-background text-voicesNext-cream",
           )}
-          aria-label={
-            playing ? `Pause ${station.label}` : `Play ${station.label}`
-          }
-        >
-          {playing ? (
-            <Square aria-hidden="true" size={12} fill="currentColor" />
-          ) : station.videoUrl ? (
-            <Video aria-hidden="true" size={16} strokeWidth={2.2} />
-          ) : (
-            <Play aria-hidden="true" size={14} fill="currentColor" />
-          )}
-        </button>
+        />
       </div>
     </div>
   );
@@ -237,7 +236,7 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
   return (
     <div className="flex h-[34px] border-b border-black last:border-b-0">
       <audio ref={audioRef} src={station.streamUrl} preload="none" />
-      <div className="grid min-w-0 flex-1 grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-3 px-2 md:gap-4 md:px-3">
+      <div className="grid min-w-0 flex-1 grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-5 px-2">
         <span className="font-outfit text-[19px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
           {station.label}
         </span>
@@ -249,24 +248,19 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
           <span className="h-2 w-2 rounded-full bg-voicesNext-live" />
         </span>
       </div>
-      <button
-        type="button"
-        disabled={!station.streamUrl || loading}
-        onClick={toggle}
+      <StationPlayButton
+        label={station.label}
+        playing={playing}
+        loading={loading}
+        error={error}
+        unavailable={!station.streamUrl}
+        onToggle={toggle}
+        iconSize={14}
         className={cn(
           "inline-flex h-[34px] w-[35px] shrink-0 items-center justify-center border-l border-black transition-colors hover:bg-voicesNext-background hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange disabled:cursor-not-allowed disabled:text-voicesNext-secondary",
           playing && "bg-voicesNext-background text-voicesNext-cream",
         )}
-        aria-label={
-          playing ? `Pause ${station.label}` : `Play ${station.label}`
-        }
-      >
-        {playing ? (
-          <Square aria-hidden="true" size={12} fill="currentColor" />
-        ) : (
-          <Play aria-hidden="true" size={14} fill="currentColor" />
-        )}
-      </button>
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
   accountSecondaryButtonClassName,
   accountSurfaceStaticClassName,
 } from "../../account/components/account-surface";
+import JoinSteps from "../join-steps";
 import { createAccountAction, type CreateAccountState } from "./actions";
 
 const initialState: CreateAccountState = undefined;
@@ -150,10 +151,14 @@ export default function CreateAccountForm({
   }
 
   const fieldErrors = state?.status === "error" ? state.fieldErrors : undefined;
+  // Echoed back on every error return. Without these the inputs re-render
+  // empty and a single mistyped character costs the visitor the whole form.
+  const values = state?.status === "error" ? state.values : undefined;
 
   return (
     <div className="mx-auto grid max-w-[980px] gap-6 px-4 py-12 md:grid-cols-[minmax(0,1fr)_320px] md:px-8 md:py-16">
-      <div>
+      <div className="order-2 md:order-1">
+        <JoinSteps current={2} />
         <AccountPageIntro
           eyebrow="Join Voices"
           title="Create your account"
@@ -195,6 +200,7 @@ export default function CreateAccountForm({
                   name="firstName"
                   type="text"
                   autoComplete="given-name"
+                  defaultValue={values?.firstName}
                   required
                   aria-invalid={Boolean(fieldErrors?.firstName)}
                   aria-describedby={
@@ -224,6 +230,7 @@ export default function CreateAccountForm({
                   name="lastName"
                   type="text"
                   autoComplete="family-name"
+                  defaultValue={values?.lastName}
                   required
                   aria-invalid={Boolean(fieldErrors?.lastName)}
                   aria-describedby={
@@ -254,6 +261,7 @@ export default function CreateAccountForm({
                 name="email"
                 type="email"
                 autoComplete="email"
+                defaultValue={values?.email}
                 required
                 aria-invalid={Boolean(fieldErrors?.email)}
                 aria-describedby={
@@ -311,6 +319,7 @@ export default function CreateAccountForm({
               <input
                 type="checkbox"
                 name="newsletters"
+                defaultChecked={values?.newsletters}
                 className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background motion-reduce:transition-none"
               />
               Send me Voices news and updates. You can change this any time in
@@ -331,7 +340,9 @@ export default function CreateAccountForm({
           </Link>
         </p>
       </div>
-      <AccountPass tier={tier} cadence={cadence} />
+      <div className="order-1 md:order-2">
+        <AccountPass tier={tier} cadence={cadence} />
+      </div>
     </div>
   );
 }

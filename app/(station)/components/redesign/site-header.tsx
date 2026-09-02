@@ -64,7 +64,7 @@ const desktopMenuLinks = [
   { href: "/agency", label: "Agency", opensInNewTab: true },
   { href: "/collaborate", label: "Partner with Us" },
   { href: "/about", label: "About Us" },
-  { href: "/support", label: "Support Us" },
+  { href: "/support", label: "Why support us" },
 ];
 
 const collaborateLinks = [
@@ -263,7 +263,16 @@ function MobileAccountLinks({
   const { user, status, signOut } = useSessionUser();
   const [signingOut, setSigningOut] = useState(false);
 
-  if (status === "loading") return null;
+  // Returning null here used to let the menu open a row short and then grow
+  // one once the session resolved, moving links out from under a thumb that
+  // was already reaching. Reserve the height instead.
+  if (status === "loading") {
+    return (
+      <div className="mt-6 px-6" aria-hidden="true">
+        <div className="h-5 w-24 animate-pulse bg-voicesNext-surface" />
+      </div>
+    );
+  }
 
   async function handleSignOut() {
     setSigningOut(true);
@@ -325,6 +334,114 @@ function MobileAccountLinks({
   );
 }
 
+type SearchPanelProps = {
+  query: string;
+  ready: boolean;
+  loading: boolean;
+  error: string | null;
+  results: SearchCategories | null;
+  hasResults: boolean;
+  /** Called when a result is chosen, so each surface can close what it opened. */
+  onNavigate: () => void;
+};
+
+/**
+ * The search results list, shared by the desktop dropdown and the mobile menu.
+ * Extracted when search reached mobile — the panel is 80 lines of markup and
+ * two copies would have drifted the way the old nav/menu pair did.
+ */
+function SearchPanel({
+  query,
+  ready,
+  loading,
+  error,
+  results,
+  hasResults,
+  onNavigate,
+}: SearchPanelProps) {
+  return (
+    <>
+      <div className="border-b border-voicesNext-border px-4 py-3">
+        <p className="font-asap text-[11px] font-bold uppercase tracking-[1px] text-voicesNext-secondary">
+          Search
+        </p>
+        <p className="mt-1 truncate font-gabarito text-sm font-bold text-voicesNext-cream">
+          {query}
+        </p>
+      </div>
+
+      {!ready && (
+        <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
+          Type at least 2 characters.
+        </p>
+      )}
+
+      {ready && loading && !results && (
+        <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
+          Searching…
+        </p>
+      )}
+
+      {ready && error && (
+        <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
+          {error}
+        </p>
+      )}
+
+      {ready && results && !loading && !error && !hasResults && (
+        <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
+          No results found.
+        </p>
+      )}
+
+      {ready && hasResults && (
+        <div className="divide-y divide-voicesNext-border">
+          {searchSections.map((section) => {
+            const items = results?.[section.key] ?? [];
+
+            if (!items.length) return null;
+
+            return (
+              <section
+                key={section.key}
+                className="px-2 py-3"
+                aria-labelledby={`site-search-${section.key}`}
+              >
+                <h2
+                  id={`site-search-${section.key}`}
+                  className="px-2 pb-2 font-asap text-[11px] font-bold uppercase tracking-[1px] text-voicesNext-orange"
+                >
+                  {section.label}
+                </h2>
+                <ul className="space-y-1">
+                  {items.map((item) => (
+                    <li key={`${section.key}-${item.id}`}>
+                      <Link
+                        href={item.url}
+                        className="block px-2 py-2 transition-colors hover:bg-voicesNext-surface focus:outline-none focus-visible:bg-voicesNext-surface focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange"
+                        onClick={onNavigate}
+                      >
+                        <span className="block truncate font-gabarito text-sm font-bold text-voicesNext-cream">
+                          {item.title}
+                        </span>
+                        <span className="mt-1 line-clamp-2 block font-asap text-xs leading-snug text-voicesNext-secondary">
+                          {[item.subtitle, item.description]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -350,6 +467,10 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   const trimmedSearchQuery = searchQuery.trim();
   const searchReady = trimmedSearchQuery.length >= 2;
   const searchHasResults = hasSearchResults(searchResults);
+  // Desktop reveals the field behind a toggle; the mobile menu shows it
+  // outright. Either counts as "the visitor is searching", so the fetch below
+  // has to watch both rather than just the desktop toggle.
+  const searchActive = searchOpen || open;
   const searchButtonLabel = searchOpen
     ? trimmedSearchQuery
       ? "Submit search"
@@ -399,7 +520,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   }, [searchOpen]);
 
   useEffect(() => {
-    if (!searchOpen || !searchReady) {
+    if (!searchActive || !searchReady) {
       setSearchResults(null);
       setSearchError(null);
       setSearchLoading(false);
@@ -451,7 +572,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [searchOpen, searchReady, trimmedSearchQuery]);
+  }, [searchActive, searchReady, trimmedSearchQuery]);
 
   function submitSearch() {
     if (!trimmedSearchQuery) {
@@ -470,6 +591,16 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     submitSearch();
+  }
+
+  function handleMobileSearchSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const firstResult = getFirstSearchResult(searchResults);
+    if (!firstResult?.url) return;
+
+    setOpen(false);
+    router.push(firstResult.url);
   }
 
   function handleSearchButtonClick() {
@@ -604,87 +735,15 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                 role="region"
                 aria-live="polite"
               >
-                <div className="border-b border-voicesNext-border px-4 py-3">
-                  <p className="font-asap text-[11px] font-bold uppercase tracking-[1px] text-voicesNext-secondary">
-                    Search
-                  </p>
-                  <p className="mt-1 truncate font-gabarito text-sm font-bold text-voicesNext-cream">
-                    {trimmedSearchQuery}
-                  </p>
-                </div>
-
-                {!searchReady && (
-                  <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
-                    Type at least 2 characters.
-                  </p>
-                )}
-
-                {searchReady && searchLoading && !searchResults && (
-                  <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
-                    Searching…
-                  </p>
-                )}
-
-                {searchReady && searchError && (
-                  <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
-                    {searchError}
-                  </p>
-                )}
-
-                {searchReady &&
-                  searchResults &&
-                  !searchLoading &&
-                  !searchError &&
-                  !searchHasResults && (
-                    <p className="px-4 py-5 font-asap text-sm text-voicesNext-secondary">
-                      No results found.
-                    </p>
-                  )}
-
-                {searchReady && searchHasResults && (
-                  <div className="divide-y divide-voicesNext-border">
-                    {searchSections.map((section) => {
-                      const items = searchResults?.[section.key] ?? [];
-
-                      if (!items.length) return null;
-
-                      return (
-                        <section
-                          key={section.key}
-                          className="px-2 py-3"
-                          aria-labelledby={`site-search-${section.key}`}
-                        >
-                          <h2
-                            id={`site-search-${section.key}`}
-                            className="px-2 pb-2 font-asap text-[11px] font-bold uppercase tracking-[1px] text-voicesNext-orange"
-                          >
-                            {section.label}
-                          </h2>
-                          <ul className="space-y-1">
-                            {items.map((item) => (
-                              <li key={`${section.key}-${item.id}`}>
-                                <Link
-                                  href={item.url}
-                                  className="block px-2 py-2 transition-colors hover:bg-voicesNext-surface focus:outline-none focus-visible:bg-voicesNext-surface focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange"
-                                  onClick={() => setSearchOpen(false)}
-                                >
-                                  <span className="block truncate font-gabarito text-sm font-bold text-voicesNext-cream">
-                                    {item.title}
-                                  </span>
-                                  <span className="mt-1 line-clamp-2 block font-asap text-xs leading-snug text-voicesNext-secondary">
-                                    {[item.subtitle, item.description]
-                                      .filter(Boolean)
-                                      .join(" · ")}
-                                  </span>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </section>
-                      );
-                    })}
-                  </div>
-                )}
+                <SearchPanel
+                  query={trimmedSearchQuery}
+                  ready={searchReady}
+                  loading={searchLoading}
+                  error={searchError}
+                  results={searchResults}
+                  hasResults={searchHasResults}
+                  onNavigate={() => setSearchOpen(false)}
+                />
               </div>
             )}
           </div>
@@ -726,8 +785,77 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                 </button>
               </div>
 
+              {/*
+                Search reached mobile here. It had lived only inside the
+                `hidden md:flex` header row, so phones — where browsing a
+                catalogue is hardest and search matters most — had no entry
+                point at all, despite /api/search already indexing shows,
+                artists and both blogs. Shares its state and its result panel
+                with the desktop dropdown.
+              */}
+              <div className="mt-9 px-6">
+                <form role="search" onSubmit={handleMobileSearchSubmit}>
+                  <label htmlFor="mobile-site-search" className="sr-only">
+                    Search all content
+                  </label>
+                  <div className="flex items-center gap-3 border-b border-voicesNext-border pb-2 focus-within:border-voicesNext-orange">
+                    <Search
+                      aria-hidden="true"
+                      size={20}
+                      strokeWidth={3}
+                      className="shrink-0 text-voicesNext-secondary"
+                    />
+                    <input
+                      id="mobile-site-search"
+                      type="search"
+                      name="mobile-site-search"
+                      autoComplete="off"
+                      spellCheck={false}
+                      value={searchQuery}
+                      onChange={(event) => setSearchQuery(event.target.value)}
+                      placeholder="Search shows, artists…"
+                      aria-autocomplete="list"
+                      aria-controls="mobile-search-results"
+                      className="h-11 min-w-0 flex-1 bg-transparent font-gabarito text-base font-bold text-voicesNext-cream outline-none placeholder:font-normal placeholder:text-voicesNext-secondary"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery("")}
+                        aria-label="Clear search"
+                        className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-voicesNext-secondary transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange"
+                      >
+                        <X aria-hidden="true" size={18} strokeWidth={3} />
+                      </button>
+                    )}
+                  </div>
+                </form>
+
+                {trimmedSearchQuery && (
+                  <div
+                    id="mobile-search-results"
+                    role="region"
+                    aria-live="polite"
+                    className="mt-3 max-h-[45vh] overflow-y-auto border border-voicesNext-border bg-voicesNext-background"
+                  >
+                    <SearchPanel
+                      query={trimmedSearchQuery}
+                      ready={searchReady}
+                      loading={searchLoading}
+                      error={searchError}
+                      results={searchResults}
+                      hasResults={searchHasResults}
+                      onNavigate={() => {
+                        setSearchOpen(false);
+                        setOpen(false);
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
               <nav
-                className="mt-[70px] flex flex-col gap-[25px] px-6"
+                className="mt-9 flex flex-col gap-[25px] px-6"
                 aria-label="Menu"
               >
                 <Link
@@ -812,7 +940,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                       : "text-voicesNext-cream",
                   )}
                 >
-                  Support Us
+                  Why support us
                 </Link>
                 <a
                   href={contactLink}
@@ -833,7 +961,7 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
                     href={supporterLink}
                     className="inline-flex h-14 w-full items-center justify-center rounded-full bg-voicesNext-orange px-6 font-gabarito text-[20px] font-medium text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
                   >
-                    Become a Supporter
+                    Join Voices
                   </a>
                 </div>
               </div>
