@@ -88,3 +88,64 @@ describe("HomeFeaturePanel mobile transport row", () => {
     expect(screen.getAllByText("3/3").length).toBeGreaterThan(0);
   });
 });
+
+function buildBlogItem(): HomeFeatureItem {
+  return {
+    id: "blog-1",
+    type: "blog",
+    label: "Blog",
+    title: "Inside the new studio",
+    description: "",
+    imageUrl: "/voices.svg",
+    imageAlt: "Inside the new studio",
+    imageFit: "cover",
+    href: "/blog/inside-the-new-studio",
+    cta: "Read",
+    meta: "18/06/26",
+  };
+}
+
+function buildEventItem(): HomeFeatureItem {
+  return {
+    id: "event-1",
+    type: "event",
+    label: "Event",
+    title: "Voices at the Social",
+    description: "",
+    imageUrl: "/voices.svg",
+    imageAlt: "Voices at the Social",
+    imageFit: "cover",
+    href: "/events/voices-at-the-social",
+    cta: "View",
+    meta: "18/06/26",
+  };
+}
+
+describe("HomeFeaturePanel desktop CTA glyph", () => {
+  it("shows a play glyph for a show, which has archive audio to play", () => {
+    const { container } = render(<HomeFeaturePanel items={[buildItem(1)]} />);
+
+    expect(container.querySelector("svg.lucide-play")).not.toBeNull();
+    expect(container.querySelector("svg.lucide-arrow-right")).toBeNull();
+  });
+
+  it("shows an arrow, not a play glyph, for a blog post", () => {
+    const { container } = render(
+      <HomeFeaturePanel items={[buildBlogItem()]} />,
+    );
+
+    expect(container.querySelector("svg.lucide-play")).toBeNull();
+    expect(container.querySelector("svg.lucide-arrow-right")).not.toBeNull();
+    expect(screen.getByText("Read")).toBeInTheDocument();
+  });
+
+  it("shows an arrow, not a play glyph, for an event", () => {
+    const { container } = render(
+      <HomeFeaturePanel items={[buildEventItem()]} />,
+    );
+
+    expect(container.querySelector("svg.lucide-play")).toBeNull();
+    expect(container.querySelector("svg.lucide-arrow-right")).not.toBeNull();
+    expect(screen.getByText("View")).toBeInTheDocument();
+  });
+});

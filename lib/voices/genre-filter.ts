@@ -3,18 +3,25 @@
  * /explore and /artists. Genre selection lives entirely in the `genre`
  * search param (repeated: `?genre=a&genre=b`); these functions produce the
  * next param list and the href to navigate to.
+ *
+ * These are thin `genre`-bound wrappers around `param-filter.ts`, which the
+ * blog index reuses for `category`.
  */
+
+import {
+  buildFilterHref,
+  removeValue,
+  toggleValue,
+} from "./param-filter";
 
 /** Add `key` if absent, remove it if already selected. Order is preserved. */
 export function toggleGenre(current: string[], key: string): string[] {
-  return current.includes(key)
-    ? current.filter((genre) => genre !== key)
-    : [...current, key];
+  return toggleValue(current, key);
 }
 
 /** Remove `key` from the selection if present. */
 export function removeGenre(current: string[], key: string): string[] {
-  return current.filter((genre) => genre !== key);
+  return removeValue(current, key);
 }
 
 /**
@@ -27,17 +34,5 @@ export function buildGenreHref(
   genres: string[],
   extra?: Record<string, string | undefined>,
 ): string {
-  const parts: string[] = [];
-
-  for (const [key, value] of Object.entries(extra ?? {})) {
-    if (value != null && value !== "") {
-      parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-    }
-  }
-
-  for (const genre of genres) {
-    parts.push(`genre=${encodeURIComponent(genre)}`);
-  }
-
-  return parts.length ? `${basePath}?${parts.join("&")}` : basePath;
+  return buildFilterHref(basePath, "genre", genres, extra);
 }

@@ -542,7 +542,10 @@ export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $
     asset->{
       url,
       metadata {
-        lqip
+        lqip,
+        dimensions {
+          aspectRatio
+        }
       }
     }
   },
@@ -555,6 +558,7 @@ export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $
   metaTitle,
   metaDescription,
   keywords,
+  relatedShowId,
   ogImage {
     ...,
     asset->{
@@ -564,6 +568,86 @@ export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $
       }
     }
   }
+}`;
+
+/**
+ * Up to three posts sharing a category with the current one, newest first.
+ *
+ * Replaces fetching every published post and slicing the first three in JS —
+ * that got more expensive with every post published, and "related" meant
+ * nothing more than "recent".
+ */
+export const relatedMainBlogPostsQuery = groq`*[
+  _type == "mainBlog"
+  && status == "published"
+  && _id != $id
+  && count((categories[])[@ in $categories]) > 0
+] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  author,
+  categories,
+  publishedAt
+}`;
+
+/** Newest published post older than $publishedAt — the "up next" tile. */
+export const nextMainBlogPostQuery = groq`*[
+  _type == "mainBlog"
+  && status == "published"
+  && _id != $id
+  && publishedAt < $publishedAt
+] | order(publishedAt desc)[0] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  author,
+  categories,
+  publishedAt
+}`;
+
+/** Fallback for the "up next" tile on the oldest post: the newest one. */
+export const newestMainBlogPostQuery = groq`*[
+  _type == "mainBlog"
+  && status == "published"
+  && _id != $id
+] | order(publishedAt desc)[0] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  author,
+  categories,
+  publishedAt
 }`;
 
 export const featuredMainBlogPostsQuery = groq`*[_type == "mainBlog" && featured == true && status == "published"] | order(publishedAt desc)[0...3] {
@@ -615,6 +699,10 @@ export interface MainBlogPost {
       url: string;
       metadata: {
         lqip: string;
+        /** Only projected by `mainBlogPostQuery`, for the article hero. */
+        dimensions?: {
+          aspectRatio: number;
+        };
       };
     };
   };
@@ -627,6 +715,11 @@ export interface MainBlogPost {
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string[];
+  /**
+   * Optional Voices show id. When set, the article offers the show in the
+   * archive mini player, so the audio keeps playing while the post is read.
+   */
+  relatedShowId?: string;
   ogImage?: {
     asset?: {
       url: string;

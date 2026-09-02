@@ -6,7 +6,7 @@ import {
   useReducedMotion,
   type PanInfo,
 } from "framer-motion";
-import { Pause, Play } from "lucide-react";
+import { ArrowRight, Pause, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
@@ -298,12 +298,26 @@ export default function HomeFeaturePanel({
                     {item.cta}
                   </span>
                   <span className="flex items-center justify-center self-stretch">
-                    <Play
-                      aria-hidden="true"
-                      className="transition-transform duration-300 group-hover/feature-cta:scale-110 group-focus/feature-cta:scale-110"
-                      size={36}
-                      fill="currentColor"
-                    />
+                    {/* Only a show has something to play. Blog and event
+                        slides read "Read"/"View", so a play glyph there
+                        promises audio that doesn't exist — they get a "go"
+                        arrow instead. Same 36px footprint either way, so the
+                        CTA block keeps its proportions and the carousel
+                        doesn't jump between slides. */}
+                    {item.type === "show" ? (
+                      <Play
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover/feature-cta:scale-110 group-focus/feature-cta:scale-110"
+                        size={36}
+                        fill="currentColor"
+                      />
+                    ) : (
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover/feature-cta:translate-x-1 group-focus/feature-cta:translate-x-1"
+                        size={36}
+                      />
+                    )}
                   </span>
                 </FeatureLink>
 

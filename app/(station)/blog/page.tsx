@@ -1,9 +1,29 @@
-import { Metadata } from "next";
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
+import { getBaseUrl } from "@/lib/site-url";
+import {
+  collectCategories,
+  filterPostsByCategories,
+  formatPostDate,
+} from "@/lib/voices/blog";
+import {
+  getParamArray,
+  type VoicesSearchParams,
+} from "@/lib/voices/search-params";
 import { client } from "@/sanity.client";
 import { mainBlogPostsQuery, type MainBlogPost } from "@/sanity.queries";
-import { Calendar, User, ArrowRight } from "lucide-react";
+import PageHero from "../components/redesign/page-hero";
+import BlogCta from "./components/blog-cta";
+import BlogLeadCard from "./components/blog-lead-card";
+import BlogPostCard from "./components/blog-post-card";
+import CategoryFilter from "./components/category-filter";
+import TransmissionLog from "./components/transmission-log";
+
+/** Cards stay browsable for about this many posts; older ones go to the
+ *  archive list below, which reads better at length. */
+const GRID_LIMIT = 9;
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Blog | Voices Radio - Community News & Updates",
@@ -28,249 +48,130 @@ async function getBlogPosts(): Promise<MainBlogPost[]> {
   return await client.fetch(mainBlogPostsQuery);
 }
 
-export default async function BlogPage() {
-  const blogPosts = await getBlogPosts();
+function EmptyState({ filtered }: { filtered: boolean }) {
+  return (
+    <div className="border border-voicesNext-border bg-voicesNext-surface p-8 md:p-12">
+      <h2 className="font-gabarito text-2xl font-bold text-voicesNext-cream">
+        {filtered ? "Nothing under that filter yet" : "No stories yet"}
+      </h2>
+      <p className="mt-3 max-w-xl font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
+        {filtered
+          ? "No posts match every category you've selected. Try clearing one, or browse everything we've published."
+          : "We're working on the first stories from the station. In the meantime, the stream is always on."}
+      </p>
+      <Link
+        href={filtered ? "/blog" : "/explore"}
+        className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-base font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface"
+      >
+        {filtered ? "Show all posts" : "Explore the shows"}
+      </Link>
+    </div>
+  );
+}
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams?: Promise<VoicesSearchParams>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const selectedCategories = getParamArray(resolvedSearchParams, "category");
 
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      news: "bg-blue-100 text-blue-800",
-      community: "bg-green-100 text-green-800",
-      events: "bg-purple-100 text-purple-800",
-      music: "bg-orange-100 text-orange-800",
-      interviews: "bg-pink-100 text-pink-800",
-      "behind-the-scenes": "bg-yellow-100 text-yellow-800",
-    };
-    return colors[category] || "bg-gray-100 text-gray-800";
+  const allPosts = await getBlogPosts();
+  const categories = collectCategories(allPosts);
+  const posts = filterPostsByCategories(allPosts, selectedCategories);
+
+  // The lead is the newest featured post, or simply the newest one — the
+  // query already orders by `publishedAt desc`. Everything after it goes to
+  // the grid, so nothing renders twice: the old page mapped every post into
+  // "All Posts" after already showing the featured ones above.
+  const lead = posts.find((post) => post.featured) ?? posts[0];
+  const rest = lead ? posts.filter((post) => post._id !== lead._id) : [];
+  const gridPosts = rest.slice(0, GRID_LIMIT);
+  const archivePosts = rest.slice(GRID_LIMIT);
+
+  const blogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "@id": `${getBaseUrl()}/blog`,
+    name: "Voices Radio Blog",
+    description:
+      "Stories, news and updates from Voices Radio, a community radio station in London.",
+    url: `${getBaseUrl()}/blog`,
+    blogPost: allPosts.slice(0, 10).map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      url: `${getBaseUrl()}/blog/${post.slug.current}`,
+      datePublished: post.publishedAt,
+      author: { "@type": "Person", name: post.author },
+    })),
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-black to-slate-800 pb-16 pt-32 lg:pb-20 lg:pt-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="mb-6 text-4xl font-bold text-white sm:text-5xl md:text-6xl">
-              Voices Radio Blog
-            </h1>
-            <p className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-200">
-              Stories, news, and updates from our community. Discover the latest
-              happenings at Voices Radio and beyond.
-            </p>
-          </div>
-        </div>
-      </section>
+    <div className="bg-voicesNext-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
 
-      {/* Blog Posts Grid */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {blogPosts.length === 0 ? (
-            <div className="py-16 text-center">
-              <div className="rounded-2xl bg-white p-12 shadow-lg">
-                <h2 className="mb-4 text-2xl font-bold text-slate-800">
-                  No Blog Posts Yet
-                </h2>
-                <p className="mb-6 text-slate-600">
-                  We&apos;re working on creating amazing content for you. Check
-                  back soon!
-                </p>
-                <Link
-                  href="/"
-                  className="inline-flex items-center rounded-full bg-voices-red px-6 py-3 font-semibold text-white transition-colors hover:bg-red-600"
-                >
-                  Back to Home
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+      <PageHero
+        eyebrow="From the station"
+        title="Blog"
+        description="Stories, news and updates from the Voices community — what's happening in the studio, on air and around London."
+        meta={
+          allPosts.length > 0 ? (
+            <dl className="flex gap-8 border-l-2 border-voicesNext-orange pl-4 md:gap-10">
+              <div>
+                <dt className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
+                  Stories
+                </dt>
+                <dd className="mt-2 font-outfit text-3xl font-black tabular-nums leading-none text-voicesNext-cream">
+                  {allPosts.length}
+                </dd>
               </div>
-            </div>
-          ) : (
-            <>
-              {/* Featured Posts */}
-              {blogPosts.filter((post) => post.featured).length > 0 && (
-                <div className="mb-16">
-                  <h2 className="mb-8 text-center text-3xl font-bold text-slate-800">
-                    Featured Posts
-                  </h2>
-                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    {blogPosts
-                      .filter((post) => post.featured)
-                      .slice(0, 2)
-                      .map((post) => (
-                        <article
-                          key={post._id}
-                          className="overflow-hidden rounded-2xl bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl"
-                        >
-                          <div className="relative h-64">
-                            <Image
-                              src={
-                                post.featuredImage?.asset?.url ||
-                                "/studio-1.jpg"
-                              }
-                              alt={post.title}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 768px) 100vw, 50vw"
-                            />
-                            <div className="absolute left-4 top-4">
-                              <span className="rounded-full bg-voices-red px-3 py-1 text-sm font-semibold text-white">
-                                Featured
-                              </span>
-                            </div>
-                          </div>
-                          <div className="p-6">
-                            <div className="mb-4 flex flex-wrap gap-2">
-                              {post.categories?.map((category) => (
-                                <span
-                                  key={category}
-                                  className={`rounded-full px-3 py-1 text-xs font-medium ${getCategoryColor(
-                                    category,
-                                  )}`}
-                                >
-                                  {category
-                                    .replace("-", " ")
-                                    .replace(/\b\w/g, (l) => l.toUpperCase())}
-                                </span>
-                              ))}
-                            </div>
-                            <h3 className="mb-3 line-clamp-2 text-xl font-bold text-slate-800">
-                              {post.title}
-                            </h3>
-                            <p className="mb-4 line-clamp-3 text-slate-600">
-                              {post.excerpt}
-                            </p>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-4 text-sm text-slate-500">
-                                <div className="flex items-center">
-                                  <User className="mr-1 h-4 w-4" />
-                                  {post.author}
-                                </div>
-                                <div className="flex items-center">
-                                  <Calendar className="mr-1 h-4 w-4" />
-                                  {formatDate(post.publishedAt)}
-                                </div>
-                              </div>
-                              <Link
-                                href={`/blog/${post.slug.current}`}
-                                className="flex items-center font-semibold text-voices-red hover:text-red-600"
-                              >
-                                Read More
-                                <ArrowRight className="ml-1 h-4 w-4" />
-                              </Link>
-                            </div>
-                          </div>
-                        </article>
-                      ))}
-                  </div>
-                </div>
-              )}
-
-              {/* All Posts */}
-              <div className="mb-8">
-                <h2 className="mb-8 text-center text-3xl font-bold text-slate-800">
-                  {blogPosts.filter((post) => post.featured).length > 0
-                    ? "All Posts"
-                    : "Latest Posts"}
-                </h2>
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                  {blogPosts.map((post) => (
-                    <article
-                      key={post._id}
-                      className="overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-lg"
-                    >
-                      <div className="relative h-48">
-                        <Image
-                          src={
-                            post.featuredImage?.asset?.url || "/studio-1.jpg"
-                          }
-                          alt={post.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
-                      <div className="p-6">
-                        <div className="mb-3 flex flex-wrap gap-2">
-                          {post.categories?.slice(0, 2).map((category) => (
-                            <span
-                              key={category}
-                              className={`rounded-full px-2 py-1 text-xs font-medium ${getCategoryColor(
-                                category,
-                              )}`}
-                            >
-                              {category
-                                .replace("-", " ")
-                                .replace(/\b\w/g, (l) => l.toUpperCase())}
-                            </span>
-                          ))}
-                        </div>
-                        <h3 className="mb-2 line-clamp-2 text-lg font-bold text-slate-800">
-                          {post.title}
-                        </h3>
-                        <p className="mb-4 line-clamp-3 text-sm text-slate-600">
-                          {post.excerpt}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3 text-xs text-slate-500">
-                            <div className="flex items-center">
-                              <User className="mr-1 h-3 w-3" />
-                              {post.author}
-                            </div>
-                            <div className="flex items-center">
-                              <Calendar className="mr-1 h-3 w-3" />
-                              {formatDate(post.publishedAt)}
-                            </div>
-                          </div>
-                          <Link
-                            href={`/blog/${post.slug.current}`}
-                            className="flex items-center text-sm font-semibold text-voices-red hover:text-red-600"
-                          >
-                            Read More
-                            <ArrowRight className="ml-1 h-3 w-3" />
-                          </Link>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
+              <div>
+                <dt className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
+                  Last updated
+                </dt>
+                <dd className="mt-2 font-outfit text-3xl font-black uppercase leading-none text-voicesNext-cream">
+                  {formatPostDate(allPosts[0]?.publishedAt)}
+                </dd>
               </div>
-            </>
-          )}
-        </div>
-      </section>
+            </dl>
+          ) : undefined
+        }
+      />
 
-      {/* CTA Section */}
-      <section className="bg-gradient-to-r from-voices-red to-red-600 py-16">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="mb-4 text-3xl font-bold text-white">
-            Want to Get Involved?
-          </h2>
-          <p className="mx-auto mb-8 max-w-3xl text-xl text-white/90">
-            Join our community of passionate music lovers and creators. Apply to
-            become part of the Voices Radio family.
-          </p>
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link
-              href="/about"
-              className="transform rounded-full bg-white px-8 py-4 text-lg font-bold text-voices-red shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-100"
-            >
-              Learn About Us
-            </Link>
-            <Link
-              href="/"
-              className="rounded-full border-2 border-white px-8 py-4 text-lg font-bold text-white transition-all duration-300 hover:bg-white hover:text-voices-red"
-            >
-              Listen Live
-            </Link>
+      <div className="mx-auto max-w-[1280px] px-4 py-10 md:px-8 md:py-14">
+        {categories.length > 0 && (
+          <div className="mb-8 md:mb-10">
+            <CategoryFilter
+              categories={categories}
+              selected={selectedCategories}
+            />
           </div>
-        </div>
-      </section>
+        )}
+
+        {!lead ? (
+          <EmptyState filtered={selectedCategories.length > 0} />
+        ) : (
+          <>
+            <BlogLeadCard post={lead} />
+
+            {gridPosts.length > 0 && (
+              <div className="mt-10 grid grid-cols-1 gap-5 md:mt-14 md:grid-cols-2 xl:grid-cols-3">
+                {gridPosts.map((post) => (
+                  <BlogPostCard key={post._id} post={post} />
+                ))}
+              </div>
+            )}
+
+            <TransmissionLog posts={archivePosts} />
+          </>
+        )}
+      </div>
+
+      <BlogCta secondaryHref="/explore" secondaryLabel="Explore the shows" />
     </div>
   );
 }
