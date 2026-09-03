@@ -40,3 +40,12 @@ next-env.d.ts
 
 # bolt folder (separate Vite project)
 /bolt/
+
+/node-compile-cache/
+/.playwright-mcp/
+core-js-banners
+.claude/settings.local.json
+
+.agents/
+.claude/
+tasks/
