@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Blog | Voices Radio - Community News & Updates",
   description: "Stay updated with the latest news, events, and stories from Voices Radio. Discover community highlights, music features, and behind-the-scenes content.",
   keywords: ["voices radio", "community radio", "london radio", "music blog", "community news"],
+  alternates: { canonical: "/blog" },
   openGraph: {
     title: "Blog | Voices Radio - Community News & Updates",
     description: "Stay updated with the latest news, events, and stories from Voices Radio.",

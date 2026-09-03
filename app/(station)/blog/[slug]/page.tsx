@@ -40,6 +40,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     title: `${title} | Voices Radio Blog`,
     description,
     keywords: post.keywords || ["voices radio", "community radio", "london"],
+    alternates: { canonical: `/blog/${params.slug}` },
     openGraph: {
       title: `${title} | Voices Radio Blog`,
       description,

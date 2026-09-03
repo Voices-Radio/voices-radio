@@ -1,4 +1,5 @@
 import { getPodcast } from "@/sanity.client";
+import { getBaseUrl } from "@/lib/site-url";
 import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
 import { JsonLd } from "../components/json-ld";
@@ -21,7 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     ...(podcast?.seoKeywords && { keywords: podcast.seoKeywords.join(", ") }),
-    alternates: { canonical: "/podcast" },
+    // No `alternates.canonical` here on purpose - see app/layout.tsx. The
+    // /podcast canonical lives on app/podcast/page.tsx.
     openGraph: {
       title,
       description,
@@ -48,7 +50,7 @@ export default async function PodcastLayout({
     "@type": "RecordingStudio",
     name: "Voices Radio Podcast Studio",
     description: podcast?.seoDescription ?? DEFAULT_DESCRIPTION,
-    url: "https://voicesradio.co.uk/podcast",
+    url: `${getBaseUrl()}/podcast`,
     ...(podcast?.phone && { telephone: podcast.phone }),
     address: {
       "@type": "PostalAddress",

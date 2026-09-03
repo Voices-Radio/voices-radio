@@ -1,4 +1,5 @@
 import { getSettings } from "@/sanity.client";
+import { getBaseUrl } from "@/lib/site-url";
 import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
 import { JsonLd } from "../components/json-ld";
@@ -18,16 +19,16 @@ export async function generateMetadata(): Promise<Metadata> {
     ? urlForImage(ogImage).width(1200).height(627).url()
     : "/voices.svg";
 
+  const baseUrl = getBaseUrl();
+
   return {
-    metadataBase: new URL("https://voicesradio.co.uk"),
+    metadataBase: new URL(baseUrl),
     title: { default: title, template: `%s | ${title}` },
     description,
-    alternates: {
-      canonical: "/",
-    },
+    // No `alternates.canonical` here on purpose - see app/layout.tsx.
     openGraph: {
       type: "website",
-      url: new URL("https://voicesradio.co.uk"),
+      url: new URL(baseUrl),
       title: { default: title, template: `%s | ${title}` },
       description,
       siteName: title,

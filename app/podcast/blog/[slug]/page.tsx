@@ -38,6 +38,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     title: `${title} | Voices Studio Blog`,
     description,
     keywords: post.keywords || ["podcast", "recording", "studio"],
+    alternates: { canonical: `/podcast/blog/${params.slug}` },
     openGraph: {
       title: `${title} | Voices Studio Blog`,
       description,

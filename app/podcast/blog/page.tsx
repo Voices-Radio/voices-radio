@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Blog | Voices Studio - Podcast Recording Tips & Industry News",
   description: "Discover expert podcast recording tips, studio updates, and industry insights from Voices Studio. Learn how to create professional podcasts with our comprehensive guides.",
   keywords: ["podcast tips", "recording studio", "podcast equipment", "audio production", "podcast industry"],
+  alternates: { canonical: "/podcast/blog" },
   openGraph: {
     title: "Blog | Voices Studio - Podcast Recording Tips & Industry News",
     description: "Discover expert podcast recording tips, studio updates, and industry insights from Voices Studio.",
