@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { getBaseUrl } from "@/lib/site-url";
 import { Asap_Condensed, Gabarito, Inter, Outfit } from "next/font/google";
 import localFont from "next/font/local";
 import { SAFE_AREA_COLOR } from "@/lib/design-tokens";
@@ -36,6 +37,18 @@ const asapCondensed = Asap_Condensed({
   display: "swap",
   variable: "--font-asap-condensed",
 });
+
+/**
+ * Resolves every relative `alternates.canonical` in the tree against the real
+ * production origin. Without it, routes outside the (station) group emit
+ * relative canonicals like `<link rel="canonical" href="/podcast">`.
+ *
+ * Deliberately no `alternates` here: canonicals belong to pages, never to
+ * layouts. See the note in app/(station)/layout.tsx.
+ */
+export const metadata: Metadata = {
+  metadataBase: new URL(getBaseUrl()),
+};
 
 export const viewport: Viewport = {
   // Declared per colour scheme rather than as a single flat value — with

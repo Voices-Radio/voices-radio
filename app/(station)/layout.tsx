@@ -21,9 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(baseUrl),
     title: { default: title, template: `%s | ${title}` },
     description,
-    alternates: {
-      canonical: "/",
-    },
+    // No `alternates.canonical` here on purpose: App Router merges layout
+    // metadata into every page beneath it, so a canonical here silently makes
+    // every child page declare itself a duplicate of the homepage. Canonicals
+    // belong to pages.
     openGraph: {
       type: "website",
       url: new URL(baseUrl),

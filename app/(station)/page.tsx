@@ -6,6 +6,10 @@ import { getHomePageContent } from "@/lib/voices/home";
 import { VOICES_APPLY_FOR_SHOW_URL } from "@/lib/voices/config";
 import { getSupporters } from "@/lib/voices/membership/membership-client";
 import Image from "next/image";
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   const { featuredItems, latestKx, latestEast, rails, liveStreams } =

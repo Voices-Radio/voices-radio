@@ -70,6 +70,7 @@ export async function generateMetadata({
     title: `${title} | Voices Radio Blog`,
     description,
     keywords: post.keywords || ["voices radio", "community radio", "london"],
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       title: `${title} | Voices Radio Blog`,
       description,

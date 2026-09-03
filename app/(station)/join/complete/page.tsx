@@ -3,6 +3,7 @@ import { requireSession } from "@/lib/voices/membership/session";
 import CompletePoller from "./complete-poller";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Confirming your membership",
 };
 

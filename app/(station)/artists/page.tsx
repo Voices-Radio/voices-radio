@@ -13,6 +13,14 @@ import {
   type VoicesSearchParams,
 } from "@/lib/voices/search-params";
 import type { VoicesArtist } from "@/lib/voices/types";
+import type { Metadata } from "next";
+/**
+ * Filtered variants (?category=, ?genre=) all consolidate here rather than
+ * competing as near-duplicates in the index.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: "/artists" },
+};
 
 const COLLAPSED_LIMIT = 9;
 const ARTISTS_BASE_PATH = "/artists";

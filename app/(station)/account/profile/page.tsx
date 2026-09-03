@@ -10,6 +10,7 @@ import {
 import ProfileForm from "./profile-form";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Your profile",
 };
 

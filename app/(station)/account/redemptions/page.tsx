@@ -3,6 +3,7 @@ import { getRedemptions } from "@/lib/voices/membership/membership-client";
 import { formatMembershipDate } from "@/lib/voices/membership/format";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Your redemptions",
 };
 

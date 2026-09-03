@@ -7,6 +7,7 @@ import { Calendar, User, ArrowRight, Search } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/podcast/blog" },
   title: "Blog | Voices Studio - Podcast Recording Tips & Industry News",
   description:
     "Discover expert podcast recording tips, studio updates, and industry insights from Voices Studio. Learn how to create professional podcasts with our comprehensive guides.",

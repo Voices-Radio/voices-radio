@@ -11,6 +11,7 @@ import {
 import ResetPasswordForm from "./reset-password-form";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Set new password",
   description: "Set a new password for your Voices account.",
 };

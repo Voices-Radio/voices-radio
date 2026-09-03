@@ -17,7 +17,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const benefit = await getMembershipBenefit(slug);
-  return { title: benefit?.name ?? "Membership benefit" };
+  return {
+    title: benefit?.name ?? "Membership benefit",
+    alternates: { canonical: `/benefits/${slug}` },
+  };
 }
 
 /**

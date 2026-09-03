@@ -69,3 +69,9 @@ playwright-transform-cache-501/
 
 # Session scratch: planning/audit notes, not shipped deliverables
 /tasks/
+
+# local tooling caches
+/node-compile-cache/
+/.playwright-mcp/
+core-js-banners
+.claude/settings.local.json

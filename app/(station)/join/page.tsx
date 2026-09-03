@@ -11,6 +11,7 @@ import { getSession } from "@/lib/voices/membership/session";
 import TierComparison from "../components/membership/tier-comparison";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/join" },
   title: "Join Voices Radio",
   description:
     "Compare Voices Radio membership tiers and choose monthly or annual billing.",

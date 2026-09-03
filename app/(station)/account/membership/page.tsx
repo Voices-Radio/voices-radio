@@ -15,6 +15,7 @@ import {
 } from "../components/account-surface";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Manage your membership",
 };
 

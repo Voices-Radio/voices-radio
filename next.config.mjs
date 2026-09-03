@@ -59,9 +59,11 @@ const config = {
   async redirects() {
     return [
       {
+        // 308, not 307: /discover was renamed to /explore and is not coming
+        // back. A temporary redirect tells Google to keep /discover indexed.
         source: "/discover",
         destination: "/explore",
-        permanent: false,
+        permanent: true,
       },
     ];
   },

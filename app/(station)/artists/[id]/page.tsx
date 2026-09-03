@@ -25,6 +25,7 @@ export async function generateMetadata({
     title: `${artist.name} | Voices Radio`,
     description:
       artist.bio || `Explore shows and profile details for ${artist.name}.`,
+    alternates: { canonical: `/artists/${id}` },
     openGraph: {
       title: artist.name,
       description:

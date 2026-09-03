@@ -52,6 +52,7 @@ export async function generateMetadata({
   return {
     title: `${title} | Voices Radio`,
     description: show.description || `Listen back to ${title} on Voices Radio.`,
+    alternates: { canonical: `/shows/${id}` },
     openGraph: {
       title,
       description:

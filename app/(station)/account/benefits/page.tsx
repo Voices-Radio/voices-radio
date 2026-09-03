@@ -3,6 +3,7 @@ import { getBenefits } from "@/lib/voices/membership/membership-client";
 import BenefitCard from "../../components/membership/benefit-card";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Your benefits",
 };
 

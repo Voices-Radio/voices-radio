@@ -1,6 +1,10 @@
 import PageHero from "../components/redesign/page-hero";
 import ShowGrid from "../components/redesign/show-grid";
 import { getShows } from "@/lib/voices/api";
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  alternates: { canonical: "/shows" },
+};
 
 export default async function ShowsPage() {
   const shows = await getShows();

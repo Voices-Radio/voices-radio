@@ -5,6 +5,7 @@ import FavouritesListNav from "./favourites-list-nav";
 import FavouritesLoadMore from "./favourites-load-more";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Your favourites",
 };
 

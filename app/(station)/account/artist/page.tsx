@@ -8,6 +8,7 @@ import {
 import ArtistProfileForm from "./artist-profile-form";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Artist profile",
 };
 

@@ -7,6 +7,7 @@ import { getSession } from "@/lib/voices/membership/session";
 import ClaimArtistForm from "./claim-artist-form";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Claim artist profile",
 };
 

@@ -26,6 +26,7 @@ const GRID_LIMIT = 9;
 export const revalidate = 300;
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/blog" },
   title: "Blog | Voices Radio - Community News & Updates",
   description:
     "Stay updated with the latest news, events, and stories from Voices Radio. Discover community highlights, music features, and behind-the-scenes content.",

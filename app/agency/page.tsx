@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getBaseUrl } from "@/lib/site-url";
 import { CallToAction } from "./_components/CallToAction";
 import { ClientStrip } from "./_components/ClientStrip";
 import { ContactBlock } from "./_components/ContactBlock";
@@ -20,7 +21,7 @@ const description =
   "Voices Agency designs and manages music programmes for venues, hotels, brands and cultural spaces across London, from single dates to fully managed multi-space calendars.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://voicesradio.co.uk"),
+  metadataBase: new URL(getBaseUrl()),
   title: "Voices Agency | Music Programming and Talent Curation",
   description,
   keywords: [

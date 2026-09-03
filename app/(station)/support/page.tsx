@@ -5,6 +5,7 @@ import { getMembershipPage } from "@/sanity.client";
 import { withMembershipCopyFallback } from "@/lib/voices/membership/constants";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/support" },
   title: "Support Voices Radio",
   description:
     "Back independent community radio in London from £4 a month. The stream stays free — membership gets you closer to the people, place and culture behind it.",

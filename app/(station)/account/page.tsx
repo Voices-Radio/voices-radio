@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Your account",
 };
 
