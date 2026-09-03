@@ -3,6 +3,7 @@ import {
   getLocationPageSlugs,
   getPodcast,
 } from "@/sanity.client";
+import { getBaseUrl } from "@/lib/site-url";
 import { urlForImage } from "@/sanity.image";
 import { PortableText } from "@portabletext/react";
 import { Metadata } from "next";
@@ -67,6 +68,8 @@ export default async function LocationPage({
 
   if (!page) notFound();
 
+  const baseUrl = getBaseUrl();
+
   // ── JSON-LD: LocalBusiness ─────────────────────────────────────────────
   const localBusiness: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -75,7 +78,7 @@ export default async function LocationPage({
     description:
       page.seoDescription ??
       `Professional podcast studio for hire in ${page.localityName}.`,
-    url: `https://voicesradio.co.uk/podcast-studio/${params.slug}`,
+    url: `${baseUrl}/podcast-studio/${params.slug}`,
     ...(podcast?.phone && { telephone: podcast.phone }),
     address: {
       "@type": "PostalAddress",
@@ -121,19 +124,19 @@ export default async function LocationPage({
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://voicesradio.co.uk",
+        item: baseUrl,
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Podcast Studio",
-        item: "https://voicesradio.co.uk/podcast",
+        item: `${baseUrl}/podcast`,
       },
       {
         "@type": "ListItem",
         position: 3,
         name: page.h1,
-        item: `https://voicesradio.co.uk/podcast-studio/${params.slug}`,
+        item: `${baseUrl}/podcast-studio/${params.slug}`,
       },
     ],
   };

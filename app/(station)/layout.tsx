@@ -55,6 +55,7 @@ export default async function StationLayout({
   children: React.ReactNode;
 }) {
   const settings = await getSettings();
+  const baseUrl = getBaseUrl();
 
   const sameAs = [
     settings?.twitter_link,
@@ -68,7 +69,7 @@ export default async function StationLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     name: settings?.title ?? "Voices Radio",
-    url: "https://voicesradio.co.uk",
+    url: baseUrl,
     ...(sameAs.length > 0 && { sameAs }),
   };
 
