@@ -18,6 +18,9 @@ export const VOICES_DEFAULT_INDEX_LIMIT = 24;
 
 export const VOICES_DEFAULT_FEATURED_LIMIT = 10;
 
+/** The backend caps paginated artist lists at 100 per page. */
+export const VOICES_ARTISTS_PAGE_SIZE = 100;
+
 export const VOICES_APPLY_FOR_SHOW_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSdlV09iFlcP2_n6ldRsSUoeZclzJpb0AMY4F2rrXUpC7jueZQ/viewform";
 

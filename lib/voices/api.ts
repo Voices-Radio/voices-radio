@@ -2,6 +2,7 @@ import "server-only";
 
 import {
   VOICES_API_BASE_URL,
+  VOICES_ARTISTS_PAGE_SIZE,
   VOICES_DEFAULT_FEATURED_LIMIT,
   VOICES_DEFAULT_INDEX_LIMIT,
 } from "./config";
@@ -87,11 +88,28 @@ export async function getArtists({
 }: {
   optimized?: boolean;
 } = {}) {
-  const payload = await voicesFetch<
-    VoicesArtistRaw[] | VoicesListResponse<VoicesArtistRaw>
-  >(optimized ? "/api/artists/optimized" : "/api/artists");
+  // The endpoint is paginated (default 20 per page), so page through every
+  // result — a single request silently capped the site at 20 artists.
+  const path = optimized ? "/api/artists/optimized" : "/api/artists";
+  const fetchPage = (page: number) =>
+    voicesFetch<VoicesArtistRaw[] | VoicesListResponse<VoicesArtistRaw>>(path, {
+      page,
+      limit: VOICES_ARTISTS_PAGE_SIZE,
+    });
 
-  return unwrapList(payload).map(normalizeArtist);
+  const firstPage = await fetchPage(1);
+  const totalPages = Array.isArray(firstPage)
+    ? 1
+    : (firstPage.pagination?.pages ?? 1);
+  const remainingPages = await Promise.all(
+    Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) =>
+      fetchPage(i + 2),
+    ),
+  );
+
+  return [firstPage, ...remainingPages]
+    .flatMap((payload) => unwrapList(payload))
+    .map(normalizeArtist);
 }
 
 export async function getArtist(id: string) {

@@ -142,6 +142,12 @@ export interface VoicesShow {
 export interface VoicesListResponse<T> {
   items: T[];
   total?: number;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
 }
 
 export interface VoicesWebsiteRailRaw {
