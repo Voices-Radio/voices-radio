@@ -12,7 +12,7 @@ export function Hero() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 18% 22%, rgba(95, 92, 243, 0.35), transparent 28%), linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.76)), url('/studio-2.jpg')",
+              "radial-gradient(circle at 18% 22%, rgba(95, 92, 243, 0.35), transparent 28%), linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.76)), url('/agency-hero.webp')",
           }}
         />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950 to-transparent" />

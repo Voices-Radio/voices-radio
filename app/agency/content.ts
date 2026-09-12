@@ -34,7 +34,7 @@ export type ClientLogo = {
 export const clientLogos: ClientLogo[] = [
   {
     name: "Hackney Bridge",
-    logo: "/agency/logos/hackney-bridge.png",
+    logo: "/agency/logos/hackney-bridge.webp",
     width: 1740,
     height: 484,
   },
@@ -86,21 +86,21 @@ export const clientLogos: ClientLogo[] = [
   },
   {
     name: "Flat Iron Square",
-    logo: "/agency/logos/flat-iron-square.png",
+    logo: "/agency/logos/flat-iron-square.webp",
     width: 70,
     height: 85,
   },
-  { name: "HOKA", logo: "/agency/logos/hoka.png", width: 32, height: 32 },
+  { name: "HOKA", logo: "/agency/logos/hoka.webp", width: 32, height: 32 },
   {
     name: "MOTH Drinks",
-    logo: "/agency/logos/moth-drinks.png",
+    logo: "/agency/logos/moth-drinks.webp",
     width: 32,
     height: 32,
     chip: true,
   },
   {
     name: "Moju Drinks",
-    logo: "/agency/logos/moju-drinks.png",
+    logo: "/agency/logos/moju-drinks.webp",
     width: 512,
     height: 512,
   },

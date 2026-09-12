@@ -8,7 +8,7 @@ export function Nav() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <a href="#home" className="flex h-11 items-center gap-2">
           <Image
-            src="/VOICESLOGO_LIGHTBOX.png"
+            src="/VOICESLOGO_LIGHTBOX.webp"
             alt="Voices Agency"
             width={34}
             height={34}

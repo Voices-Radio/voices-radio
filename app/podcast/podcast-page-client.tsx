@@ -26,22 +26,22 @@ const PodcastPage = () => {
 
   const studioImages = [
     {
-      url: '/studio-6.jpg',
+      url: '/studio-6.webp',
       alt: 'Voices Studio recording setup',
       title: 'Studio Setup'
     },
     {
-      url: '/studio-3.jpg',
+      url: '/studio-3.webp',
       alt: 'Professional podcast recording environment',
       title: 'Recording Environment'
     },
     {
-      url: '/studio-4.jpg',
+      url: '/studio-4.webp',
       alt: 'Voices Studio podcast recording',
       title: 'Venue Exterior'
     },
     {
-      url: '/studio-5.jpg',
+      url: '/studio-5.webp',
       alt: 'Additional Voices Studio recording setup',
       title: 'Restaurant & Bar'
     }
@@ -161,7 +161,7 @@ const PodcastPage = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 ml-2">
               <Image 
-                src="/VOICESLOGO_LIGHTBOX.png" 
+                src="/VOICESLOGO_LIGHTBOX.webp" 
                 alt="Voices Studio Logo" 
                 width={32}
                 height={32}
@@ -246,7 +246,7 @@ const PodcastPage = () => {
             <div 
               className="absolute inset-0 bg-cover bg-center bg-no-repeat"
               style={{
-                backgroundImage: 'url(/studio-1.jpg)'
+                backgroundImage: 'url(/studio-1.webp)'
               }}
             />
           </video>
@@ -333,7 +333,7 @@ const PodcastPage = () => {
           <div className="mb-16">
             <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image 
-                src="/studio-2.jpg"
+                src="/studio-2.webp"
                 alt="Professional podcast studio overview"
                 fill
                 className="object-cover"
