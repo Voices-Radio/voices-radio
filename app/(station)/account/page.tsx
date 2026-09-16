@@ -30,38 +30,6 @@ export const metadata: Metadata = {
 
 const USABLE_BENEFIT_STATES = new Set(["available", "requires_action"]);
 
-function AccountNotice({
-  missing,
-  artist,
-}: {
-  missing?: string;
-  artist?: string;
-}) {
-  if (
-    missing !== "artist" &&
-    missing !== "member" &&
-    artist !== "missing" &&
-    artist !== "unavailable"
-  ) {
-    return null;
-  }
-
-  const message =
-    artist === "missing"
-      ? "This account is not linked to an artist profile. Use the invitation link from Voices to claim one."
-      : artist === "unavailable"
-      ? "Your artist profile is linked, but it cannot be edited from this account right now. Contact Voices if this looks wrong."
-      : missing === "artist"
-      ? "You signed in successfully, but this account is not linked to an artist profile."
-      : "You signed in successfully, but this account does not currently have a membership.";
-
-  return (
-    <div className="mb-6 rounded-voices-sm border border-voicesNext-orange bg-voicesNext-surface px-4 py-3 font-gabarito text-sm text-voicesNext-cream">
-      {message}
-    </div>
-  );
-}
-
 function EmptyAccountState() {
   return (
     <div>
@@ -127,12 +95,14 @@ function CapabilitiesUnavailableState() {
   );
 }
 
-export default async function AccountPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ missing?: string; artist?: string }>;
-}) {
-  const [params, store] = await Promise.all([searchParams, cookies()]);
+/**
+ * The account home. It shows what the account holds and nothing about how
+ * the person got here: the `?missing=` / `?artist=` notices that used to sit
+ * on top of this page are gone, along with every redirect that produced them.
+ * An account with no artist profile is simply an account without one.
+ */
+export default async function AccountPage() {
+  const store = await cookies();
   const lookup = await lookupCapabilities();
 
   // "We couldn't load your account" is a different sentence from "your
@@ -167,7 +137,6 @@ export default async function AccountPage({
 
   return (
     <div>
-      <AccountNotice missing={params.missing} artist={params.artist} />
       <AccountPageIntro
         eyebrow="Account desk"
         title={user?.firstName ? `Hi ${user.firstName}` : "Your account"}
@@ -179,9 +148,9 @@ export default async function AccountPage({
             state={membershipResult.data}
             tierName={
               tiersResult.ok
-                ? tiersResult.data.find(
+                ? (tiersResult.data.find(
                     (tier) => tier.id === membershipResult.data.tierId,
-                  )?.name ?? null
+                  )?.name ?? null)
                 : null
             }
           />

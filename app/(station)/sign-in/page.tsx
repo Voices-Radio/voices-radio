@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { parseAccountIntent } from "@/lib/voices/membership/capabilities";
 import SignInForm from "./sign-in-form";
 
 export const metadata: Metadata = {
@@ -11,9 +10,11 @@ export const metadata: Metadata = {
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string; as?: string }>;
+  // `?as=artist|member` from older links is deliberately ignored: there is
+  // one sign-in, and where it lands depends on what the account holds.
+  searchParams: Promise<{ next?: string }>;
 }) {
-  const { next, as } = await searchParams;
+  const { next } = await searchParams;
 
-  return <SignInForm next={next ?? ""} intent={parseAccountIntent(as)} />;
+  return <SignInForm next={next ?? ""} />;
 }

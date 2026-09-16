@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
+import PasswordInput from "../components/forms/password-input";
 import { cn } from "@/lib/utils";
 import {
   accountFieldClassName,
@@ -53,7 +54,7 @@ export default function ResetPasswordForm({
         ref={statusRef}
         role="status"
         tabIndex={-1}
-        className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-4 font-asap text-sm leading-relaxed text-voicesNext-cream/85 focus:outline-none"
+        className="text-voicesNext-cream/85 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-4 font-asap text-sm leading-relaxed focus:outline-none"
       >
         <p>{state.message}</p>
         <Link
@@ -91,10 +92,9 @@ export default function ResetPasswordForm({
         >
           New password
         </label>
-        <input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="new-password"
           required
           aria-invalid={Boolean(
@@ -124,10 +124,9 @@ export default function ResetPasswordForm({
         >
           Confirm new password
         </label>
-        <input
+        <PasswordInput
           id="confirmPassword"
           name="confirmPassword"
-          type="password"
           autoComplete="new-password"
           required
           aria-invalid={Boolean(
