@@ -75,3 +75,6 @@ playwright-transform-cache-501/
 /.playwright-mcp/
 core-js-banners
 .claude/settings.local.json
+
+AGENTS.md
+CLAUDE.md
