@@ -152,7 +152,7 @@ export async function getShows({
         ),
       )
     : await voicesFetch<VoicesShowRaw[]>("/api/shows", {
-        artist: artistId,
+        artistId,
         featured,
         station,
         location,
