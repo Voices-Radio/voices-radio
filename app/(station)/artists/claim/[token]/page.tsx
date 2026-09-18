@@ -36,7 +36,7 @@ function InvitationSummary({ invitation }: { invitation: ArtistInvitation }) {
         {invitation.artist.name}
       </h2>
       {invitation.artist.bio && (
-        <p className="mt-2 font-asap text-sm leading-relaxed text-voicesNext-cream/75">
+        <p className="mt-2 whitespace-pre-line font-asap text-sm leading-relaxed text-voicesNext-cream/75">
           {invitation.artist.bio}
         </p>
       )}

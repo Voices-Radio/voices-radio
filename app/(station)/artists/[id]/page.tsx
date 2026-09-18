@@ -11,6 +11,14 @@ type ArtistPageProps = {
   params: Promise<{ id: string }>;
 };
 
+// Bios now carry real line breaks (voices_backend's ArtistMirror/ArtistSync
+// preserve them end to end), but a <meta name="description"> is a single
+// attribute value — line breaks there are just whitespace to collapse, not
+// something a search snippet or share card benefits from keeping.
+function toMetaDescription(bio: string | undefined | null, fallback: string) {
+  return bio ? bio.replace(/\s+/g, " ").trim() || fallback : fallback;
+}
+
 export async function generateMetadata({
   params,
 }: ArtistPageProps): Promise<Metadata> {
@@ -21,15 +29,18 @@ export async function generateMetadata({
     return { title: "Artist not found" };
   }
 
+  const description = toMetaDescription(
+    artist.bio,
+    `Explore shows and profile details for ${artist.name}.`,
+  );
+
   return {
     title: `${artist.name} | Voices Radio`,
-    description:
-      artist.bio || `Explore shows and profile details for ${artist.name}.`,
+    description,
     alternates: { canonical: `/artists/${id}` },
     openGraph: {
       title: artist.name,
-      description:
-        artist.bio || `Explore shows and profile details for ${artist.name}.`,
+      description,
       images: artist.imageUrl ? [{ url: artist.imageUrl }] : undefined,
     },
   };
@@ -128,7 +139,7 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
           </div>
           {artist.bio && (
             <>
-              <p className="mt-5 line-clamp-5 max-w-[313px] font-asap text-[16px] leading-normal text-voicesNext-cream">
+              <p className="mt-5 line-clamp-5 max-w-[313px] whitespace-pre-line font-asap text-[16px] leading-normal text-voicesNext-cream">
                 {artist.bio}
               </p>
               <p className="mt-[10px] font-asap text-[16px] font-bold leading-none text-voicesNext-orange">

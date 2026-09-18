@@ -30,7 +30,7 @@ export default function PageHero({
             {title}
           </h1>
           {description && (
-            <p className="mt-5 max-w-3xl font-gabarito text-lg leading-relaxed text-voicesNext-cream">
+            <p className="mt-5 max-w-3xl whitespace-pre-line font-gabarito text-lg leading-relaxed text-voicesNext-cream">
               {description}
             </p>
           )}
