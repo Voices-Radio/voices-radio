@@ -125,7 +125,7 @@ export const services = [
   {
     title: "Production and content",
     description:
-      "Optional event, broadcast, podcast and content support through the wider Voices platform.",
+      "Optional support for events, broadcast, podcasts and content through the wider Voices platform.",
   },
 ];
 
@@ -170,7 +170,7 @@ export const whoWeWorkWith = [
   {
     title: "Cultural institutions",
     description:
-      "Museums, galleries and public programmes looking for a proper link to London's music communities.",
+      "Museums, galleries and public programmes looking for a legitimate link to London's music communities.",
   },
   {
     title: "Developments and meanwhile spaces",
@@ -201,7 +201,7 @@ export const caseStudies: CaseStudy[] = [
     brief:
       "Build and manage a sustainable music and events programme across Hackney Bridge's venue spaces: a canal-side cocktail bar, a 400-capacity warehouse room and a large outdoor garden. One retained programming partner, a consistent cultural offer, and a calendar that holds up across the whole year.",
     delivered:
-      "Voices programmes all three spaces: Nico's, Block C and the Garden. That covers programme development, promoter sourcing and outreach, booking coordination, calendar management across the three rooms, and marketing liaison. At Nico's, Voices creates the DJ line-ups for live music dates, weekly DJ sets and day parties. In Block C and the Garden, Voices sources and manages the promoters behind larger takeovers, split-site events and headline weekends, with spaces regularly running two separate programmes on the same night.",
+      "Voices programmes all three spaces: Nico's, Block C and the Garden. That covers programme development, promoter sourcing and outreach, booking coordination, calendar management across the three rooms, and marketing liaison. At Nico's, Voices creates the line-ups for live music dates, weekly DJ sets and day parties. In Block C and the Garden, Voices sources and manages the promoters behind larger takeovers, split-site events and headline weekends, with spaces regularly running two separate programmes on the same night.",
     scale:
       "A formal retained promoter arrangement started in January 2025 and continues into its second year. Between February and July 2026, Voices programmed 33 promoted events across the three spaces.",
     proof:
@@ -233,7 +233,7 @@ export const caseStudies: CaseStudy[] = [
     brief:
       "Develop Campfire as a music destination as well as a brewery and taproom, increasing drink and event sales, combining regular trading-night programming with larger headline events and cultural moments.",
     delivered:
-      "As Campfire's retained promoter, Voices curates and promotes the ongoing music programme: regular DJ programming across Thursday, Friday and Saturday trading, artist and collective sourcing, headline-led day parties, guest takeovers, record fairs, showcases and the annual Voices birthday events. Voices also runs a DJ workshop programme for aspiring underrepresented artists that ends with participants playing their first live club set at Campfire.",
+      "As Campfire's retained promoter, Voices curates and promotes the ongoing music programme. That covers regular DJ programming across Thursday, Friday and Saturday trading, plus artist and collective sourcing. It also covers headline-led day parties, guest takeovers, record fairs, showcases and the annual Voices birthday events. Voices also runs a DJ workshop programme for aspiring underrepresented artists that ends with participants playing their first live club set at Campfire.",
     scale:
       "The documented partnership runs from at least June 2022 to the present. Campfire's public venue information describes Voices DJs performing regularly on Thursday, Friday and Saturday evenings.",
   },
@@ -244,11 +244,12 @@ export const caseStudies: CaseStudy[] = [
     location: "Tate Corner",
     headline: "A monthly live improvisation series inside a national museum",
     brief:
-      "Programme a recurring, free-to-attend evening series for Tate Modern's Corner Bar that brings real London jazz credibility into a national institution and gives the space its own identity after hours, featured in Time Out London.",
+      "Programme a recurring, free-to-attend evening series for Tate Modern's Corner Bar that brings real London jazz credibility into a national institution and gives the space its own identity after hours.",
     delivered:
-      "Voices curates the artist roster and programmes the series in partnership with Tate, bringing together players from the London jazz scene for unrehearsed live improvisation, with vinyl DJ sets between performances.",
+      "Voices curates the artist roster and programmes the series in partnership with Tate, bringing together players from the London jazz scene for unrehearsed live improvisation, with vinyl DJ sets between performances. The roster has featured Mackwood, Benji Appiah, Maddy Coombs, Maria Chiara Argirò and Poppy Daniels, among other names on the rise in London jazz.",
     scale:
       "Natural Jazz x Voices Radio runs monthly on first Fridays at Tate Modern's Corner Bar, free to attend.",
+    proof: "Natural Jazz x Voices Radio has been featured in Time Out London.",
   },
   {
     index: "05",

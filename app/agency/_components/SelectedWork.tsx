@@ -29,7 +29,7 @@ export function SelectedWork() {
           {caseStudies.map((study) => (
             <article
               key={study.title}
-              className="overflow-hidden rounded-3xl border border-white/10 bg-white text-slate-900 shadow-2xl"
+              className="overflow-hidden rounded-3xl border border-white/10 bg-white text-slate-900 shadow-2xl md:flex md:h-full md:flex-col"
             >
               <details className="group md:hidden">
                 <summary className="cursor-pointer list-none bg-slate-900 p-5 text-white [&::-webkit-details-marker]:hidden">
@@ -47,8 +47,8 @@ export function SelectedWork() {
                 </div>
               </details>
 
-              <div className="hidden md:block">
-                <div className="min-h-56 relative overflow-hidden bg-slate-900 p-6 text-white">
+              <div className="hidden md:flex md:h-full md:flex-col">
+                <div className="min-h-64 relative flex shrink-0 flex-col justify-end overflow-hidden bg-slate-900 p-6 text-white">
                   {/* TODO: swap for supplied client photography once available */}
                   <div
                     className="absolute inset-0"
@@ -57,12 +57,12 @@ export function SelectedWork() {
                         "linear-gradient(135deg, rgba(95, 92, 243, 0.55), rgba(15, 23, 42, 0.96)), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.24), transparent 24%)",
                     }}
                   />
-                  <div className="relative z-10 pt-20">
+                  <div className="relative z-10">
                     <CaseStudyHeader study={study} />
                   </div>
                 </div>
 
-                <div className="grid gap-5 p-8">
+                <div className="grid flex-1 gap-5 p-8">
                   <CaseStudyFields study={study} />
                 </div>
               </div>
@@ -88,7 +88,7 @@ function CaseStudyHeader({ study }: { study: (typeof caseStudies)[number] }) {
       <h3 className="mt-7 text-2xl font-black leading-tight md:text-3xl">
         {study.title}
       </h3>
-      <p className="mt-2 text-base font-bold text-white/80 md:text-lg">
+      <p className="mt-2 line-clamp-2 text-base font-bold text-white/80 md:text-lg">
         {study.headline}
       </p>
       <div className="mt-5 flex flex-wrap gap-3 text-xs font-bold text-white/75 md:text-sm">

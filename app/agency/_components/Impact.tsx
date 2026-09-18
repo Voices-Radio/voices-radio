@@ -11,10 +11,10 @@ export function Impact() {
         <p className="mx-auto mt-6 max-w-3xl text-lg font-semibold leading-relaxed text-slate-200 md:text-xl">
           Voices exists to get people paid for creative work. Our workshop
           programmes have taken people with no experience to their first paid
-          club set, and our alumni have gone on to RINSE, NTS, KISS FM and
-          Radio 1 and BBC Radio 1Xtra. Commercial programming is what funds
-          it. Every calendar we run expands the paid work available across
-          the community we come from.
+          club set, and our alumni have gone on to RINSE, NTS, KISS FM, Radio 1
+          and BBC Radio 1Xtra. Commercial programming is what funds it. Every
+          calendar we run expands the paid work available across the community
+          we come from.
         </p>
       </div>
     </section>

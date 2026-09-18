@@ -1,5 +1,6 @@
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { briefHref } from "../content";
+import { ScrollCue } from "./ScrollCue";
 
 export function Hero() {
   return (
@@ -25,7 +26,9 @@ export function Hero() {
           </p>
           <h1 className="text-4xl font-black leading-tight sm:text-5xl md:text-7xl">
             We program music
-            <span className="block text-voices-purple">to suit your needs.</span>
+            <span className="block text-voices-purple">
+              to suit your needs.
+            </span>
           </h1>
           <p className="mt-6 max-w-3xl text-lg font-semibold leading-relaxed text-slate-200 md:text-2xl">
             Music programming and talent curation for venues, hospitality
@@ -51,16 +54,7 @@ export function Hero() {
       </div>
 
       <div className="absolute bottom-8 left-0 right-0 hidden justify-center sm:flex">
-        <a
-          href="#offer"
-          aria-label="Scroll to offer"
-          className="text-white/85 flex flex-col items-center gap-2 transition hover:text-voices-purple"
-        >
-          <span className="text-xs font-black uppercase tracking-[0.18em]">
-            Scroll
-          </span>
-          <ArrowDown className="h-7 w-7 animate-bounce" />
-        </a>
+        <ScrollCue targetId="offer" />
       </div>
     </section>
   );

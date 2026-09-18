@@ -12,6 +12,7 @@ import { Nav } from "./_components/Nav";
 import { Proposition } from "./_components/Proposition";
 import { Questions } from "./_components/Questions";
 import { SelectedWork } from "./_components/SelectedWork";
+import { StationIntro } from "./_components/StationIntro";
 import { Testimonials } from "./_components/Testimonials";
 import { WhoWeWorkWith } from "./_components/WhoWeWorkWith";
 import { WhyVoices } from "./_components/WhyVoices";
@@ -51,6 +52,7 @@ export default function AgencyPage() {
     <main className="min-h-screen bg-white text-slate-900">
       <Nav />
       <Hero />
+      <StationIntro />
       <ClientStrip />
       <Proposition />
       <EngagementFormats />

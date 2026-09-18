@@ -3,7 +3,10 @@ import { SectionHeader } from "./SectionHeader";
 
 export function EngagementFormats() {
   return (
-    <section id="formats" className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8">
+    <section
+      id="formats"
+      className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8"
+    >
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Engagement formats"
@@ -11,8 +14,8 @@ export function EngagementFormats() {
         >
           <p>
             Whether it&rsquo;s a single date, a recurring residency, a full
-            calendar or a site-wide activation, it runs through one point of
-            contact.
+            calendar or a site-wide activation, you&rsquo;ll only ever run
+            through one point of contact.
           </p>
         </SectionHeader>
 
