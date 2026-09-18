@@ -49,3 +49,5 @@ core-js-banners
 .agents/
 .claude/
 tasks/
+AGENTS.md
+CLAUDE.md
