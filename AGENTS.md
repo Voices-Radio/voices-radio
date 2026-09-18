@@ -6,7 +6,7 @@ Voices Radio is a private Next.js app for the Voices Radio website, with station
 
 ## Tech Stack
 
-- Next.js 14 App Router, React 18, TypeScript with `strict` enabled.
+- Next.js 15 App Router, React 18, TypeScript with `strict` enabled.
 - Tailwind CSS, custom theme tokens in `tailwind.config.js`, global styles in `app/globals.css`.
 - Sanity CMS via `sanity`, `next-sanity`, schemas in `schemas/`, queries/config in root Sanity files.
 - ESLint uses `next/core-web-vitals`; Prettier is configured through the package scripts.
@@ -30,7 +30,7 @@ Voices Radio is a private Next.js app for the Voices Radio website, with station
 - Production build: `npm run build`
 - Lint: `npm run lint`
 - Format: `npm run format`
-- No dedicated test script is currently defined in `package.json`.
+- Tests: `npm test` (Vitest unit), `npm run test:e2e` (Playwright).
 
 ## Coding Style
 
