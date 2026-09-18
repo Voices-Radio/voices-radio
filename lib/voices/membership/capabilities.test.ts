@@ -104,14 +104,54 @@ describe("accountHomeDecision", () => {
   });
 });
 
-describe("resolvePostLoginPath", () => {
-  it("keeps wrong-door sign-in on a reachable capability page", () => {
-    expect(
-      resolvePostLoginPath({
-        intent: "member",
-        capabilities: capabilities(["artist"]),
-      }),
-    ).toBe("/account/artist?missing=member");
+describe("resolvePostLoginPath — the sign-in matrix (plan §4a)", () => {
+  // One sign-in door, so the only inputs are what the account holds and an
+  // optional deep link. Every combination is enumerated rather than sampled:
+  // the "not linked to an artist profile" notice came from a combination
+  // nobody had written down.
+  const HOLDINGS: Array<[string, AccountCapabilities | null, string]> = [
+    ["neither", capabilities([]), "/account"],
+    ["member-only", capabilities(["member"]), "/account/profile"],
+    ["artist-only", capabilities(["artist"]), "/account/artist"],
+    [
+      "artist and member",
+      capabilities(["artist", "member"]),
+      "/account/profile",
+    ],
+    ["unknown (lookup failed)", null, "/account"],
+  ];
+
+  const NEXTS: Array<[string, string | undefined, "honoured" | "ignored"]> = [
+    ["no next", undefined, "ignored"],
+    ["a member page", "/account/membership", "honoured"],
+    ["the artist area", "/account/artist", "honoured"],
+    ["an off-site URL", "https://evil.example.com/phish", "ignored"],
+    ["a protocol-relative URL", "//evil.example.com/phish", "ignored"],
+  ];
+
+  const matrix = HOLDINGS.flatMap(([holding, caps, landing]) =>
+    NEXTS.map(([nextLabel, next, rule]) => ({
+      holding,
+      nextLabel,
+      caps,
+      next,
+      expected: rule === "honoured" ? (next as string) : landing,
+    })),
+  );
+
+  it.each(matrix)(
+    "$holding account, $nextLabel → $expected",
+    ({ caps, next, expected }) => {
+      expect(resolvePostLoginPath({ next, capabilities: caps })).toBe(expected);
+    },
+  );
+
+  it("never produces a notice marker for any combination", () => {
+    for (const { caps, next } of matrix) {
+      expect(resolvePostLoginPath({ next, capabilities: caps })).not.toMatch(
+        /[?&](missing|artist)=/,
+      );
+    }
   });
 
   it("lands a plain member sign-in on the profile page", () => {

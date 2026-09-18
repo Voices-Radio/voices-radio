@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
-import type { AccountIntent } from "@/lib/voices/membership/capabilities";
 import { cn } from "@/lib/utils";
 import {
   AccountPageIntro,
@@ -11,6 +10,7 @@ import {
   accountFieldClassName,
   accountPrimaryButtonClassName,
 } from "../account/components/account-surface";
+import PasswordInput from "../components/forms/password-input";
 import { signInAction, type SignInState } from "./actions";
 
 const initialState: SignInState = undefined;
@@ -33,27 +33,16 @@ function SubmitButton() {
   );
 }
 
-export default function SignInForm({
-  next,
-  intent,
-}: {
-  next: string;
-  intent?: AccountIntent;
-}) {
+/**
+ * One sign-in for everyone. There used to be an Artist / Member picker here,
+ * but it was only ever a landing hint — both doors ran the same login — and
+ * choosing the "wrong" one produced a "this account is not linked to an
+ * artist profile" notice for a sign-in that had worked. Where an account lands
+ * now depends only on what it holds (see resolvePostLoginPath).
+ */
+export default function SignInForm({ next }: { next: string }) {
   const [state, formAction] = useFormState(signInAction, initialState);
   const errorRef = useRef<HTMLDivElement>(null);
-  const heading =
-    intent === "artist"
-      ? "Artist sign in"
-      : intent === "member"
-        ? "Member sign in"
-        : "Sign in";
-  const description =
-    intent === "artist"
-      ? "Sign in to manage your Voices artist profile."
-      : intent === "member"
-        ? "Sign in to manage your Voices membership."
-        : "Sign in to manage your Voices account.";
   const forgotPasswordHref = `/forgot-password${
     next ? `?next=${encodeURIComponent(next)}` : ""
   }`;
@@ -69,41 +58,13 @@ export default function SignInForm({
       <div>
         <AccountPageIntro
           eyebrow="Voices account"
-          title={heading}
-          description={description}
+          title="Sign in"
+          description="Sign in to manage your Voices membership or artist profile."
         />
-
-        {!intent && (
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <Link
-              href={`/sign-in?as=artist${
-                next ? `&next=${encodeURIComponent(next)}` : ""
-              }`}
-              className="group/intent rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface px-4 py-3 font-gabarito text-sm font-bold text-voicesNext-cream transition-[border-color,color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-voicesNext-orange hover:bg-voicesNext-background hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-            >
-              Artist
-              <span className="mt-1 block font-asap text-xs font-normal text-voicesNext-cream/70">
-                Manage your DJ profile.
-              </span>
-            </Link>
-            <Link
-              href={`/sign-in?as=member${
-                next ? `&next=${encodeURIComponent(next)}` : ""
-              }`}
-              className="group/intent rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface px-4 py-3 font-gabarito text-sm font-bold text-voicesNext-cream transition-[border-color,color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-voicesNext-orange hover:bg-voicesNext-background hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-            >
-              Member
-              <span className="mt-1 block font-asap text-xs font-normal text-voicesNext-cream/70">
-                Manage your membership.
-              </span>
-            </Link>
-          </div>
-        )}
 
         <AccountSurface className="mt-6">
           <form action={formAction} noValidate className="flex flex-col gap-5">
             <input type="hidden" name="next" value={next} />
-            <input type="hidden" name="as" value={intent ?? ""} />
 
             {state?.formError && (
               <div
@@ -162,10 +123,9 @@ export default function SignInForm({
                   Forgot password?
                 </Link>
               </div>
-              <input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 autoComplete="current-password"
                 required
                 aria-invalid={Boolean(state?.fieldErrors?.password)}

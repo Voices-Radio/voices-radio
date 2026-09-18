@@ -3,10 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { backendLogin } from "@/lib/voices/membership/auth-client";
-import {
-  parseAccountIntent,
-  resolvePostLoginPath,
-} from "@/lib/voices/membership/capabilities";
+import { resolvePostLoginPath } from "@/lib/voices/membership/capabilities";
 import {
   getCapabilities,
   setSessionCookies,
@@ -19,7 +16,6 @@ const schema = z.object({
     .email("Enter a valid email address."),
   password: z.string().min(1, "Enter your password."),
   next: z.string().optional(),
-  as: z.string().optional(),
 });
 
 export type SignInState =
@@ -37,7 +33,6 @@ export async function signInAction(
     email: formData.get("email"),
     password: formData.get("password"),
     next: formData.get("next") || undefined,
-    as: formData.get("as") || undefined,
   });
 
   if (!parsed.success) {
@@ -78,7 +73,6 @@ export async function signInAction(
   redirect(
     resolvePostLoginPath({
       next: parsed.data.next,
-      intent: parseAccountIntent(parsed.data.as),
       capabilities,
     }),
   );

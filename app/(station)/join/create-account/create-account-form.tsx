@@ -12,6 +12,7 @@ import {
   accountSecondaryButtonClassName,
   accountSurfaceStaticClassName,
 } from "../../account/components/account-surface";
+import PasswordInput from "../../components/forms/password-input";
 import JoinSteps from "../join-steps";
 import { createAccountAction, type CreateAccountState } from "./actions";
 
@@ -286,10 +287,9 @@ export default function CreateAccountForm({
               >
                 Password
               </label>
-              <input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 autoComplete="new-password"
                 required
                 aria-invalid={Boolean(fieldErrors?.password)}

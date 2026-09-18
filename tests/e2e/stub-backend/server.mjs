@@ -160,6 +160,48 @@ async function readJsonBody(req) {
   }
 }
 
+// --- Artist invitations: mirrors routes/artistInvitations.js --------------
+// Kept to the real backend's response shape ({ reason, message }, not the
+// { error: { code } } the membership stubs use) so the claim page is tested
+// against what it will actually receive. The backend's own tests
+// (tests/routes/artistInvitations*.test.js) pin the same cases.
+
+const MIN_PASSWORD_LENGTH = 8;
+/** Lower-cased, whitespace-collapsed names of every artist that exists. */
+const takenArtistNames = new Set();
+/** old token -> new token, so a spec can "open the email" a renewal sent. */
+const renewals = new Map();
+
+function artistNameKey(name) {
+  return String(name ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function tidyArtistName(name) {
+  return String(name ?? "").trim().replace(/\s+/g, " ");
+}
+
+function invitationIsExpired(invitation) {
+  return invitation.status === "expired" || Date.parse(invitation.expiresAt) < Date.now();
+}
+
+/** routes/artistInvitations.js resolveNetNewArtistName(). */
+function resolveNetNewArtistName(invitedName, requestedName) {
+  const invited = tidyArtistName(invitedName);
+  if (!takenArtistNames.has(artistNameKey(invited))) return { ok: true, name: invited };
+
+  const variant = tidyArtistName(requestedName);
+  if (!variant || artistNameKey(variant) === artistNameKey(invited)) {
+    return {
+      ok: false,
+      message: `"${invited}" is already the name of another artist on Voices. Choose a variant to use instead.`,
+    };
+  }
+  if (takenArtistNames.has(artistNameKey(variant))) {
+    return { ok: false, message: `"${variant}" is taken too. Try another variant.` };
+  }
+  return { ok: true, name: variant };
+}
+
 const server = createServer(async (req, res) => {
   const url = new URL(req.url ?? "/", `http://localhost:${PORT}`);
   const { pathname } = url;
@@ -195,11 +237,18 @@ const server = createServer(async (req, res) => {
     if (pathname === "/__test__/seed" && req.method === "POST") {
       const body = await readJsonBody(req);
 
+      for (const name of body.takenArtistNames ?? []) {
+        takenArtistNames.add(artistNameKey(name));
+      }
+
       if (body.user) {
         const user = {
           _id: randomUUID(),
           email: body.user.email,
-          password: body.user.password,
+          // An Apple-only account has no password to check — the real
+          // backend stores a '$APPLE_AUTH$' marker that never matches.
+          password: body.user.authProvider === "apple" ? null : body.user.password,
+          authProvider: body.user.authProvider ?? "local",
           firstName: body.user.firstName ?? "Test",
           lastName: body.user.lastName ?? "User",
         };
@@ -222,6 +271,7 @@ const server = createServer(async (req, res) => {
         }
 
         if (body.artist) {
+          takenArtistNames.add(artistNameKey(body.artist.name ?? "Test Artist"));
           artistsByUserId.set(user._id, {
             id: randomUUID(),
             name: "Test Artist",
@@ -238,12 +288,21 @@ const server = createServer(async (req, res) => {
 
       if (body.invitation) {
         const token = body.invitation.token ?? randomUUID();
+        const acceptedBy = body.invitation.acceptedByEmail
+          ? usersByEmail.get(body.invitation.acceptedByEmail)?._id ?? null
+          : null;
         invitationsByToken.set(token, {
           id: randomUUID(),
           email: body.invitation.email,
           status: body.invitation.status ?? "pending",
-          expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
+          acceptedBy,
+          expiresAt: new Date(
+            Date.now() + (body.invitation.expired ? -60_000 : 7 * 86400000),
+          ).toISOString(),
+          // { id, name, ... } for an artist we already hold; absent for a
+          // net-new one, which is named by artistName instead.
           artist: body.invitation.artist ?? null,
+          artistName: body.invitation.artistName ?? `New Artist ${token}`,
         });
       }
 
@@ -372,33 +431,74 @@ const server = createServer(async (req, res) => {
     const validateMatch = pathname.match(/^\/api\/artist-invitations\/validate\/([^/]+)$/);
     if (validateMatch && req.method === "GET") {
       const invitation = invitationsByToken.get(validateMatch[1]);
-      if (!invitation || invitation.status !== "pending") {
-        return sendError(res, 404, "NOT_FOUND", "Invalid or expired invitation");
+      if (!invitation) {
+        return sendJson(res, 404, { reason: "invalid", message: "This invitation link is not valid." });
       }
+      if (invitation.status === "accepted") {
+        const viewerId = userFromAuth(req);
+        return sendJson(res, 409, {
+          reason: "claimed",
+          claimedByYou: Boolean(viewerId && viewerId === invitation.acceptedBy),
+          message: "This invitation has already been claimed.",
+        });
+      }
+      if (invitationIsExpired(invitation)) {
+        return sendJson(res, 410, { reason: "expired", message: "This invitation link has expired." });
+      }
+
+      const account = usersByEmail.get(invitation.email);
       return sendJson(res, 200, {
         invitation: {
           id: invitation.id,
           email: invitation.email,
           expiresAt: invitation.expiresAt,
           kind: invitation.artist ? "claim_existing" : "create_new",
-          artist: invitation.artist ?? null,
+          artist: invitation.artist ?? {
+            id: null,
+            name: invitation.artistName,
+            imageUrl: null,
+            bio: null,
+          },
+          account: { exists: Boolean(account), passwordSet: Boolean(account?.password) },
+          nameTaken: !invitation.artist && takenArtistNames.has(artistNameKey(invitation.artistName)),
         },
       });
+    }
+
+    const renewMatch = pathname.match(/^\/api\/artist-invitations\/renew\/([^/]+)$/);
+    if (renewMatch && req.method === "POST") {
+      const oldToken = renewMatch[1];
+      const invitation = invitationsByToken.get(oldToken);
+      if (invitation && invitation.status !== "accepted" && invitationIsExpired(invitation)) {
+        const newToken = `renewed-${randomUUID().slice(0, 8)}`;
+        invitation.status = "pending";
+        invitation.expiresAt = new Date(Date.now() + 7 * 86400000).toISOString();
+        invitationsByToken.delete(oldToken);
+        invitationsByToken.set(newToken, invitation);
+        renewals.set(oldToken, newToken);
+      }
+      return sendJson(res, 202, {
+        message: "If this link can be renewed, a new one is on its way to the invited email address.",
+      });
+    }
+
+    // Test-only: the link a renewal "emailed", so a spec can follow it.
+    const renewalLookup = pathname.match(/^\/__test__\/renewals\/([^/]+)$/);
+    if (renewalLookup && req.method === "GET") {
+      return sendJson(res, 200, { token: renewals.get(renewalLookup[1]) ?? null });
     }
 
     const claimMatch = pathname.match(/^\/api\/artist-invitations\/claim\/([^/]+)$/);
     if (claimMatch && req.method === "POST") {
       const invitation = invitationsByToken.get(claimMatch[1]);
-      if (!invitation) {
-        return sendError(res, 404, "NOT_FOUND", "Invalid or expired invitation");
-      }
-      if (invitation.status !== "pending") {
-        return sendError(res, 409, "ALREADY_CLAIMED", "This invitation has already been claimed");
+      if (!invitation || invitation.status !== "pending" || invitationIsExpired(invitation)) {
+        return sendJson(res, 404, { reason: "invalid", message: "Invalid or expired invitation" });
       }
 
       const body = await readJsonBody(req);
       const existing = usersByEmail.get(invitation.email);
       let user = existing;
+      let passwordToSet = null;
 
       if (existing) {
         // S1: token alone must never modify an existing account. Either a
@@ -406,33 +506,71 @@ const server = createServer(async (req, res) => {
         const bearerUserId = userFromAuth(req);
         const bySession = bearerUserId === existing._id;
         const byPassword =
-          typeof body.password === "string" && body.password === existing.password;
+          Boolean(existing.password) &&
+          typeof body.password === "string" &&
+          body.password === existing.password;
 
         if (!bySession && !byPassword) {
-          return sendError(
-            res,
-            401,
-            "PROOF_REQUIRED",
-            "An account already exists for this email. Sign in, or provide the account password, to link this artist profile.",
-          );
+          if (existing.password) {
+            return sendJson(res, 401, {
+              reason: "auth_required",
+              message:
+                "An account already exists for this email. Sign in, or provide the account password, to link this artist profile.",
+            });
+          }
+          // D2: nothing to check (Apple-only) — the claim sets a password.
+          const candidate = typeof body.password === "string" ? body.password : "";
+          if (candidate.length < MIN_PASSWORD_LENGTH) {
+            return sendJson(res, 400, {
+              reason: "password_required",
+              message: `This account signs in with Apple. Choose a password of at least ${MIN_PASSWORD_LENGTH} characters to use it on the website.`,
+            });
+          }
+          passwordToSet = candidate;
         }
       } else {
         if (!body.firstName || !body.lastName || !body.password) {
-          return sendError(res, 400, "MISSING_FIELDS", "First name, last name, and password are required");
+          return sendJson(res, 400, {
+            reason: "details_required",
+            message: "First name, last name, and password are required",
+          });
         }
+        if (body.password.length < MIN_PASSWORD_LENGTH) {
+          return sendJson(res, 400, {
+            reason: "password_too_short",
+            message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+          });
+        }
+      }
+
+      let artistName = invitation.artist?.name ?? null;
+      if (!invitation.artist) {
+        const resolved = resolveNetNewArtistName(invitation.artistName, body.artistName);
+        if (!resolved.ok) {
+          return sendJson(res, 409, { reason: "name_taken", message: resolved.message });
+        }
+        artistName = resolved.name;
+      }
+
+      if (!existing) {
         user = {
           _id: randomUUID(),
           email: invitation.email,
           password: body.password,
+          authProvider: "local",
           firstName: body.firstName,
           lastName: body.lastName,
         };
         usersByEmail.set(invitation.email, user);
       }
+      if (passwordToSet) user.password = passwordToSet;
+
+      takenArtistNames.add(artistNameKey(artistName));
+      invitation.acceptedBy = user._id;
 
       const artist = {
         id: invitation.artist?.id ?? randomUUID(),
-        name: invitation.artist?.name ?? body.artistName ?? "Untitled artist",
+        name: artistName,
         // D5: set unconditionally, from the invitation, on every claim.
         programmingEmail: invitation.email,
         imageUrl: invitation.artist?.imageUrl ?? null,
@@ -453,6 +591,17 @@ const server = createServer(async (req, res) => {
         artist: { id: artist.id, name: artist.name },
         token, // note: no refreshToken, matching the real backend
       });
+    }
+
+    // GET /api/auth/validate-token/:token — backs reset-password's server-side
+    // guard (app/(station)/reset-password/page.tsx). A real reset token is a
+    // signed JWT from utils/tokens.js; the stub has no equivalent to mint, so
+    // any token prefixed "e2e-" is treated as a live fixture token instead —
+    // good enough to exercise the form, not meant to model real expiry.
+    const validateTokenMatch = pathname.match(/^\/api\/auth\/validate-token\/([^/]+)$/);
+    if (validateTokenMatch && req.method === "GET") {
+      const valid = validateTokenMatch[1].startsWith("e2e-");
+      return sendJson(res, valid ? 200 : 400, valid ? { valid: true } : { valid: false, message: "Invalid or expired reset token" });
     }
 
     if (pathname === "/api/auth/refresh" && req.method === "POST") {
