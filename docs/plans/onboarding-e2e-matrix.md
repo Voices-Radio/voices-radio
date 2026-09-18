@@ -1,7 +1,10 @@
-# Onboarding E2E — permutation matrix and fix plan
+# Onboarding E2E — permutation matrix, as built
 
-Status: **DRAFT, waiting for confirmation.** Nothing implemented yet.
-Branches: voices-radio `staging/redesign-preview` (local copy is behind origin, so pull first), voices_backend `staging/2026-09-13`. Never merge to main.
+Status: **implemented, in review.** voices-radio [#10](https://github.com/Voices-Radio/voices-radio/pull/10) (`feat/onboarding-matrix` → `staging/redesign-preview`) and voices_backend #1 (`feat/onboarding-claim-flow` → `main`). Neither is merged yet; both need the other, so land the backend first.
+
+Never merge to main (website). The backend change *does* go to `main` — that is where the staging site reads from.
+
+Written as a plan on 2026-09-14, rewritten as a record on 2026-09-18. Sections 1–4 are the original analysis and still hold; sections 5–8 describe what actually shipped and what did not.
 
 ## 1. Requirements restated
 
@@ -24,12 +27,17 @@ Branches: voices-radio `staging/redesign-preview` (local copy is behind origin, 
 
 ## 3. The contract (invariants every test asserts)
 
-- **I1**: No page ever renders `AccountNotice`, and no redirect ever contains `missing=` or `artist=missing|unavailable`. This is asserted globally in a Playwright fixture after every navigation.
+- **I1**: No page ever renders `AccountNotice`, and no redirect ever contains `missing=` or `artist=missing|unavailable`. Asserted globally in a Playwright fixture after every navigation.
 - **I2**: Post-login landing is a pure function of (capabilities, safe `next`). The entry door plays no part.
 - **I3**: A valid pending claim link offers exactly one path that can succeed for this email's real account state, and success lands on `/account/artist`.
 - **I4**: A non-pending link (claimed, expired, cancelled, invalid) shows a specific message plus a CTA: sign in, request a fresh link, or contact us.
-- **I5**: A claim sends no email and triggers no notification (see memory: no artist comms from data ops). Tests mock the mailer and RadioCult and assert the call counts.
+- **I5**: A claim sends no email and triggers no notification (see memory: no artist comms from data ops).
 - **I6**: Every `input[type=password]` has an accessible toggle (`aria-label="Show password"`, `aria-pressed`).
+
+Two invariants were added during implementation, both in the backend:
+
+- **S1**: Attaching an artist to an *existing* account requires proof of control — the correct password, or a session for that exact user. A token alone is not enough. This is the privilege-escalation pin: a valid token plus a session for a *different* user must be refused.
+- **D5**: `programmingEmail` is written from `invitation.email` on every claim, overwriting any existing value.
 
 ## 4. Permutation matrix
 
@@ -39,72 +47,76 @@ Capabilities: `none` · `member` · `artist` · `both`. Entry: `/sign-in` · `?a
 
 Expected landing: `member` or `both` → `/account/profile` (or a safe `next` the account can use). `artist` → `/account/artist`. `none` → `/account` (a coherent empty state that offers "Join"). A `next` the account can't use falls back **silently** to that default. **Every case asserts I1.**
 
-### 4b. Claim link: 18 cases
+Covered exhaustively as a table in `lib/voices/membership/capabilities.test.ts` (L1) and end to end in `tests/e2e/onboarding-matrix.spec.ts` (L3).
 
-| ID | Invitation | Email's account state | Browser session | Expected |
-|----|-----------|----------------------|-----------------|----------|
-| C1 | existing artist | no account | signed out | create form (name + password) → `/account/artist` |
-| C2 | net-new artist | no account | signed out | create form + profile fields → `/account/artist` |
-| C3 | existing artist | local account, member | signed out | password form → linked, still a member → `/account/artist` with the DJ toggle |
-| C4 | existing artist | local account, member | signed in as same email | one-click "Claim" → `/account/artist` |
-| C5 | existing artist | local account | signed in as **different** email | "You're signed in as X; this invite is for Y" + "Switch account". Never link to X |
-| C6 | existing artist | local account | signed out, wrong password | inline error + "Forgot password" that returns to this claim link |
-| C7 | existing artist | **Apple-only** account | signed out | "Set a password for the web": sets the password and links the artist → `/account/artist`. Apple login still works afterwards |
-| C12b | expired, then "Email me a new link" | — | any | new token emailed to the invitation address only; old token still refused; rate-limited |
-| C8 | existing artist | email differs only in case or whitespace | signed out | treated as the same account |
-| C9 | existing artist | account holds a privileged role (admin, producer) | signed out | linked, role **not** downgraded |
-| C10 | pending, token already used by this user | — | signed in | "Already yours" → `/account/artist` |
-| C11 | accepted by someone | — | signed out | "Already claimed" + Sign in CTA |
-| C12 | expired | — | any | "Link expired" + decision D3 CTA |
-| C13 | cancelled or deleted | — | any | "No longer valid, contact Voices" |
-| C14 | malformed or unknown token | — | any | clear message, no crash |
-| C15 | existing artist already linked to another user | — | any | blocked at invite time (backend 400). Test that the claim is refused too |
-| C16 | net-new, name collides (incl. case/whitespace variants) | no account | signed out | name field error "that name is taken, try a variant", other fields kept; a variant name succeeds → `/account/artist` |
-| C17 | double submit, or two tabs | — | — | exactly one Artist and one User created (the existing lock), second gets C10 or C11 |
-| C18 | any | any | — | I5 holds: zero emails and zero notifications fired |
+### 4b. Claim link: 18 cases, and where each is now tested
 
-## 5. Test layers (cheapest first; each case ID appears in at least one layer)
+L1 = vitest unit · L2 = backend jest (voices_backend #1) · L3 = Playwright + stub backend · L4 = Playwright + real local backend.
 
-| Layer | Where | Covers | Runs |
-|-------|-------|--------|------|
-| L1 unit (vitest) | `lib/voices/membership/capabilities.test.ts`, new `claim-mode.test.ts` | 4a exhaustively, as a table; claim default-mode function across (kind × accountExists × session) | CI |
-| L2 backend (jest) | `voices_backend/tests/routes/artistInvitationClaim.matrix.test.js` | C1–C18 against the real route and models; mailer and RadioCult mocked; asserts I5 | CI |
-| L3 UI (Playwright + stub backend) | new `tests/e2e/onboarding-matrix.spec.ts`, data-driven from `tests/e2e/fixtures/onboarding-cases.ts` | 4a (16 cases) and C1–C16 through the real Next app; the global I1 assertion; the I6 toggle on every page | CI |
-| L4 real-backend E2E | local backend + **isolated DB `voices_e2e`**, RadioCult and email disabled | C1, C3, C4, C7, C11 end to end, to catch drift between the stub and the real backend | manual, before each staging deploy |
-| L5 staging smoke | `tests/staging/` | 4a only, read-only, with your member account. **No claims (F7)** | manual |
+| ID | Invitation | Email's account state | Session | Expected | Covered |
+|----|-----------|----------------------|---------|----------|---------|
+| C1 | existing artist | no account | signed out | create form (name + password) → `/account/artist` | L2 L3 L4 |
+| C2 | net-new artist | no account | signed out | create form + profile fields → `/account/artist` | L2 L3 |
+| C3 | existing artist | local account, member | signed out | password form → linked, still a member → `/account/artist` with the DJ toggle | L2 L3 L4 |
+| C4 | existing artist | local account, member | signed in, same email | one-click "Claim" → `/account/artist` | L2 L3 L4 |
+| C5 | existing artist | local account | signed in, **different** email | "You're signed in as X; this invite is for Y" + "Switch account". Never link to X | L2 L3 |
+| C6 | existing artist | local account | signed out, wrong password | inline error + "Forgot password" that returns to this claim link | L2 L3 |
+| C7 | existing artist | **Apple-only** account | signed out | "Set a password for the web": sets it and links the artist. Apple login still works | L2 L3 L4 |
+| C8 | existing artist | email differs only in case or whitespace | signed out | treated as the same account | **none — gap** |
+| C9 | existing artist | account holds a privileged role | signed out | linked, role **not** downgraded | L2 |
+| C10 | pending, token already used by this user | — | signed in | "Already yours" → `/account/artist` | L3 |
+| C11 | accepted by someone | — | signed out | "Already claimed" + Sign in CTA | L3 L4 |
+| C12 | expired | — | any | "Link expired" + D3 CTA | L3 |
+| C12b | expired, then "Email me a new link" | — | any | new token to the invited address only; old token dead; rate-limited | L2 L3 |
+| C13 | cancelled or deleted | — | any | "No longer valid, contact Voices" | **none — gap** |
+| C14 | malformed or unknown token | — | any | clear message, no crash | L3 |
+| C15 | existing artist already linked to another user | — | any | claim refused | **none — gap** |
+| C16 | net-new, name collides (incl. case/whitespace variants) | no account | signed out | name error, other fields kept; a variant succeeds | L2 L3 |
+| C17 | double submit, or two tabs | — | — | exactly one Artist and one User created | L2 |
+| C18 | any | any | — | I5 holds: zero emails and zero notifications | L2 |
 
-To stop the stub drifting from the backend, L2 and L3 import the same case IDs and the stub gains `accountExists`, `authProvider` and non-pending statuses. That way an L2 contract change breaks L3 visibly.
+## 5. What shipped
 
-## 6. Implementation phases (TDD: failing test first in each)
+**Phase 1 — password toggle (I6, F5).** `app/(station)/components/forms/password-input.tsx` with `password-input.test.tsx`, used by `sign-in-form`, `create-account-form`, `reset-password-form` and `claim-artist-form` — all 6 inputs.
 
-- **Phase 0, verify (read-only).** Check whether forgot-password works for Apple accounts. Check who, if anyone, sets `artist=missing|unavailable`. Check which backend env kill switches exist for RadioCult sync and email, needed by L4.
-- **Phase 1, password toggle.** Add a shared `components/forms/password-input.tsx` and swap it into the 6 call sites. L3 checks I6.
-- **Phase 2, remove the strip.** Delete the `missing=` generation in `resolvePostLoginPath` and the `AccountNotice` branches. D1 decides whether the picker goes too. L1 for 4a, then L3 I1.
-- **Phase 3, claim flow.**
-  - The backend `validate` returns `accountExists` and `accountProvider`. This is only visible to the token holder, who by construction controls the inbox.
-  - The form defaults from those fields and hides the path that can't succeed (fixes F3).
-  - Handle C5 (session mismatch), C10 and C11 (sign-in CTA), C12 (D3), C7 (D2) and C16 (D4).
-- **Phase 4, L2 backend matrix, then L4 harness** (seed script plus `voices_e2e` DB plus kill switches).
-- **Phase 5, deploy to staging branches only**, run L4 and L5, and write up the results in this file.
+**Phase 2 — the strip is gone (I1, I2, F1, D1).** `resolvePostLoginPath` no longer emits `missing=`; `AccountNotice` is deleted from `app/(station)/account/page.tsx` (only explanatory comments remain). The Artist/Member picker is removed: `?as=` from older links is read and deliberately ignored, so old links still work.
 
-## 7. Decisions (answered 2026-09-14)
+**Phase 3 — the claim flow (I3, I4, F3, F4, F6).**
+- `lib/voices/membership/claim-mode.ts` picks exactly one of `session` · `existing` · `set_password` · `create` from the account signal the backend now returns on `validate`. `canChooseClaimMode` only opens the choice when the backend could not say — otherwise offering the other paths only offers ways to fail.
+- `renew-invitation-form.tsx` + `renewArtistInvitation` implement D3. The backend answers identically whether or not a link was sent, so it leaks nothing.
+- Apple-only accounts set a web password through the claim (D2), and stay Apple accounts.
 
-- **D1: Remove the Artist/Member picker.** One `/sign-in` door. `?as=` is ignored from now on, so old links still work. Landing = capabilities + safe `next`.
-- **D2: Apple-only DJs set a web password during the claim.** Claim token = inbox proof, the same proof a password reset uses. Add a local password **alongside** `appleId`. Don't flip `authProvider` in a way that breaks Apple login on mobile. `comparePassword` has to accept a local password on an Apple account, so pin mobile Apple login with a backend test first.
-- **D3: Expired links (C12) get a self-serve "Email me a new link" button.** It sends only to the invitation's own address, is rate-limited, and rotates the token (the old one stays dead). This email is triggered by the DJ, so it isn't a data-ops send.
-- **D4: On a name collision (C16), the DJ picks a variant.** The form keeps everything they've entered, highlights the name field and says the name is taken. The server re-checks uniqueness on every submit, case- and whitespace-insensitively (`osBrain` = `osbrain ` = `OSBRAIN`), so a near-duplicate can't slip through. L2 covers the normalisation, and L3 covers the retry keeping the form's data.
+**Phase 4 — test layers.** L3 `tests/e2e/onboarding-matrix.spec.ts` (548 lines) against an extended stub backend. L4 `playwright.real-backend.config.ts` + `tests/e2e-real/{onboarding.spec.ts,seed.ts}`, run with `npm run test:e2e:real`, covering C1, C3, C4, C7, C11 against a real local backend. L2 lives in voices_backend #1.
+
+**Phase 5 — staging deploy and L5 smoke: not done.** This is the remaining step.
+
+## 6. Decisions (taken 2026-09-14, all implemented)
+
+- **D1: Remove the Artist/Member picker.** One `/sign-in` door; `?as=` ignored. Landing = capabilities + safe `next`.
+- **D2: Apple-only DJs set a web password during the claim.** Claim token = inbox proof. A local password sits *alongside* `appleId`; `authProvider` is not flipped, so mobile Apple login is untouched (pinned by a backend test). Guarded by S1: a token plus a new password can never overwrite a password that already exists.
+- **D3: Expired links get a self-serve "Email me a new link".** Invited address only, rate-limited, token rotated atomically, old token dead. Triggered by the DJ, so not a data-ops send.
+- **D4: On a name collision the DJ picks a variant.** The form keeps what they entered; the server re-checks case- and whitespace-insensitively on every submit, and a collision landing between check and save is reported as `name_taken` too.
+
+⚠️ Naming drift to fix in the backend PR: `D4` labels two unrelated things — the name-collision rules *and* "RadioCult creation is best-effort, ordered last, never blocking". The latter deserves its own ID.
+
+## 7. Gaps
+
+- **C8, C13, C15 have no test at any layer.** C8 (email differing by case or whitespace) is the one with real-world bite: invitations are sent from admin-entered addresses.
+- **Phase 5 not started**: nothing deployed to staging, L5 smoke not run.
+- **L5 is sign-in only.** Claims can never run against staging — it points at the production backend (F7), so a real claim there would create an Artist and sync to RadioCult.
 
 ## 8. Risks
 
-- **HIGH**: L4 must never point at the prod `MONGODB_URI`. Add a guard: refuse to run unless the DB name ends in `_e2e`.
-- **HIGH**: C9. Changing the role logic could downgrade producers or admins, so pin it with an L2 test before touching the code.
-- **MEDIUM**: The stub backend drifting from the real backend (mitigated by the shared case IDs and L4).
-- **MEDIUM**: `accountExists` on `validate` is account enumeration, but only to someone holding a valid token.
-- **HIGH (D2)**: Letting an Apple account also hold a local password changes `comparePassword` and the login route, and could break Apple sign-in in the mobile app. Mitigation: backend regression tests for Apple login first, before any change.
-- **MEDIUM (D3)**: The self-serve resend is a new unauthenticated email-sending endpoint. Mitigation: rate limit per token and per IP, send only to the stored invitation address, and give the same response whether or not the token exists.
-- **MEDIUM (D4)**: A variant name can still be a near-duplicate that isn't an exact match (e.g. `DJ Foo` vs `Foo`). Accepted for now; the admin artist list shows it.
-- **LOW**: Changing the toggle's markup could break the existing `auth.spec.ts` selectors.
+Retired by implementation:
 
-## 9. Estimated complexity: MEDIUM-HIGH
+- ~~C9 role downgrade~~ — pinned: an admin claiming an artist stays admin; `user` → `presenter` only.
+- ~~Apple login breaking~~ — pinned: the account stays an Apple account after setting a web password.
+- ~~D3 as a new unauthenticated email endpoint~~ — rate-limited, invited-address-only, and answers identically whether or not a link exists.
+- ~~L4 pointing at the production database~~ — `playwright.real-backend.config.ts` refuses to start unless `E2E_MONGODB_URI` is a `mongodb://` URI on a local host naming a database ending `_e2e`. There is no default to fall back to.
 
-About 1 day for Phases 1–2 with L1 and L3. About 1.5–2 days for Phase 3 with L2. About 0.5 day for the L4 harness.
+Still live:
+
+- **MEDIUM**: the stub backend drifting from the real one. Mitigated by shared case IDs and L4, but only 5 of 18 cases run against a real backend.
+- **MEDIUM**: `account` on `validate` is account enumeration, limited to someone holding a valid token.
+- **MEDIUM**: a variant name can still be a near-duplicate that isn't an exact match (`DJ Foo` vs `Foo`). Accepted; the admin artist list surfaces it.
+- **LOW**: the two PRs must land together, backend first. The website's claim page reads `account` from `validate`; without the backend, `claimModeFor` falls back to the old `kind` guess (F3).
