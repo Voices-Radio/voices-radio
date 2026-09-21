@@ -1,5 +1,6 @@
 import { DocumentIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { blogImageHotspotForSchema } from "./blogImageHotspot";
 
 export default defineType({
   name: "blog",
@@ -45,7 +46,7 @@ export default defineType({
       type: "image",
       group: "content",
       options: {
-        hotspot: true,
+        hotspot: blogImageHotspotForSchema,
       },
       fields: [
         {
@@ -107,7 +108,7 @@ export default defineType({
         }),
         defineArrayMember({
           type: "image",
-          options: { hotspot: true },
+          options: { hotspot: blogImageHotspotForSchema },
           fields: [
             {
               name: "alt",
@@ -134,19 +135,14 @@ export default defineType({
     }),
     defineField({
       name: "categories",
-      title: "Categories",
+      title: "Categories / Topics",
       type: "array",
       group: "content",
       of: [{ type: "string" }],
       options: {
-        list: [
-          { title: "Podcast Tips", value: "podcast-tips" },
-          { title: "Studio Updates", value: "studio-updates" },
-          { title: "Industry News", value: "industry-news" },
-          { title: "Equipment Reviews", value: "equipment-reviews" },
-          { title: "Guest Interviews", value: "guest-interviews" },
-        ],
+        layout: "tags",
       },
+      description: "Add your own categories or topics. Type and press Enter to add.",
     }),
     defineField({
       name: "tags",
@@ -157,6 +153,7 @@ export default defineType({
       options: {
         layout: "tags",
       },
+      description: "Add your own tags. Type and press Enter to add.",
     }),
     defineField({
       name: "publishedAt",
@@ -221,7 +218,7 @@ export default defineType({
       group: "seo",
       description: "Image for social media sharing (1200x630px recommended)",
       options: {
-        hotspot: true,
+        hotspot: blogImageHotspotForSchema,
       },
     }),
   ],

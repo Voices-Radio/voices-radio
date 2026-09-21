@@ -1,10 +1,11 @@
 import { getSettings } from "@/sanity.client";
+import { getBaseUrl } from "@/lib/site-url";
 import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
+import { JsonLd } from "../components/json-ld";
 import Navigation from "../components/navigation";
 import Footer from "../components/navigation/footer";
 import SpriteSheet from "../components/sprite-sheet";
-import ChatbotWidget from "../podcast/chatbot-widget";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
@@ -14,18 +15,20 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = settings?.description || "Community Radio in London";
   const ogImage = settings?.ogImage;
 
-  const imageUrl = ogImage ? urlForImage(ogImage).width(1200).height(627).url() : "/voices.svg";
+  const imageUrl = ogImage
+    ? urlForImage(ogImage).width(1200).height(627).url()
+    : "/voices.svg";
+
+  const baseUrl = getBaseUrl();
 
   return {
-    metadataBase: new URL("https://voicesradio.co.uk"),
+    metadataBase: new URL(baseUrl),
     title: { default: title, template: `%s | ${title}` },
     description,
-    alternates: {
-      canonical: "/",
-    },
+    // No `alternates.canonical` here on purpose - see app/layout.tsx.
     openGraph: {
       type: "website",
-      url: new URL("https://voicesradio.co.uk"),
+      url: new URL(baseUrl),
       title: { default: title, template: `%s | ${title}` },
       description,
       siteName: title,
@@ -46,13 +49,33 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function StationLayout({
+export default async function StationLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSettings();
+  const baseUrl = getBaseUrl();
+
+  const sameAs = [
+    settings?.twitter_link,
+    settings?.instagram_link,
+    settings?.facebook_link,
+    settings?.linkedin_link,
+    settings?.mixcloud_link,
+  ].filter(Boolean);
+
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: settings?.title ?? "Voices Radio",
+    url: baseUrl,
+    ...(sameAs.length > 0 && { sameAs }),
+  };
+
   return (
     <>
+      <JsonLd data={organizationJsonLd} />
       <Navigation />
 
       {children}
@@ -60,9 +83,6 @@ export default function StationLayout({
       <Footer />
 
       <SpriteSheet />
-      
-      {/* Global chatbot management */}
-      <ChatbotWidget />
     </>
   );
 }

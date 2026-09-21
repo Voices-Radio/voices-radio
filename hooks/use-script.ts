@@ -82,6 +82,8 @@ export function useScript(
         script.remove();
       }
     };
+    // Intentionally only re-run when `src` / remove flag change; other options are stable for a given script tag.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- see comment above
   }, [src, options.removeOnUnmount]);
 
   return status;

@@ -1,0 +1,117 @@
+- generic [active] [ref=f7e1]:
+  - banner [ref=f7e2]:
+    - navigation [ref=f7e3]:
+      - paragraph [ref=f7e10]: Loading Station...
+      - link "Voices" [ref=f7e13] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f7e14]:
+        - button "Join Chat" [ref=f7e15] [cursor=pointer]
+        - button "Schedule" [ref=f7e18] [cursor=pointer]
+        - button "Menu" [ref=f7e19] [cursor=pointer]
+  - main [ref=f7e23]:
+    - generic [ref=f7e24]:
+      - generic [ref=f7e25]:
+        - button "Stop" [ref=f7e27] [cursor=pointer]
+        - generic [ref=f7e39]:
+          - img "Voices Logo" [ref=f7e40]
+          - generic [ref=f7e41]:
+            - generic [ref=f7e42]: Community
+            - generic [ref=f7e43]: Radio
+            - generic [ref=f7e44]: London
+          - paragraph [ref=f7e45]: Monday –> Sunday 11:00 –> 07:00
+      - button "Scroll Down" [ref=f7e46] [cursor=pointer]
+    - generic [ref=f7e50]:
+      - generic [ref=f7e56]:
+        - heading "Welcome to Voices!" [level=2] [ref=f7e57]
+        - paragraph [ref=f7e59]:
+          - text: Voices is one of the UK's
+          - strong [ref=f7e60]: fastest-growing community radio stations
+          - text: . We broadcast a wide range of fascinating discussion topics and huge number of musical genres, each day with its own sonic identity. Want to find out more? Better tune in!
+        - link "More About Us" [ref=f7e61] [cursor=pointer]:
+          - /url: /about
+      - generic [ref=f7e67]:
+        - heading "Drink With Us" [level=2] [ref=f7e68]
+        - generic [ref=f7e69]:
+          - paragraph [ref=f7e70]:
+            - text: Support Voices Radio by drinking at our
+            - strong [ref=f7e71]: pop-up bar
+            - text: . Open Friday-Sunday every week on Lower Stable Street, Coal Drops Yard (12 - 9pm).
+          - paragraph [ref=f7e72]:
+            - text: We serve Two Tribes beers, DRTY Hard Seltzers, MOTH cockatils, BLOODY Drinks, Pimms, Aperol + more. Including our very own
+            - strong [ref=f7e73]: Voices Pale Ale
+            - text: ", expertly crafted by Voices and lovingly brewed by our friends at Two Tribes."
+    - generic [ref=f7e76]:
+      - heading "Play for Us!" [level=2] [ref=f7e77]
+      - paragraph [ref=f7e78]: If you're passionate about sharing your ideas, apply to join our community of radio presenters, hosts and DJs. We accept shows on everything from music, discussion, politics, fashion, activism, podcasts, live music and more. We'd love to hear from you.
+      - link "Apply for a Show" [ref=f7e79] [cursor=pointer]:
+        - /url: https://docs.google.com/forms/d/e/1FAIpQLSdlV09iFlcP2_n6ldRsSUoeZclzJpb0AMY4F2rrXUpC7jueZQ/viewform
+    - generic [ref=f7e81]:
+      - generic [ref=f7e82]:
+        - img "Two Tribes" [ref=f7e84]
+        - paragraph [ref=f7e85]:
+          - text: VOICES bar is powered by
+          - link "Two Tribes" [ref=f7e86] [cursor=pointer]:
+            - /url: https://twotribes.co.uk
+        - paragraph [ref=f7e87]: Two Tribes Brewery emerged from London's counterculture. Two Tribes unite brewers, artists, musicians, chefs, and craft creators with shared values of fun, freedom, curiosity and creative discovery. Just like us at Voices Radio, they’re a community of people who come together to share a love of the moment.
+      - generic [ref=f7e88]:
+        - img "Qube" [ref=f7e90]
+        - paragraph [ref=f7e91]: Voices at night sponsored by Qube
+        - paragraph [ref=f7e92]: Qube is a creative home for music makers, DJs, podcasters, photographers, videographers, content creators, and teams. It’s more than just studios - it’s a community built on collaboration, connection, and shared passion like Voices.
+        - paragraph [ref=f7e93]: With monthly studio time, workspaces, exclusive events, and a network of over 1,000 like-minded creatives, Qube is where people come to create, grow, and find support at every stage of their journey.
+      - generic [ref=f7e94]:
+        - img "DRTY" [ref=f7e96]
+        - paragraph [ref=f7e97]:
+          - text: DRTY Thursdays powered by
+          - link "DRTY" [ref=f7e98] [cursor=pointer]:
+            - /url: https://drtydrinks.com
+          - text: Hard Seltzer
+        - paragraph [ref=f7e99]:
+          - text: The kind folks over DRTY are also offering a discount to our community members at checkout for 20% off your purchase!
+          - strong [ref=f7e100]: "Discount Code: DRTYVOICES20"
+  - contentinfo [ref=f7e101]:
+    - generic [ref=f7e102]:
+      - generic [ref=f7e103]:
+        - generic [ref=f7e105]:
+          - paragraph [ref=f7e106]:
+            - link "Radio" [ref=f7e107] [cursor=pointer]:
+              - /url: https://www.google.com/maps/place/Voices+Radio/@51.5364649,-0.1258868,17z/data=!3m2!4b1!5s0x48761b17d562d595:0x6240f16e618038dc!4m6!3m5!1s0x48761b950517d955:0x85e38b968e4f1002!8m2!3d51.5364649!4d-0.1258868!16s%2Fg%2F11nnwm36_2?entry=ttu
+          - paragraph [ref=f7e108]:
+            - link "Unit 113 Lower Stable Street Coal Drops Yard Kings Cross N1C 4LW" [ref=f7e109] [cursor=pointer]:
+              - /url: https://www.google.com/maps/place/Voices+Radio/@51.5364649,-0.1258868,17z/data=!3m2!4b1!5s0x48761b17d562d595:0x6240f16e618038dc!4m6!3m5!1s0x48761b950517d955:0x85e38b968e4f1002!8m2!3d51.5364649!4d-0.1258868!16s%2Fg%2F11nnwm36_2?entry=ttu
+              - text: Unit 113 Lower Stable StreetCoal Drops YardKings CrossN1C 4LW
+          - paragraph [ref=f7e110]: Podcast Studio
+          - paragraph [ref=f7e111]: 2nd Floor
+          - paragraph [ref=f7e112]: Mare Street Market
+          - paragraph [ref=f7e113]: 10 Lewis Cubitt Square
+          - paragraph [ref=f7e114]: London
+        - generic [ref=f7e115]:
+          - link [ref=f7e116] [cursor=pointer]:
+            - /url: https://twitter.com/voices__radio
+            - img "twitter Logo" [ref=f7e117]
+          - link [ref=f7e118] [cursor=pointer]:
+            - /url: https://www.instagram.com/voices_radio/
+            - img "instagram Logo" [ref=f7e119]
+          - link [ref=f7e120] [cursor=pointer]:
+            - /url: https://www.facebook.com/voicesvoxuk
+            - img "facebook Logo" [ref=f7e121]
+          - link [ref=f7e122] [cursor=pointer]:
+            - /url: https://www.linkedin.com/company/voicesradio
+            - img "linkedin Logo" [ref=f7e123]
+          - link [ref=f7e124] [cursor=pointer]:
+            - /url: https://www.mixcloud.com/VoicesRadio/
+            - img "mixcloud Logo" [ref=f7e125]
+        - link "Contact Us" [ref=f7e127] [cursor=pointer]:
+          - /url: mailto:info@voicesradio.co.uk
+      - img "Voices Logo" [ref=f7e129]
+      - paragraph [ref=f7e130]:
+        - text: Designed by
+        - link "panorama" [ref=f7e131] [cursor=pointer]:
+          - /url: https://www.studiopanorama.de/?lang=en
+        - text: . Built by
+        - link "mirshko" [ref=f7e132] [cursor=pointer]:
+          - /url: https://reiner.systems
+        - text: . Powered by
+        - link [ref=f7e133] [cursor=pointer]:
+          - /url: https://vercel.com/?utm_source=voicesradio&utm_campaign=oss
+          - img "Vercel" [ref=f7e134]
+  - alert [ref=f7e136]

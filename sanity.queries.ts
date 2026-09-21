@@ -1,5 +1,6 @@
 import { groq } from "next-sanity";
 import type { Image, PortableTextBlock } from "sanity";
+import type { BlogSanityImage } from "./sanity.image";
 
 export const settingsQuery = groq`*[_type == "settings"][0]`;
 
@@ -120,11 +121,27 @@ export const podcastQuery = groq`*[_type == "podcast"][0] {
   podcast_final_image {
     ...,
     "lqip": asset->metadata.lqip
+  },
+  seoOgImage {
+    ...,
+    "lqip": asset->metadata.lqip
   }
 }`;
 
+export interface PodcastFaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface PodcastService {
+  name: string;
+  description?: string;
+  priceFrom?: string;
+}
+
 export interface Podcast {
   hero_image: Image & { lqip: string };
+  heroImageAlt?: string;
 
   heading_podcast_intro: string;
   podcast_cta_text?: string;
@@ -138,6 +155,58 @@ export interface Podcast {
   podcast_final_heading: string;
   podcast_final: PortableTextBlock[];
   podcast_final_image: Image & { lqip: string };
+
+  // SEO
+  h1Override?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoOgImage?: Image & { lqip: string };
+  seoKeywords?: string[];
+
+  // Local business
+  streetAddress?: string;
+  locality?: string;
+  postalCode?: string;
+  phone?: string;
+  openingHours?: string[];
+  priceRange?: string;
+  geoLat?: number;
+  geoLng?: number;
+
+  // Structured data
+  studioServices?: PodcastService[];
+  faq?: PodcastFaqItem[];
+}
+
+export const locationPageSlugsQuery = groq`*[_type == "locationPage"] { "slug": slug.current, _updatedAt }`;
+
+export const locationPageBySlugQuery = groq`*[_type == "locationPage" && slug.current == $slug][0] {
+  ...,
+  ogImage {
+    ...,
+    "lqip": asset->metadata.lqip
+  }
+}`;
+
+export interface LocationPageFaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface LocationPage {
+  title: string;
+  slug: { current: string };
+  h1: string;
+  localityName: string;
+  intro?: PortableTextBlock[];
+  body?: PortableTextBlock[];
+  faq?: LocationPageFaqItem[];
+  ctaText?: string;
+  ctaUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: Image & { lqip: string };
+  keywords?: string[];
 }
 
 export const servicesQuery = groq`*[_type == "services"][0] {
@@ -174,20 +243,19 @@ export interface Services {
   services_heading: string;
   services_main: PortableTextBlock[];
 
-
-  services_heading1 : string;
+  services_heading1: string;
   services_main1: PortableTextBlock[];
   services_main1_image: Image & { lqip: string };
 
-  services_heading2 : string;
+  services_heading2: string;
   services_main2: PortableTextBlock[];
   services_main2_image: Image & { lqip: string };
 
-  services_heading3 : string;
+  services_heading3: string;
   services_main3: PortableTextBlock[];
   services_main3_image: Image & { lqip: string };
 
-  services_heading4 : string;
+  services_heading4: string;
   services_main4: PortableTextBlock[];
   services_main4_image: Image & { lqip: string };
 
@@ -195,7 +263,22 @@ export interface Services {
   services_final_image: Image & { lqip: string };
 }
 
-// Blog Queries
+/** Resolves image asset refs inside Portable Text `content` so `asset.url` exists at render time. */
+const portableTextContentProjection = groq`content[]{
+  ...,
+  _type == "image" => {
+    ...,
+    asset->{
+      "_ref": _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
+}`;
+
+// Podcast Blog Queries
 export const blogPostsQuery = groq`*[_type == "blog"] | order(publishedAt desc) {
   _id,
   title,
@@ -204,6 +287,7 @@ export const blogPostsQuery = groq`*[_type == "blog"] | order(publishedAt desc) 
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -228,13 +312,14 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
       }
     }
   },
-  content,
+  ${portableTextContentProjection},
   author,
   categories,
   tags,
@@ -246,6 +331,7 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
   ogImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -262,6 +348,7 @@ export const featuredBlogPostsQuery = groq`*[_type == "blog" && featured == true
   featuredImage {
     ...,
     asset->{
+      "_ref": _id,
       url,
       metadata {
         lqip
@@ -273,19 +360,18 @@ export const featuredBlogPostsQuery = groq`*[_type == "blog" && featured == true
   publishedAt
 }`;
 
+/** Slugs + dates for sitemap (published podcast blog posts only) */
+export const podcastBlogSitemapQuery = groq`*[_type == "blog" && status == "published"] {
+  "slug": slug.current,
+  "lastModified": coalesce(publishedAt, _updatedAt)
+}`;
+
 export interface BlogPost {
   _id: string;
   title: string;
   slug: { current: string };
   excerpt: string;
-  featuredImage?: {
-    asset?: {
-      url: string;
-      metadata: {
-        lqip: string;
-      };
-    };
-  };
+  featuredImage?: BlogSanityImage;
   content?: PortableTextBlock[];
   author: string;
   categories?: string[];
@@ -295,12 +381,111 @@ export interface BlogPost {
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string[];
-  ogImage?: {
-    asset?: {
-      url: string;
-      metadata: {
-        lqip: string;
-      };
-    };
-  };
+  ogImage?: BlogSanityImage;
+}
+
+// Main Website Blog Queries
+export const mainBlogPostsQuery = groq`*[_type == "mainBlog" && status == "published"] | order(publishedAt desc) {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      "_ref": _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  author,
+  categories,
+  tags,
+  publishedAt,
+  featured,
+  metaTitle,
+  metaDescription,
+  keywords
+}`;
+
+/** Slugs + dates for sitemap (published main site blog posts only) */
+export const mainBlogSitemapQuery = groq`*[_type == "mainBlog" && status == "published"] {
+  "slug": slug.current,
+  "lastModified": coalesce(publishedAt, _updatedAt)
+}`;
+
+export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $slug][0] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      "_ref": _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  ${portableTextContentProjection},
+  author,
+  categories,
+  tags,
+  publishedAt,
+  featured,
+  metaTitle,
+  metaDescription,
+  keywords,
+  ogImage {
+    ...,
+    asset->{
+      "_ref": _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  }
+}`;
+
+export const featuredMainBlogPostsQuery = groq`*[_type == "mainBlog" && featured == true && status == "published"] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featuredImage {
+    ...,
+    asset->{
+      "_ref": _id,
+      url,
+      metadata {
+        lqip
+      }
+    }
+  },
+  author,
+  categories,
+  publishedAt
+}`;
+
+export interface MainBlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  featuredImage?: BlogSanityImage;
+  content?: PortableTextBlock[];
+  author: string;
+  categories?: string[];
+  tags?: string[];
+  publishedAt: string;
+  featured?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string[];
+  ogImage?: BlogSanityImage;
 }

@@ -3,12 +3,16 @@ import { env } from "./env";
 import {
   About,
   Home,
+  LocationPage,
   Podcast,
   Partner,
   Settings,
   Services,
   BlogPost,
+  MainBlogPost,
   aboutQuery,
+  locationPageBySlugQuery,
+  locationPageSlugsQuery,
   servicesQuery,
   homeQuery,
   podcastQuery,
@@ -17,6 +21,9 @@ import {
   blogPostsQuery,
   blogPostQuery,
   featuredBlogPostsQuery,
+  mainBlogPostsQuery,
+  mainBlogPostQuery,
+  featuredMainBlogPostsQuery,
 } from "./sanity.queries";
 
 export const client = createClient({
@@ -31,31 +38,42 @@ export const client = createClient({
   fetch: { next: { revalidate: 0 } },
 });
 
-// Helper function to handle Sanity fetch errors
-const safeFetch = async <T>(query: string, params?: any): Promise<T | null> => {
+const safeFetch = async <T>(
+  query: string,
+  params?: Record<string, unknown>,
+): Promise<T | null> => {
   try {
-    return await client.fetch<T>(query, params);
+    return await client.fetch<T>(query, params ?? {});
   } catch (error) {
-    console.error('Sanity fetch error:', error);
+    console.error("Sanity fetch error:", error);
     return null;
   }
 };
 
 export const getSettings = () => safeFetch<Settings>(settingsQuery);
-
 export const getPartners = () => safeFetch<Partner[]>(partnersQuery);
-
 export const getHome = () => safeFetch<Home>(homeQuery);
-
 export const getAbout = () => safeFetch<About>(aboutQuery);
-
 export const getPodcast = () => safeFetch<Podcast>(podcastQuery);
-
 export const getServices = () => safeFetch<Services>(servicesQuery);
 
-// Blog functions
+// Podcast blog
 export const getBlogPosts = () => safeFetch<BlogPost[]>(blogPostsQuery);
+export const getBlogPost = (slug: string) =>
+  safeFetch<BlogPost>(blogPostQuery, { slug });
+export const getFeaturedBlogPosts = () =>
+  safeFetch<BlogPost[]>(featuredBlogPostsQuery);
 
-export const getBlogPost = (slug: string) => safeFetch<BlogPost>(blogPostQuery, { slug });
+// Main website blog
+export const getMainBlogPosts = () =>
+  safeFetch<MainBlogPost[]>(mainBlogPostsQuery);
+export const getMainBlogPost = (slug: string) =>
+  safeFetch<MainBlogPost>(mainBlogPostQuery, { slug });
+export const getFeaturedMainBlogPosts = () =>
+  safeFetch<MainBlogPost[]>(featuredMainBlogPostsQuery);
 
-export const getFeaturedBlogPosts = () => safeFetch<BlogPost[]>(featuredBlogPostsQuery);
+// Location pages (SEO)
+export const getLocationPageSlugs = () =>
+  client.fetch<{ slug: string; _updatedAt: string }[]>(locationPageSlugsQuery);
+export const getLocationPageBySlug = (slug: string) =>
+  client.fetch<LocationPage | null>(locationPageBySlugQuery, { slug });

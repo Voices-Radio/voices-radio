@@ -81,6 +81,7 @@ module.exports = {
       },
       animation: {
         "color-shift": "color-shift 4500ms ease-out 800ms infinite",
+        marquee: "marquee 28s linear infinite",
       },
       keyframes: {
         "color-shift": {
@@ -93,6 +94,10 @@ module.exports = {
           "66.66%": {
             "background-color": "#ed675d",
           },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
         },
       },
     },
