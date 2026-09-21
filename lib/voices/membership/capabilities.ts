@@ -32,7 +32,6 @@ export interface AccountCapabilities {
   member: MemberCapabilityProfile | null;
 }
 
-export type AccountIntent = AccountCapability;
 export type AccountMode = "artist" | "member";
 export type AccountHomeDecision =
   { kind: "member" } | { kind: "empty" } | { kind: "redirect"; href: string };
@@ -42,10 +41,6 @@ export function hasCapability(
   capability: AccountCapability,
 ) {
   return capabilities?.capabilities.includes(capability) ?? false;
-}
-
-export function parseAccountIntent(value: unknown): AccountIntent | undefined {
-  return value === "artist" || value === "member" ? value : undefined;
 }
 
 export function safeAccountNextPath(next: string | undefined) {
@@ -83,33 +78,29 @@ export function accountHomeDecision(
   return { kind: "empty" };
 }
 
+/**
+ * Where a successful sign-in lands: a safe deep link if there is one,
+ * otherwise wherever this account's own capabilities point.
+ *
+ * Deliberately takes nothing about *how* the person signed in. The old
+ * artist/member "doors" fed an intent in here, and an intent the account could
+ * not satisfy became a `?missing=` notice — telling someone whose sign-in had
+ * worked that their account was "not linked to an artist profile". There is
+ * no sign-in outcome that should produce a notice, so there is no marker.
+ */
 export function resolvePostLoginPath({
   next,
-  intent,
   capabilities,
 }: {
   next?: string;
-  intent?: AccountIntent;
   capabilities: AccountCapabilities | null;
 }) {
   const safeNext = safeAccountNextPath(next);
   if (safeNext) return safeNext;
 
-  if (intent === "artist") {
-    return hasCapability(capabilities, "artist")
-      ? "/account/artist"
-      : `${defaultAccountPathForCapabilities(capabilities)}?missing=artist`;
-  }
-
-  if (intent === "member") {
-    return hasCapability(capabilities, "member")
-      ? "/account"
-      : `${defaultAccountPathForCapabilities(capabilities)}?missing=member`;
-  }
-
-  // A plain sign-in (no deep-link `next`, no artist/member door) lands the
-  // member on their profile rather than the account overview or wherever
-  // they happened to be when they clicked "Sign in".
+  // A plain sign-in (no deep-link `next`) lands the member on their profile
+  // rather than the account overview or wherever they happened to be when
+  // they clicked "Sign in".
   if (hasCapability(capabilities, "member")) return "/account/profile";
 
   return defaultAccountPathForCapabilities(capabilities);

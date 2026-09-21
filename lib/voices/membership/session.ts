@@ -301,24 +301,23 @@ export async function requireArtist(
   const lookup = await lookupCapabilities();
 
   // A failed lookup is not evidence that this account has no artist profile.
-  // Sending them to ?artist=missing would state, wrongly and in the second
-  // person, that they don't have one. /account renders the error state for
-  // the same failed lookup, so hand off without an explanatory marker.
+  // /account renders the error state for the same failed lookup.
   if (lookup.status !== "ok") {
     redirect("/account");
   }
 
+  // Any linked artist gets in — including one whose account role cannot edit
+  // it (a staff account that claimed a profile). /account/artist shows that
+  // case read-only. Redirecting it away instead bounced between /account
+  // (which sends artist accounts here) and back again.
   const capabilities = lookup.data;
-  if (
-    capabilities.capabilities.includes("artist") &&
-    capabilities.artist?.canManageProfile
-  ) {
+  if (capabilities.capabilities.includes("artist")) {
     return capabilities;
   }
 
-  if (capabilities.capabilities.includes("artist")) {
-    redirect("/account?artist=unavailable");
-  }
-
-  redirect("/account?artist=missing");
+  // No artist profile: go home, with no notice. Being signed in without an
+  // artist profile is not an error, and "this account is not linked to an
+  // artist profile" read like one to every member who followed an artist
+  // link.
+  redirect("/account");
 }

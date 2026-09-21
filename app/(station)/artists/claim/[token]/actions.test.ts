@@ -14,6 +14,7 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@/lib/voices/membership/artist-invitations-client", () => ({
   claimArtistInvitation: vi.fn(),
+  renewArtistInvitation: vi.fn(),
 }));
 
 vi.mock("@/lib/voices/membership/auth-client", () => ({
@@ -28,17 +29,13 @@ vi.mock("@/lib/voices/membership/session", () => ({
 }));
 
 const { redirect } = await import("next/navigation");
-const { claimArtistInvitation } = await import(
-  "@/lib/voices/membership/artist-invitations-client"
-);
+const { claimArtistInvitation, renewArtistInvitation } =
+  await import("@/lib/voices/membership/artist-invitations-client");
 const { backendLogin } = await import("@/lib/voices/membership/auth-client");
-const {
-  getAccessToken,
-  getSession,
-  setAccessTokenCookie,
-  setSessionCookies,
-} = await import("@/lib/voices/membership/session");
-const { claimArtistInvitationAction } = await import("./actions");
+const { getAccessToken, getSession, setAccessTokenCookie, setSessionCookies } =
+  await import("@/lib/voices/membership/session");
+const { claimArtistInvitationAction, renewInvitationAction } =
+  await import("./actions");
 
 function formData(fields: Record<string, string>) {
   const data = new FormData();
@@ -59,7 +56,10 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(getSession).mockResolvedValue(null);
   vi.mocked(getAccessToken).mockResolvedValue(undefined);
-  vi.mocked(claimArtistInvitation).mockResolvedValue({ ok: true, data: SUCCESS });
+  vi.mocked(claimArtistInvitation).mockResolvedValue({
+    ok: true,
+    data: SUCCESS,
+  });
   vi.mocked(backendLogin).mockResolvedValue({
     ok: false,
     status: 401,
@@ -91,7 +91,9 @@ describe("claimArtistInvitationAction", () => {
       {},
       "existing-access",
     );
-    expect(setAccessTokenCookie).toHaveBeenCalledWith({ token: "claim-access" });
+    expect(setAccessTokenCookie).toHaveBeenCalledWith({
+      token: "claim-access",
+    });
     expect(redirect).toHaveBeenCalledWith("/account/artist");
   });
 
@@ -199,6 +201,151 @@ describe("claimArtistInvitationAction", () => {
     expect(result).toEqual({
       status: "already_claimed",
       message: "Invitation already claimed.",
+    });
+  });
+
+  it("set_password (Apple-only account): sends the chosen password and signs in with it", async () => {
+    vi.mocked(backendLogin).mockResolvedValue({
+      ok: true,
+      status: 200,
+      payload: { token: "login-access", refreshToken: "login-refresh" },
+    });
+
+    await expect(
+      claimArtistInvitationAction(
+        undefined,
+        formData({
+          token: "invite-token",
+          invitationEmail: "dj@example.com",
+          mode: "set_password",
+          password: "a-new-web-password",
+        }),
+      ),
+    ).rejects.toThrow(RedirectSignal);
+
+    expect(claimArtistInvitation).toHaveBeenCalledWith(
+      "invite-token",
+      { password: "a-new-web-password" },
+      undefined,
+    );
+    expect(backendLogin).toHaveBeenCalledWith({
+      email: "dj@example.com",
+      password: "a-new-web-password",
+    });
+    expect(setSessionCookies).toHaveBeenCalled();
+  });
+
+  it.each(["set_password", "create"])(
+    "%s: refuses a password under 8 characters before calling the backend",
+    async (mode) => {
+      const result = await claimArtistInvitationAction(
+        undefined,
+        formData({
+          token: "invite-token",
+          invitationEmail: "dj@example.com",
+          mode,
+          firstName: "Ada",
+          lastName: "Lovelace",
+          password: "short",
+        }),
+      );
+
+      expect(result).toMatchObject({
+        status: "error",
+        mode,
+        field: "password",
+      });
+      expect(claimArtistInvitation).not.toHaveBeenCalled();
+    },
+  );
+
+  it("a taken artist name comes back as a fixable field error, keeping what was typed", async () => {
+    vi.mocked(claimArtistInvitation).mockResolvedValue({
+      ok: false,
+      status: 409,
+      code: "NAME_TAKEN",
+      reason: "name_taken",
+      message: '"osBrain" is already the name of another artist on Voices.',
+    });
+
+    const result = await claimArtistInvitationAction(
+      undefined,
+      formData({
+        token: "invite-token",
+        invitationEmail: "new@example.com",
+        mode: "create",
+        firstName: "Ada",
+        lastName: "Lovelace",
+        password: "new-password",
+        artistName: "osBrain",
+        newsletters: "on",
+      }),
+    );
+
+    expect(result).toEqual({
+      status: "error",
+      mode: "create",
+      field: "artistName",
+      message: '"osBrain" is already the name of another artist on Voices.',
+      values: {
+        firstName: "Ada",
+        lastName: "Lovelace",
+        artistName: "osBrain",
+        newsletters: true,
+      },
+    });
+  });
+
+  it("never echoes the password back in the form values", async () => {
+    vi.mocked(claimArtistInvitation).mockResolvedValue({
+      ok: false,
+      status: 500,
+      code: "INVITATION_ERROR",
+      message: "Failed to claim artist profile",
+    });
+
+    const result = await claimArtistInvitationAction(
+      undefined,
+      formData({
+        token: "invite-token",
+        invitationEmail: "new@example.com",
+        mode: "create",
+        firstName: "Ada",
+        lastName: "Lovelace",
+        password: "new-password",
+      }),
+    );
+
+    expect(JSON.stringify(result)).not.toContain("new-password");
+  });
+});
+
+describe("renewInvitationAction", () => {
+  it("reports the request as sent, in the backend's words", async () => {
+    vi.mocked(renewArtistInvitation).mockResolvedValue({
+      ok: true,
+      data: { message: "On its way." },
+    });
+
+    await expect(
+      renewInvitationAction(undefined, formData({ token: "old" })),
+    ).resolves.toEqual({ status: "sent", message: "On its way." });
+    expect(renewArtistInvitation).toHaveBeenCalledWith("old");
+  });
+
+  it("reports a failure to send", async () => {
+    vi.mocked(renewArtistInvitation).mockResolvedValue({
+      ok: false,
+      status: 500,
+      code: "RENEW_FAILED",
+      message: "We couldn't send a new link just now.",
+    });
+
+    await expect(
+      renewInvitationAction(undefined, formData({ token: "old" })),
+    ).resolves.toEqual({
+      status: "error",
+      message: "We couldn't send a new link just now.",
     });
   });
 });

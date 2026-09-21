@@ -392,9 +392,12 @@ describe("requireArtist", () => {
   it("returns capabilities when the account can manage its artist profile", async () => {
     cookieStore.set("voices_at", { value: "valid-token" });
     mockFetchSequence([
-      new Response(JSON.stringify({ user: { _id: "u1", email: "dj@example.com" } }), {
-        status: 200,
-      }),
+      new Response(
+        JSON.stringify({ user: { _id: "u1", email: "dj@example.com" } }),
+        {
+          status: 200,
+        },
+      ),
       new Response(
         JSON.stringify({
           user: { _id: "u1", email: "dj@example.com" },
@@ -420,12 +423,15 @@ describe("requireArtist", () => {
     });
   });
 
-  it("redirects away when the account has no artist link", async () => {
+  it("sends an account with no artist link home, with no notice marker", async () => {
     cookieStore.set("voices_at", { value: "valid-token" });
     mockFetchSequence([
-      new Response(JSON.stringify({ user: { _id: "u1", email: "member@example.com" } }), {
-        status: 200,
-      }),
+      new Response(
+        JSON.stringify({ user: { _id: "u1", email: "member@example.com" } }),
+        {
+          status: 200,
+        },
+      ),
       new Response(
         JSON.stringify({
           user: { _id: "u1", email: "member@example.com" },
@@ -437,16 +443,23 @@ describe("requireArtist", () => {
       ),
     ]);
 
-    await expect(requireArtist("/account/artist")).rejects.toThrow(RedirectSignal);
-    expect(redirect).toHaveBeenCalledWith("/account?artist=missing");
+    await expect(requireArtist("/account/artist")).rejects.toThrow(
+      RedirectSignal,
+    );
+    expect(redirect).toHaveBeenCalledWith("/account");
   });
 
-  it("redirects with different messaging when the artist is linked but cannot be edited", async () => {
+  it("lets a linked artist in even when the account cannot edit it — the page shows it read-only", async () => {
+    // Redirecting this case away looped: /account sends an artist-only
+    // account to /account/artist, which sent it straight back.
     cookieStore.set("voices_at", { value: "valid-token" });
     mockFetchSequence([
-      new Response(JSON.stringify({ user: { _id: "u1", email: "dj@example.com" } }), {
-        status: 200,
-      }),
+      new Response(
+        JSON.stringify({ user: { _id: "u1", email: "dj@example.com" } }),
+        {
+          status: 200,
+        },
+      ),
       new Response(
         JSON.stringify({
           user: { _id: "u1", email: "dj@example.com" },
@@ -466,7 +479,10 @@ describe("requireArtist", () => {
       ),
     ]);
 
-    await expect(requireArtist("/account/artist")).rejects.toThrow(RedirectSignal);
-    expect(redirect).toHaveBeenCalledWith("/account?artist=unavailable");
+    await expect(requireArtist("/account/artist")).resolves.toMatchObject({
+      capabilities: ["artist"],
+      artist: { canManageProfile: false },
+    });
+    expect(redirect).not.toHaveBeenCalled();
   });
 });

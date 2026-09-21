@@ -23,9 +23,8 @@ vi.mock("@/lib/voices/membership/session", () => ({
 
 const { redirect } = await import("next/navigation");
 const { backendLogin } = await import("@/lib/voices/membership/auth-client");
-const { getCapabilities, setSessionCookies } = await import(
-  "@/lib/voices/membership/session"
-);
+const { getCapabilities, setSessionCookies } =
+  await import("@/lib/voices/membership/session");
 const { signInAction } = await import("./actions");
 
 function formData(fields: Record<string, string>) {
@@ -92,7 +91,10 @@ describe("signInAction", () => {
     });
 
     await expect(
-      signInAction(undefined, formData({ email: "member@example.com", password: "correct" })),
+      signInAction(
+        undefined,
+        formData({ email: "member@example.com", password: "correct" }),
+      ),
     ).rejects.toThrow(RedirectSignal);
 
     expect(setSessionCookies).toHaveBeenCalledWith({
@@ -102,7 +104,7 @@ describe("signInAction", () => {
     expect(redirect).toHaveBeenCalledWith("/account");
   });
 
-  it("uses artist intent only as a default landing hint when the account has artist access", async () => {
+  it("ignores a stale ?as=artist from an old link — an artist still lands in the artist area", async () => {
     vi.mocked(backendLogin).mockResolvedValue({
       ok: true,
       status: 200,
@@ -137,7 +139,34 @@ describe("signInAction", () => {
     expect(redirect).toHaveBeenCalledWith("/account/artist");
   });
 
-  it("still signs in through the wrong door and lands on the capability the account actually has", async () => {
+  it("ignores a stale ?as=artist for a member-only account — their profile, never a 'not linked' notice", async () => {
+    vi.mocked(backendLogin).mockResolvedValue({
+      ok: true,
+      status: 200,
+      payload: { token: "at", refreshToken: "rt", user: { _id: "u1" } },
+    });
+    vi.mocked(getCapabilities).mockResolvedValue({
+      user: { _id: "u1", email: "member@example.com" },
+      capabilities: ["member"],
+      artist: null,
+      member: { status: "active", tierId: "insider", cadence: "monthly" },
+    });
+
+    await expect(
+      signInAction(
+        undefined,
+        formData({
+          email: "member@example.com",
+          password: "correct",
+          as: "artist",
+        }),
+      ),
+    ).rejects.toThrow(RedirectSignal);
+
+    expect(redirect).toHaveBeenCalledWith("/account/profile");
+  });
+
+  it("ignores a stale ?as=member for an artist-only account", async () => {
     vi.mocked(backendLogin).mockResolvedValue({
       ok: true,
       status: 200,
@@ -169,10 +198,10 @@ describe("signInAction", () => {
       ),
     ).rejects.toThrow(RedirectSignal);
 
-    expect(redirect).toHaveBeenCalledWith("/account/artist?missing=member");
+    expect(redirect).toHaveBeenCalledWith("/account/artist");
   });
 
-  it("lets an explicit safe next path win over the as intent", async () => {
+  it("lets an explicit safe next path win", async () => {
     vi.mocked(backendLogin).mockResolvedValue({
       ok: true,
       status: 200,

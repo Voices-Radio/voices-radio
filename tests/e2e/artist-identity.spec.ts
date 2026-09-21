@@ -65,7 +65,10 @@ test.describe("account area reflects what the account actually holds", () => {
     });
 
     await signIn(page, email);
-    await expect(page).toHaveURL(/\/account$/);
+    // A plain sign-in lands a member on their profile, not the account
+    // overview — see resolvePostLoginPath. Pre-existing behaviour, not
+    // something this branch changed; this assertion was stale.
+    await expect(page).toHaveURL(/\/account\/profile$/);
 
     await expect(
       nav(page).getByRole("link", { name: "Membership" }),
@@ -169,13 +172,11 @@ test.describe("claiming an artist profile", () => {
     await page.goto(`/artists/claim/${token}`);
     await expect(page.getByText(email)).toBeVisible();
 
-    await page
-      .getByRole("button", { name: /create account for this invitation/i })
-      .click();
+    // No account for this address, so account creation is the only path
+    // offered — no "existing password" choice to get wrong.
     await page.getByLabel(/first name/i).fill("Ada");
     await page.getByLabel(/last name/i).fill("Lovelace");
-    await page.getByLabel(/artist name/i).fill(`Ada FM ${Date.now()}`);
-    await page.getByLabel(/^password$/i).fill(PASSWORD);
+    await page.getByLabel(/choose a password/i).fill(PASSWORD);
     await page.getByRole("button", { name: /claim artist profile/i }).click();
 
     await expect(page).toHaveURL(/\/account\/artist$/);
@@ -205,9 +206,6 @@ test.describe("claiming an artist profile", () => {
     });
 
     await page.goto(`/artists/claim/${token}`);
-    await page
-      .getByRole("button", { name: /use existing account password/i })
-      .click();
     const resetLink = page.getByRole("link", { name: /reset it first/i });
     await expect(resetLink).toBeVisible();
     await expect(resetLink).toHaveAttribute(
@@ -244,9 +242,6 @@ test.describe("claiming an artist profile", () => {
     });
 
     await page.goto(`/artists/claim/${token}`);
-    await page
-      .getByRole("button", { name: /use existing account password/i })
-      .click();
     await page.getByLabel(/existing account password/i).fill(PASSWORD);
     await page.getByRole("button", { name: /claim artist profile/i }).click();
 
@@ -271,7 +266,9 @@ test.describe("claiming an artist profile", () => {
     });
 
     await page.goto(`/artists/claim/${token}`);
-    await expect(page.getByText(/invitation unavailable/i)).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /already claimed/i }),
+    ).toBeVisible();
   });
 
   test("an invalid token is a clear message, not a crash", async ({ page }) => {
@@ -283,7 +280,7 @@ test.describe("claiming an artist profile", () => {
 // ── artist profile editing ───────────────────────────────────────────────────
 
 test.describe("artist profile management", () => {
-  test("a non-artist is redirected away from /account/artist", async ({
+  test("a non-artist is sent home from /account/artist, with no notice", async ({
     page,
     request,
   }) => {
@@ -296,7 +293,10 @@ test.describe("artist profile management", () => {
     await signIn(page, email);
     await page.goto("/account/artist");
 
-    await expect(page).toHaveURL(/\/account\?artist=missing/);
+    await expect(page).toHaveURL(/\/account$/);
+    await expect(
+      page.getByText(/not linked to an artist profile/i),
+    ).toHaveCount(0);
   });
 
   test("the edit form exposes no field for name or programmingEmail", async ({

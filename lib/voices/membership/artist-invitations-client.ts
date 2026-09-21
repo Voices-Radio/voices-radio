@@ -28,12 +28,25 @@ const invitationArtistSchema = z
   })
   .nullable();
 
+// What the invited address already holds. Nullable with a null default for
+// the same reason as imageUrl above: a backend that predates this field must
+// still render a claimable page, not "invitation unavailable". claimModeFor()
+// treats null as "unknown" and lets the DJ choose.
+const invitationAccountSchema = z
+  .object({ exists: z.boolean(), passwordSet: z.boolean() })
+  .nullable()
+  .default(null);
+
 const invitationSchema = z.object({
   id: z.string(),
   email: z.string().email(),
   expiresAt: z.string(),
   kind: z.enum(["claim_existing", "create_new"]),
   artist: invitationArtistSchema,
+  account: invitationAccountSchema,
+  // A net-new artist name taken since the invite went out — the claim form
+  // asks for a variant up front rather than failing at submit.
+  nameTaken: z.boolean().default(false),
 });
 
 const validateInvitationSchema = z.object({
@@ -62,26 +75,61 @@ export type ArtistInvitationClaimSuccess = z.infer<typeof claimSuccessSchema>;
 
 export type ArtistInvitationResult<T> =
   | { ok: true; data: T }
-  | { ok: false; status: number; code: string; message: string };
+  | {
+      ok: false;
+      status: number;
+      code: string;
+      message: string;
+      /** routes/artistInvitations.js's `reason`, when it gave one. */
+      reason?: string;
+      /** On a claimed invitation: whether the signed-in caller claimed it. */
+      claimedByYou?: boolean;
+    };
+
+function payloadString(payload: unknown, key: string): string | undefined {
+  if (typeof payload !== "object" || !payload || !(key in payload)) {
+    return undefined;
+  }
+  const value = (payload as Record<string, unknown>)[key];
+  return typeof value === "string" ? value : undefined;
+}
 
 function errorResult(
   status: number,
   payload: unknown,
 ): ArtistInvitationResult<never> {
-  const message =
-    typeof payload === "object" &&
-    payload &&
-    "message" in payload &&
-    typeof payload.message === "string"
-      ? payload.message
-      : undefined;
+  const message = payloadString(payload, "message");
+  const reason = payloadString(payload, "reason");
 
   if (status === 404) {
     return {
       ok: false,
       status,
       code: "INVALID_INVITATION",
-      message: "This invitation is no longer valid.",
+      reason: "invalid",
+      message: "This invitation link isn't valid.",
+    };
+  }
+
+  if (status === 410) {
+    return {
+      ok: false,
+      status,
+      code: "EXPIRED_INVITATION",
+      reason: "expired",
+      message: "This invitation link has expired.",
+    };
+  }
+
+  // Two different 409s: a net-new artist name taken since the invite went out
+  // (fixable on the same form), and an invitation already claimed (not).
+  if (status === 409 && reason === "name_taken") {
+    return {
+      ok: false,
+      status,
+      code: "NAME_TAKEN",
+      reason,
+      message: message ?? "That artist name is taken. Choose a variant.",
     };
   }
 
@@ -101,6 +149,11 @@ function errorResult(
       ok: false,
       status,
       code: "ALREADY_CLAIMED",
+      reason: "claimed",
+      claimedByYou:
+        typeof payload === "object" &&
+        payload !== null &&
+        (payload as Record<string, unknown>).claimedByYou === true,
       message: message ?? "This invitation has already been claimed.",
     };
   }
@@ -109,20 +162,31 @@ function errorResult(
     ok: false,
     status,
     code: "INVITATION_ERROR",
+    ...(reason ? { reason } : {}),
     message:
       message ?? "We couldn't process this invitation. Please try again.",
   };
 }
 
+/**
+ * @param bearerToken The signed-in caller's access token, if any — only so a
+ *   claimed invitation can say "you claimed this" and send them straight in.
+ */
 export async function validateArtistInvitation(
   token: string,
+  bearerToken?: string,
 ): Promise<ArtistInvitationResult<ArtistInvitationValidation>> {
   try {
     const response = await fetch(
       `${VOICES_MEMBERSHIP_API_BASE_URL}/api/artist-invitations/validate/${encodeURIComponent(
         token,
       )}`,
-      { cache: "no-store" },
+      {
+        cache: "no-store",
+        ...(bearerToken
+          ? { headers: { Authorization: `Bearer ${bearerToken}` } }
+          : {}),
+      },
     );
     const payload = await response.json().catch(() => null);
 
@@ -194,6 +258,55 @@ export async function claimArtistInvitation(
       status: 503,
       code: "NETWORK_ERROR",
       message: "We couldn't claim this profile. Please try again.",
+    };
+  }
+}
+
+const RENEW_FALLBACK_MESSAGE =
+  "If this link can be renewed, a new one is on its way to the invited email address.";
+
+/**
+ * Asks for a fresh link for an expired invitation. The backend answers 202
+ * whatever happened and only ever emails the invited address, so success here
+ * means "asked", not "sent" — the page words it that way.
+ */
+export async function renewArtistInvitation(
+  token: string,
+): Promise<ArtistInvitationResult<{ message: string }>> {
+  try {
+    const response = await fetch(
+      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/artist-invitations/renew/${encodeURIComponent(
+        token,
+      )}`,
+      { method: "POST", cache: "no-store" },
+    );
+    const payload = await response.json().catch(() => null);
+
+    if (response.status === 202) {
+      return {
+        ok: true,
+        data: {
+          message: payloadString(payload, "message") ?? RENEW_FALLBACK_MESSAGE,
+        },
+      };
+    }
+
+    return {
+      ok: false,
+      status: response.status,
+      code: "RENEW_FAILED",
+      message:
+        "We couldn't send a new link just now. Please try again, or email info@voicesradio.co.uk.",
+    };
+  } catch (error) {
+    if (isNextControlFlowError(error)) throw error;
+    console.error("Voices artist invitation renewal failed:", error);
+    return {
+      ok: false,
+      status: 503,
+      code: "NETWORK_ERROR",
+      message:
+        "We couldn't send a new link just now. Please try again, or email info@voicesradio.co.uk.",
     };
   }
 }
