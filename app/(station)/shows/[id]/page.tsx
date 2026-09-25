@@ -7,6 +7,7 @@ import ArchivePlayPanel from "../../components/redesign/archive-play-panel";
 import ShowRail from "../../components/redesign/show-rail";
 import SupporterBlock from "../../components/redesign/supporter-block";
 import { getShow, getShowsForArtist } from "@/lib/voices/api";
+import { artworkForSize } from "@/lib/voices/artwork";
 import { formatShowDisplayTitle } from "@/lib/voices/show-title";
 
 type ShowPageProps = {
@@ -81,6 +82,12 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
     ? "WORLD"
     : "LONDON";
   const genres = show.genres.slice(0, 3);
+  // The hero is the largest the artwork is ever painted: full-bleed on mobile,
+  // 420px on desktop, and on a 3x phone that asks for ~1300 device pixels.
+  // Shows are normalised at the "full" size, which is 1000px for Mixcloud —
+  // so ask for the 2400px render here instead. No-op for SoundCloud, whose
+  // 500px ceiling is upstream and cannot be recovered at any size.
+  const heroArtwork = artworkForSize(show.artwork, "feature");
   // The raw title trails the date and station name; both already have their own
   // place on this page, so the heading carries the show name alone.
   const displayTitle = formatShowDisplayTitle(show.title);
@@ -103,10 +110,11 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
       <section className="md:hidden">
         <div className="relative -mx-2 aspect-square">
           <Image
-            src={show.artwork.src}
-            alt={show.artwork.alt}
+            src={heroArtwork.src}
+            alt={heroArtwork.alt}
             fill
             sizes="100vw"
+            quality={88}
             priority
             className="object-cover"
           />
@@ -181,10 +189,11 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
       <section className="mx-auto hidden max-w-[1280px] gap-8 px-4 py-10 md:grid md:grid-cols-[minmax(0,420px)_1fr] md:px-8">
         <div className="relative aspect-square overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface">
           <Image
-            src={show.artwork.src}
-            alt={show.artwork.alt}
+            src={heroArtwork.src}
+            alt={heroArtwork.alt}
             fill
             sizes="(min-width: 768px) 420px, 90vw"
+            quality={88}
             className="object-cover"
           />
         </div>

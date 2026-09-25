@@ -68,6 +68,14 @@ const config = {
     ];
   },
   images: {
+    // AVIF first. Roughly half the show archive is SoundCloud artwork, which
+    // is capped at 500x500 upstream (-original 404s), so those pixels are all
+    // we will ever have — what is left to win is the re-encode. Next was
+    // recompressing an already-lossy JPEG at the default quality of 75, laying
+    // fresh ringing over the source's own. AVIF at 88 carries far less of it
+    // at a comparable file size.
+    formats: ["image/avif", "image/webp"],
+    qualities: [75, 88],
     remotePatterns: [
       { hostname: "cdn.sanity.io" },
       { hostname: "thumbnailer.mixcloud.com" },

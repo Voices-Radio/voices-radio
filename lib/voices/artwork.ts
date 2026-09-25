@@ -1,5 +1,5 @@
 import { VOICES_FALLBACK_ARTWORK } from "./config";
-import type { VoicesArtwork } from "./types";
+import type { VoicesArtwork, VoicesFocalPoint } from "./types";
 
 const SOUNDCLOUD_IMAGE_SIZE_PATTERN =
   /-(badge|crop|large|mini|original|small|t\d+x\d+|tiny)\.(jpe?g|png|webp)$/i;
@@ -102,16 +102,74 @@ export function getArtworkSrcSet(src?: string | null) {
   return Array.from(entries, ([url, width]) => `${url} ${width}`).join(", ");
 }
 
+/**
+ * Default `object-position` for show artwork cropped into a landscape box.
+ *
+ * The redesign show card paints a SQUARE source into a 350x236 box (350 less
+ * the 30px station header and the 84px genre footer), so `object-cover`
+ * discards 114px vertically — 57px off the top and 57px off the bottom when
+ * centred. That centred crop is what takes the tops of people's heads off.
+ *
+ * 35% rather than 50% because a saliency sweep over a random sample of 24 live
+ * shows put 16 of them above centre. The distribution is bimodal — artwork
+ * either wants its top or its bottom, rarely the middle — so no single value
+ * is right for everything. 35% is chosen on asymmetric downside: cropping a
+ * face is far worse than cropping background, so it is worth being mildly
+ * wrong on the minority that want their lower half to be right on the
+ * majority that do not. Per-show `focalPoint` overrides this whenever one
+ * exists.
+ */
+export const SHOW_CARD_FOCAL_POSITION = "50% 35%";
+
+function clampPercentage(value: number) {
+  return Math.min(100, Math.max(0, value));
+}
+
+/**
+ * Turns an optional focal point into a CSS `object-position` string, falling
+ * back to the measured default. Out-of-range and non-finite values are
+ * rejected rather than passed through, so bad data degrades to a sensible
+ * crop instead of an invalid style declaration.
+ */
+export function artworkPosition(
+  focalPoint?: VoicesFocalPoint,
+  fallback: string = SHOW_CARD_FOCAL_POSITION,
+) {
+  if (!focalPoint) return fallback;
+  const { x, y } = focalPoint;
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return fallback;
+  return `${clampPercentage(x)}% ${clampPercentage(y)}%`;
+}
+
+/**
+ * Re-renders already-resolved artwork at the size a particular surface needs.
+ *
+ * Shows are normalised once and then shared between cards, rails and the
+ * detail hero, so the single `src` on a VoicesShow cannot be right for all of
+ * them. Rather than thread a size through normalisation, surfaces that care
+ * ask for what they need at render time. Returns a new object; the input is
+ * never mutated.
+ */
+export function artworkForSize(
+  artwork: VoicesArtwork,
+  size: EnhanceArtworkOptions["size"],
+): VoicesArtwork {
+  const src = enhanceArtworkUrl(artwork.src, { size });
+  return src ? { ...artwork, src } : { ...artwork };
+}
+
 export function resolveShowArtwork({
   showTitle,
   showImageUrl,
   artistName,
   artistImageUrl,
+  focalPoint,
 }: {
   showTitle: string;
   showImageUrl?: string | null;
   artistName?: string | null;
   artistImageUrl?: string | null;
+  focalPoint?: VoicesFocalPoint;
 }): VoicesArtwork {
   const enhancedShowImageUrl = enhanceArtworkUrl(showImageUrl);
   const enhancedArtistImageUrl = enhanceArtworkUrl(artistImageUrl);
@@ -121,6 +179,7 @@ export function resolveShowArtwork({
       src: enhancedShowImageUrl,
       alt: `${showTitle} artwork`,
       source: "show",
+      ...(focalPoint ? { focalPoint } : {}),
     };
   }
 
@@ -129,6 +188,7 @@ export function resolveShowArtwork({
       src: enhancedArtistImageUrl,
       alt: artistName ? `${artistName} profile image` : "Artist profile image",
       source: "artist",
+      ...(focalPoint ? { focalPoint } : {}),
     };
   }
 

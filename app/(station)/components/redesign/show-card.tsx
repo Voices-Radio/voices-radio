@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { artworkPosition } from "@/lib/voices/artwork";
 import type { VoicesShow } from "@/lib/voices/types";
 import ArchiveTilePlayButton from "./archive-tile-play-button";
 import SaveShowButton from "./save-show-button";
@@ -64,12 +65,17 @@ export default function ShowCard({
         </div>
 
         <div className="relative min-h-0 flex-1">
+          {/* This box is 350x236, not square, so a square source loses 114px
+              vertically. Centring that crop is what clips heads — see
+              SHOW_CARD_FOCAL_POSITION for why the default sits above centre. */}
           <Image
             src={show.artwork.src}
             alt={show.artwork.alt}
             fill
             sizes="(min-width: 768px) 350px, 88vw"
+            quality={88}
             priority={priority}
+            style={{ objectPosition: artworkPosition(show.artwork.focalPoint) }}
             className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
           <div className="from-black/85 via-black/15 absolute inset-0 bg-gradient-to-t to-transparent" />

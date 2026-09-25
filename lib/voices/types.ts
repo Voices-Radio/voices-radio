@@ -95,10 +95,22 @@ export interface VoicesArtist {
   socialLinks: NonNullable<VoicesArtistRaw["socialLinks"]>;
 }
 
+/**
+ * Where the subject sits inside the frame, as CSS `object-position`
+ * percentages. Optional on purpose: nothing stores one yet, so every consumer
+ * has to cope with its absence. Once shows carry an owned image with a
+ * computed focal point, populating this is the only change needed.
+ */
+export interface VoicesFocalPoint {
+  x: number;
+  y: number;
+}
+
 export interface VoicesArtwork {
   src: string;
   alt: string;
   source: "show" | "artist" | "fallback";
+  focalPoint?: VoicesFocalPoint;
 }
 
 export type VoicesArchiveProvider = VoicesPlatform;
