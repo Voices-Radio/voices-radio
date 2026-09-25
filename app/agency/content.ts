@@ -190,7 +190,12 @@ export type CaseStudy = {
   scale: string;
   proof?: string;
   /** Card header photo. Omitted case studies keep the gradient-only header. */
-  image?: { src: string; alt: string };
+  image?: {
+    src: string;
+    alt: string;
+    /** CSS object-position, for portrait source photos cropped into a wide header - defaults to center. */
+    position?: string;
+  };
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -208,6 +213,10 @@ export const caseStudies: CaseStudy[] = [
       "A formal retained promoter arrangement started in January 2025 and continues into its second year. Between February and July 2026, Voices programmed 33 promoted events across the three spaces.",
     proof:
       "Hackney Bridge publicly credits Voices with creating Nico's DJ line-ups, and the weekly programme continued to be advertised as curated by Voices in 2026. Maria Hanlon presents: Soul Satisfaction was recently selected as a Resident Advisor Pick - an editorial selection showcasing the best events in London.",
+    image: {
+      src: "/agency/hackney-bridge-garden-crowd.webp",
+      alt: "A packed crowd under a marquee and market umbrellas in Hackney Bridge's outdoor Garden space",
+    },
   },
   {
     index: "02",
@@ -224,6 +233,11 @@ export const caseStudies: CaseStudy[] = [
       "Monthly since July 2022, ongoing. More than 40 residency dates delivered.",
     proof:
       "Now in its fourth year, making it the longest continuous music residency Voices holds.",
+    image: {
+      src: "/agency/the-standard-library-lounge.webp",
+      alt: "Guests gathered around the bar in The Standard's book-lined Library Lounge",
+      position: "center 65%",
+    },
   },
   {
     index: "03",
@@ -256,6 +270,11 @@ export const caseStudies: CaseStudy[] = [
     scale:
       "Natural Jazz x Voices Radio runs monthly on first Fridays at Tate Modern's Corner Bar, free to attend.",
     proof: "Natural Jazz x Voices Radio has been featured in Time Out London.",
+    image: {
+      src: "/agency/tate-modern-natural-jazz.webp",
+      alt: "A live trio performing for a seated crowd at Natural Jazz x Voices Radio inside Tate Modern",
+      position: "center 60%",
+    },
   },
   {
     index: "05",
@@ -283,6 +302,11 @@ export const caseStudies: CaseStudy[] = [
       "Aperidisco ran at Hackney Bridge from 13 to 29 June 2025, combining DJ programming, supper clubs with chef Robin Gill, masterclasses and BBQ days.",
     proof:
       "Voices Radio is credited by Aperol in the campaign's public event programme.",
+    image: {
+      src: "/agency/aperol-aperidisco-dj-booth.webp",
+      alt: "A DJ playing vinyl behind the Aperol Spritz branded booth at the Aperidisco residency",
+      position: "center 58%",
+    },
   },
 ];
 
