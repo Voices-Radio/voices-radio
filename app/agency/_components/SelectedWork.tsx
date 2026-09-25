@@ -52,7 +52,7 @@ export function SelectedWork() {
               </details>
 
               <div className="hidden md:flex md:h-full md:flex-col">
-                <div className="min-h-64 relative flex shrink-0 flex-col justify-end overflow-hidden bg-slate-900 p-6 text-white">
+                <div className="relative flex h-72 shrink-0 flex-col justify-end overflow-hidden bg-slate-900 p-6 text-white">
                   <CardHeaderBackground study={study} />
                   <div className="relative z-10">
                     <CaseStudyHeader study={study} />
