@@ -1,4 +1,5 @@
 import { MapPin } from "lucide-react";
+import Image from "next/image";
 import { caseStudies } from "../content";
 
 const fields = (study: (typeof caseStudies)[number]) =>
@@ -32,14 +33,17 @@ export function SelectedWork() {
               className="overflow-hidden rounded-3xl border border-white/10 bg-white text-slate-900 shadow-2xl md:flex md:h-full md:flex-col"
             >
               <details className="group md:hidden">
-                <summary className="cursor-pointer list-none bg-slate-900 p-5 text-white [&::-webkit-details-marker]:hidden">
-                  <CaseStudyHeader study={study} />
-                  <span className="mt-5 inline-flex h-11 items-center rounded-full bg-voices-purple px-4 text-sm font-black text-white">
-                    <span className="group-open:hidden">View details</span>
-                    <span className="hidden group-open:inline">
-                      Hide details
+                <summary className="relative cursor-pointer list-none overflow-hidden bg-slate-900 p-5 text-white [&::-webkit-details-marker]:hidden">
+                  <CardHeaderBackground study={study} />
+                  <div className="relative z-10">
+                    <CaseStudyHeader study={study} />
+                    <span className="mt-5 inline-flex h-11 items-center rounded-full bg-voices-purple px-4 text-sm font-black text-white">
+                      <span className="group-open:hidden">View details</span>
+                      <span className="hidden group-open:inline">
+                        Hide details
+                      </span>
                     </span>
-                  </span>
+                  </div>
                 </summary>
 
                 <div className="grid gap-4 p-5">
@@ -49,14 +53,7 @@ export function SelectedWork() {
 
               <div className="hidden md:flex md:h-full md:flex-col">
                 <div className="min-h-64 relative flex shrink-0 flex-col justify-end overflow-hidden bg-slate-900 p-6 text-white">
-                  {/* TODO: swap for supplied client photography once available */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(135deg, rgba(95, 92, 243, 0.55), rgba(15, 23, 42, 0.96)), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.24), transparent 24%)",
-                    }}
-                  />
+                  <CardHeaderBackground study={study} />
                   <div className="relative z-10">
                     <CaseStudyHeader study={study} />
                   </div>
@@ -71,6 +68,43 @@ export function SelectedWork() {
         </div>
       </div>
     </section>
+  );
+}
+
+function CardHeaderBackground({
+  study,
+}: {
+  study: (typeof caseStudies)[number];
+}) {
+  if (!study.image) {
+    return (
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(135deg, rgba(95, 92, 243, 0.55), rgba(15, 23, 42, 0.96)), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.24), transparent 24%)",
+        }}
+      />
+    );
+  }
+
+  return (
+    <>
+      <Image
+        src={study.image.src}
+        alt={study.image.alt}
+        fill
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        className="object-cover"
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0.55) 55%, rgba(15, 23, 42, 0.92) 100%)",
+        }}
+      />
+    </>
   );
 }
 

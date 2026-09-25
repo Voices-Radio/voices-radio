@@ -189,6 +189,8 @@ export type CaseStudy = {
   delivered: string;
   scale: string;
   proof?: string;
+  /** Card header photo. Omitted case studies keep the gradient-only header. */
+  image?: { src: string; alt: string };
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -236,6 +238,10 @@ export const caseStudies: CaseStudy[] = [
       "As Campfire's retained promoter, Voices curates and promotes the ongoing music programme. That covers regular DJ programming across Thursday, Friday and Saturday trading, plus artist and collective sourcing. It also covers headline-led day parties, guest takeovers, record fairs, showcases and the annual Voices birthday events. Voices also runs a DJ workshop programme for aspiring underrepresented artists that ends with participants playing their first live club set at Campfire.",
     scale:
       "The documented partnership runs from at least June 2022 to the present. Campfire's public venue information describes Voices DJs performing regularly on Thursday, Friday and Saturday evenings.",
+    image: {
+      src: "/agency/two-tribes-birthday-live.webp",
+      alt: "A live performer singing at a keyboard on stage at Two Tribes Campfire, the Two Tribes logo lit up behind her",
+    },
   },
   {
     index: "04",

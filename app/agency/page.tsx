@@ -4,6 +4,7 @@ import { CallToAction } from "./_components/CallToAction";
 import { ClientStrip } from "./_components/ClientStrip";
 import { ContactBlock } from "./_components/ContactBlock";
 import { EngagementFormats } from "./_components/EngagementFormats";
+import { EventMoment } from "./_components/EventMoment";
 import { Footer } from "./_components/Footer";
 import { Hero } from "./_components/Hero";
 import { HowItWorks } from "./_components/HowItWorks";
@@ -57,6 +58,7 @@ export default function AgencyPage() {
       <Proposition />
       <EngagementFormats />
       <WhoWeWorkWith />
+      <EventMoment />
       <SelectedWork />
       <WhyVoices />
       <HowItWorks />
