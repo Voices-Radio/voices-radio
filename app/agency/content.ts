@@ -287,6 +287,11 @@ export const caseStudies: CaseStudy[] = [
     delivered:
       "Voices supplies DJs for in-store events, sourcing and booking talent that suits the brand's heritage and the store's audience, as well as supplying full AV and production, and managing delivery on the day.",
     scale: "Ongoing, across the in-store events programme.",
+    image: {
+      src: "/agency/dr-martens-in-store-decks.webp",
+      alt: "A DJ's hands cueing a record on a turntable during an in-store set",
+      position: "center 55%",
+    },
   },
   {
     index: "06",
