@@ -17,29 +17,30 @@ import {
   resumeAction,
 } from "./actions";
 
-interface SupporterOffer {
-  id: string;
-  name: string;
-  priceMinor: number;
+interface RetentionOffer {
+  amountMinor: number;
+  heading: string;
 }
 
 /**
  * Deliberately non-obstructive (brief requirement): the paid-through date
- * is shown up front, and "Switch to Supporter" is a genuinely equal-weight
+ * is shown up front, and "Reduce contribution" is a genuinely equal-weight
  * peer option next to "Cancel membership" — not a dark-pattern retention
- * flow. After cancelling, Resume has no preview step (the contract has no
- * preview-change action for resume), so it's a plain confirm, not a dialog.
+ * flow. There's no lowest tier to switch to anymore, just the scale
+ * minimum. After cancelling, Resume has no preview step (the contract has
+ * no preview-change action for resume), so it's a plain confirm, not a
+ * dialog.
  */
 export default function CancelFlow({
   status,
   paidThroughAt,
   currency,
-  supporterOffer,
+  retentionOffer,
 }: {
   status: "active" | "grace" | "cancelling";
   paidThroughAt: string | null;
   currency: string;
-  supporterOffer: SupporterOffer | null;
+  retentionOffer: RetentionOffer | null;
 }) {
   const router = useRouter();
   const [resuming, setResuming] = useState(false);
@@ -100,31 +101,31 @@ export default function CancelFlow({
       )}
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-        {supporterOffer && (
+        {retentionOffer && (
           <ConfirmChangeDialog
-            triggerLabel={`Switch to Supporter — ${formatMinorUnits(
-              supporterOffer.priceMinor,
-              currency,
-            )}/month`}
+            triggerLabel={
+              retentionOffer.heading ||
+              `Reduce to ${formatMinorUnits(retentionOffer.amountMinor, currency)}/month`
+            }
             triggerClassName={cn(
               accountSecondaryButtonClassName,
               "h-11 flex-1 px-5 text-center text-sm",
             )}
-            title="Switch to Supporter"
+            title="Reduce your contribution"
             currency={currency}
             loadPreview={() =>
               previewChangeAction({
                 action: "downgrade",
-                toTierId: supporterOffer.id,
+                toAmountMinor: retentionOffer.amountMinor,
               })
             }
-            confirmLabel="Confirm switch"
+            confirmLabel="Confirm reduction"
             onConfirm={async () => {
-              const result = await downgradeAction(supporterOffer.id);
+              const result = await downgradeAction(retentionOffer.amountMinor);
               if (result.ok) {
                 trackMembershipEvent({
                   name: "membership_downgrade_scheduled",
-                  tierId: supporterOffer.id,
+                  amountMinor: retentionOffer.amountMinor,
                 });
               }
               return result;

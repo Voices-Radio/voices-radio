@@ -82,7 +82,7 @@ function jsonInit(body: unknown, idempotencyKey: string): RequestInit {
 
 export function checkout(
   input: {
-    tierId: string;
+    amountMinor: number;
     cadence: "monthly" | "annual";
     successUrl: string;
     cancelUrl: string;
@@ -98,7 +98,7 @@ export function checkout(
 
 export function previewChange(input: {
   action: "upgrade" | "downgrade" | "change_cadence" | "cancel";
-  toTierId?: string;
+  toAmountMinor?: number;
   toCadence?: "monthly" | "annual";
 }): Promise<MutationResult<PreviewChangeResponse>> {
   // Preview has no side effect, so no idempotency key — distinct from the
@@ -114,30 +114,37 @@ export function previewChange(input: {
   );
 }
 
-export function upgrade(toTierId: string, idempotencyKey: string) {
+export function upgrade(toAmountMinor: number, idempotencyKey: string) {
   return authedMutate(
     "/api/membership/upgrade",
     immediateChangeResponseSchema,
-    jsonInit({ toTierId }, idempotencyKey),
+    jsonInit({ toAmountMinor }, idempotencyKey),
   );
 }
 
-export function downgrade(toTierId: string, idempotencyKey: string) {
+export function downgrade(toAmountMinor: number, idempotencyKey: string) {
   return authedMutate(
     "/api/membership/downgrade",
     scheduledChangeResponseSchema,
-    jsonInit({ toTierId }, idempotencyKey),
+    jsonInit({ toAmountMinor }, idempotencyKey),
   );
 }
 
+/**
+ * `toAmountMinor` only matters when switching TO monthly — switching to
+ * annual always resolves to the one active annual price server-side and
+ * ignores it (see contract §5). Optional so the common "just switch"
+ * action from CadenceSwitcher doesn't need to know the scale's default.
+ */
 export function changeCadence(
   toCadence: "monthly" | "annual",
   idempotencyKey: string,
+  toAmountMinor?: number,
 ) {
   return authedMutate(
     "/api/membership/change-cadence",
     scheduledChangeResponseSchema,
-    jsonInit({ toCadence }, idempotencyKey),
+    jsonInit({ toCadence, toAmountMinor }, idempotencyKey),
   );
 }
 

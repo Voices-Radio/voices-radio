@@ -1,30 +1,11 @@
 # Voices Radio Membership — Backend API Contract (frontend requirements)
 
 > Companion to [`voices-membership-frontend-implementation-brief.md`](./voices-membership-frontend-implementation-brief.md).
-> **Status: implemented.** Every `TODO(backend)` below has been resolved and built against — see the "Resolved decisions" note under each section and the final summary. The backend now matches this document; where a decision required a real tradeoff (not just a confirmation), the reasoning is inline so it can be revisited if wrong.
+> **Status: implemented, revised for the sliding-scale change.** Every `TODO(backend)` below has been resolved and built against — see the "Resolved decisions" note under each section and the final summary. The backend now matches this document; where a decision required a real tradeoff (not just a confirmation), the reasoning is inline so it can be revisited if wrong.
+>
+> **2026-09 revision — sliding scale replaces the four named tiers.** Membership is now a single contribution: £3.99–£15.99/month in £1 steps (default £5.99), or a single fixed £40.99/year. There is no `tierId`/`tierKey` anywhere in this contract anymore — every endpoint that referenced one now takes/returns `amountMinor` (checkout, changes) or `contributionAmountMinor` (state). `GET /api/membership/tiers` is renamed to `GET /api/membership/plans` (no deprecation alias — both repos deploy together). Benefits are flat: any live membership qualifies for every active benefit, so `GET /api/membership/benefits` no longer varies by amount. See `docs/plans/sliding-scale-membership.md` for the full rationale and impact analysis. Sections below are updated in place; historical tier language has been removed rather than struck through, since there are no live members to preserve continuity for (pre-launch).
 >
 > The frontend proxies all of this through Next.js route handlers (a BFF) — the browser never calls `api.voicesradio.co.uk` directly, and never sees a raw JWT. See `lib/voices/membership/session.ts` for the proxy implementation.
->
-> ⚠️ **Deployment gap found 2026-08-11**: the frontend (Phases 4–7) is fully built and tested against this contract — see 163 unit tests / 28 E2E tests, all passing against a stub backend that mirrors this document exactly. But `https://api.voicesradio.co.uk` does not yet serve it in production:
-> ```
-> GET /api/auth/validate       -> 401 {"valid":false,...}        (pre-existing, live, as expected)
-> GET /api/membership/tiers    -> 404 {"message":"Route not found"}
-> GET /api/membership/me       -> 404 {"message":"Route not found"}
-> ```
-> So either these routes are only live on a different host (staging?) that isn't documented here, or the deploy to production is still pending. Until one of those is resolved, no real end-to-end run against the live backend is possible — only the stub-backed proof. Please confirm which it is and update this note.
->
-> ⚠️ **Update 2026-08-11, later same day**: backend team pushed commit `469b90a` to `main`, expecting Vercel's GitHub integration to auto-deploy it. Re-checked `https://api.voicesradio.co.uk` after the push (two checks, several seconds apart, same result) — every route now returns a 500, **including the previously-working `/api/auth/validate`**:
-> ```
-> GET /api/auth/validate       -> 500 FUNCTION_INVOCATION_FAILED
-> GET /api/membership/tiers    -> 500 FUNCTION_INVOCATION_FAILED
-> GET /api/membership/me       -> 500 FUNCTION_INVOCATION_FAILED
-> GET /api/membership/benefits -> 500 FUNCTION_INVOCATION_FAILED
-> ```
-> This reads as a bootstrap/import-time crash in the new commit (missing env var, throwing top-level import, DB client construction, etc.) rather than a still-propagating deploy — the build itself likely succeeded since Vercel is serving its runtime-error page, not a build-failure page. It's a regression: auth validation worked fine (401) before this push and is now broken for everyone, not just membership. Needs the Vercel function logs for `469b90a` to diagnose. No staging URL is documented for the backend, so this could not be re-checked against a separate staging host.
->
-> ✅ **Update 2026-08-11, re-checked**: the 500s are gone. Re-probed every route above plus `POST /api/membership/checkout` and `GET /api/membership/profile` (with a deliberately bogus bearer token) — every route now returns correct, contract-shaped responses: `401`s with the right error codes for unauthenticated/invalid-token requests, and `200 {"tiers":[]}` for the public tiers endpoint. Auth enforcement and error envelopes look right across the board.
->
-> ⚠️ **Remaining blocker**: `GET /api/membership/tiers` returns an **empty catalogue** (`{"tiers":[]}`) — not a bug, just no tier data entered yet in this environment. `/join` will correctly show the "pricing unavailable" state (as designed) until tiers are seeded. Full E2E against the real backend (register → checkout → complete → account → manage → redeem) is still blocked on: (1) tiers being populated, (2) Stripe test-mode keys being added, (3) a real test account to sign in with — auth-gated routes can't be meaningfully checked with a bogus token beyond confirming the 401 path.
 
 ## 0. Conventions
 
@@ -55,37 +36,43 @@ The existing `/api/auth/register`, `/api/auth/login`, `/api/auth/refresh`, `/api
 
 ---
 
-## 2. Tiers & pricing — `GET /api/membership/tiers`
+## 2. The sliding scale — `GET /api/membership/plans`
 
-Returns the four launch tiers. This is presentation data (name, description) plus **authoritative price** — the number actually charged, which the frontend reconciles against Sanity CMS copy (Sanity is copy-only; this endpoint is the source of truth for money).
+Returns the monthly scale (every currently valid amount, £3.99–£15.99) and the single fixed annual price. This is **authoritative price** — the numbers actually charged, resolved from our own `PriceVersion` collection, never from Sanity (Sanity is copy-only). The annual discount is derived server-side from the live prices, floored, and included so the frontend never computes or hardcodes it itself.
 
 ```jsonc
 {
-  "tiers": [
-    {
-      "id": "supporter",
-      "name": "Supporter",
-      "monthlyPriceMinor": 400,
-      "annualPriceMinor": 4000,
-      "currency": "gbp",
-      "mostPopular": false,
-      "sortOrder": 1
-    },
-    {
-      "id": "member",
-      "name": "Member",
-      "monthlyPriceMinor": 800,
-      "annualPriceMinor": 8000,
-      "currency": "gbp",
-      "mostPopular": true,
-      "sortOrder": 2
-    }
-    // insider (£15/£150), patron (£30/£300)
-  ]
+  "scale": {
+    "minMinor": 399,
+    "maxMinor": 1599,
+    "defaultMinor": 599,
+    "currency": "gbp",
+    "points": [
+      { "amountMinor": 399, "priceVersionId": "..." },
+      { "amountMinor": 499, "priceVersionId": "..." }
+      // ... £1 steps up to 1599
+    ]
+  },
+  "annual": {
+    "amountMinor": 4099,
+    "currency": "gbp",
+    "priceVersionId": "...",
+    "comparedToMonthlyMinor": 4788, // cheapest active monthly price × 12
+    "savingMinor": 689,
+    "discountPercent": 14 // floor()'d — never rounds up, never overstates the saving
+  }
 }
 ```
 
-**Resolved**: tier `id` slugs are exactly `supporter` / `member` / `insider` / `patron`, immutable at the model level (`models/Tier.js` marks `key` as `immutable: true` once created) — they cannot change post-launch without a deliberate migration.
+**Resolved**: every `amountMinor` accepted anywhere in this contract (checkout, upgrade, downgrade) must be one of the `points[].amountMinor` values returned here for the relevant cadence, or the fixed `annual.amountMinor` — the backend validates every amount server-side against the active `PriceVersion` catalogue regardless of what this endpoint last returned, so a stale client-side copy of the scale can never be exploited to charge an unavailable amount.
+
+**Resolved**: `annual` is `null` if no annual price is currently active — the frontend should hide the annual toggle entirely in that case, not show a broken price.
+
+---
+
+## 2a. What replaced tiers
+
+There is no tier ladder. A member's benefits do not depend on how much they contribute — see section 6. The only two axes are **amount** (the monthly scale point, or the fixed annual price) and **cadence** (`monthly` | `annual`). Every place the old contract took a `tierId`/`toTierId` now takes `amountMinor`/`toAmountMinor`; every place it returned a `tierId` now returns `contributionAmountMinor`.
 
 ---
 
@@ -95,12 +82,14 @@ Request:
 
 ```jsonc
 {
-  "tierId": "member",
+  "amountMinor": 799, // must be a valid scale point (monthly) or the fixed annual price
   "cadence": "monthly", // "monthly" | "annual"
   "successUrl": "https://voicesradio.co.uk/join/complete",
   "cancelUrl": "https://voicesradio.co.uk/join"
 }
 ```
+
+**Resolved — the amount allowlist (security-relevant)**: `amountMinor` arrives from the browser via the slider, so it is validated twice before it can ever reach Stripe: first against the fixed scale shape (`utils/membershipScale.js`'s `isValidAmount()` — off-step or out-of-range amounts are rejected with `VALIDATION_FAILED` before any DB call), then by resolving an **active** `PriceVersion` for that exact `(cadence, amountMinor)` pair (`PRICE_UNAVAILABLE` if none exists). There is no code path that constructs a Stripe `price_data` object from the request — checkout only ever uses a `stripePriceId` already sitting on a pre-seeded `PriceVersion`. See `docs/plans/sliding-scale-membership.md` R1.
 
 Response:
 
@@ -122,13 +111,13 @@ The single source of truth the dashboard and `/account/membership` render from. 
 ```jsonc
 {
   "status": "active", // see enum below
-  "tierId": "member",
+  "contributionAmountMinor": 4099,
   "cadence": "annual",
-  "priceMinor": 8000,
+  "priceMinor": 4099,
   "currency": "gbp",
   "renewsAt": "2027-09-05T00:00:00Z",
   "paidThroughAt": "2027-09-05T00:00:00Z",
-  "scheduledChange": null, // or { "type": "downgrade", "toTierId": "supporter", "effectiveAt": "..." }
+  "scheduledChange": null, // or { "type": "downgrade", "toAmountMinor": 799, "toCadence": "monthly", "effectiveAt": "..." }
   "isFoundingMember": true,
   "paymentIssue": null // or { "code": "CARD_DECLINED", "gracePeriodEndsAt": "..." }
 }
@@ -146,7 +135,7 @@ The single source of truth the dashboard and `/account/membership` render from. 
 | `pending_reconciliation` | Payment succeeded, reconciliation pending | see below |
 | `null` (not a string) | *(new — not in the brief's enum)* | no Membership exists at all: this user never checked out. Render as "not a member yet", distinct from `expired` ("was a member, isn't now"). |
 
-**Resolved — `scheduled_downgrade` is NOT a distinct status.** It's always `status: "active"` (or `"cancelling"`) + a populated `scheduledChange: { type, toTierId, effectiveAt }`. Check `scheduledChange !== null`, not a status string.
+**Resolved — `scheduled_downgrade` is NOT a distinct status.** It's always `status: "active"` (or `"cancelling"`) + a populated `scheduledChange: { type, toAmountMinor, toCadence, effectiveAt }`. Check `scheduledChange !== null`, not a status string.
 
 **Resolved — `pending_reconciliation` is real and implemented**: the Membership row is now created *eagerly*, at checkout-session creation, in an `incomplete` state — not first-created by the webhook. `GET /api/membership/me` maps `incomplete` → `pending_reconciliation` from the moment `/checkout` is called, closing the gap where a fast poll right after the Stripe redirect could otherwise see nothing at all.
 
@@ -154,12 +143,12 @@ The single source of truth the dashboard and `/account/membership` render from. 
 
 ## 5. Membership changes
 
-All of these need a **preview** step, because the brief requires showing the financial/date consequence before the member confirms:
+All of these need a **preview** step, because the brief requires showing the financial/date consequence before the member confirms. "Upgrade" now means "increase your contribution amount" and "downgrade" means "decrease" it — there is no tier ladder, just amount comparison at the same cadence.
 
-- `POST /api/membership/preview-change` — body `{ "action": "upgrade" | "downgrade" | "change_cadence" | "cancel", "toTierId"?, "toCadence"? }` → returns `{ "effectiveAt", "priceMinor", "proratedAmountMinor"?, "description" }`.
-- `POST /api/membership/upgrade` — body `{ "toTierId" }`. Immediate. Response: `{ applied: "immediate", tierId, cadence, scheduledChange: null, unlockedBenefits: [...] }` — `unlockedBenefits` is the full `GET /benefits`-shaped array, computed fresh post-upgrade, so the success screen can render it without a second round trip.
-- `POST /api/membership/downgrade` — body `{ "toTierId" }`. Scheduled for next renewal; current tier's benefits remain until then. Response: `{ applied: "scheduled", tierId (unchanged today), cadence, scheduledChange: { type: "downgrade", toTierId, effectiveAt } }`.
-- `POST /api/membership/change-cadence` — body `{ "toCadence" }`. Same scheduled shape as downgrade, `scheduledChange.type: "change_cadence"`.
+- `POST /api/membership/preview-change` — body `{ "action": "upgrade" | "downgrade" | "change_cadence" | "cancel", "toAmountMinor"?, "toCadence"? }` → returns `{ "effectiveAt", "priceMinor", "proratedAmountMinor"?, "description" }`. For `change_cadence`, `toAmountMinor` is optional (see `/change-cadence` below for how the target amount resolves).
+- `POST /api/membership/upgrade` — body `{ "toAmountMinor" }`, must be a valid scale point strictly higher than the member's current amount. Immediate. Response: `{ applied: "immediate", contributionAmountMinor, cadence, scheduledChange: null, unlockedBenefits: [...] }` — `unlockedBenefits` is the full `GET /benefits`-shaped array (unaffected by the amount change now that benefits are flat — see section 6 — but still returned for a consistent response shape and so a future non-flat benefit doesn't need a contract change).
+- `POST /api/membership/downgrade` — body `{ "toAmountMinor" }`, must be a valid scale point strictly lower than the current amount. Scheduled for next renewal; current access (including benefits) remains until then. Response: `{ applied: "scheduled", contributionAmountMinor (unchanged today), cadence, scheduledChange: { type: "downgrade", toAmountMinor, effectiveAt } }`.
+- `POST /api/membership/change-cadence` — body `{ "toCadence", "toAmountMinor"? }`. Monthly and annual are not two prices on the same tier anymore, so there is no automatic "equivalent" amount across a cadence switch: switching **to annual** always resolves to the one active annual price (`toAmountMinor` is ignored if sent); switching **to monthly** uses the supplied `toAmountMinor` if valid, else defaults to the scale's default amount (£5.99) rather than erroring. Same scheduled response shape as downgrade, `scheduledChange.type: "change_cadence"`.
 - `POST /api/membership/cancel` — body may include a `reason`. Response: `{ status: "cancelling", paidThroughAt }`.
 - `POST /api/membership/resume` — only valid while `status === "cancelling"` and the paid-through date hasn't passed (`MEMBERSHIP_LAPSED` error if it has). Response: `{ status: "active" }`.
 - **Resolved — payment-method update**: hosted, via `POST /api/membership/portal-session` (body: `{ returnUrl? }` → `{ url }`, a Stripe Customer Portal deep link). Chosen over a dedicated client-secret/embedded-form endpoint specifically to keep zero PCI scope on our side and inherit Stripe's own SCA/3DS handling — `/account/membership`'s "manage payment" action should be a redirect, not an embedded form.
@@ -170,7 +159,9 @@ All of these need a **preview** step, because the brief requires showing the fin
 
 ## 6. Entitlements — `GET /api/membership/benefits`
 
-Server-authoritative per-member benefit list. The frontend renders **only** what this returns — never infers entitlement from the tier held in client state.
+Server-authoritative per-member benefit list. The frontend renders **only** what this returns — never infers entitlement from anything held in client state.
+
+**Resolved — benefits are flat.** Any live membership (any contribution amount, £3.99 minimum) is eligible for every active benefit — there is no amount or tier threshold. There is currently exactly one seeded benefit (`submission_eligibility`); the array shape below still returns a list (not a single object) so adding a second benefit later is additive, not a contract change.
 
 ```jsonc
 {
@@ -253,7 +244,7 @@ The frontend's `/join/complete` page lands here immediately after Stripe redirec
 
 ## 11. Founding member cohort
 
-**Resolved**: `isFoundingMember` is true for the first 250 memberships to record a **successful first payment** (any tier, either cadence). Complimentary and admin-granted memberships are explicitly excluded from the count. The badge is permanent — it is never revoked if the member later cancels or churns. Allocation is atomic under concurrency (an atomic capped counter increment, not a count-then-write) and capped at exactly 250 regardless of how many payments land simultaneously — see `services/FoundingMemberService.js`. The frontend just renders the boolean, as assumed; badge copy is CMS-driven, as assumed.
+**Resolved**: `isFoundingMember` is true for the first 250 memberships to record a **successful first payment** (any contribution amount, either cadence). Complimentary and admin-granted memberships are explicitly excluded from the count. The badge is permanent — it is never revoked if the member later cancels or churns. Allocation is atomic under concurrency (an atomic capped counter increment, not a count-then-write) and capped at exactly 250 regardless of how many payments land simultaneously — see `services/FoundingMemberService.js`. The frontend just renders the boolean, as assumed; badge copy is CMS-driven, as assumed.
 
 ---
 
@@ -264,7 +255,7 @@ All fifteen were open questions when this document was written; all are now impl
 1. **CORS**: no action needed for the BFF's server-to-server calls (no browser `Origin` header sent). Direct browser calls to the API are a separate, lower-priority gap — see section 1.
 2. Email verification does **not** block checkout.
 3. Path prefix is `/api/membership/*` as assumed; error envelope is `{ error: { code, message } }` as assumed.
-4. Tier `id` slugs confirmed and made immutable at the model level.
+4. ~~Tier `id` slugs confirmed and made immutable at the model level.~~ Superseded 2026-09: tiers removed entirely in favour of a sliding-scale contribution — see the revision note at the top of this document.
 5. Idempotency: `Idempotency-Key` header on checkout (passed to Stripe natively) and on every membership-change endpoint (10-minute response replay).
 6. Stripe does not auto-append `session_id` — the backend does it for you.
 7. Kept as account-before-checkout; not changed.
@@ -278,63 +269,3 @@ All fifteen were open questions when this document was written; all are now impl
 15. Founding-member cohort: first 250 successful first payments, permanent, excludes comps/admin grants, concurrency-safe.
 
 One thing found during implementation that wasn't a question in this document: the upgrade endpoint's response now includes `unlockedBenefits` (the full post-upgrade benefit list), matching section 5's "show these immediately on success" requirement — flagging since it wasn't in the original request/response examples above.
-
----
-
-## 🔴 Bug found during FE E2E — 2026-08-12: every scheduled change 500s after an immediate upgrade overtakes one
-
-**Update, same day**: broader than first scoped — this isn't downgrade-specific. `change-cadence` fails identically:
-
-```
-POST /api/membership/downgrade      {"toTierId":"insider"}   (adjacent tier)
-POST /api/membership/downgrade      {"toTierId":"supporter"} (skip-tier)
-POST /api/membership/change-cadence {"toCadence":"annual"}
-→ all three: 500 {"error":{"code":"INTERNAL","message":"Failed to <downgrade|change cadence>"}}
-```
-
-**Reproduced live** against `jonslow4@gmail.com` (Stripe test mode), both via the real `/account/membership` UI and directly against the API. Not tier- or action-specific — adjacent-tier downgrade, skip-tier downgrade, and cadence change all fail identically from the account's current tier (Patron). `preview-change` succeeds (200) for all three; only the confirm step 500s. The account can currently *preview* any scheduled change but never complete one — immediate upgrades are the only mutation still working on it.
-
-This matches the root-cause hypothesis below exactly: both `/downgrade` and `/change-cadence` route through the same scheduled branch of `applyChange` (`services/MembershipChangeService.js:121-171`), so anything reaching that branch hits the same orphaned-schedule collision.
-
-**✅ Fixed — 2026-08-12, `d11e2a4`.** Re-verified live against the same account, same two endpoints:
-
-```
-POST /api/membership/change-cadence {"toCadence":"annual"}
-→ 200 {"applied":"scheduled","scheduledChange":{"type":"change_cadence", ..., "stripeScheduleId":"sub_sched_1U3cryGcvYl5L8Letz8lew5S"}}
-
-POST /api/membership/downgrade {"toTierId":"insider"}
-→ 200 {"applied":"scheduled","scheduledChange":{"type":"downgrade", ..., "stripeScheduleId":"sub_sched_1U3cryGcvYl5L8Letz8lew5S"}}
-```
-
-Both succeed, and — worth noting — the second call reused the *same* `stripeScheduleId` rather than erroring, which is exactly the "member changes their mind about the target, replace the existing schedule's phase" path the original code comment described. That path now works too, not just the create-fresh path. Full state-matrix suite re-run below.
-
-**Sequence that produced it**, all against the same account, in order:
-1. Checkout → active/supporter (immediate).
-2. Upgrade → member (immediate).
-3. Downgrade → supporter, scheduled — `MembershipChangeService.applyChange`'s scheduled branch creates a Stripe Subscription Schedule ("schedule A").
-4. Cancel while that downgrade was pending — correctly releases schedule A (`changes.js:159-162`) before setting `cancel_at_period_end`. This step is fine, and is the "cancelling wins" regression you fixed on the 11th — confirmed still correct.
-5. Resume — clean, only touches `cancel_at_period_end`.
-6. Switch to annual billing, scheduled — creates a fresh Stripe schedule ("schedule B"), correctly, since step 4 had cleared `scheduledChange` in Mongo.
-7. **Upgrade → insider (immediate)**, with schedule B still attached and un-released.
-
-**Root-cause hypothesis** (code-level, not confirmed against your Stripe dashboard — flagging confidence honestly): the *immediate* branch of `applyChange` (`services/MembershipChangeService.js:100-118`) calls `stripe.subscriptions.update()` directly and sets `membership.scheduledChange = null` (line 113), but — unlike `cancel` (`routes/membership/changes.js:159-160`) — never calls `stripe.subscriptionSchedules.release()` first. If a schedule is attached when an immediate upgrade happens, Mongo forgets about it (`scheduledChange` is now `null`) while Stripe still has it attached. The next scheduled-change attempt takes the `else` branch at `MembershipChangeService.js:129-131`, sees no `stripeScheduleId` on the Mongo doc, and calls `subscriptionSchedules.create({ from_subscription: ... })` — which is exactly the rejection the comment on lines 122-128 already anticipated for a *different* trigger ("attempting create() while one already exists"), just reached via this path instead of the one it was written to guard against.
-
-If right, the fix is symmetric with `cancel`'s: release any attached schedule (`membership.scheduledChange?.stripeScheduleId`) as part of the immediate-upgrade branch, before nulling the field.
-
-**Impact**: any member who schedules a downgrade or cadence change, then changes their mind and upgrades immediately instead (a plausible real flow, not an edge case), permanently loses the ability to schedule *any* future downgrade or cadence change — every attempt 500s. Worth checking whether `jonslow4@gmail.com` is the only account currently in this state or whether it's been hit elsewhere.
-
----
-
-## 🟡 Frontend finding — 2026-08-12: live-player-bar contrast, out of scope for this branch
-
-`axe` (`tests/staging/accessibility.spec.ts`, `/account` scan) flagged a marginal AA contrast failure on the persistent live-player bar rendered on every page, including the homepage:
-
-```
-color-contrast: #756f6b on #f8efe0 → 4.34:1 (needs 4.5:1 for normal text)
-```
-
-Not caused by, or fixable within, the membership work on `staging/redesign-preview` — the player bar is a shared, site-wide component untouched by any file in Phases 4–7, and the same contrast ratio is present on pages with no membership content at all (confirmed on `/`). It's a real, pre-existing AA violation (fails by a small margin — 0.16 short of threshold), not a false positive like the earlier zoom-reflow test artifact.
-
-**Not fixed here** — flagging for its own ticket rather than bundling an unrelated visual change into this branch. Likely the same class of fix as `voicesNext.orangeText` in `tailwind.config.js`: darken/lighten one of the two tokens by a small, hue-preserved amount until it clears 4.5:1, then audit for other places `#756f6b`-on-`#f8efe0` (or equivalent token pairing) is reused.
-
-**Not fixed here** — this is `voices_backend`, out of scope for the frontend branch this session is testing. Frontend behavior is correct throughout: the confirm-dialog UI surfaced the backend's own error text (`"Failed to downgrade"`) rather than masking it, which is exactly what the error-envelope work from earlier today was for.

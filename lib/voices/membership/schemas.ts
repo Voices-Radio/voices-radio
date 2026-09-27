@@ -28,20 +28,40 @@ function nullish<T extends z.ZodTypeAny>(schema: T) {
 
 export const membershipCadenceApiSchema = z.enum(["monthly", "annual"]);
 
-export const membershipTierApiSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  monthlyPriceMinor: z.number().int().nonnegative(),
-  annualPriceMinor: z.number().int().nonnegative(),
-  currency: z.string(),
-  mostPopular: z.boolean(),
-  sortOrder: z.number(),
+// GET /api/membership/plans (contract §2) — the sliding scale, not a list
+// of named tiers. `points` is every currently valid monthly amount;
+// `annual` is the single fixed price, or null if none is active.
+export const membershipScalePointApiSchema = z.object({
+  amountMinor: z.number().int().positive(),
+  priceVersionId: z.string(),
 });
-export type MembershipTierApi = z.infer<typeof membershipTierApiSchema>;
 
-export const tiersResponseSchema = z.object({
-  tiers: z.array(membershipTierApiSchema),
+export const membershipScaleApiSchema = z.object({
+  minMinor: z.number().int().positive(),
+  maxMinor: z.number().int().positive(),
+  defaultMinor: z.number().int().positive(),
+  currency: z.string(),
+  points: z.array(membershipScalePointApiSchema),
 });
+
+export const membershipAnnualApiSchema = z
+  .object({
+    amountMinor: z.number().int().positive(),
+    currency: z.string(),
+    priceVersionId: z.string(),
+    comparedToMonthlyMinor: z.number().int().optional(),
+    savingMinor: z.number().int().optional(),
+    discountPercent: z.number().int().optional(),
+  })
+  .nullable();
+
+export const membershipPlansResponseSchema = z.object({
+  scale: membershipScaleApiSchema,
+  annual: membershipAnnualApiSchema,
+});
+export type MembershipScaleApi = z.infer<typeof membershipScaleApiSchema>;
+export type MembershipAnnualApi = z.infer<typeof membershipAnnualApiSchema>;
+export type MembershipPlansApi = z.infer<typeof membershipPlansResponseSchema>;
 
 // Backs the homepage supporter wall (membership-client.ts getSupporters).
 // Deliberately just { name } — the backend endpoint never returns anything
@@ -73,7 +93,7 @@ export type MembershipStatus = z.infer<typeof membershipStatusSchema>;
 export const scheduledChangeSchema = z
   .object({
     type: z.enum(["downgrade", "change_cadence"]),
-    toTierId: z.string().optional(),
+    toAmountMinor: z.number().int().nonnegative().optional(),
     toCadence: membershipCadenceApiSchema.optional(),
     effectiveAt: z.string(),
   })
@@ -90,7 +110,7 @@ export type PaymentIssue = z.infer<typeof paymentIssueSchema>;
 
 export const membershipStateSchema = z.object({
   status: membershipStatusSchema,
-  tierId: nullish(z.string()),
+  contributionAmountMinor: nullish(z.number().int().nonnegative()),
   cadence: nullish(membershipCadenceApiSchema),
   priceMinor: nullish(z.number().int().nonnegative()),
   currency: nullish(z.string()),
@@ -146,7 +166,7 @@ export type PreviewChangeResponse = z.infer<typeof previewChangeResponseSchema>;
 
 export const immediateChangeResponseSchema = z.object({
   applied: z.literal("immediate"),
-  tierId: z.string(),
+  contributionAmountMinor: z.number().int().nonnegative(),
   cadence: membershipCadenceApiSchema,
   scheduledChange: z.null(),
   unlockedBenefits: z.array(benefitSchema),
@@ -154,7 +174,7 @@ export const immediateChangeResponseSchema = z.object({
 
 export const scheduledChangeResponseSchema = z.object({
   applied: z.literal("scheduled"),
-  tierId: z.string(),
+  contributionAmountMinor: z.number().int().nonnegative(),
   cadence: membershipCadenceApiSchema,
   scheduledChange: scheduledChangeSchema,
 });

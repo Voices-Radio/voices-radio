@@ -1,5 +1,17 @@
 # Voices Radio Membership Programme — Frontend Implementation Brief
 
+> **2026-09 revision — superseded on pricing.** This brief's four named tiers
+> (Supporter/Member/Insider/Patron) and their fixed prices have been replaced
+> by a single sliding-scale contribution: £3.99–£15.99/month in £1 steps
+> (default £5.99), or a fixed £40.99/year. Every "tier" reference below is
+> historical context for *why* the original launch worked the way it did —
+> the actual implementation now follows
+> [`docs/plans/sliding-scale-membership.md`](./plans/sliding-scale-membership.md)
+> and the revised
+> [`voices-membership-backend-api-contract.md`](./voices-membership-backend-api-contract.md).
+> Benefits are flat under the new model: any live membership qualifies for
+> every active benefit, regardless of contribution amount.
+
 ## Purpose
 
 Build the customer-facing membership experience for Voices Radio: discovery, signup, payment handoff, onboarding, member account management and benefit redemption.

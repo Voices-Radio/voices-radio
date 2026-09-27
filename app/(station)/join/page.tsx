@@ -1,20 +1,21 @@
 import { PortableText } from "@portabletext/react";
 import type { Metadata } from "next";
-import { getMembershipPage, getMembershipTiers } from "@/sanity.client";
+import { getMembershipPage } from "@/sanity.client";
 import {
-  mergeMembershipTiers,
+  mergeMembershipScale,
+  mergeMembershipAnnual,
   withMembershipCopyFallback,
 } from "@/lib/voices/membership/constants";
 import { parseMembershipCadence } from "@/lib/voices/membership/types";
-import { getTiers } from "@/lib/voices/membership/membership-client";
+import { getPlans } from "@/lib/voices/membership/membership-client";
 import { getSession } from "@/lib/voices/membership/session";
-import TierComparison from "../components/membership/tier-comparison";
+import ContributionSummary from "../components/membership/contribution-summary";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/join" },
   title: "Join Voices Radio",
   description:
-    "Compare Voices Radio membership tiers and choose monthly or annual billing.",
+    "Support Voices Radio with a monthly or annual contribution, from £3.99 a month.",
 };
 
 export default async function JoinPage({
@@ -22,11 +23,10 @@ export default async function JoinPage({
 }: {
   searchParams: Promise<{ cadence?: string; checkoutError?: string }>;
 }) {
-  const [cmsCopy, cmsTiers, tiersResult, session, resolvedSearchParams] =
+  const [cmsCopy, plansResult, session, resolvedSearchParams] =
     await Promise.all([
       getMembershipPage(),
-      getMembershipTiers(),
-      getTiers(),
+      getPlans(),
       getSession(),
       searchParams,
     ]);
@@ -42,7 +42,7 @@ export default async function JoinPage({
   // truth for what's actually charged (contract §2). If it's unreachable,
   // show an honest "unavailable" state rather than a hardcoded price a
   // visitor might not actually be charged.
-  if (!tiersResult.ok) {
+  if (!plansResult.ok) {
     return (
       <main
         id="main-content"
@@ -52,13 +52,14 @@ export default async function JoinPage({
           Pricing is temporarily unavailable
         </h1>
         <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
-          {tiersResult.message}
+          {plansResult.message}
         </p>
       </main>
     );
   }
 
-  const tiers = mergeMembershipTiers(tiersResult.data, cmsTiers);
+  const scale = mergeMembershipScale(plansResult.data.scale);
+  const annual = mergeMembershipAnnual(plansResult.data.annual);
 
   return (
     <main
@@ -86,10 +87,12 @@ export default async function JoinPage({
         </p>
       )}
 
-      <TierComparison
-        tiers={tiers}
+      <ContributionSummary
+        scale={scale}
+        annual={annual}
         cadence={cadence}
         ctaBasePath={ctaBasePath}
+        scaleBody={copy.join_scale_body}
       />
 
       <p className="mx-auto mt-10 max-w-2xl text-center font-asap text-sm leading-relaxed text-voicesNext-cream/70">

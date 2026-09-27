@@ -58,22 +58,6 @@ export default defineType({
       rows: 4,
     }),
     defineField({
-      name: "availableTierIds",
-      title: "Available to tiers",
-      description:
-        "Tier ids that unlock this benefit (presentation only — actual entitlement is server-authoritative).",
-      type: "array",
-      of: [{ type: "string" }],
-      options: {
-        list: [
-          { title: "Supporter", value: "supporter" },
-          { title: "Member", value: "member" },
-          { title: "Insider", value: "insider" },
-          { title: "Patron", value: "patron" },
-        ],
-      },
-    }),
-    defineField({
       name: "isCapacityLimited",
       title: "Capacity limited",
       description:

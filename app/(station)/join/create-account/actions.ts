@@ -7,6 +7,7 @@ import {
 } from "@/lib/voices/membership/auth-client";
 import { setSessionCookies } from "@/lib/voices/membership/session";
 import { startCheckout } from "@/lib/voices/membership/start-checkout";
+import { parseAmountMinor } from "@/lib/voices/membership/types";
 
 const schema = z.object({
   firstName: z.string().min(1, "Enter your first name."),
@@ -17,7 +18,7 @@ const schema = z.object({
     .email("Enter a valid email address."),
   password: z.string().min(8, "Use at least 8 characters."),
   newsletters: z.string().optional(),
-  tier: z.string().optional(),
+  amount: z.string().optional(),
   cadence: z.string().optional(),
 });
 
@@ -67,7 +68,7 @@ export async function createAccountAction(
     email: formData.get("email"),
     password: formData.get("password"),
     newsletters: formData.get("newsletters") ?? undefined,
-    tier: formData.get("tier") || undefined,
+    amount: formData.get("amount") || undefined,
     cadence: formData.get("cadence") || undefined,
   });
 
@@ -94,7 +95,7 @@ export async function createAccountAction(
     };
   }
 
-  const { email, password, firstName, lastName, newsletters, tier, cadence } =
+  const { email, password, firstName, lastName, newsletters, amount, cadence } =
     parsed.data;
 
   const registerResult = await backendRegister({
@@ -134,7 +135,7 @@ export async function createAccountAction(
     // returns; it only comes back here on failure, with the account
     // already created and the member already signed in, so we show the
     // checkout error rather than losing that progress.
-    const failure = await startCheckout(tier, cadence);
+    const failure = await startCheckout(parseAmountMinor(amount), cadence);
     return { status: "checkout_error", message: failure.message };
   }
 

@@ -14,7 +14,6 @@ import podcastType from "./schemas/podcast";
 import servicesType from "./schemas/services";
 import eventType from "./schemas/event";
 import membershipPageType from "./schemas/membershipPage";
-import membershipTierType from "./schemas/membershipTier";
 import membershipBenefitType from "./schemas/membershipBenefit";
 
 const schemaTypes = [
@@ -30,7 +29,6 @@ const schemaTypes = [
   mainBlogType,
   eventType,
   membershipPageType,
-  membershipTierType,
   membershipBenefitType,
 ];
 

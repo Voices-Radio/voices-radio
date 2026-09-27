@@ -21,7 +21,7 @@ export interface ArtistCapabilityProfile {
 
 export interface MemberCapabilityProfile {
   status: string | null;
-  tierId: string | null;
+  contributionAmountMinor: number | null;
   cadence: "monthly" | "annual" | string | null;
 }
 

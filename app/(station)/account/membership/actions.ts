@@ -28,7 +28,7 @@ export type PreviewResult =
  */
 export async function previewChangeAction(input: {
   action: "upgrade" | "downgrade" | "change_cadence" | "cancel";
-  toTierId?: string;
+  toAmountMinor?: number;
   toCadence?: "monthly" | "annual";
 }): Promise<PreviewResult> {
   const result = await previewChange(input);
@@ -49,13 +49,17 @@ function afterMutation(result: { ok: boolean; message?: string }): ActionResult 
   return { ok: false, message: result.message ?? "Something went wrong." };
 }
 
-export async function upgradeAction(toTierId: string): Promise<ActionResult> {
-  const result = await upgrade(toTierId, crypto.randomUUID());
+export async function upgradeAction(
+  toAmountMinor: number,
+): Promise<ActionResult> {
+  const result = await upgrade(toAmountMinor, crypto.randomUUID());
   return afterMutation(result);
 }
 
-export async function downgradeAction(toTierId: string): Promise<ActionResult> {
-  const result = await downgrade(toTierId, crypto.randomUUID());
+export async function downgradeAction(
+  toAmountMinor: number,
+): Promise<ActionResult> {
+  const result = await downgrade(toAmountMinor, crypto.randomUUID());
   return afterMutation(result);
 }
 

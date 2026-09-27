@@ -27,9 +27,9 @@ const { startCheckout } =
   await import("@/lib/voices/membership/start-checkout");
 const { GET } = await import("./route");
 
-function requestWith(tier?: string, cadence?: string) {
+function requestWith(amount?: string, cadence?: string) {
   const params = new URLSearchParams();
-  if (tier) params.set("tier", tier);
+  if (amount) params.set("amount", amount);
   if (cadence) params.set("cadence", cadence);
   return new NextRequest(
     `https://staging.voicesradio.co.uk/join/checkout?${params.toString()}`,
@@ -49,22 +49,34 @@ describe("GET /join/checkout", () => {
       throw new RedirectSignal("/sign-in?next=%2Fjoin%2Fcheckout");
     });
 
-    await expect(GET(requestWith("member", "monthly"))).rejects.toThrow(
+    await expect(GET(requestWith("799", "monthly"))).rejects.toThrow(
       RedirectSignal,
     );
     expect(startCheckout).not.toHaveBeenCalled();
   });
 
-  it("passes tier/cadence straight through to startCheckout", async () => {
+  it("passes the parsed amount/cadence straight through to startCheckout", async () => {
     vi.mocked(startCheckout).mockImplementation(() => {
       throw new RedirectSignal("https://checkout.stripe.com/cs_123");
     });
 
-    await expect(GET(requestWith("member", "annual"))).rejects.toThrow(
+    await expect(GET(requestWith("799", "annual"))).rejects.toThrow(
       RedirectSignal,
     );
 
-    expect(startCheckout).toHaveBeenCalledWith("member", "annual");
+    expect(startCheckout).toHaveBeenCalledWith(799, "annual");
+  });
+
+  it("passes undefined to startCheckout for a missing/invalid amount, rather than a bad number", async () => {
+    vi.mocked(startCheckout).mockImplementation(() => {
+      throw new RedirectSignal("https://checkout.stripe.com/cs_123");
+    });
+
+    await expect(GET(requestWith("not-a-number", "monthly"))).rejects.toThrow(
+      RedirectSignal,
+    );
+
+    expect(startCheckout).toHaveBeenCalledWith(undefined, "monthly");
   });
 
   it("redirects to /join with the failure message when startCheckout fails", async () => {
@@ -73,7 +85,7 @@ describe("GET /join/checkout", () => {
       message: "Pricing is temporarily unavailable. Please try again shortly.",
     });
 
-    await expect(GET(requestWith("member", "monthly"))).rejects.toThrow(
+    await expect(GET(requestWith("799", "monthly"))).rejects.toThrow(
       RedirectSignal,
     );
 

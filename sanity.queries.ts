@@ -775,29 +775,21 @@ export interface MembershipPage {
   join_heading: string;
   join_subheading?: string;
   join_ballot_disclaimer: string;
+  /** Shown near the slider — what a member's contribution funds, tier-free copy. */
+  join_scale_body?: string;
 
   faqs?: MembershipFaq[];
 
   dashboard_announcement?: string;
   founding_member_badge_text: string;
   cancellation_copy?: string;
-  supporter_downgrade_offer_heading?: string;
-  supporter_downgrade_offer_body?: string;
-}
-
-export const membershipTiersQuery = groq`*[_type == "membershipTier" && ${notFutureDated}] | order(sortOrder asc)`;
-
-export interface MembershipTier {
-  _id: string;
-  tierId: { current: string };
-  name: string;
-  headline: string;
-  description?: string;
-  monthlyPriceDisplay: string;
-  annualPriceDisplay: string;
-  benefitBullets: string[];
-  mostPopular?: boolean;
-  sortOrder: number;
+  /**
+   * The cancel-flow retention offer, renamed from
+   * supporter_downgrade_offer_* — there is no "Supporter" tier to switch
+   * to anymore, just an offer to reduce to the scale minimum (£3.99).
+   */
+  retention_offer_heading?: string;
+  retention_offer_body?: string;
 }
 
 export const membershipBenefitsQuery = groq`*[_type == "membershipBenefit" && ${notFutureDated}]`;
@@ -813,6 +805,5 @@ export interface MembershipBenefit {
   eligibilityExplanation?: string;
   redemptionInstructions?: string;
   terms?: string;
-  availableTierIds?: string[];
   isCapacityLimited?: boolean;
 }

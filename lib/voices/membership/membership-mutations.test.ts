@@ -34,17 +34,28 @@ beforeEach(() => {
 describe("checkout", () => {
   it("sends the Idempotency-Key header and returns the parsed checkoutUrl", async () => {
     vi.mocked(authedFetch).mockResolvedValue(
-      response({ checkoutUrl: "https://checkout.stripe.com/cs_1", sessionId: "cs_1" }),
+      response({
+        checkoutUrl: "https://checkout.stripe.com/cs_1",
+        sessionId: "cs_1",
+      }),
     );
 
     const result = await checkout(
-      { tierId: "member", cadence: "monthly", successUrl: "https://x/join/complete", cancelUrl: "https://x/join" },
+      {
+        amountMinor: 799,
+        cadence: "monthly",
+        successUrl: "https://x/join/complete",
+        cancelUrl: "https://x/join",
+      },
       "key-abc",
     );
 
     expect(result).toEqual({
       ok: true,
-      data: { checkoutUrl: "https://checkout.stripe.com/cs_1", sessionId: "cs_1" },
+      data: {
+        checkoutUrl: "https://checkout.stripe.com/cs_1",
+        sessionId: "cs_1",
+      },
     });
     const call = vi.mocked(authedFetch).mock.calls[0];
     expect(call[0]).toBe("/api/membership/checkout");
@@ -53,11 +64,14 @@ describe("checkout", () => {
 
   it("maps a non-ok response to the error envelope", async () => {
     vi.mocked(authedFetch).mockResolvedValue(
-      response({ error: { code: "INVALID_REDIRECT_URL", message: "raw" } }, 400),
+      response(
+        { error: { code: "INVALID_REDIRECT_URL", message: "raw" } },
+        400,
+      ),
     );
 
     const result = await checkout(
-      { tierId: "member", cadence: "monthly", successUrl: "x", cancelUrl: "x" },
+      { amountMinor: 799, cadence: "monthly", successUrl: "x", cancelUrl: "x" },
       "key",
     );
     expect(result).toMatchObject({ ok: false, code: "INVALID_REDIRECT_URL" });
@@ -67,10 +81,14 @@ describe("checkout", () => {
 describe("previewChange", () => {
   it("does NOT send an Idempotency-Key header — preview has no side effect", async () => {
     vi.mocked(authedFetch).mockResolvedValue(
-      response({ effectiveAt: "2027-01-01T00:00:00Z", priceMinor: 1500, description: "x" }),
+      response({
+        effectiveAt: "2027-01-01T00:00:00Z",
+        priceMinor: 1500,
+        description: "x",
+      }),
     );
 
-    await previewChange({ action: "upgrade", toTierId: "insider" });
+    await previewChange({ action: "upgrade", toAmountMinor: 1599 });
 
     const call = vi.mocked(authedFetch).mock.calls[0];
     expect(headersOf(call)["Idempotency-Key"]).toBeUndefined();
@@ -78,16 +96,24 @@ describe("previewChange", () => {
 });
 
 describe("upgrade / downgrade / changeCadence / cancelMembership / resumeMembership", () => {
-  it("upgrade hits /api/membership/upgrade with {toTierId} and the idempotency key", async () => {
+  it("upgrade hits /api/membership/upgrade with {toAmountMinor} and the idempotency key", async () => {
     vi.mocked(authedFetch).mockResolvedValue(
-      response({ applied: "immediate", tierId: "insider", cadence: "monthly", scheduledChange: null, unlockedBenefits: [] }),
+      response({
+        applied: "immediate",
+        contributionAmountMinor: 1599,
+        cadence: "monthly",
+        scheduledChange: null,
+        unlockedBenefits: [],
+      }),
     );
 
-    await upgrade("insider", "key-1");
+    await upgrade(1599, "key-1");
 
     const call = vi.mocked(authedFetch).mock.calls[0];
     expect(call[0]).toBe("/api/membership/upgrade");
-    expect(JSON.parse((call[1] as RequestInit).body as string)).toEqual({ toTierId: "insider" });
+    expect(JSON.parse((call[1] as RequestInit).body as string)).toEqual({
+      toAmountMinor: 1599,
+    });
     expect(headersOf(call)["Idempotency-Key"]).toBe("key-1");
   });
 
@@ -95,24 +121,35 @@ describe("upgrade / downgrade / changeCadence / cancelMembership / resumeMembers
     vi.mocked(authedFetch).mockResolvedValue(
       response({
         applied: "scheduled",
-        tierId: "member",
+        contributionAmountMinor: 799,
         cadence: "monthly",
-        scheduledChange: { type: "downgrade", toTierId: "supporter", effectiveAt: "2027-02-01T00:00:00Z" },
+        scheduledChange: {
+          type: "downgrade",
+          toAmountMinor: 399,
+          effectiveAt: "2027-02-01T00:00:00Z",
+        },
       }),
     );
 
-    const result = await downgrade("supporter", "key-2");
+    const result = await downgrade(399, "key-2");
     expect(result.ok).toBe(true);
   });
 
   it("changeCadence sends {toCadence}", async () => {
     vi.mocked(authedFetch).mockResolvedValue(
-      response({ applied: "scheduled", tierId: "member", cadence: "annual", scheduledChange: null }),
+      response({
+        applied: "scheduled",
+        contributionAmountMinor: 799,
+        cadence: "annual",
+        scheduledChange: null,
+      }),
     );
 
     await changeCadence("annual", "key-3");
     const call = vi.mocked(authedFetch).mock.calls[0];
-    expect(JSON.parse((call[1] as RequestInit).body as string)).toEqual({ toCadence: "annual" });
+    expect(JSON.parse((call[1] as RequestInit).body as string)).toEqual({
+      toCadence: "annual",
+    });
   });
 
   it("cancelMembership omits `reason` from the body when not provided", async () => {
@@ -232,10 +269,19 @@ describe("redeemBenefit", () => {
 describe("updateProfile", () => {
   it("PATCHes /api/membership/profile with the given fields", async () => {
     vi.mocked(authedFetch).mockResolvedValue(
-      response({ displayName: "Ada", supporterWallOptIn: true, marketingConsent: false, address: null }),
+      response({
+        displayName: "Ada",
+        supporterWallOptIn: true,
+        marketingConsent: false,
+        address: null,
+      }),
     );
 
-    await updateProfile({ displayName: "Ada", supporterWallOptIn: true, marketingConsent: false });
+    await updateProfile({
+      displayName: "Ada",
+      supporterWallOptIn: true,
+      marketingConsent: false,
+    });
 
     const call = vi.mocked(authedFetch).mock.calls[0];
     expect(call[0]).toBe("/api/membership/profile");
@@ -245,16 +291,18 @@ describe("updateProfile", () => {
 
 describe("error handling shared across all mutations", () => {
   it("returns INVALID_RESPONSE, not a throw, when the backend's success payload fails schema validation", async () => {
-    vi.mocked(authedFetch).mockResolvedValue(response({ totally: "wrong shape" }));
+    vi.mocked(authedFetch).mockResolvedValue(
+      response({ totally: "wrong shape" }),
+    );
 
-    const result = await upgrade("insider", "key");
+    const result = await upgrade(1599, "key");
     expect(result).toMatchObject({ ok: false, code: "INVALID_RESPONSE" });
   });
 
   it("returns NETWORK_ERROR rather than throwing when authedFetch itself rejects", async () => {
     vi.mocked(authedFetch).mockRejectedValue(new Error("network down"));
 
-    const result = await upgrade("insider", "key");
+    const result = await upgrade(1599, "key");
     expect(result).toMatchObject({ ok: false, code: "NETWORK_ERROR" });
   });
 
@@ -264,6 +312,6 @@ describe("error handling shared across all mutations", () => {
     });
     vi.mocked(authedFetch).mockRejectedValue(controlFlowError);
 
-    await expect(upgrade("insider", "key")).rejects.toBe(controlFlowError);
+    await expect(upgrade(1599, "key")).rejects.toBe(controlFlowError);
   });
 });

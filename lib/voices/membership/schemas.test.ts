@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   benefitsResponseSchema,
+  membershipPlansResponseSchema,
   membershipProfileSchema,
   membershipStateSchema,
   supportersResponseSchema,
-  tiersResponseSchema,
 } from "./schemas";
 
 /**
@@ -13,44 +13,51 @@ import {
  * boundary, rather than three components deep — matching the intent
  * documented in membership-client.ts.
  */
-describe("tiersResponseSchema", () => {
-  it("accepts a well-formed tiers response", () => {
-    const result = tiersResponseSchema.safeParse({
-      tiers: [
-        {
-          id: "member",
-          name: "Member",
-          monthlyPriceMinor: 800,
-          annualPriceMinor: 8000,
-          currency: "gbp",
-          mostPopular: true,
-          sortOrder: 2,
-        },
-      ],
+describe("membershipPlansResponseSchema", () => {
+  const wellFormed = {
+    scale: {
+      minMinor: 399,
+      maxMinor: 1599,
+      defaultMinor: 599,
+      currency: "gbp",
+      points: [{ amountMinor: 799, priceVersionId: "pv1" }],
+    },
+    annual: {
+      amountMinor: 4099,
+      currency: "gbp",
+      priceVersionId: "pv_annual",
+      discountPercent: 14,
+    },
+  };
+
+  it("accepts a well-formed plans response", () => {
+    expect(membershipPlansResponseSchema.safeParse(wellFormed).success).toBe(
+      true,
+    );
+  });
+
+  it("accepts a null annual block — no active annual price", () => {
+    const result = membershipPlansResponseSchema.safeParse({
+      ...wellFormed,
+      annual: null,
     });
     expect(result.success).toBe(true);
   });
 
-  it("rejects a negative price", () => {
-    const result = tiersResponseSchema.safeParse({
-      tiers: [
-        {
-          id: "member",
-          name: "Member",
-          monthlyPriceMinor: -100,
-          annualPriceMinor: 8000,
-          currency: "gbp",
-          mostPopular: true,
-          sortOrder: 2,
-        },
-      ],
+  it("rejects a non-positive scale point amount", () => {
+    const result = membershipPlansResponseSchema.safeParse({
+      ...wellFormed,
+      scale: {
+        ...wellFormed.scale,
+        points: [{ amountMinor: 0, priceVersionId: "pv1" }],
+      },
     });
     expect(result.success).toBe(false);
   });
 
-  it("rejects a response with no tiers array at all", () => {
-    expect(tiersResponseSchema.safeParse({}).success).toBe(false);
-    expect(tiersResponseSchema.safeParse(null).success).toBe(false);
+  it("rejects a response with no scale at all", () => {
+    expect(membershipPlansResponseSchema.safeParse({}).success).toBe(false);
+    expect(membershipPlansResponseSchema.safeParse(null).success).toBe(false);
   });
 });
 
@@ -83,7 +90,7 @@ describe("supportersResponseSchema", () => {
 
 describe("membershipStateSchema", () => {
   const base = {
-    tierId: "member",
+    contributionAmountMinor: 799,
     cadence: "monthly" as const,
     priceMinor: 800,
     currency: "gbp",
@@ -129,9 +136,9 @@ describe("membershipStateSchema", () => {
   it("accepts the live pending_reconciliation payload, which omits renewsAt", () => {
     const result = membershipStateSchema.safeParse({
       status: "pending_reconciliation",
-      tierId: "supporter",
+      contributionAmountMinor: 399,
       cadence: "monthly",
-      priceMinor: 300,
+      priceMinor: 399,
       currency: "gbp",
       paidThroughAt: null,
       scheduledChange: null,
@@ -153,7 +160,7 @@ describe("membershipStateSchema", () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.tierId).toBeNull();
+    expect(result.data.contributionAmountMinor).toBeNull();
     expect(result.data.cadence).toBeNull();
     expect(result.data.priceMinor).toBeNull();
     expect(result.data.currency).toBeNull();
@@ -174,7 +181,7 @@ describe("membershipStateSchema", () => {
       status: "active",
       scheduledChange: {
         type: "downgrade",
-        toTierId: "supporter",
+        toAmountMinor: 399,
         effectiveAt: "2027-02-01T00:00:00Z",
       },
     });

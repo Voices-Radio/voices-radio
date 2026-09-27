@@ -70,16 +70,6 @@ export default function CompletePoller() {
         </p>
 
         <dl className="mt-6 flex flex-col gap-3 border-t border-voicesNext-border pt-5">
-          {data?.tierId && (
-            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-              <dt className="font-asap text-xs font-bold uppercase tracking-[1.2px] text-voicesNext-cream/60">
-                Membership
-              </dt>
-              <dd className="font-gabarito text-base font-bold capitalize text-voicesNext-cream">
-                {data.tierId}
-              </dd>
-            </div>
-          )}
           {price && (
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
               <dt className="font-asap text-xs font-bold uppercase tracking-[1.2px] text-voicesNext-cream/60">

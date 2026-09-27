@@ -62,11 +62,8 @@ const TONE_CLASSES: Record<"positive" | "warning" | "neutral", string> = {
 
 export default function MembershipStatusCard({
   state,
-  tierName,
 }: {
   state: MembershipState;
-  /** Human tier name resolved from GET /api/membership/tiers — state.tierId is only a slug. */
-  tierName: string | null;
 }) {
   if (!state.status) {
     return (
@@ -123,18 +120,14 @@ export default function MembershipStatusCard({
       </div>
 
       <h2 className="mt-2 font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-        {tierName ?? state.tierId ?? "Membership"}
+        {state.priceMinor !== null && state.currency && state.cadence
+          ? formatMinorUnitsWithCadence(
+              state.priceMinor,
+              state.currency,
+              state.cadence,
+            )
+          : "Voices Membership"}
       </h2>
-
-      {state.priceMinor !== null && state.currency && state.cadence && (
-        <p className="mt-1 font-gabarito text-base text-voicesNext-cream/90">
-          {formatMinorUnitsWithCadence(
-            state.priceMinor,
-            state.currency,
-            state.cadence,
-          )}
-        </p>
-      )}
 
       {state.status === "cancelling" && paidThroughAt && (
         <p className="mt-3 font-gabarito text-sm text-voicesNext-cream/90">
@@ -161,7 +154,7 @@ export default function MembershipStatusCard({
       {state.scheduledChange && (
         <p className="mt-3 font-gabarito text-sm text-voicesNext-cream/70">
           {state.scheduledChange.type === "downgrade"
-            ? `Switching to a lower tier on ${formatMembershipDate(
+            ? `Reducing your contribution on ${formatMembershipDate(
                 state.scheduledChange.effectiveAt,
               )}.`
             : `Switching billing cadence on ${formatMembershipDate(

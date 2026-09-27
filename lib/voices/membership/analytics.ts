@@ -3,26 +3,26 @@
 import { env } from "@/env";
 
 /**
- * Typed membership funnel events. Deliberately narrow: tier/cadence/benefit
+ * Typed membership funnel events. Deliberately narrow: amount/cadence/benefit
  * slug only — never an email, user ID or membership ID reaches Fathom.
  * Mirrors the lazy dynamic-import pattern in app/components/fathom.tsx so
  * fathom-client is only pulled in when actually tracking.
  */
 export type MembershipAnalyticsEvent =
   | {
-      name: "membership_tier_viewed";
-      tierId: string;
+      name: "membership_amount_viewed";
+      amountMinor: number;
       cadence: "monthly" | "annual";
     }
   | { name: "membership_cadence_toggled"; cadence: "monthly" | "annual" }
   | {
       name: "membership_checkout_started";
-      tierId: string;
+      amountMinor: number;
       cadence: "monthly" | "annual";
     }
   | { name: "membership_checkout_reconciled" }
-  | { name: "membership_upgraded"; tierId: string }
-  | { name: "membership_downgrade_scheduled"; tierId: string }
+  | { name: "membership_upgraded"; amountMinor: number }
+  | { name: "membership_downgrade_scheduled"; amountMinor: number }
   | { name: "membership_cadence_changed"; cadence: "monthly" | "annual" }
   | { name: "membership_cancelled" }
   | { name: "membership_resumed" }
@@ -40,22 +40,22 @@ function getFathomClient() {
 
 /**
  * Fathom's trackEvent only accepts an event name and an optional numeric
- * `_value` — no custom string properties. So tier/cadence/benefit-slug are
+ * `_value` — no custom string properties. So amount/cadence/benefit-slug are
  * folded into the event name itself (still no email/user/membership ID),
  * rather than sent as event metadata Fathom can't actually store.
  */
 export function eventName(event: MembershipAnalyticsEvent): string {
   switch (event.name) {
-    case "membership_tier_viewed":
-      return `membership_tier_viewed:${event.tierId}:${event.cadence}`;
+    case "membership_amount_viewed":
+      return `membership_amount_viewed:${event.amountMinor}:${event.cadence}`;
     case "membership_cadence_toggled":
       return `membership_cadence_toggled:${event.cadence}`;
     case "membership_checkout_started":
-      return `membership_checkout_started:${event.tierId}:${event.cadence}`;
+      return `membership_checkout_started:${event.amountMinor}:${event.cadence}`;
     case "membership_upgraded":
-      return `membership_upgraded:${event.tierId}`;
+      return `membership_upgraded:${event.amountMinor}`;
     case "membership_downgrade_scheduled":
-      return `membership_downgrade_scheduled:${event.tierId}`;
+      return `membership_downgrade_scheduled:${event.amountMinor}`;
     case "membership_cadence_changed":
       return `membership_cadence_changed:${event.cadence}`;
     case "membership_benefit_redeemed":

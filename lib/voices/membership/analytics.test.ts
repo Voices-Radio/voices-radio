@@ -12,21 +12,21 @@ beforeEach(() => {
 });
 
 describe("eventName", () => {
-  it("folds tier/cadence/benefit-slug into the event name — no separate metadata object (Fathom can't store it)", async () => {
+  it("folds amount/cadence/benefit-slug into the event name — no separate metadata object (Fathom can't store it)", async () => {
     const { eventName } = await import("./analytics");
 
     expect(
       eventName({
-        name: "membership_tier_viewed",
-        tierId: "member",
+        name: "membership_amount_viewed",
+        amountMinor: 799,
         cadence: "annual",
       }),
-    ).toBe("membership_tier_viewed:member:annual");
+    ).toBe("membership_amount_viewed:799:annual");
     expect(
       eventName({ name: "membership_cadence_toggled", cadence: "monthly" }),
     ).toBe("membership_cadence_toggled:monthly");
-    expect(eventName({ name: "membership_upgraded", tierId: "insider" })).toBe(
-      "membership_upgraded:insider",
+    expect(eventName({ name: "membership_upgraded", amountMinor: 1599 })).toBe(
+      "membership_upgraded:1599",
     );
     expect(
       eventName({
@@ -49,11 +49,11 @@ describe("eventName", () => {
     );
   });
 
-  it("never includes an email, user ID or membership ID — only tier/cadence/benefit-slug reach the name", () => {
+  it("never includes an email, user ID or membership ID — only amount/cadence/benefit-slug reach the name", () => {
     // Static check on the type surface: MembershipAnalyticsEvent's per-variant
-    // fields are exhaustively tierId/cadence/benefitSlug, enforced by the
-    // switch in eventName() having no default case that reads other fields.
-    // (Covered functionally by the assertions above.)
+    // fields are exhaustively amountMinor/cadence/benefitSlug, enforced by
+    // the switch in eventName() having no default case that reads other
+    // fields. (Covered functionally by the assertions above.)
     expect(true).toBe(true);
   });
 });
@@ -74,10 +74,10 @@ describe("trackMembershipEvent", () => {
     }));
     const { trackMembershipEvent } = await import("./analytics");
 
-    trackMembershipEvent({ name: "membership_upgraded", tierId: "patron" });
+    trackMembershipEvent({ name: "membership_upgraded", amountMinor: 3000 });
 
     await vi.waitFor(() => {
-      expect(trackEvent).toHaveBeenCalledWith("membership_upgraded:patron");
+      expect(trackEvent).toHaveBeenCalledWith("membership_upgraded:3000");
     });
   });
 });

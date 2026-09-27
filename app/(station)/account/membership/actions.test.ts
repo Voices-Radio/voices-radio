@@ -49,13 +49,13 @@ describe("previewChangeAction", () => {
       data: { effectiveAt: "2027-01-01T00:00:00Z", priceMinor: 1500, description: "x" },
     });
 
-    const result = await previewChangeAction({ action: "upgrade", toTierId: "insider" });
+    const result = await previewChangeAction({ action: "upgrade", toAmountMinor: 1599 });
 
     expect(result).toEqual({
       ok: true,
       data: { effectiveAt: "2027-01-01T00:00:00Z", priceMinor: 1500, description: "x" },
     });
-    expect(previewChange).toHaveBeenCalledWith({ action: "upgrade", toTierId: "insider" });
+    expect(previewChange).toHaveBeenCalledWith({ action: "upgrade", toAmountMinor: 1599 });
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
@@ -75,13 +75,13 @@ describe("mutation actions", () => {
   it("upgradeAction revalidates /account and /account/membership on success", async () => {
     vi.mocked(upgrade).mockResolvedValue({
       ok: true,
-      data: { applied: "immediate", tierId: "insider", cadence: "monthly", scheduledChange: null, unlockedBenefits: [] },
+      data: { applied: "immediate", contributionAmountMinor: 1599, cadence: "monthly", scheduledChange: null, unlockedBenefits: [] },
     });
 
-    const result = await upgradeAction("insider");
+    const result = await upgradeAction(1599);
 
     expect(result).toEqual({ ok: true });
-    expect(upgrade).toHaveBeenCalledWith("insider", expect.any(String));
+    expect(upgrade).toHaveBeenCalledWith(1599, expect.any(String));
     expect(revalidatePath).toHaveBeenCalledWith("/account");
     expect(revalidatePath).toHaveBeenCalledWith("/account/membership");
   });
@@ -90,23 +90,23 @@ describe("mutation actions", () => {
     vi.mocked(upgrade).mockResolvedValue({
       ok: false,
       code: "ALREADY_ON_TIER",
-      message: "You're already on this tier.",
+      message: "You're already at this amount.",
     });
 
-    const result = await upgradeAction("insider");
+    const result = await upgradeAction(1599);
 
-    expect(result).toEqual({ ok: false, message: "You're already on this tier." });
+    expect(result).toEqual({ ok: false, message: "You're already at this amount." });
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
   it("downgradeAction and changeCadenceAction pass a fresh idempotency key each call", async () => {
     vi.mocked(downgrade).mockResolvedValue({
       ok: true,
-      data: { applied: "scheduled", tierId: "supporter", cadence: "monthly", scheduledChange: null },
+      data: { applied: "scheduled", contributionAmountMinor: 399, cadence: "monthly", scheduledChange: null },
     });
 
-    await downgradeAction("supporter");
-    await downgradeAction("supporter");
+    await downgradeAction(399);
+    await downgradeAction(399);
 
     const [firstKey] = vi.mocked(downgrade).mock.calls[0].slice(1);
     const [secondKey] = vi.mocked(downgrade).mock.calls[1].slice(1);
@@ -116,7 +116,7 @@ describe("mutation actions", () => {
   it("changeCadenceAction forwards the target cadence", async () => {
     vi.mocked(changeCadence).mockResolvedValue({
       ok: true,
-      data: { applied: "scheduled", tierId: "member", cadence: "annual", scheduledChange: null },
+      data: { applied: "scheduled", contributionAmountMinor: 799, cadence: "annual", scheduledChange: null },
     });
 
     await changeCadenceAction("annual");

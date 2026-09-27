@@ -2,11 +2,15 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import {
   getMembership,
-  getTiers,
+  getPlans,
 } from "@/lib/voices/membership/membership-client";
-import { formatMembershipDate } from "@/lib/voices/membership/format";
+import { mergeMembershipScale } from "@/lib/voices/membership/constants";
+import {
+  formatMembershipDate,
+  formatMinorUnits,
+} from "@/lib/voices/membership/format";
 import MembershipStatusCard from "../../components/membership/membership-status-card";
-import { CadenceSwitcher, PlanSwitcher } from "./plan-switcher";
+import { AmountSwitcher, CadenceSwitcher } from "./plan-switcher";
 import CancelFlow from "./cancel-flow";
 import ManagePaymentButton from "./manage-payment-button";
 import {
@@ -22,9 +26,9 @@ export const metadata: Metadata = {
 const CANCEL_ELIGIBLE_STATUSES = new Set(["active", "grace", "cancelling"]);
 
 export default async function AccountMembershipPage() {
-  const [membershipResult, tiersResult] = await Promise.all([
+  const [membershipResult, plansResult] = await Promise.all([
     getMembership(),
-    getTiers(),
+    getPlans(),
   ]);
 
   if (!membershipResult.ok) {
@@ -40,8 +44,7 @@ export default async function AccountMembershipPage() {
   }
 
   const state = membershipResult.data;
-  const tiers = tiersResult.ok ? tiersResult.data : [];
-  const currentTier = tiers.find((tier) => tier.id === state.tierId) ?? null;
+  const scale = plansResult.ok ? mergeMembershipScale(plansResult.data.scale) : null;
 
   return (
     <div className="flex flex-col gap-10">
@@ -49,13 +52,10 @@ export default async function AccountMembershipPage() {
         <AccountPageIntro
           eyebrow="Member desk"
           title="Manage your membership"
-          description="Review your current pass, change tier, adjust billing, or manage payment details."
+          description="Review your current contribution, adjust the amount or billing, or manage payment details."
         />
         <div className="mt-6">
-          <MembershipStatusCard
-            state={state}
-            tierName={currentTier?.name ?? null}
-          />
+          <MembershipStatusCard state={state} />
         </div>
       </div>
 
@@ -73,36 +73,27 @@ export default async function AccountMembershipPage() {
       )}
 
       {state.status &&
-        currentTier &&
         state.cadence &&
         state.currency &&
-        tiers.length > 0 && (
+        state.contributionAmountMinor !== null &&
+        scale && (
           <>
             {(state.status === "active" || state.status === "grace") && (
               <AccountSurface>
-                <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
-                  Change tier
-                </h2>
-                <div className="mt-4">
-                  <PlanSwitcher
-                    currency={state.currency}
-                    cadence={state.cadence}
-                    otherTiers={tiers
-                      .filter((tier) => tier.id !== state.tierId)
-                      .map((tier) => ({
-                        id: tier.id,
-                        name: tier.name,
-                        priceMinor:
-                          state.cadence === "annual"
-                            ? tier.annualPriceMinor
-                            : tier.monthlyPriceMinor,
-                        direction:
-                          tier.sortOrder > currentTier.sortOrder
-                            ? ("upgrade" as const)
-                            : ("downgrade" as const),
-                      }))}
-                  />
-                </div>
+                {state.cadence === "monthly" && (
+                  <>
+                    <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
+                      Change your contribution
+                    </h2>
+                    <div className="mt-4">
+                      <AmountSwitcher
+                        scale={scale}
+                        currentAmountMinor={state.contributionAmountMinor}
+                        cadence={state.cadence}
+                      />
+                    </div>
+                  </>
+                )}
 
                 <h2 className="mt-8 font-gabarito text-xl font-bold text-voicesNext-cream">
                   Billing cadence
@@ -130,27 +121,20 @@ export default async function AccountMembershipPage() {
                 <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
                   {state.status === "cancelling"
                     ? "Cancellation"
-                    : "Cancel or switch down"}
+                    : "Cancel or reduce"}
                 </h2>
                 <div className="mt-4">
                   <CancelFlow
                     status={state.status as "active" | "grace" | "cancelling"}
                     paidThroughAt={formatMembershipDate(state.paidThroughAt)}
                     currency={state.currency}
-                    supporterOffer={
-                      currentTier.id !== "supporter"
-                        ? (() => {
-                            const supporter = tiers.find(
-                              (tier) => tier.id === "supporter",
-                            );
-                            return supporter
-                              ? {
-                                  id: supporter.id,
-                                  name: supporter.name,
-                                  priceMinor: supporter.monthlyPriceMinor,
-                                }
-                              : null;
-                          })()
+                    retentionOffer={
+                      state.cadence === "monthly" &&
+                      state.contributionAmountMinor > scale.minMinor
+                        ? {
+                            amountMinor: scale.minMinor,
+                            heading: `Reduce to ${formatMinorUnits(scale.minMinor, scale.currency)}/month`,
+                          }
                         : null
                     }
                   />

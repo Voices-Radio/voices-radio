@@ -11,7 +11,7 @@ const {
   getProfile,
   getRedemptions,
   getSupporters,
-  getTiers,
+  getPlans,
 } = await import("./membership-client");
 
 function mockFetchOnce(response: Response) {
@@ -22,21 +22,27 @@ function mockFetchOnce(response: Response) {
   return fn;
 }
 
-const validTier = {
-  id: "member",
-  name: "Member",
-  monthlyPriceMinor: 800,
-  annualPriceMinor: 8000,
-  currency: "gbp",
-  mostPopular: true,
-  sortOrder: 2,
+const validPlans = {
+  scale: {
+    minMinor: 399,
+    maxMinor: 1599,
+    defaultMinor: 599,
+    currency: "gbp",
+    points: [{ amountMinor: 799, priceVersionId: "pv1" }],
+  },
+  annual: {
+    amountMinor: 4099,
+    currency: "gbp",
+    priceVersionId: "pv_annual",
+    discountPercent: 14,
+  },
 };
 
 const validMembershipState = {
   status: "active",
-  tierId: "member",
+  contributionAmountMinor: 799,
   cadence: "monthly",
-  priceMinor: 800,
+  priceMinor: 799,
   currency: "gbp",
   renewsAt: "2027-01-01T00:00:00Z",
   paidThroughAt: "2027-01-01T00:00:00Z",
@@ -50,15 +56,15 @@ beforeEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("getTiers", () => {
+describe("getPlans", () => {
   it("fetches without an Authorization header — pricing is public", async () => {
     const fetchMock = mockFetchOnce(
-      new Response(JSON.stringify({ tiers: [validTier] }), { status: 200 }),
+      new Response(JSON.stringify(validPlans), { status: 200 }),
     );
 
-    const result = await getTiers();
+    const result = await getPlans();
 
-    expect(result).toEqual({ ok: true, data: [validTier] });
+    expect(result).toEqual({ ok: true, data: validPlans });
     const [, init] = fetchMock.mock.calls[0];
     expect((init as RequestInit)?.headers).toBeUndefined();
     expect(getAccessToken).not.toHaveBeenCalled();
@@ -66,12 +72,12 @@ describe("getTiers", () => {
 
   it("returns INVALID_RESPONSE, not a thrown error, when the payload fails schema validation", async () => {
     mockFetchOnce(
-      new Response(JSON.stringify({ tiers: [{ id: "member" }] }), {
+      new Response(JSON.stringify({ scale: { points: [] } }), {
         status: 200,
       }),
     );
 
-    const result = await getTiers();
+    const result = await getPlans();
     expect(result).toMatchObject({ ok: false, code: "INVALID_RESPONSE" });
   });
 
@@ -85,7 +91,7 @@ describe("getTiers", () => {
       ),
     );
 
-    const result = await getTiers();
+    const result = await getPlans();
     expect(result).toEqual({
       ok: false,
       code: "PRICE_UNAVAILABLE",
@@ -101,7 +107,7 @@ describe("getTiers", () => {
       }),
     );
 
-    const result = await getTiers();
+    const result = await getPlans();
     expect(result).toMatchObject({ ok: false, code: "NETWORK_ERROR" });
   });
 
@@ -116,7 +122,7 @@ describe("getTiers", () => {
       }),
     );
 
-    await expect(getTiers()).rejects.toBe(controlFlowError);
+    await expect(getPlans()).rejects.toBe(controlFlowError);
   });
 });
 

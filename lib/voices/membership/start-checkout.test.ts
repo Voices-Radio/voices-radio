@@ -29,17 +29,17 @@ beforeEach(() => {
 });
 
 describe("startCheckout", () => {
-  it("returns a failure without calling the backend when no tier is chosen", async () => {
+  it("returns a failure without calling the backend when no amount is chosen", async () => {
     const result = await startCheckout(undefined, "monthly");
     expect(result).toEqual({
       ok: false,
-      message: "Choose a membership tier to continue.",
+      message: "Choose a contribution amount to continue.",
     });
     expect(checkout).not.toHaveBeenCalled();
   });
 
   it("returns a failure without calling the backend when cadence isn't monthly/annual", async () => {
-    const result = await startCheckout("member", "biannually");
+    const result = await startCheckout(799, "biannually");
     expect(result.ok).toBe(false);
     expect(checkout).not.toHaveBeenCalled();
   });
@@ -50,11 +50,11 @@ describe("startCheckout", () => {
       data: { checkoutUrl: "https://checkout.stripe.com/cs_test_123", sessionId: "cs_test_123" },
     });
 
-    await expect(startCheckout("member", "annual")).rejects.toThrow(RedirectSignal);
+    await expect(startCheckout(4099, "annual")).rejects.toThrow(RedirectSignal);
 
     expect(checkout).toHaveBeenCalledWith(
       {
-        tierId: "member",
+        amountMinor: 4099,
         cadence: "annual",
         successUrl: "https://staging.voicesradio.co.uk/join/complete",
         cancelUrl: "https://staging.voicesradio.co.uk/join?cadence=annual",
@@ -70,10 +70,10 @@ describe("startCheckout", () => {
       data: { checkoutUrl: "https://checkout.stripe.com/cs_1", sessionId: "cs_1" },
     });
 
-    await expect(startCheckout("member", "monthly")).rejects.toThrow(RedirectSignal);
+    await expect(startCheckout(799, "monthly")).rejects.toThrow(RedirectSignal);
     const firstKey = vi.mocked(checkout).mock.calls[0][1];
 
-    await expect(startCheckout("member", "monthly")).rejects.toThrow(RedirectSignal);
+    await expect(startCheckout(799, "monthly")).rejects.toThrow(RedirectSignal);
     const secondKey = vi.mocked(checkout).mock.calls[1][1];
 
     expect(firstKey).not.toBe(secondKey);
@@ -86,7 +86,7 @@ describe("startCheckout", () => {
       message: "Pricing is temporarily unavailable. Please try again shortly.",
     });
 
-    const result = await startCheckout("member", "monthly");
+    const result = await startCheckout(799, "monthly");
 
     expect(result).toEqual({
       ok: false,

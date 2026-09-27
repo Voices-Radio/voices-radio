@@ -5,14 +5,14 @@ import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
 import { getAccessToken } from "./session";
 import { describeMembershipError } from "./errors";
 import {
-  tiersResponseSchema,
+  membershipPlansResponseSchema,
   supportersResponseSchema,
   membershipStateSchema,
   benefitsResponseSchema,
   redemptionsResponseSchema,
   membershipProfileSchema,
   backendErrorEnvelopeSchema,
-  type MembershipTierApi,
+  type MembershipPlansApi,
   type MembershipState,
   type Benefit,
   type Redemption,
@@ -36,14 +36,14 @@ export async function describeErrorResponse(response: Response): Promise<{
 
 /**
  * Public read — no session required. Used from /join, which must render
- * pricing for signed-out visitors before they create an account.
+ * pricing for signed-out visitors before they create an account. Renamed
+ * from getTiers() — membership is a single sliding-scale contribution, not
+ * a ladder of named tiers (see docs/plans/sliding-scale-membership.md).
  */
-export async function getTiers(): Promise<
-  MembershipResult<MembershipTierApi[]>
-> {
+export async function getPlans(): Promise<MembershipResult<MembershipPlansApi>> {
   try {
     const response = await fetch(
-      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/membership/tiers`,
+      `${VOICES_MEMBERSHIP_API_BASE_URL}/api/membership/plans`,
       { cache: "no-store" },
     );
 
@@ -53,10 +53,10 @@ export async function getTiers(): Promise<
     }
 
     const payload = await response.json().catch(() => null);
-    const parsed = tiersResponseSchema.safeParse(payload);
+    const parsed = membershipPlansResponseSchema.safeParse(payload);
     if (!parsed.success) {
       console.error(
-        "Voices tiers response failed validation:",
+        "Voices plans response failed validation:",
         parsed.error.flatten(),
       );
       return {
@@ -67,10 +67,10 @@ export async function getTiers(): Promise<
       };
     }
 
-    return { ok: true, data: parsed.data.tiers };
+    return { ok: true, data: parsed.data };
   } catch (error) {
     if (isNextControlFlowError(error)) throw error;
-    console.error("Voices getTiers failed:", error);
+    console.error("Voices getPlans failed:", error);
     return {
       ok: false,
       code: "NETWORK_ERROR",
@@ -81,7 +81,7 @@ export async function getTiers(): Promise<
 
 /**
  * Public read — no session required. Backs the homepage supporter wall.
- * Unlike getTiers, this is decorative rather than pricing-critical, so it
+ * Unlike getPlans, this is decorative rather than pricing-critical, so it
  * rides Next's data cache (revalidate: 300s, matching the backend's own
  * cacheMiddleware TTL) instead of "no-store" — the homepage shouldn't make
  * a live backend round-trip per visitor just to render a name carousel.

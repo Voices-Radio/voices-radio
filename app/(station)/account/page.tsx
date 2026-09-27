@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import {
   getBenefits,
   getMembership,
-  getTiers,
 } from "@/lib/voices/membership/membership-client";
 import {
   accountHomeDecision,
@@ -127,13 +126,11 @@ export default async function AccountPage() {
     return <EmptyAccountState />;
   }
 
-  const [user, membershipResult, tiersResult, benefitsResult] =
-    await Promise.all([
-      getSession(),
-      getMembership(),
-      getTiers(),
-      getBenefits(),
-    ]);
+  const [user, membershipResult, benefitsResult] = await Promise.all([
+    getSession(),
+    getMembership(),
+    getBenefits(),
+  ]);
 
   return (
     <div>
@@ -144,16 +141,7 @@ export default async function AccountPage() {
 
       <div className="mt-6">
         {membershipResult.ok ? (
-          <MembershipStatusCard
-            state={membershipResult.data}
-            tierName={
-              tiersResult.ok
-                ? (tiersResult.data.find(
-                    (tier) => tier.id === membershipResult.data.tierId,
-                  )?.name ?? null)
-                : null
-            }
-          />
+          <MembershipStatusCard state={membershipResult.data} />
         ) : (
           <AccountSurface
             interactive={false}
