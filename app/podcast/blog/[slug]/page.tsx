@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { client } from "@/sanity.client";
+import { getBaseUrl } from "@/lib/site-url";
+import { JsonLd } from "../../../components/json-ld";
 import { blogPostQuery, blogPostsQuery, type BlogPost } from "@/sanity.queries";
 import { portableTextBlogImageSrc, urlForBlogImageSafe, blogShareImageUrl } from "@/sanity.image";
 import { PortableText } from "@portabletext/react";
@@ -114,8 +116,36 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const readingTime = post.content ? estimateReadingTime(post.content) : 5;
 
+  const baseUrl = getBaseUrl();
+  const postUrl = `${baseUrl}/podcast/blog/${params.slug}`;
+  const shareImage = blogShareImageUrl(post.ogImage, post.featuredImage);
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.metaDescription || post.excerpt,
+    image: shareImage.startsWith("/") ? `${baseUrl}${shareImage}` : shareImage,
+    datePublished: post.publishedAt,
+    author: { "@type": "Person", name: post.author },
+    publisher: { "@type": "Organization", name: "Voices Radio", url: baseUrl },
+    mainEntityOfPage: postUrl,
+    ...(post.keywords?.length && { keywords: post.keywords.join(", ") }),
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
+      { "@type": "ListItem", position: 2, name: "Podcast Studio", item: `${baseUrl}/podcast` },
+      { "@type": "ListItem", position: 3, name: "Blog", item: `${baseUrl}/podcast/blog` },
+      { "@type": "ListItem", position: 4, name: post.title, item: postUrl },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {/* Navigation */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

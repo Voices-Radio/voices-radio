@@ -2,9 +2,29 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import {
+  AUDIO_EQUIPMENT as audioEquipment,
+  BOOKING_URL,
+  OTHER_EQUIPMENT as otherEquipment,
+  PRICING_OPTIONS as pricingOptions,
+  VIDEO_EQUIPMENT as videoEquipment,
+} from '@/lib/podcast-studio-facts';
 import { ArrowRight, ArrowDown, Play, Mic, Video, Edit, Users, TrendingUp, Calculator, Headphones, Camera, Monitor, Lightbulb, Thermometer, MapPin, Facebook, Twitter, Instagram, Linkedin, Youtube, Menu, X } from 'lucide-react';
 
-const PodcastPage = () => {
+interface PodcastPageProps {
+  h1Override?: string;
+  heroImageAlt?: string;
+  faq?: { question: string; answer: string }[];
+  locationLinks?: { href: string; label: string }[];
+}
+
+const PodcastPage = ({
+  h1Override,
+  heroImageAlt,
+  faq = [],
+  locationLinks = [],
+}: PodcastPageProps) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -86,64 +106,6 @@ const PodcastPage = () => {
     }
   ];
 
-  const pricingOptions = [
-    {
-      title: 'Audio Package',
-      price: '£65',
-      period: 'per hour',
-      features: ['Professional audio recording', 'Acoustically treated room', 'Self-service studio access', '', ''],
-      popular: false,
-      isAddon: false
-    },
-    {
-      title: 'Single Camera',
-      price: '£90',
-      period: 'per hour',
-      features: ['Everything in Audio Package', 'Single camera setup', 'Professional lighting', '', ''],
-      popular: false,
-      isAddon: false
-    },
-    {
-      title: 'Dual Camera',
-      price: '£170',
-      period: 'per hour',
-      features: ['Everything in Single Camera', 'Second camera angle', 'Multi-angle recording', '', ''],
-      popular: true,
-      isAddon: false
-    },
-    {
-      title: 'Engineer Support',
-      price: '£30',
-      period: 'per hour add-on',
-      features: ['Technical assistance', 'Equipment setup help', 'Recording guidance', 'Quality assurance', 'Available for all packages'],
-      popular: false,
-      isAddon: true
-    }
-  ];
-
-  const audioEquipment = [
-    '4 x Shure SM7B dynamic microphones',
-    '4 x Sony MDR-7506 production headphones',
-    '4 x Rode PSA1 boom arms',
-    'Rodecaster Pro digital mixing desk, recorder and audio interface',
-    '2 x Yamaha HS8 speakers'
-  ];
-
-  const videoEquipment = [
-    'Sony FX30',
-    'Sigma Art 12-24mm F2.8 lens',
-    'Godox SL60W adjustable lighting with softbox',
-    '1 x Tripod'
-  ];
-
-  const otherEquipment = [
-    'Controllable lighting',
-    'Climate control (A/C, Heating)',
-    'Door access via your phone, no app needed',
-    'Wheelchair accessible',
-    'Toilets, food and drinks amenities on site'
-  ];
-
   const socialLinks = [
     { icon: <Instagram className="h-5 w-5" />, href: 'https://www.instagram.com/voices_studio_/', label: 'Instagram' },
     { icon: <Linkedin className="h-5 w-5" />, href: 'https://www.linkedin.com/company/104914569/admin/dashboard/', label: 'LinkedIn' }
@@ -166,7 +128,6 @@ const PodcastPage = () => {
                 width={32}
                 height={32}
                 className="h-8 w-auto"
-                priority
               />
               <span className={`text-xl font-bold ${isScrolled ? 'text-slate-800' : 'text-white'}`}>
                 Voices Studio
@@ -255,17 +216,27 @@ const PodcastPage = () => {
 
         {/* Content */}
         <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4 pt-20 md:pt-0">
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 md:mb-6 leading-tight">
-            Welcome to
-            <span className="block text-accent">Voices Studio</span>
-          </h1>
+          {h1Override ? (
+            <>
+              <h1 className="sr-only">{h1Override}</h1>
+              <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 md:mb-6 leading-tight">
+                Welcome to
+                <span className="block text-accent">Voices Studio</span>
+              </h2>
+            </>
+          ) : (
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 md:mb-6 leading-tight">
+              Welcome to
+              <span className="block text-accent">Voices Studio</span>
+            </h1>
+          )}
           <p className="text-lg sm:text-xl md:text-2xl mb-6 md:mb-8 text-gray-200 leading-relaxed">
             Professional podcast recording with everything you need for high-quality audio and video.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a 
-              href="https://voicesradio.spaces.nexudus.com/bookings?tab=Resources&view=card"
+              href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="group bg-accent hover:bg-orange-700 text-white px-8 py-4 rounded-full font-semibold flex items-center space-x-2 transition-all duration-300 transform hover:scale-105"
@@ -334,11 +305,10 @@ const PodcastPage = () => {
             <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image 
                 src="/studio-2.webp"
-                alt="Professional podcast studio overview"
+                alt={heroImageAlt ?? 'Professional podcast studio overview'}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
               <div className="absolute bottom-8 left-8 text-white">
@@ -466,7 +436,7 @@ const PodcastPage = () => {
                 Choose your package and book your podcast recording session today
               </p>
               <a 
-                href="https://voicesradio.spaces.nexudus.com/bookings?tab=Resources&view=card"
+                href={BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center bg-white text-accent px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
@@ -642,6 +612,52 @@ const PodcastPage = () => {
       </section>
 
       {/* Contact Section */}
+      {/* FAQ + location pages (visible content backing the FAQPage JSON-LD) */}
+      {(faq.length > 0 || locationLinks.length > 0) && (
+        <section id="faq" className="py-12 md:py-20 bg-slate-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {faq.length > 0 && (
+              <>
+                <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-8 text-center">
+                  Podcast Studio Hire: Frequently Asked Questions
+                </h2>
+                <dl className="space-y-6">
+                  {faq.map((item) => (
+                    <div key={item.question}>
+                      <dt className="text-lg font-semibold text-slate-800">
+                        {item.question}
+                      </dt>
+                      <dd className="mt-1 text-slate-600 leading-relaxed">
+                        {item.answer}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </>
+            )}
+            {locationLinks.length > 0 && (
+              <nav aria-label="Podcast studio locations" className="mt-12">
+                <h3 className="text-xl font-bold text-slate-800 mb-3">
+                  Find a podcast studio near you
+                </h3>
+                <ul className="flex flex-wrap gap-x-6 gap-y-2">
+                  {locationLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-accent underline underline-offset-2 hover:text-orange-700"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+          </div>
+        </section>
+      )}
+
       <section id="contact" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Location Section */}

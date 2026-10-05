@@ -10,6 +10,11 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "../../../components/json-ld";
+import {
+  DEFAULT_PRICE_RANGE,
+  STUDIO_ADDRESS,
+  STUDIO_EMAIL,
+} from "@/lib/podcast-studio-facts";
 
 export const revalidate = 3600;
 
@@ -79,12 +84,13 @@ export default async function LocationPage({
       page.seoDescription ??
       `Professional podcast studio for hire in ${page.localityName}.`,
     url: `${baseUrl}/podcast-studio/${params.slug}`,
+    email: STUDIO_EMAIL,
     ...(podcast?.phone && { telephone: podcast.phone }),
     address: {
       "@type": "PostalAddress",
-      ...(podcast?.streetAddress && { streetAddress: podcast.streetAddress }),
-      addressLocality: podcast?.locality ?? "London",
-      ...(podcast?.postalCode && { postalCode: podcast.postalCode }),
+      streetAddress: podcast?.streetAddress ?? STUDIO_ADDRESS.streetAddress,
+      addressLocality: podcast?.locality ?? STUDIO_ADDRESS.locality,
+      postalCode: podcast?.postalCode ?? STUDIO_ADDRESS.postalCode,
       addressCountry: "GB",
     },
     ...(podcast?.geoLat &&
@@ -98,7 +104,7 @@ export default async function LocationPage({
     ...(podcast?.openingHours?.length && {
       openingHours: podcast.openingHours,
     }),
-    ...(podcast?.priceRange && { priceRange: podcast.priceRange }),
+    priceRange: podcast?.priceRange ?? DEFAULT_PRICE_RANGE,
     areaServed: page.localityName,
   };
 

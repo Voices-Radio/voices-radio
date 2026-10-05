@@ -4,6 +4,12 @@ import { urlForImage } from "@/sanity.image";
 import { Metadata } from "next";
 import { JsonLd } from "../components/json-ld";
 import SpriteSheet from "../components/sprite-sheet";
+import {
+  DEFAULT_PRICE_RANGE,
+  STUDIO_ADDRESS,
+  STUDIO_EMAIL,
+  resolveServices,
+} from "@/lib/podcast-studio-facts";
 
 const DEFAULT_TITLE = "London Podcast Studio in Kings Cross";
 const DEFAULT_DESCRIPTION =
@@ -51,12 +57,13 @@ export default async function PodcastLayout({
     name: "Voices Radio Podcast Studio",
     description: podcast?.seoDescription ?? DEFAULT_DESCRIPTION,
     url: `${getBaseUrl()}/podcast`,
+    email: STUDIO_EMAIL,
     ...(podcast?.phone && { telephone: podcast.phone }),
     address: {
       "@type": "PostalAddress",
-      ...(podcast?.streetAddress && { streetAddress: podcast.streetAddress }),
-      addressLocality: podcast?.locality ?? "London",
-      ...(podcast?.postalCode && { postalCode: podcast.postalCode }),
+      streetAddress: podcast?.streetAddress ?? STUDIO_ADDRESS.streetAddress,
+      addressLocality: podcast?.locality ?? STUDIO_ADDRESS.locality,
+      postalCode: podcast?.postalCode ?? STUDIO_ADDRESS.postalCode,
       addressCountry: "GB",
     },
     ...(podcast?.geoLat &&
@@ -68,42 +75,32 @@ export default async function PodcastLayout({
         },
       }),
     ...(podcast?.openingHours?.length && { openingHours: podcast.openingHours }),
-    ...(podcast?.priceRange && { priceRange: podcast.priceRange }),
+    priceRange: podcast?.priceRange ?? DEFAULT_PRICE_RANGE,
     areaServed: "London",
   };
 
-  const serviceJsonLd = podcast?.studioServices?.length
-    ? podcast.studioServices.map((svc) => ({
-        "@context": "https://schema.org",
-        "@type": "Service",
-        name: svc.name,
-        ...(svc.description && { description: svc.description }),
-        provider: { "@type": "RecordingStudio", name: "Voices Radio Podcast Studio" },
-        areaServed: "London",
-        ...(svc.priceFrom && {
-          offers: { "@type": "Offer", price: svc.priceFrom, priceCurrency: "GBP" },
-        }),
-      }))
-    : null;
-
-  const faqJsonLd =
-    podcast?.faq?.length
-      ? {
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: podcast.faq.map((item) => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: { "@type": "Answer", text: item.answer },
-          })),
-        }
-      : null;
+  const serviceJsonLd = resolveServices(podcast).map((svc) => ({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: svc.name,
+    ...(svc.description && { description: svc.description }),
+    provider: { "@type": "RecordingStudio", name: "Voices Radio Podcast Studio" },
+    areaServed: "London",
+    ...(svc.priceFrom && {
+      offers: {
+        "@type": "Offer",
+        price: svc.priceFrom.replace(/[^\d.]/g, ""),
+        priceCurrency: "GBP",
+      },
+    }),
+  }));
 
   return (
     <>
       <JsonLd data={localBusiness} />
-      {serviceJsonLd?.map((svc, i) => <JsonLd key={i} data={svc} />)}
-      {faqJsonLd && <JsonLd data={faqJsonLd} />}
+      {serviceJsonLd.map((svc, i) => (
+        <JsonLd key={i} data={svc} />
+      ))}
 
       {children}
 
