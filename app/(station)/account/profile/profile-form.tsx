@@ -118,6 +118,16 @@ export default function ProfileForm({
         Send me Voices news and updates.
       </label>
 
+      <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
+        <input
+          type="checkbox"
+          name="memberUpdates"
+          defaultChecked={profile.memberUpdates}
+          className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background motion-reduce:transition-none"
+        />
+        Send me member-only updates.
+      </label>
+
       {showAddress && (
         <fieldset className="flex flex-col gap-3 border-0 p-0">
           <legend className="font-gabarito text-sm font-bold text-voicesNext-cream">

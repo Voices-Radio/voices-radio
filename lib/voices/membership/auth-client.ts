@@ -49,9 +49,7 @@ async function authRequest<T>(
   }
 }
 
-async function authGetRequest<T>(
-  path: string,
-): Promise<BackendAuthResult<T>> {
+async function authGetRequest<T>(path: string): Promise<BackendAuthResult<T>> {
   try {
     const response = await fetch(`${VOICES_MEMBERSHIP_API_BASE_URL}${path}`, {
       cache: "no-store",
@@ -76,6 +74,8 @@ export async function backendRegister(input: {
   firstName: string;
   lastName: string;
   newsletters?: boolean;
+  /** Member-only updates opt-in — separate from the general newsletter. */
+  memberUpdates?: boolean;
 }): Promise<BackendAuthResult> {
   return authRequest("/api/auth/register", input);
 }

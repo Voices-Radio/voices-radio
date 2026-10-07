@@ -341,6 +341,17 @@ export default function CreateAccountForm({
               your account.
             </label>
 
+            <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
+              <input
+                type="checkbox"
+                name="memberUpdates"
+                defaultChecked={values?.memberUpdates}
+                className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background motion-reduce:transition-none"
+              />
+              Send me member-only updates. You can change this any time in your
+              account.
+            </label>
+
             <SubmitButton />
           </form>
         </AccountSurface>

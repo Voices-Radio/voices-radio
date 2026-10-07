@@ -10,6 +10,7 @@ const schema = z.object({
   displayName: z.string().max(80).optional(),
   supporterWallOptIn: z.string().optional(),
   marketingConsent: z.string().optional(),
+  memberUpdates: z.string().optional(),
   line1: addressPart,
   line2: addressPart,
   city: addressPart,
@@ -29,9 +30,10 @@ export type ProfileState =
   { status: "success" } | { status: "error"; message: string } | undefined;
 
 /**
- * supporterWallOptIn and marketingConsent are independently controlled
- * (contract §9 / brief test #16) — this always sends the form's current
- * checked state for both, so unchecking one never touches the other.
+ * supporterWallOptIn, marketingConsent and memberUpdates are independently
+ * controlled (contract §9 / brief test #16) — this always sends the form's
+ * current checked state for all three, so unchecking one never touches the
+ * others.
  */
 export async function updateProfileAction(
   _prevState: ProfileState,
@@ -41,6 +43,7 @@ export async function updateProfileAction(
     displayName: formData.get("displayName") || undefined,
     supporterWallOptIn: formData.get("supporterWallOptIn") ?? undefined,
     marketingConsent: formData.get("marketingConsent") ?? undefined,
+    memberUpdates: formData.get("memberUpdates") ?? undefined,
     ...Object.fromEntries(
       ADDRESS_PARTS.map((part) => [
         part,
@@ -71,6 +74,7 @@ export async function updateProfileAction(
     displayName: parsed.data.displayName,
     supporterWallOptIn: parsed.data.supporterWallOptIn === "on",
     marketingConsent: parsed.data.marketingConsent === "on",
+    memberUpdates: parsed.data.memberUpdates === "on",
     address: Object.keys(addressParts).length ? addressParts : undefined,
   });
 

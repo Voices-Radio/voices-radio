@@ -284,11 +284,30 @@ describe("authenticated reads (getMembership/getBenefits/getRedemptions/getProfi
       displayName: "Ada",
       supporterWallOptIn: true,
       marketingConsent: false,
+      memberUpdates: true,
       address: null,
     };
     mockFetchOnce(new Response(JSON.stringify(profile), { status: 200 }));
 
     expect(await getProfile()).toEqual({ ok: true, data: profile });
+  });
+
+  it("getProfile treats a backend response without memberUpdates as not opted in, rather than failing the parse", async () => {
+    vi.mocked(getAccessToken).mockResolvedValue("token-123");
+    const legacyProfile = {
+      displayName: "Ada",
+      supporterWallOptIn: true,
+      marketingConsent: false,
+      address: null,
+    };
+    mockFetchOnce(
+      new Response(JSON.stringify(legacyProfile), { status: 200 }),
+    );
+
+    expect(await getProfile()).toEqual({
+      ok: true,
+      data: { ...legacyProfile, memberUpdates: false },
+    });
   });
 
   it("does not attempt a token refresh on a 401 — that's requireSession()'s job, not this layer's", async () => {

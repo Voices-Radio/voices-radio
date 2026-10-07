@@ -227,6 +227,8 @@ export const membershipProfileSchema = z.object({
   displayName: nullish(z.string()),
   supporterWallOptIn: z.boolean(),
   marketingConsent: z.boolean(),
+  // Defaults to false so a backend that predates the field doesn't fail the whole profile parse.
+  memberUpdates: z.boolean().default(false),
   address: nullish(membershipAddressSchema),
 });
 export type MembershipProfile = z.infer<typeof membershipProfileSchema>;

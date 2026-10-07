@@ -18,6 +18,7 @@ const schema = z.object({
     .email("Enter a valid email address."),
   password: z.string().min(8, "Use at least 8 characters."),
   newsletters: z.string().optional(),
+  memberUpdates: z.string().optional(),
   amount: z.string().optional(),
   cadence: z.string().optional(),
 });
@@ -36,6 +37,7 @@ export type CreateAccountValues = {
   lastName: string;
   email: string;
   newsletters: boolean;
+  memberUpdates: boolean;
 };
 
 export type CreateAccountState =
@@ -60,6 +62,7 @@ export async function createAccountAction(
     lastName: String(formData.get("lastName") ?? ""),
     email: String(formData.get("email") ?? ""),
     newsletters: formData.get("newsletters") === "on",
+    memberUpdates: formData.get("memberUpdates") === "on",
   };
 
   const parsed = schema.safeParse({
@@ -68,6 +71,7 @@ export async function createAccountAction(
     email: formData.get("email"),
     password: formData.get("password"),
     newsletters: formData.get("newsletters") ?? undefined,
+    memberUpdates: formData.get("memberUpdates") ?? undefined,
     amount: formData.get("amount") || undefined,
     cadence: formData.get("cadence") || undefined,
   });
@@ -95,8 +99,16 @@ export async function createAccountAction(
     };
   }
 
-  const { email, password, firstName, lastName, newsletters, amount, cadence } =
-    parsed.data;
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    newsletters,
+    memberUpdates,
+    amount,
+    cadence,
+  } = parsed.data;
 
   const registerResult = await backendRegister({
     email,
@@ -104,6 +116,7 @@ export async function createAccountAction(
     firstName,
     lastName,
     newsletters: newsletters === "on",
+    memberUpdates: memberUpdates === "on",
   });
 
   if (!registerResult.ok) {

@@ -90,6 +90,7 @@ describe("createAccountAction", () => {
         lastName: validFields.lastName,
         email: validFields.email,
         newsletters: false,
+        memberUpdates: false,
       },
     });
     expect(backendLogin).not.toHaveBeenCalled();
@@ -104,6 +105,7 @@ describe("createAccountAction", () => {
         email: "ada@example.test",
         password: "short",
         newsletters: "on",
+        memberUpdates: "on",
       }),
     );
 
@@ -113,9 +115,36 @@ describe("createAccountAction", () => {
       lastName: "Lovelace",
       email: "ada@example.test",
       newsletters: true,
+      memberUpdates: true,
     });
     // The password is the one field deliberately not returned.
     expect(state.values).not.toHaveProperty("password");
+  });
+
+  it("sends newsletters and memberUpdates to the backend as independent flags", async () => {
+    vi.mocked(backendRegister).mockResolvedValue({
+      ok: false,
+      status: 400,
+      payload: { message: "x" },
+    });
+
+    await createAccountAction(
+      undefined,
+      formData({ ...validFields, memberUpdates: "on" }),
+    );
+
+    expect(backendRegister).toHaveBeenCalledWith(
+      expect.objectContaining({ newsletters: false, memberUpdates: true }),
+    );
+
+    await createAccountAction(
+      undefined,
+      formData({ ...validFields, newsletters: "on" }),
+    );
+
+    expect(backendRegister).toHaveBeenLastCalledWith(
+      expect.objectContaining({ newsletters: true, memberUpdates: false }),
+    );
   });
 
   it("falls back to a check-your-email state when registration succeeds but login is rejected (unverified email)", async () => {

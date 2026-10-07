@@ -9,9 +9,8 @@ vi.mock("@/lib/voices/membership/membership-mutations", () => ({
 }));
 
 const { revalidatePath } = await import("next/cache");
-const { updateProfile } = await import(
-  "@/lib/voices/membership/membership-mutations"
-);
+const { updateProfile } =
+  await import("@/lib/voices/membership/membership-mutations");
 const { updateProfileAction } = await import("./actions");
 
 function formData(fields: Record<string, string>) {
@@ -30,6 +29,7 @@ beforeEach(() => {
       displayName: "Ada",
       supporterWallOptIn: true,
       marketingConsent: false,
+      memberUpdates: false,
       address: null,
     },
   });
@@ -46,6 +46,7 @@ describe("updateProfileAction", () => {
       displayName: "Ada",
       supporterWallOptIn: true,
       marketingConsent: false,
+      memberUpdates: false,
       address: undefined,
     });
   });
@@ -60,6 +61,7 @@ describe("updateProfileAction", () => {
       displayName: "Ada",
       supporterWallOptIn: false,
       marketingConsent: true,
+      memberUpdates: false,
       address: undefined,
     });
   });
@@ -68,12 +70,41 @@ describe("updateProfileAction", () => {
     await updateProfileAction(undefined, formData({ displayName: "Ada" }));
 
     expect(updateProfile).toHaveBeenCalledWith(
-      expect.objectContaining({ supporterWallOptIn: false, marketingConsent: false }),
+      expect.objectContaining({
+        supporterWallOptIn: false,
+        marketingConsent: false,
+      }),
+    );
+  });
+
+  it("sends memberUpdates: true on its own, without touching the other two consents", async () => {
+    await updateProfileAction(
+      undefined,
+      formData({ displayName: "Ada", memberUpdates: "on" }),
+    );
+
+    expect(updateProfile).toHaveBeenCalledWith({
+      displayName: "Ada",
+      supporterWallOptIn: false,
+      marketingConsent: false,
+      memberUpdates: true,
+      address: undefined,
+    });
+  });
+
+  it("sends memberUpdates: false when unchecked, so a member can withdraw", async () => {
+    await updateProfileAction(undefined, formData({ displayName: "Ada" }));
+
+    expect(updateProfile).toHaveBeenCalledWith(
+      expect.objectContaining({ memberUpdates: false }),
     );
   });
 
   it("returns success and revalidates /account/profile", async () => {
-    const result = await updateProfileAction(undefined, formData({ displayName: "Ada" }));
+    const result = await updateProfileAction(
+      undefined,
+      formData({ displayName: "Ada" }),
+    );
 
     expect(result).toEqual({ status: "success" });
     expect(revalidatePath).toHaveBeenCalledWith("/account/profile");
@@ -86,7 +117,10 @@ describe("updateProfileAction", () => {
       message: "Something went wrong. Please try again.",
     });
 
-    const result = await updateProfileAction(undefined, formData({ displayName: "Ada" }));
+    const result = await updateProfileAction(
+      undefined,
+      formData({ displayName: "Ada" }),
+    );
 
     expect(result).toEqual({
       status: "error",

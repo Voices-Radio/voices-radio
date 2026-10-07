@@ -202,6 +202,7 @@ export function updateProfile(input: {
   displayName?: string;
   supporterWallOptIn?: boolean;
   marketingConsent?: boolean;
+  memberUpdates?: boolean;
   /** Structured, matching what the backend persists — not a free-text blob. */
   address?: Partial<MembershipAddress>;
 }) {
