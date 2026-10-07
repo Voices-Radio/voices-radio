@@ -115,7 +115,7 @@ export default function ProfileForm({
           defaultChecked={profile.marketingConsent}
           className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background motion-reduce:transition-none"
         />
-        Send me Voices news and updates.
+        Send me the Voices newsletter.
       </label>
 
       <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">

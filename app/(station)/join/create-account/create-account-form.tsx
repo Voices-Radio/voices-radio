@@ -337,7 +337,7 @@ export default function CreateAccountForm({
                 defaultChecked={values?.newsletters}
                 className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background motion-reduce:transition-none"
               />
-              Send me Voices news and updates. You can change this any time in
+              Send me the Voices newsletter. You can change this any time in
               your account.
             </label>
 
@@ -345,7 +345,9 @@ export default function CreateAccountForm({
               <input
                 type="checkbox"
                 name="memberUpdates"
-                defaultChecked={values?.memberUpdates}
+                // On for a fresh form; after a failed submit, keep whatever
+                // the visitor chose so unticking it isn't undone.
+                defaultChecked={values ? values.memberUpdates : true}
                 className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background motion-reduce:transition-none"
               />
               Send me member-only updates. You can change this any time in your
