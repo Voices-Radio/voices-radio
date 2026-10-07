@@ -1,6 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 
+const LOCATIONS = [
+  {
+    name: "Voices Radio",
+    address: "Unit 113 Lower Stable Street Coal Drops Yard, London N1C 4LW",
+  },
+  {
+    name: "Voices Podcast Studio",
+    address: "Upstairs at Mare Street, Lewis Cubitt Square, London N1C 4DY",
+  },
+  { name: "Voices East", address: "TBC" },
+] as const;
+
 export default function SiteFooter({
   contactUrl,
 }: {
@@ -43,10 +55,14 @@ export default function SiteFooter({
           />
         </Link>
 
-        <p className="max-w-[340px] justify-self-start font-asap text-sm leading-snug text-voicesNext-secondary md:justify-self-end md:text-left">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-          posuere erat a ante venenatis dapibus posuere velit aliquet.
-        </p>
+        <address className="grid max-w-[380px] gap-2 justify-self-start font-asap text-sm not-italic leading-snug text-voicesNext-secondary md:justify-self-end md:text-left">
+          {LOCATIONS.map(({ name, address }) => (
+            <p key={name}>
+              <span className="font-bold text-voicesNext-cream">{name}:</span>{" "}
+              {address}
+            </p>
+          ))}
+        </address>
       </div>
     </footer>
   );
