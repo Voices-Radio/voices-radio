@@ -129,6 +129,26 @@ export const homePageQuery = groq`*[_type == "homePage"][0] {
       fallbackImage ${homePageImageProjection}
     }
   },
+  latestKxLane {
+    title,
+    description
+  },
+  featuredLane {
+    title,
+    description,
+    shows[] {
+      ...,
+      image ${homePageImageProjection},
+      _type == "homeRailShow" => {
+        show
+      }
+    }
+  },
+  applyBanner {
+    heading,
+    mobileBody,
+    ctaText
+  },
   showRails[] {
     _key,
     title,
@@ -245,9 +265,29 @@ export interface HomeShowRailConfig {
   shows?: Array<HomeShowSelection | HomeRailShow>;
 }
 
+export interface HomeLatestKxLaneConfig {
+  title?: string;
+  description?: string;
+}
+
+export interface HomeFeaturedLaneConfig {
+  title?: string;
+  description?: string;
+  shows?: Array<HomeShowSelection | HomeRailShow>;
+}
+
+export interface HomeApplyBannerConfig {
+  heading?: string;
+  mobileBody?: string;
+  ctaText?: string;
+}
+
 export interface HomePage {
   _id: string;
   featuredContent?: HomeFeaturedContent[];
+  latestKxLane?: HomeLatestKxLaneConfig;
+  featuredLane?: HomeFeaturedLaneConfig;
+  applyBanner?: HomeApplyBannerConfig;
   liveStreams?: {
     kx?: {
       fallbackImage?: HomePageImage;

@@ -1,35 +1,35 @@
 import { getHomePage } from "@/sanity.client";
 import type {
+  HomeApplyBannerConfig,
   HomeFeaturedBlog,
   HomeFeaturedContent,
   HomeFeaturedEvent,
+  HomeFeaturedLaneConfig,
+  HomeLatestKxLaneConfig,
   HomePage,
   HomePageImage,
   HomeRailShow,
-  HomeShowRailConfig,
   HomeShowSelection,
 } from "@/sanity.queries";
 import { urlForImage } from "@/sanity.image";
 import type { Image } from "sanity";
-import { getShowForCuration, getWebsiteRails } from "./api";
+import { getShowForCuration, getShows } from "./api";
 import { enhanceArtworkUrl } from "./artwork";
 import { VOICES_FALLBACK_ARTWORK } from "./config";
-import type { VoicesShow, VoicesWebsiteRail } from "./types";
+import type { VoicesShow } from "./types";
 
-const defaultRailDescription =
+const defaultLaneDescription =
   "The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.";
 
-const retiredHomeRailKeys = new Set([
-  "latest_east",
-  "independent_label_market",
-  "voices_global_community",
-]);
+const LATEST_KX_LIMIT = 10;
+const FEATURE_PANEL_FALLBACK_LIMIT = 8;
 
-const retiredHomeRailTitles = new Set([
-  "latest on east",
-  "independent label market",
-  "voices global community",
-]);
+export const defaultApplyBanner = {
+  heading: "Apply for a show!",
+  mobileBody:
+    "Voices is one of the UK's fastest-growing community radio stations. If you're passionate about sharing your ideas, apply to join our community of radio presenters, hosts and DJs.",
+  ctaText: "Apply for a show",
+};
 
 export type HomeFeatureImageFit = "cover" | "contain";
 
@@ -64,12 +64,29 @@ export interface HomeLiveStreamConfig {
   fallbackImageAlt?: string;
 }
 
+export interface HomeShowLane {
+  key: string;
+  title: string;
+  description: string;
+  shows: VoicesShow[];
+}
+
+export interface HomeApplyBanner {
+  heading: string;
+  mobileBody: string;
+  ctaText: string;
+}
+
+/**
+ * The homepage below the feature panel is a fixed sequence:
+ * latestKx → featured → Apply banner → swimlanes (0..N, CMS order).
+ */
 export interface HomePageContent {
   featuredItems: HomeFeatureItem[];
-  rails: VoicesWebsiteRail[];
-  latestKx: VoicesShow[];
-  latestEast: VoicesShow[];
-  byKey: Map<string, VoicesWebsiteRail>;
+  latestKx: HomeShowLane;
+  featured: HomeShowLane;
+  applyBanner: HomeApplyBanner;
+  swimlanes: HomeShowLane[];
   liveStreams: {
     kx?: HomeLiveStreamConfig;
     east?: HomeLiveStreamConfig;
@@ -400,67 +417,92 @@ async function getHomeFeatureItems(
   }));
 }
 
-async function getCmsRails(homePage: HomePage | null) {
-  const railConfigs = (homePage?.showRails ?? []).filter(
-    (rail) => rail.enabled !== false,
-  );
-  const selections = railConfigs.flatMap((rail) => rail.shows ?? []);
-  const showsById = await hydrateShows(selections.map(getSelectionShow));
-
-  return railConfigs
-    .map((rail): VoicesWebsiteRail | null => {
-      const shows = getRailShows(rail, showsById);
-
-      return {
-        key: rail.key?.current ?? rail._key,
-        title: rail.title,
-        description: rail.description ?? "",
-        station: "unknown",
-        pagePlacement: ["home"],
-        shows,
-      };
-    })
-    .filter((rail): rail is VoicesWebsiteRail => Boolean(rail));
-}
-
-function getRailShows(
-  rail: HomeShowRailConfig,
+function resolveLaneShows(
+  selections: Array<HomeShowSelection | HomeRailShow> | undefined,
   showsById: Map<string, VoicesShow>,
 ) {
   const seen = new Set<string>();
   const shows: VoicesShow[] = [];
 
-  for (const selection of rail.shows ?? []) {
-    const showSelection = getSelectionShow(selection);
-    const showId = getShowId(showSelection);
+  for (const selection of selections ?? []) {
+    const showId = getShowId(getSelectionShow(selection));
     const show = showId ? showsById.get(showId) : undefined;
-    if (show && !seen.has(show.id)) {
-      seen.add(show.id);
-      const overrideImage = getSelectionImage(selection);
-      const overrideImageUrl = getImageUrl(overrideImage, {
-        width: 800,
-        height: 800,
-        quality: 92,
-      });
+    if (!show || seen.has(show.id)) continue;
 
-      shows.push(
-        overrideImageUrl
-          ? {
-              ...show,
-              imageUrl: overrideImageUrl,
-              artwork: {
-                ...show.artwork,
-                src: overrideImageUrl,
-                alt: getImageAlt(overrideImage, show.artwork.alt || show.title),
-                source: "show",
-              },
-            }
-          : show,
-      );
-    }
+    seen.add(show.id);
+    const overrideImage = getSelectionImage(selection);
+    const overrideImageUrl = getImageUrl(overrideImage, {
+      width: 800,
+      height: 800,
+      quality: 92,
+    });
+
+    shows.push(
+      overrideImageUrl
+        ? {
+            ...show,
+            imageUrl: overrideImageUrl,
+            artwork: {
+              ...show.artwork,
+              src: overrideImageUrl,
+              alt: getImageAlt(overrideImage, show.artwork.alt || show.title),
+              source: "show",
+            },
+          }
+        : show,
+    );
   }
 
   return shows;
+}
+
+function buildLatestKxLane(
+  config: HomeLatestKxLaneConfig | undefined,
+  shows: VoicesShow[],
+): HomeShowLane {
+  return {
+    key: "latest_kx",
+    title: config?.title || "Latest on KX",
+    description: config?.description || defaultLaneDescription,
+    shows,
+  };
+}
+
+function buildFeaturedLane(
+  config: HomeFeaturedLaneConfig | undefined,
+  showsById: Map<string, VoicesShow>,
+): HomeShowLane {
+  return {
+    key: "featured",
+    title: config?.title || "Featured",
+    description: config?.description || defaultLaneDescription,
+    shows: resolveLaneShows(config?.shows, showsById),
+  };
+}
+
+function buildSwimlanes(
+  homePage: HomePage | null,
+  showsById: Map<string, VoicesShow>,
+): HomeShowLane[] {
+  return (homePage?.showRails ?? [])
+    .filter((rail) => rail.enabled !== false)
+    .map((rail) => ({
+      key: rail.key?.current ?? rail._key,
+      title: rail.title,
+      description: rail.description ?? "",
+      shows: resolveLaneShows(rail.shows, showsById),
+    }))
+    .filter((lane) => lane.shows.length > 0);
+}
+
+function buildApplyBanner(
+  config: HomeApplyBannerConfig | undefined,
+): HomeApplyBanner {
+  return {
+    heading: config?.heading || defaultApplyBanner.heading,
+    mobileBody: config?.mobileBody || defaultApplyBanner.mobileBody,
+    ctaText: config?.ctaText || defaultApplyBanner.ctaText,
+  };
 }
 
 function getLiveStreamConfig(homePage: HomePage | null) {
@@ -487,52 +529,40 @@ function getLiveStreamConfig(homePage: HomePage | null) {
   };
 }
 
-function isActiveHomeRail(rail: VoicesWebsiteRail) {
-  return (
-    !retiredHomeRailKeys.has(rail.key) &&
-    !retiredHomeRailTitles.has(rail.title.trim().toLowerCase())
-  );
-}
-
-export async function getHomeShowRails() {
-  const rails = await getWebsiteRails();
-  const byKey = new Map(rails.map((rail) => [rail.key, rail]));
-
-  return {
-    rails,
-    latestKx: byKey.get("latest_kx")?.shows ?? [],
-    latestEast: byKey.get("latest_east")?.shows ?? [],
-    byKey,
-  };
+/**
+ * The backend does not tag shows with a station yet (neither `/api/shows` nor
+ * artists carry one), and KX is the only live station, so "latest" is the
+ * newest public shows. When station data exists, filter here — nowhere else.
+ */
+function getLatestKxShows() {
+  return getShows({ limit: LATEST_KX_LIMIT });
 }
 
 export async function getHomePageContent(): Promise<HomePageContent> {
-  const [homePage, websiteRails] = await Promise.all([
+  const [homePage, latestKxShows] = await Promise.all([
     getHomePage(),
-    getWebsiteRails(),
+    getLatestKxShows(),
   ]);
-  const fallbackByKey = new Map(websiteRails.map((rail) => [rail.key, rail]));
-  const latestKx = fallbackByKey.get("latest_kx")?.shows ?? [];
-  const latestEast = fallbackByKey.get("latest_east")?.shows ?? [];
-  const fallbackFeaturedShows = [...latestKx, ...latestEast].filter(
-    (show, index, shows) =>
-      shows.findIndex((candidate) => candidate.id === show.id) === index,
-  );
-  const [featuredItems, cmsRails] = await Promise.all([
-    getHomeFeatureItems(homePage, fallbackFeaturedShows),
-    getCmsRails(homePage),
+  const laneSelections = [
+    ...(homePage?.featuredLane?.shows ?? []),
+    ...(homePage?.showRails ?? [])
+      .filter((rail) => rail.enabled !== false)
+      .flatMap((rail) => rail.shows ?? []),
+  ];
+  const [featuredItems, laneShowsById] = await Promise.all([
+    getHomeFeatureItems(
+      homePage,
+      latestKxShows.slice(0, FEATURE_PANEL_FALLBACK_LIMIT),
+    ),
+    hydrateShows(laneSelections.map(getSelectionShow)),
   ]);
-  const sourceRails = cmsRails.length ? cmsRails : websiteRails;
-  const rails = sourceRails.filter(isActiveHomeRail);
-  const sourceByKey = new Map(sourceRails.map((rail) => [rail.key, rail]));
-  const byKey = new Map(rails.map((rail) => [rail.key, rail]));
 
   return {
     featuredItems,
-    rails,
-    latestKx: sourceByKey.get("latest_kx")?.shows ?? latestKx,
-    latestEast: sourceByKey.get("latest_east")?.shows ?? latestEast,
-    byKey,
+    latestKx: buildLatestKxLane(homePage?.latestKxLane, latestKxShows),
+    featured: buildFeaturedLane(homePage?.featuredLane, laneShowsById),
+    applyBanner: buildApplyBanner(homePage?.applyBanner),
+    swimlanes: buildSwimlanes(homePage, laneShowsById),
     liveStreams: getLiveStreamConfig(homePage),
     hasCmsHomePage: Boolean(homePage),
   };

@@ -108,6 +108,44 @@ const imageOverrideField = defineField({
   ],
 });
 
+/**
+ * Members of any hand-curated show list (Featured lane and swimlanes):
+ * a plain show pick, or a pick with an image override.
+ */
+const curatedShowMembers = [
+  { type: "homeShowSelection" },
+  defineArrayMember({
+    name: "homeRailShow",
+    title: "Show With Image Override",
+    type: "object",
+    fields: [
+      defineField({
+        name: "show",
+        title: "Show",
+        type: "homeShowSelection",
+        validation: (rule) => rule.required(),
+      }),
+      imageOverrideField,
+    ],
+    preview: {
+      select: {
+        title: "show.title",
+        artistName: "show.artistName",
+        media: "image",
+      },
+      prepare(selection) {
+        return {
+          title: selection.title ?? "Show",
+          subtitle: ["Curated show", selection.artistName]
+            .filter(Boolean)
+            .join(" / "),
+          media: selection.media,
+        };
+      },
+    },
+  }),
+];
+
 export const homeShowSelectionType = defineType({
   name: "homeShowSelection",
   title: "Show",
@@ -145,9 +183,11 @@ export default defineType({
   // @ts-ignore
   icon: HomeIcon,
   groups: [
-    { name: "featured", title: "Featured Content" },
+    { name: "featured", title: "1. Feature panel" },
+    { name: "fixed", title: "2. Latest on KX & Featured" },
+    { name: "apply", title: "3. Apply banner" },
+    { name: "rails", title: "4. Swimlanes" },
     { name: "live", title: "Live Streams" },
-    { name: "rails", title: "Curated Show Lists" },
   ],
   preview: {
     prepare() {
@@ -267,6 +307,86 @@ export default defineType({
       validation: (rule) => rule.required().length(8),
     }),
     defineField({
+      name: "latestKxLane",
+      title: "Latest on KX",
+      description:
+        "Always sits first, above Featured. Fills itself with the newest shows; only the heading and blurb are editable here.",
+      type: "object",
+      group: "fixed",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({
+          name: "title",
+          title: "Title",
+          type: "string",
+          initialValue: "Latest on KX",
+        }),
+        defineField({
+          name: "description",
+          title: "Description",
+          type: "text",
+          rows: 3,
+        }),
+      ],
+    }),
+    defineField({
+      name: "featuredLane",
+      title: "Featured",
+      description:
+        "Always sits second, directly above the Apply banner. Hand-pick the shows; the list is hidden on the site while it is empty.",
+      type: "object",
+      group: "fixed",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({
+          name: "title",
+          title: "Title",
+          type: "string",
+          initialValue: "Featured",
+        }),
+        defineField({
+          name: "description",
+          title: "Description",
+          type: "text",
+          rows: 3,
+        }),
+        defineField({
+          name: "shows",
+          title: "Shows",
+          type: "array",
+          of: curatedShowMembers,
+        }),
+      ],
+    }),
+    defineField({
+      name: "applyBanner",
+      title: "Apply for a show banner",
+      description:
+        "Sits between Featured and the swimlanes. The button link comes from Settings → Apply link.",
+      type: "object",
+      group: "apply",
+      fields: [
+        defineField({
+          name: "heading",
+          title: "Heading (desktop)",
+          type: "string",
+          initialValue: "Apply for a show!",
+        }),
+        defineField({
+          name: "mobileBody",
+          title: "Body (mobile)",
+          type: "text",
+          rows: 4,
+        }),
+        defineField({
+          name: "ctaText",
+          title: "Button text",
+          type: "string",
+          initialValue: "Apply for a show",
+        }),
+      ],
+    }),
+    defineField({
       name: "liveStreams",
       title: "Live Streams",
       type: "object",
@@ -316,13 +436,15 @@ export default defineType({
     }),
     defineField({
       name: "showRails",
-      title: "Curated Show Lists",
+      title: "Swimlanes (below the Apply banner)",
+      description:
+        "Add as many or as few as you like, drag to reorder, switch off with Enabled, or delete when you are done. Lists with no shows are hidden.",
       type: "array",
       group: "rails",
       of: [
         defineArrayMember({
           name: "homeShowRail",
-          title: "Show List",
+          title: "Swimlane",
           type: "object",
           fields: [
             defineField({
@@ -357,39 +479,7 @@ export default defineType({
               name: "shows",
               title: "Shows",
               type: "array",
-              of: [
-                { type: "homeShowSelection" },
-                defineArrayMember({
-                  name: "homeRailShow",
-                  title: "Show With Image Override",
-                  type: "object",
-                  fields: [
-                    defineField({
-                      name: "show",
-                      title: "Show",
-                      type: "homeShowSelection",
-                      validation: (rule) => rule.required(),
-                    }),
-                    imageOverrideField,
-                  ],
-                  preview: {
-                    select: {
-                      title: "show.title",
-                      artistName: "show.artistName",
-                      media: "image",
-                    },
-                    prepare(selection) {
-                      return {
-                        title: selection.title ?? "Show",
-                        subtitle: ["Curated show", selection.artistName]
-                          .filter(Boolean)
-                          .join(" / "),
-                        media: selection.media,
-                      };
-                    },
-                  },
-                }),
-              ],
+              of: curatedShowMembers,
             }),
           ],
           preview: {
@@ -403,7 +493,7 @@ export default defineType({
                 ? selection.shows.length
                 : 0;
               return {
-                title: selection.title ?? "Show List",
+                title: selection.title ?? "Swimlane",
                 subtitle: `${
                   selection.enabled === false ? "Disabled" : "Enabled"
                 } / ${count} shows`,

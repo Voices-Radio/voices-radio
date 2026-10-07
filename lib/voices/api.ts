@@ -21,8 +21,6 @@ import type {
   VoicesStation,
   VoicesShow,
   VoicesShowRaw,
-  VoicesWebsiteRail,
-  VoicesWebsiteRailRaw,
 } from "./types";
 
 type SearchParamValue = string | number | boolean;
@@ -213,94 +211,4 @@ export async function getShowsForArtist(
   { limit = VOICES_DEFAULT_FEATURED_LIMIT }: { limit?: number } = {},
 ) {
   return getShows({ artistId, limit, includeArtistFallbacks: false });
-}
-
-function normalizeWebsiteRail(
-  rawRail: VoicesWebsiteRailRaw,
-): VoicesWebsiteRail {
-  return {
-    key: rawRail.key,
-    title: rawRail.title,
-    description: rawRail.description ?? "",
-    station: rawRail.station ?? "unknown",
-    pagePlacement: rawRail.pagePlacement ?? [],
-    shows: (rawRail.items ?? [])
-      .filter(
-        (item): item is VoicesShowRaw =>
-          typeof item === "object" && item !== null && "_id" in item,
-      )
-      .filter(isPublicMatchedShow)
-      .map((show) => normalizeShow(show)),
-  };
-}
-
-function fallbackRail(
-  key: string,
-  title: string,
-  description: string,
-  shows: VoicesShow[],
-  start: number,
-): VoicesWebsiteRail {
-  return {
-    key,
-    title,
-    description,
-    station: "unknown",
-    pagePlacement: ["home", "explore"],
-    shows: shows.slice(start, start + VOICES_DEFAULT_FEATURED_LIMIT),
-  };
-}
-
-export async function getWebsiteRails() {
-  try {
-    const payload = await voicesFetch<
-      VoicesWebsiteRailRaw[] | VoicesListResponse<VoicesWebsiteRailRaw>
-    >("/api/website/rails");
-
-    const rails = unwrapList(payload)
-      .filter((rail) => rail.published !== false)
-      .map(normalizeWebsiteRail);
-
-    if (rails.length) return rails;
-  } catch {
-    // The website rails endpoint is planned but not required for local preview.
-  }
-
-  const shows = await getShows({ limit: 40 });
-  const defaultDescription =
-    "The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.";
-
-  return [
-    fallbackRail("latest_kx", "Latest on KX", defaultDescription, shows, 0),
-    fallbackRail("latest_east", "Latest on EAST", defaultDescription, shows, 5),
-    fallbackRail("featured", "Featured", defaultDescription, shows, 0),
-    fallbackRail(
-      "producer_picks",
-      "Producer Picks",
-      "A list of highlights from the recent weeks picked by our team of producers.",
-      shows,
-      10,
-    ),
-    fallbackRail(
-      "monthly_highlights",
-      "May Highlights",
-      defaultDescription,
-      shows,
-      15,
-    ),
-    fallbackRail(
-      "independent_label_market",
-      "Independent Label Market",
-      "Shows that aired as part of the annual event at the Coal Drops Yard",
-      shows,
-      20,
-    ),
-    fallbackRail(
-      "voices_global_community",
-      "Voices Global Community",
-      "Shows from our hosts around the world.",
-      shows,
-      25,
-    ),
-  ];
 }

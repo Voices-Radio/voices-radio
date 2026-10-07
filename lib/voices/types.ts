@@ -149,24 +149,3 @@ export interface VoicesListResponse<T> {
     pages: number;
   };
 }
-
-export interface VoicesWebsiteRailRaw {
-  key: string;
-  title: string;
-  description?: string | null;
-  station?: VoicesStation | null;
-  pagePlacement?: string[];
-  items?: Array<VoicesShowRaw | string>;
-  published?: boolean;
-  startAt?: string | null;
-  endAt?: string | null;
-}
-
-export interface VoicesWebsiteRail {
-  key: string;
-  title: string;
-  description: string;
-  station: VoicesStation;
-  pagePlacement: string[];
-  shows: VoicesShow[];
-}
