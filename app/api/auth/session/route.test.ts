@@ -24,7 +24,7 @@ beforeEach(() => {
     user: USER,
     capabilities: ["member"],
     artist: null,
-    member: { status: "active", tierId: "insider", cadence: "monthly" },
+    member: { status: "active", contributionAmountMinor: 1599, cadence: "monthly" },
   });
 });
 
@@ -40,7 +40,7 @@ describe("GET /api/auth/session", () => {
         ...USER,
         capabilities: ["member"],
         artist: null,
-        member: { status: "active", tierId: "insider", cadence: "monthly" },
+        member: { status: "active", contributionAmountMinor: 1599, cadence: "monthly" },
       },
     });
     expect(refreshTokens).not.toHaveBeenCalled();
@@ -67,7 +67,7 @@ describe("GET /api/auth/session", () => {
         ...USER,
         capabilities: ["member"],
         artist: null,
-        member: { status: "active", tierId: "insider", cadence: "monthly" },
+        member: { status: "active", contributionAmountMinor: 1599, cadence: "monthly" },
       },
     });
   });

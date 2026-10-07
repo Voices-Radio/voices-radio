@@ -18,9 +18,10 @@ describe("CadenceToggle", () => {
       "aria-pressed",
       "true",
     );
-    expect(
-      screen.getByRole("button", { name: /annual/i }),
-    ).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: /annual/i })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
   });
 
   it("navigates to the other cadence in the URL when clicked", async () => {
@@ -41,5 +42,22 @@ describe("CadenceToggle", () => {
     await user.click(screen.getByRole("button", { name: /monthly/i }));
 
     expect(replace).not.toHaveBeenCalled();
+  });
+
+  it("shows the discount badge on the inactive Annual option when a positive discount is passed", () => {
+    render(<CadenceToggle cadence="monthly" annualDiscountPercent={14} />);
+    expect(screen.getByText("Save 14%")).toBeInTheDocument();
+  });
+
+  it("hides the discount badge once Annual is the active option", () => {
+    // The badge's own orange fill would wash out against an already-orange
+    // active pill, so it only renders as an enticement on the inactive side.
+    render(<CadenceToggle cadence="annual" annualDiscountPercent={14} />);
+    expect(screen.queryByText("Save 14%")).not.toBeInTheDocument();
+  });
+
+  it("renders no badge when there is no discount", () => {
+    render(<CadenceToggle cadence="monthly" annualDiscountPercent={null} />);
+    expect(screen.queryByText(/Save \d+%/)).not.toBeInTheDocument();
   });
 });

@@ -148,7 +148,7 @@ describe("getCapabilities", () => {
           },
           member: {
             status: "active",
-            tierId: "insider",
+            contributionAmountMinor: 1599,
             cadence: "monthly",
           },
         }),
@@ -159,7 +159,7 @@ describe("getCapabilities", () => {
     expect(await getCapabilities()).toMatchObject({
       capabilities: ["artist", "member"],
       artist: { id: "artist-1", canManageProfile: true },
-      member: { status: "active", tierId: "insider" },
+      member: { status: "active", contributionAmountMinor: 1599 },
     });
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("/api/auth/capabilities"),
@@ -437,7 +437,11 @@ describe("requireArtist", () => {
           user: { _id: "u1", email: "member@example.com" },
           capabilities: ["member"],
           artist: null,
-          member: { status: "active", tierId: "insider", cadence: "monthly" },
+          member: {
+            status: "active",
+            contributionAmountMinor: 1599,
+            cadence: "monthly",
+          },
         }),
         { status: 200 },
       ),

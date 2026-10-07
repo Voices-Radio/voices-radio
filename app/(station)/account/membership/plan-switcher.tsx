@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ConfirmChangeDialog from "../../components/membership/confirm-change-dialog";
+import ContributionSlider from "../../components/membership/contribution-slider";
 import { trackMembershipEvent } from "@/lib/voices/membership/analytics";
 import {
   changeCadenceAction,
@@ -9,84 +11,95 @@ import {
   previewChangeAction,
   upgradeAction,
 } from "./actions";
-import type { MembershipCadence } from "@/lib/voices/membership/types";
+import type {
+  MembershipCadence,
+  MembershipScaleView,
+} from "@/lib/voices/membership/types";
 import { formatMinorUnits } from "@/lib/voices/membership/format";
 import { accountSecondaryButtonClassName } from "../components/account-surface";
 import { cn } from "@/lib/utils";
 
-interface OtherTier {
-  id: string;
-  name: string;
-  priceMinor: number;
-  direction: "upgrade" | "downgrade";
-}
-
-export function PlanSwitcher({
-  otherTiers,
-  currency,
+/**
+ * Replaces the old "other tiers" list — there's no ladder to pick from
+ * anymore, just an amount to move the slider to. Moving it away from the
+ * current amount surfaces a single confirm action for whichever direction
+ * that is (contract §5: same-cadence increase is immediate, decrease is
+ * scheduled at renewal).
+ */
+export function AmountSwitcher({
+  scale,
+  currentAmountMinor,
   cadence,
 }: {
-  otherTiers: OtherTier[];
-  currency: string;
+  scale: MembershipScaleView;
+  currentAmountMinor: number;
   cadence: MembershipCadence;
 }) {
   const router = useRouter();
+  const [amount, setAmount] = useState(currentAmountMinor);
+  const direction =
+    amount === currentAmountMinor
+      ? null
+      : amount > currentAmountMinor
+        ? ("upgrade" as const)
+        : ("downgrade" as const);
+  const display = formatMinorUnits(amount, scale.currency);
 
   return (
-    <div className="flex flex-col gap-3">
-      {otherTiers.map((tier) => (
-        <div
-          key={tier.id}
-          className="flex items-center justify-between gap-4 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 transition-[border-color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-voicesNext-orange/70 hover:bg-voicesNext-surface motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-        >
-          <div>
-            <p className="font-gabarito text-sm font-bold text-voicesNext-cream">
-              {tier.name}
-            </p>
-            <p className="font-gabarito text-xs text-voicesNext-cream/70">
-              {formatMinorUnits(tier.priceMinor, currency)}/
-              {cadence === "monthly" ? "month" : "year"}
-            </p>
-          </div>
-          <ConfirmChangeDialog
-            triggerLabel={
-              tier.direction === "upgrade" ? "Upgrade" : "Downgrade"
+    <div className="flex flex-col gap-4">
+      <ContributionSlider
+        minMinor={scale.minMinor}
+        maxMinor={scale.maxMinor}
+        stepMinor={scale.stepMinor}
+        currency={scale.currency}
+        value={amount}
+        onChange={setAmount}
+      />
+
+      {direction && (
+        <ConfirmChangeDialog
+          triggerLabel={
+            direction === "upgrade"
+              ? `Increase to ${display}/month`
+              : `Reduce to ${display}/month`
+          }
+          triggerClassName={cn(
+            accountSecondaryButtonClassName,
+            "h-11 w-fit px-5 text-sm",
+          )}
+          title={
+            direction === "upgrade"
+              ? `Increase to ${display}/month`
+              : `Reduce to ${display}/month`
+          }
+          currency={scale.currency}
+          loadPreview={() =>
+            previewChangeAction({ action: direction, toAmountMinor: amount })
+          }
+          confirmLabel={`Confirm ${direction === "upgrade" ? "increase" : "reduction"}`}
+          onConfirm={async () => {
+            const result =
+              direction === "upgrade"
+                ? await upgradeAction(amount)
+                : await downgradeAction(amount);
+            if (result.ok) {
+              trackMembershipEvent(
+                direction === "upgrade"
+                  ? { name: "membership_upgraded", amountMinor: amount }
+                  : {
+                      name: "membership_downgrade_scheduled",
+                      amountMinor: amount,
+                    },
+              );
             }
-            triggerClassName={cn(
-              accountSecondaryButtonClassName,
-              "h-10 px-4 text-sm",
-            )}
-            title={`${
-              tier.direction === "upgrade" ? "Upgrade" : "Downgrade"
-            } to ${tier.name}`}
-            currency={currency}
-            loadPreview={() =>
-              previewChangeAction({ action: tier.direction, toTierId: tier.id })
-            }
-            confirmLabel={`Confirm ${
-              tier.direction === "upgrade" ? "upgrade" : "downgrade"
-            }`}
-            onConfirm={async () => {
-              const result =
-                tier.direction === "upgrade"
-                  ? await upgradeAction(tier.id)
-                  : await downgradeAction(tier.id);
-              if (result.ok) {
-                trackMembershipEvent(
-                  tier.direction === "upgrade"
-                    ? { name: "membership_upgraded", tierId: tier.id }
-                    : {
-                        name: "membership_downgrade_scheduled",
-                        tierId: tier.id,
-                      },
-                );
-              }
-              return result;
-            }}
-            onSuccess={() => router.refresh()}
-          />
-        </div>
-      ))}
+            return result;
+          }}
+          onSuccess={() => {
+            router.refresh();
+            setAmount(currentAmountMinor);
+          }}
+        />
+      )}
     </div>
   );
 }

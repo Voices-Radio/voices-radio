@@ -149,7 +149,7 @@ describe("signInAction", () => {
       user: { _id: "u1", email: "member@example.com" },
       capabilities: ["member"],
       artist: null,
-      member: { status: "active", tierId: "insider", cadence: "monthly" },
+      member: { status: "active", contributionAmountMinor: 1599, cadence: "monthly" },
     });
 
     await expect(

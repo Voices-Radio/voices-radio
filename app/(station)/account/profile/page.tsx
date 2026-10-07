@@ -33,7 +33,7 @@ export default async function AccountProfilePage() {
   }
 
   // Only prompt for a postal address when it's actually needed to fulfil a
-  // benefit on the member's current tier (contract §9) — never by default.
+  // benefit the member has access to (contract §9) — never by default.
   const showAddress =
     benefitsResult.ok &&
     benefitsResult.data.some((benefit) => benefit.requiresAddress);

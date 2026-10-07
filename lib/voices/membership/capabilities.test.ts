@@ -22,7 +22,7 @@ function capabilities(values: AccountCapabilities["capabilities"]) {
         }
       : null,
     member: values.includes("member")
-      ? { status: "active", tierId: "insider", cadence: "monthly" }
+      ? { status: "active", contributionAmountMinor: 1599, cadence: "monthly" }
       : null,
   } satisfies AccountCapabilities;
 }

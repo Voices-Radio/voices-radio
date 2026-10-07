@@ -137,7 +137,7 @@ describe("createAccountAction", () => {
     expect(redirect).not.toHaveBeenCalled();
   });
 
-  it("signs the member in and starts checkout with the chosen tier/cadence when both succeed", async () => {
+  it("signs the member in and starts checkout with the chosen amount/cadence when both succeed", async () => {
     vi.mocked(backendRegister).mockResolvedValue({
       ok: true,
       status: 201,
@@ -158,7 +158,7 @@ describe("createAccountAction", () => {
     await expect(
       createAccountAction(
         undefined,
-        formData({ ...validFields, tier: "member", cadence: "annual" }),
+        formData({ ...validFields, amount: "799", cadence: "annual" }),
       ),
     ).rejects.toThrow(RedirectSignal);
 
@@ -166,7 +166,7 @@ describe("createAccountAction", () => {
       token: "at",
       refreshToken: "rt",
     });
-    expect(startCheckout).toHaveBeenCalledWith("member", "annual");
+    expect(startCheckout).toHaveBeenCalledWith(799, "annual");
     expect(redirect).not.toHaveBeenCalled();
   });
 
@@ -183,14 +183,14 @@ describe("createAccountAction", () => {
     });
     vi.mocked(startCheckout).mockResolvedValue({
       ok: false,
-      message: "Choose a membership tier to continue.",
+      message: "Choose a contribution amount to continue.",
     });
 
     const state = await createAccountAction(undefined, formData(validFields));
 
     expect(state).toEqual({
       status: "checkout_error",
-      message: "Choose a membership tier to continue.",
+      message: "Choose a contribution amount to continue.",
     });
     expect(setSessionCookies).toHaveBeenCalled();
   });

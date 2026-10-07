@@ -15,6 +15,8 @@ import {
 import PasswordInput from "../../components/forms/password-input";
 import JoinSteps from "../join-steps";
 import { createAccountAction, type CreateAccountState } from "./actions";
+import { formatMinorUnitsWithCadence } from "@/lib/voices/membership/format";
+import { isMembershipCadence } from "@/lib/voices/membership/types";
 
 const initialState: CreateAccountState = undefined;
 
@@ -36,9 +38,21 @@ function SubmitButton() {
   );
 }
 
-function AccountPass({ tier, cadence }: { tier: string; cadence: string }) {
+/** `£3.99/month`, or a fallback while the amount is unknown. */
+function displayContribution(amount: string, cadence: string): string | null {
+  const parsed = Number.parseInt(amount, 10);
+  if (!Number.isInteger(parsed) || parsed <= 0) return null;
+  return formatMinorUnitsWithCadence(
+    parsed,
+    "gbp",
+    isMembershipCadence(cadence) ? cadence : "monthly",
+  );
+}
+
+function AccountPass({ amount, cadence }: { amount: string; cadence: string }) {
+  const contribution = displayContribution(amount, cadence);
   const passRows = [
-    ["Access", tier ? `${tier} membership` : "Voices membership"],
+    ["Contribution", contribution ?? "Voices membership"],
     ["Billing", cadence || "Selected at checkout"],
     ["Next", "Secure checkout"],
   ];
@@ -68,12 +82,13 @@ function AccountPass({ tier, cadence }: { tier: string; cadence: string }) {
 }
 
 export default function CreateAccountForm({
-  tier,
+  amount,
   cadence,
 }: {
-  tier: string;
+  amount: string;
   cadence: string;
 }) {
+  const contribution = displayContribution(amount, cadence);
   const [state, formAction] = useFormState(createAccountAction, initialState);
   const errorRef = useRef<HTMLDivElement>(null);
 
@@ -98,7 +113,7 @@ export default function CreateAccountForm({
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
-            href={tier ? `/join?cadence=${cadence}` : "/join"}
+            href={amount ? `/join?cadence=${cadence}` : "/join"}
             className={cn(accountPrimaryButtonClassName, "h-12 px-6 text-base")}
           >
             Try again
@@ -128,15 +143,15 @@ export default function CreateAccountForm({
         </h1>
         <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
           We&rsquo;ve sent a verification link to <strong>{state.email}</strong>
-          {tier
-            ? `. Verify your address, then sign in and we'll pick your ${tier} membership back up.`
+          {contribution
+            ? `. Verify your address, then sign in and we'll pick your ${contribution} membership back up.`
             : ". Verify your address, then sign in to continue."}
         </p>
         <Link
           href={
-            tier
+            amount
               ? `/sign-in?next=${encodeURIComponent(
-                  `/join/checkout?tier=${tier}&cadence=${cadence}`,
+                  `/join/checkout?amount=${amount}&cadence=${cadence}`,
                 )}`
               : "/sign-in"
           }
@@ -164,15 +179,15 @@ export default function CreateAccountForm({
           eyebrow="Join Voices"
           title="Create your account"
           description={
-            tier
-              ? `Setting up your ${tier} membership, billed ${cadence}.`
+            contribution
+              ? `Setting up your ${contribution} membership.`
               : "Create an account to join Voices."
           }
         />
 
         <AccountSurface className="mt-6">
           <form action={formAction} noValidate className="flex flex-col gap-5">
-            <input type="hidden" name="tier" value={tier} />
+            <input type="hidden" name="amount" value={amount} />
             <input type="hidden" name="cadence" value={cadence} />
 
             {state?.status === "error" && state.formError && (
@@ -341,7 +356,7 @@ export default function CreateAccountForm({
         </p>
       </div>
       <div className="order-1 md:order-2">
-        <AccountPass tier={tier} cadence={cadence} />
+        <AccountPass amount={amount} cadence={cadence} />
       </div>
     </div>
   );

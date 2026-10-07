@@ -1,194 +1,108 @@
 import { describe, expect, it } from "vitest";
 import {
   MEMBERSHIP_FALLBACK_COPY,
-  MEMBERSHIP_FALLBACK_TIERS,
-  mergeMembershipTiers,
-  normalizeMembershipTiers,
+  MEMBERSHIP_FALLBACK_SCALE,
+  mergeMembershipScale,
+  mergeMembershipAnnual,
   withMembershipCopyFallback,
 } from "./constants";
-import type { MembershipTier } from "@/sanity.queries";
-import type { MembershipTierApi } from "./schemas";
+import type { MembershipScaleApi, MembershipAnnualApi } from "./schemas";
 
-describe("normalizeMembershipTiers", () => {
-  it("falls back to launch tiers when Sanity returns null", () => {
-    expect(normalizeMembershipTiers(null)).toEqual(MEMBERSHIP_FALLBACK_TIERS);
+describe("MEMBERSHIP_FALLBACK_SCALE", () => {
+  it("spans £3.99 to £15.99 with a £5.99 default, matching docs/plans/sliding-scale-membership.md", () => {
+    expect(MEMBERSHIP_FALLBACK_SCALE.minMinor).toBe(399);
+    expect(MEMBERSHIP_FALLBACK_SCALE.maxMinor).toBe(1599);
+    expect(MEMBERSHIP_FALLBACK_SCALE.defaultMinor).toBe(599);
+    expect(MEMBERSHIP_FALLBACK_SCALE.stepMinor).toBe(100);
   });
 
-  it("falls back to launch tiers when Sanity returns an empty array", () => {
-    expect(normalizeMembershipTiers([])).toEqual(MEMBERSHIP_FALLBACK_TIERS);
-  });
-
-  it("exactly one fallback tier is marked most popular, and it's Member", () => {
-    const popular = MEMBERSHIP_FALLBACK_TIERS.filter((t) => t.mostPopular);
-    expect(popular).toHaveLength(1);
-    expect(popular[0].id).toBe("member");
-  });
-
-  it("maps CMS tier documents, preserving query order", () => {
-    const cmsTiers: MembershipTier[] = [
-      {
-        _id: "1",
-        tierId: { current: "member" },
-        name: "Member",
-        headline: "Get closer to Voices.",
-        monthlyPriceDisplay: "£8",
-        annualPriceDisplay: "£80",
-        benefitBullets: ["Perk one", "Perk two"],
-        mostPopular: true,
-        sortOrder: 1,
-      },
-      {
-        _id: "2",
-        tierId: { current: "patron" },
-        name: "Patron",
-        headline: "Help build what comes next.",
-        monthlyPriceDisplay: "£30",
-        annualPriceDisplay: "£300",
-        benefitBullets: [],
-        mostPopular: false,
-        sortOrder: 2,
-      },
-    ];
-
-    const result = normalizeMembershipTiers(cmsTiers);
-
-    expect(result).toEqual([
-      {
-        id: "member",
-        name: "Member",
-        headline: "Get closer to Voices.",
-        description: undefined,
-        monthlyPriceDisplay: "£8",
-        annualPriceDisplay: "£80",
-        benefitBullets: ["Perk one", "Perk two"],
-        mostPopular: true,
-      },
-      {
-        id: "patron",
-        name: "Patron",
-        headline: "Help build what comes next.",
-        description: undefined,
-        monthlyPriceDisplay: "£30",
-        annualPriceDisplay: "£300",
-        benefitBullets: [],
-        mostPopular: false,
-      },
-    ]);
-  });
-
-  it("falls back to a lowercased name when tierId is missing", () => {
-    const cmsTiers = [
-      {
-        _id: "1",
-        name: "Insider",
-        headline: "Step inside the station.",
-        monthlyPriceDisplay: "£15",
-        annualPriceDisplay: "£150",
-        benefitBullets: [],
-        sortOrder: 1,
-      },
-    ] as unknown as MembershipTier[];
-
-    expect(normalizeMembershipTiers(cmsTiers)[0].id).toBe("insider");
+  it("has exactly 13 points, one per £1 step", () => {
+    expect(MEMBERSHIP_FALLBACK_SCALE.points).toHaveLength(13);
+    expect(MEMBERSHIP_FALLBACK_SCALE.points[0]).toBe(399);
+    expect(
+      MEMBERSHIP_FALLBACK_SCALE.points[
+        MEMBERSHIP_FALLBACK_SCALE.points.length - 1
+      ],
+    ).toBe(1599);
   });
 });
 
-describe("mergeMembershipTiers", () => {
-  const apiTiers: MembershipTierApi[] = [
-    {
-      id: "patron",
-      name: "Patron",
-      monthlyPriceMinor: 3000,
-      annualPriceMinor: 30000,
+describe("mergeMembershipScale", () => {
+  const apiScale: MembershipScaleApi = {
+    minMinor: 399,
+    maxMinor: 1599,
+    defaultMinor: 599,
+    currency: "gbp",
+    points: [
+      { amountMinor: 999, priceVersionId: "pv2" },
+      { amountMinor: 399, priceVersionId: "pv1" },
+      { amountMinor: 1599, priceVersionId: "pv3" },
+    ],
+  };
+
+  it("sorts points ascending regardless of API order", () => {
+    const result = mergeMembershipScale(apiScale);
+    expect(result.points).toEqual([399, 999, 1599]);
+  });
+
+  it("passes min/max/default/currency straight through from the API — never a hardcoded fallback once the API has responded", () => {
+    const result = mergeMembershipScale(apiScale);
+    expect(result.minMinor).toBe(399);
+    expect(result.maxMinor).toBe(1599);
+    expect(result.defaultMinor).toBe(599);
+    expect(result.currency).toBe("gbp");
+  });
+
+  it("derives stepMinor from the gap between the two lowest points", () => {
+    const result = mergeMembershipScale(apiScale);
+    // Lowest two sorted points are 399 and 999 in this fixture (deliberately
+    // not a real £1 step) — the derivation is generic, not hardcoded to 100.
+    expect(result.stepMinor).toBe(600);
+  });
+
+  it("falls back to the fallback scale's step when there are fewer than two points", () => {
+    const result = mergeMembershipScale({
+      ...apiScale,
+      points: [{ amountMinor: 599, priceVersionId: "pv1" }],
+    });
+    expect(result.stepMinor).toBe(MEMBERSHIP_FALLBACK_SCALE.stepMinor);
+  });
+});
+
+describe("mergeMembershipAnnual", () => {
+  it("returns null when the API reports no active annual price", () => {
+    expect(mergeMembershipAnnual(null)).toBeNull();
+  });
+
+  it("passes the server-derived discount through unchanged — never recomputed client-side", () => {
+    const apiAnnual: MembershipAnnualApi = {
+      amountMinor: 4099,
       currency: "gbp",
-      mostPopular: false,
-      sortOrder: 4,
-    },
-    {
-      id: "member",
-      name: "Member",
-      monthlyPriceMinor: 800,
-      annualPriceMinor: 8000,
-      currency: "gbp",
-      mostPopular: true,
-      sortOrder: 2,
-    },
-  ];
-
-  it("orders by the backend's sortOrder, not the input array order", () => {
-    const result = mergeMembershipTiers(apiTiers, null);
-    expect(result.map((tier) => tier.id)).toEqual(["member", "patron"]);
-  });
-
-  it("prices always come from the API, formatted — never a hardcoded fallback", () => {
-    const result = mergeMembershipTiers(apiTiers, null);
-    const member = result.find((tier) => tier.id === "member")!;
-    expect(member.monthlyPriceDisplay).toBe("£8");
-    expect(member.annualPriceDisplay).toBe("£80");
-  });
-
-  it("uses CMS copy for headline/benefits when a matching CMS tier exists", () => {
-    const cmsTiers: MembershipTier[] = [
-      {
-        _id: "1",
-        tierId: { current: "member" },
-        name: "Member",
-        headline: "CMS headline for Member",
-        monthlyPriceDisplay: "ignored",
-        annualPriceDisplay: "ignored",
-        benefitBullets: ["CMS perk"],
-        mostPopular: true,
-        sortOrder: 1,
-      },
-    ];
-
-    const result = mergeMembershipTiers(apiTiers, cmsTiers);
-    const member = result.find((tier) => tier.id === "member")!;
-    expect(member.headline).toBe("CMS headline for Member");
-    expect(member.benefitBullets).toEqual(["CMS perk"]);
-    // Price still comes from the API, not the (ignored) CMS display strings.
-    expect(member.monthlyPriceDisplay).toBe("£8");
-  });
-
-  it("falls back to launch copy when a tier has no CMS document yet", () => {
-    const result = mergeMembershipTiers(apiTiers, null);
-    const member = result.find((tier) => tier.id === "member")!;
-    expect(member.headline).toBe(
-      MEMBERSHIP_FALLBACK_TIERS.find((t) => t.id === "member")!.headline,
-    );
-  });
-
-  it("falls back to the tier's own name when neither CMS nor launch copy has a headline", () => {
-    const unknownTier: MembershipTierApi = {
-      id: "brand-new-tier",
-      name: "Brand New Tier",
-      monthlyPriceMinor: 100,
-      annualPriceMinor: 1000,
-      currency: "gbp",
-      mostPopular: false,
-      sortOrder: 1,
+      priceVersionId: "pv_annual",
+      comparedToMonthlyMinor: 4788,
+      savingMinor: 689,
+      discountPercent: 14,
     };
-    const result = mergeMembershipTiers([unknownTier], null);
-    expect(result[0].headline).toBe("Brand New Tier");
-    expect(result[0].benefitBullets).toEqual([]);
+    expect(mergeMembershipAnnual(apiAnnual)).toEqual({
+      amountMinor: 4099,
+      currency: "gbp",
+      discountPercent: 14,
+      savingMinor: 689,
+    });
   });
 
-  it("mostPopular always comes from the API, even if CMS disagrees", () => {
-    const cmsTiers: MembershipTier[] = [
-      {
-        _id: "1",
-        tierId: { current: "member" },
-        name: "Member",
-        headline: "x",
-        monthlyPriceDisplay: "x",
-        annualPriceDisplay: "x",
-        benefitBullets: [],
-        mostPopular: false,
-        sortOrder: 1,
-      },
-    ];
-    const result = mergeMembershipTiers(apiTiers, cmsTiers);
-    expect(result.find((t) => t.id === "member")!.mostPopular).toBe(true);
+  it("normalises a missing discountPercent/savingMinor to null, not undefined", () => {
+    const apiAnnual: MembershipAnnualApi = {
+      amountMinor: 4099,
+      currency: "gbp",
+      priceVersionId: "pv_annual",
+    };
+    expect(mergeMembershipAnnual(apiAnnual)).toEqual({
+      amountMinor: 4099,
+      currency: "gbp",
+      discountPercent: null,
+      savingMinor: null,
+    });
   });
 });
 
@@ -210,5 +124,17 @@ describe("withMembershipCopyFallback", () => {
     expect(result.join_ballot_disclaimer).toBe(
       MEMBERSHIP_FALLBACK_COPY.join_ballot_disclaimer,
     );
+  });
+
+  it("mentions no stale tier names in the fallback copy", () => {
+    // "Supporter Radio" and "Open Decks" are pre-existing Voices programme
+    // names (join_ballot_disclaimer) unrelated to the old "Supporter" tier —
+    // deliberately not asserted against here, since a bare substring check
+    // would false-positive on them. "Insider"/"Patron" have no such
+    // legitimate collision, so those two are safe to check directly.
+    const copy = JSON.stringify(MEMBERSHIP_FALLBACK_COPY).toLowerCase();
+    for (const stale of ["insider", "patron"]) {
+      expect(copy).not.toContain(stale);
+    }
   });
 });

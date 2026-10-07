@@ -20,7 +20,7 @@ export const BENEFIT_STATE_META: Record<BenefitState, BenefitStateMeta> = {
   expired: { label: "Expired", tone: "neutral", actionable: false },
   not_yet_available: { label: "Not yet available", tone: "neutral", actionable: false },
   capacity_full: { label: "Full for now", tone: "neutral", actionable: false },
-  ineligible: { label: "Not included in your tier", tone: "neutral", actionable: false },
+  ineligible: { label: "Join to unlock this", tone: "neutral", actionable: false },
   requires_action: { label: "Eligible to enter", tone: "positive", actionable: true },
   ballot_entered: {
     label: "Entry submitted — you'll hear back if selected",

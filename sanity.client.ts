@@ -10,7 +10,6 @@ import {
   Services,
   BlogPost,
   MembershipPage,
-  MembershipTier,
   MembershipBenefit,
   aboutQuery,
   servicesQuery,
@@ -23,7 +22,6 @@ import {
   blogPostQuery,
   featuredBlogPostsQuery,
   membershipPageQuery,
-  membershipTiersQuery,
   membershipBenefitsQuery,
   membershipBenefitQuery,
 } from "./sanity.queries";
@@ -75,9 +73,6 @@ export const getFeaturedBlogPosts = () =>
 // Membership functions
 export const getMembershipPage = () =>
   safeFetch<MembershipPage>(membershipPageQuery);
-
-export const getMembershipTiers = () =>
-  safeFetch<MembershipTier[]>(membershipTiersQuery);
 
 export const getMembershipBenefits = () =>
   safeFetch<MembershipBenefit[]>(membershipBenefitsQuery);

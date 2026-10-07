@@ -41,7 +41,7 @@ export default defineType({
       group: "support",
       rows: 3,
       initialValue:
-        "Back Voices from £4 a month and help fund the people, space and ideas that keep London's community radio moving.",
+        "Back Voices from £3.99 a month and help fund the people, space and ideas that keep London's community radio moving.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -96,7 +96,7 @@ export default defineType({
       title: "Heading",
       type: "string",
       group: "join",
-      initialValue: "Choose how you support Voices.",
+      initialValue: "Choose what you give.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -105,6 +105,19 @@ export default defineType({
       type: "text",
       rows: 2,
       group: "join",
+      initialValue:
+        "Slide to set your monthly contribution, or save by paying annually. Every amount keeps the station running.",
+    }),
+    defineField({
+      name: "join_scale_body",
+      title: "Scale explainer (shown near the slider)",
+      description:
+        "Short, tier-free copy — there is no tier to pick, just an amount.",
+      type: "text",
+      rows: 2,
+      group: "join",
+      initialValue:
+        "There's no tier to pick — just the amount that feels right, from £3.99 to £15.99 a month.",
     }),
     defineField({
       name: "join_ballot_disclaimer",
@@ -178,15 +191,17 @@ export default defineType({
       group: "account",
     }),
     defineField({
-      name: "supporter_downgrade_offer_heading",
-      title: "\"Switch to Supporter\" offer heading",
+      name: "retention_offer_heading",
+      title: "Retention offer heading (shown on cancel)",
+      description:
+        "Offers to reduce to the scale minimum instead of cancelling. There is no lowest tier to switch to anymore — just a lower amount.",
       type: "string",
       group: "account",
-      initialValue: "Switch to Supporter — £4/month",
+      initialValue: "Reduce to £3.99/month",
     }),
     defineField({
-      name: "supporter_downgrade_offer_body",
-      title: "\"Switch to Supporter\" offer body",
+      name: "retention_offer_body",
+      title: "Retention offer body",
       type: "string",
       group: "account",
       initialValue: "Keep supporting Voices at our lowest level.",

@@ -4,11 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { MembershipCadence } from "@/lib/voices/membership/types";
 import { trackMembershipEvent } from "@/lib/voices/membership/analytics";
-
-const OPTIONS: { value: MembershipCadence; label: string }[] = [
-  { value: "monthly", label: "Monthly" },
-  { value: "annual", label: "Annual" },
-];
+import AnnualDiscountBadge from "./annual-discount-badge";
 
 /**
  * Billing cadence control. The current value is read from the URL
@@ -18,8 +14,11 @@ const OPTIONS: { value: MembershipCadence; label: string }[] = [
  */
 export default function CadenceToggle({
   cadence,
+  annualDiscountPercent = null,
 }: {
   cadence: MembershipCadence;
+  /** Server-derived discount (contract §2) — shown on the Annual option when positive. */
+  annualDiscountPercent?: number | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -39,7 +38,12 @@ export default function CadenceToggle({
       aria-label="Billing cadence"
       className="inline-flex rounded-full border border-voicesNext-border bg-voicesNext-surface p-1"
     >
-      {OPTIONS.map((option) => {
+      {(
+        [
+          { value: "monthly" as const, label: "Monthly" },
+          { value: "annual" as const, label: "Annual" },
+        ]
+      ).map((option) => {
         const active = option.value === cadence;
         return (
           <button
@@ -48,17 +52,18 @@ export default function CadenceToggle({
             aria-pressed={active}
             onClick={() => handleChange(option.value)}
             className={cn(
-              "flex min-w-[112px] items-center justify-center gap-1 rounded-full px-5 font-gabarito text-sm font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface",
+              "flex min-w-[112px] items-center justify-center gap-1.5 rounded-full px-5 font-gabarito text-sm font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface",
               active
                 ? "bg-voicesNext-orangeButton text-white"
                 : "text-voicesNext-cream hover:text-voicesNext-orange",
             )}
           >
             {option.label}
-            {option.value === "annual" && (
-              <span className="font-asap text-[10px] font-bold uppercase tracking-[0.5px] text-voicesNext-cream/70">
-                (2 free)
-              </span>
+            {/* The badge's own orange background would wash out against an
+                already-orange active pill, so it only shows as an enticement
+                on the inactive option — exactly when it's doing its job. */}
+            {option.value === "annual" && !active && (
+              <AnnualDiscountBadge discountPercent={annualDiscountPercent} />
             )}
           </button>
         );

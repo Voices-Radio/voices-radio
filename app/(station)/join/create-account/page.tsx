@@ -10,9 +10,11 @@ export const metadata: Metadata = {
 export default async function CreateAccountPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tier?: string; cadence?: string }>;
+  searchParams: Promise<{ amount?: string; cadence?: string }>;
 }) {
-  const { tier, cadence } = await searchParams;
+  const { amount, cadence } = await searchParams;
 
-  return <CreateAccountForm tier={tier ?? ""} cadence={cadence ?? "monthly"} />;
+  return (
+    <CreateAccountForm amount={amount ?? ""} cadence={cadence ?? "monthly"} />
+  );
 }
