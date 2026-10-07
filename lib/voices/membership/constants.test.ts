@@ -121,17 +121,16 @@ describe("withMembershipCopyFallback", () => {
     expect(result.support_subheading).toBe(
       MEMBERSHIP_FALLBACK_COPY.support_subheading,
     );
-    expect(result.join_ballot_disclaimer).toBe(
-      MEMBERSHIP_FALLBACK_COPY.join_ballot_disclaimer,
+    expect(result.join_scale_body).toBe(
+      MEMBERSHIP_FALLBACK_COPY.join_scale_body,
     );
   });
 
   it("mentions no stale tier names in the fallback copy", () => {
-    // "Supporter Radio" and "Open Decks" are pre-existing Voices programme
-    // names (join_ballot_disclaimer) unrelated to the old "Supporter" tier —
-    // deliberately not asserted against here, since a bare substring check
-    // would false-positive on them. "Insider"/"Patron" have no such
-    // legitimate collision, so those two are safe to check directly.
+    // "Supporter" is also an ordinary word on the site (e.g. "Become a
+    // Supporter"), so a bare substring check would false-positive on it.
+    // "Insider"/"Patron" have no such collision, so those two are safe to
+    // check directly.
     const copy = JSON.stringify(MEMBERSHIP_FALLBACK_COPY).toLowerCase();
     for (const stale of ["insider", "patron"]) {
       expect(copy).not.toContain(stale);

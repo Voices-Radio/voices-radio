@@ -774,7 +774,6 @@ export interface MembershipPage {
 
   join_heading: string;
   join_subheading?: string;
-  join_ballot_disclaimer: string;
   /** Shown near the slider — what a member's contribution funds, tier-free copy. */
   join_scale_body?: string;
 

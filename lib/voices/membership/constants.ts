@@ -40,8 +40,6 @@ export const MEMBERSHIP_FALLBACK_COPY: MembershipPage = {
     "Slide to set your monthly contribution, or save by paying annually. Every amount keeps the station running.",
   join_scale_body:
     "There's no tier to pick — just the amount that feels right, from £3.99 to £15.99 a month.",
-  join_ballot_disclaimer:
-    "Open Decks and Supporter Radio membership gives you eligibility to submit for editorial consideration — it does not guarantee airplay.",
   founding_member_badge_text: "FOUNDING MEMBER · VOICES · 2026",
   retention_offer_heading: "Reduce to £3.99/month",
   retention_offer_body: "Keep supporting Voices at our lowest level.",

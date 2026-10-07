@@ -119,18 +119,6 @@ export default defineType({
       initialValue:
         "There's no tier to pick — just the amount that feels right, from £3.99 to £15.99 a month.",
     }),
-    defineField({
-      name: "join_ballot_disclaimer",
-      title: "Ballot / application disclaimer",
-      description:
-        "Shown near Open Decks / Supporter Radio and other capacity-limited benefits. Must state eligibility to submit, not guaranteed airplay/admission.",
-      type: "text",
-      rows: 2,
-      group: "join",
-      initialValue:
-        "Open Decks and Supporter Radio membership gives you eligibility to submit for editorial consideration — it does not guarantee airplay.",
-      validation: (rule) => rule.required(),
-    }),
 
     // FAQs
     defineField({

@@ -10,6 +10,7 @@ import { parseMembershipCadence } from "@/lib/voices/membership/types";
 import { getPlans } from "@/lib/voices/membership/membership-client";
 import { getSession } from "@/lib/voices/membership/session";
 import ContributionSummary from "../components/membership/contribution-summary";
+import MemberBenefits from "../components/membership/member-benefits";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/join" },
@@ -95,9 +96,7 @@ export default async function JoinPage({
         scaleBody={copy.join_scale_body}
       />
 
-      <p className="mx-auto mt-10 max-w-2xl text-center font-asap text-sm leading-relaxed text-voicesNext-cream/70">
-        {copy.join_ballot_disclaimer}
-      </p>
+      <MemberBenefits />
 
       {copy.faqs && copy.faqs.length > 0 && (
         <section className="mt-16 border-t border-voicesNext-border pt-10">
