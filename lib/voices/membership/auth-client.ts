@@ -25,7 +25,8 @@ async function authRequest<T>(
     | "/api/auth/login"
     | "/api/auth/check-email"
     | "/api/auth/forgot-password"
-    | "/api/auth/reset-password",
+    | "/api/auth/reset-password"
+    | `/api/auth/verify-email/${string}`,
   input: unknown,
 ): Promise<BackendAuthResult<T>> {
   try {
@@ -76,8 +77,25 @@ export async function backendRegister(input: {
   newsletters?: boolean;
   /** Member-only updates opt-in — separate from the general newsletter. */
   memberUpdates?: boolean;
+  /**
+   * This site's /verify-email page, so the emailed link brings the member
+   * back here rather than to the auth site. The backend drops it unless the
+   * origin is on its allowlist.
+   */
+  verificationReturnUrl?: string;
 }): Promise<BackendAuthResult> {
   return authRequest("/api/auth/register", input);
+}
+
+/**
+ * Spends an emailed verification token. On success the backend returns the
+ * same `token` / `refreshToken` pair /login does, so the member can be signed
+ * straight in.
+ */
+export async function backendVerifyEmail(
+  token: string,
+): Promise<BackendAuthResult> {
+  return authRequest(`/api/auth/verify-email/${encodeURIComponent(token)}`, {});
 }
 
 export async function backendLogin(input: {

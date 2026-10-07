@@ -25,6 +25,14 @@ vi.mock("@/lib/voices/membership/start-checkout", () => ({
   startCheckout: vi.fn(),
 }));
 
+// Stands in for the request host: next/headers has no request outside Next.
+vi.mock("@/lib/voices/membership/verification-return", () => ({
+  verificationReturnUrl: vi.fn(
+    async (next: string) =>
+      `https://staging.voicesradio.co.uk/verify-email?next=${encodeURIComponent(next)}`,
+  ),
+}));
+
 const { redirect } = await import("next/navigation");
 const { backendRegister, backendLogin } =
   await import("@/lib/voices/membership/auth-client");
@@ -222,5 +230,33 @@ describe("createAccountAction", () => {
       message: "Choose a contribution amount to continue.",
     });
     expect(setSessionCookies).toHaveBeenCalled();
+  });
+
+  it("asks for a verification link that returns to this site and resumes checkout", async () => {
+    vi.mocked(backendRegister).mockResolvedValue({ ok: true, status: 201, payload: { user: { _id: "u1" } } });
+    vi.mocked(backendLogin).mockResolvedValue({ ok: false, status: 401, payload: {} });
+
+    await createAccountAction(undefined, formData({ ...validFields, amount: "699", cadence: "monthly" }));
+
+    expect(backendRegister).toHaveBeenCalledWith(
+      expect.objectContaining({
+        verificationReturnUrl:
+          "https://staging.voicesradio.co.uk/verify-email?next=" +
+          encodeURIComponent("/join/checkout?amount=699&cadence=monthly"),
+      }),
+    );
+  });
+
+  it("returns to the account when no membership amount was chosen", async () => {
+    vi.mocked(backendRegister).mockResolvedValue({ ok: true, status: 201, payload: { user: { _id: "u1" } } });
+    vi.mocked(backendLogin).mockResolvedValue({ ok: false, status: 401, payload: {} });
+
+    await createAccountAction(undefined, formData(validFields));
+
+    expect(backendRegister).toHaveBeenCalledWith(
+      expect.objectContaining({
+        verificationReturnUrl: "https://staging.voicesradio.co.uk/verify-email?next=%2Faccount",
+      }),
+    );
   });
 });

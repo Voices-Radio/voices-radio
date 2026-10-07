@@ -144,8 +144,8 @@ export default function CreateAccountForm({
         <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
           We&rsquo;ve sent a verification link to <strong>{state.email}</strong>
           {contribution
-            ? `. Verify your address, then sign in and we'll pick your ${contribution} membership back up.`
-            : ". Verify your address, then sign in to continue."}
+            ? `. Open the link and we'll sign you in and pick your ${contribution} membership straight back up.`
+            : ". Open the link and we'll sign you in."}
         </p>
         <Link
           href={

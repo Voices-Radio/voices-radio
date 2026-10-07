@@ -7,6 +7,7 @@ import {
 } from "@/lib/voices/membership/auth-client";
 import { setSessionCookies } from "@/lib/voices/membership/session";
 import { startCheckout } from "@/lib/voices/membership/start-checkout";
+import { verificationReturnUrl } from "@/lib/voices/membership/verification-return";
 import { parseAmountMinor } from "@/lib/voices/membership/types";
 
 const schema = z.object({
@@ -110,6 +111,12 @@ export async function createAccountAction(
     cadence,
   } = parsed.data;
 
+  // Where the verification link should land them once signed in: back into
+  // checkout for the amount they picked, or their account if none.
+  const afterVerifyPath = amount
+    ? `/join/checkout?amount=${encodeURIComponent(amount)}&cadence=${encodeURIComponent(cadence ?? "")}`
+    : "/account";
+
   const registerResult = await backendRegister({
     email,
     password,
@@ -117,6 +124,7 @@ export async function createAccountAction(
     lastName,
     newsletters: newsletters === "on",
     memberUpdates: memberUpdates === "on",
+    verificationReturnUrl: await verificationReturnUrl(afterVerifyPath),
   });
 
   if (!registerResult.ok) {
