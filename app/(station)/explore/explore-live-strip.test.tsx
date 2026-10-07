@@ -86,6 +86,17 @@ describe("ExploreLiveStrip mobile controls", () => {
 });
 
 describe("ExploreLiveStrip desktop controls", () => {
+  it("shows only Now and Next in the schedule context, not Previous", () => {
+    render(<ExploreLiveStrip />);
+
+    const context = screen.getByLabelText("KX schedule context");
+
+    expect(within(context).getByText("Now")).toBeInTheDocument();
+    expect(within(context).getByText("Next")).toBeInTheDocument();
+    expect(within(context).queryByText("Previous")).toBeNull();
+    expect(context).toHaveClass("grid-cols-2");
+  });
+
   it("reserves room for two 34px station rows plus the player borders", () => {
     const { container } = render(<ExploreLiveStrip />);
 

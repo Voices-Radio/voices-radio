@@ -7,6 +7,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
+import Marquee from "react-fast-marquee";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { cn } from "@/lib/utils";
 import { accountLinksForCapabilities } from "@/lib/voices/membership/capabilities";
 import AccountMenu, { getInitials } from "./account-menu";
@@ -131,15 +133,16 @@ function MobileHeaderArtwork() {
       </Link>
       <Link
         href="/"
-        className="block h-[28px] w-[82px] justify-self-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+        className="block h-[28px] w-[41px] justify-self-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         aria-label="Voices Radio home"
       >
+        {/* Text only — the circular mark is already the top-left logo. */}
         <Image
-          src="/voices-wordmark.svg"
+          src="/voices-wordmark-text.svg"
           alt=""
-          width={82}
+          width={41}
           height={28}
-          className="h-[28px] w-[82px] object-contain"
+          className="h-[28px] w-[41px] object-contain"
           priority
         />
       </Link>
@@ -148,15 +151,19 @@ function MobileHeaderArtwork() {
 }
 
 function MobileOnAirTicker() {
+  const reducedMotion = useReducedMotion();
+
   return (
     <div className="h-[15px] overflow-hidden bg-voicesNext-background font-outfit text-[9px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary md:hidden">
-      <div className="flex h-full w-max items-center gap-[6px] px-1">
-        {Array.from({ length: 14 }).map((_, index) => (
-          <span key={index} className="flex shrink-0 items-center gap-[6px]">
+      {/* Decorative loop — one sr-only label stands in for the repeats. */}
+      <span className="sr-only">On air</span>
+      <div aria-hidden="true" className="h-full">
+        <Marquee autoFill speed={30} play={!reducedMotion} gradient={false}>
+          <span className="flex h-[15px] items-center gap-[6px] pr-[6px]">
             <span>On air</span>
             <span className="size-2 rounded-full bg-voicesNext-live" />
           </span>
-        ))}
+        </Marquee>
       </div>
     </div>
   );
