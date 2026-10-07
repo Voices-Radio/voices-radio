@@ -149,14 +149,13 @@ function ScheduleContextItems() {
   const { data } = useWeekInfo();
   const context = getScheduleContext(data, "kx");
   const items = [
-    { label: "Previous", value: context.previous },
     { label: "Now", value: context.current },
     { label: "Next", value: context.next },
   ];
 
   return (
     <div
-      className="grid h-full min-w-0 flex-1 grid-cols-3 divide-x divide-black text-voicesNext-background"
+      className="grid h-full min-w-0 flex-1 grid-cols-2 divide-x divide-black text-voicesNext-background"
       aria-label="KX schedule context"
     >
       {items.map((item) => (
