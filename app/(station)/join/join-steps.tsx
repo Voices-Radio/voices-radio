@@ -1,15 +1,20 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Progress through the membership journey: choose a tier, create an account,
- * pay. The flow had no step count anywhere, so a visitor part-way through had
+ * Progress through the membership journey: choose an amount, give your
+ * details, pay, then create a password from the email we send. The flow had no step count anywhere, so a visitor part-way through had
  * no way to tell whether they were nearly done or nearly starting — and the
  * only hint of what came next was a line in a sidebar that mobile pushed
  * below the submit button.
  */
-const steps = ["Choose your tier", "Create account", "Payment"] as const;
+const steps = [
+  "Choose your amount",
+  "Your details",
+  "Payment",
+  "Create password",
+] as const;
 
-export type JoinStep = 1 | 2 | 3;
+export type JoinStep = 1 | 2 | 3 | 4;
 
 export default function JoinSteps({ current }: { current: JoinStep }) {
   return (

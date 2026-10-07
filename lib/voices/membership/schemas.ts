@@ -76,6 +76,18 @@ export const checkoutResponseSchema = z.object({
 });
 export type CheckoutResponse = z.infer<typeof checkoutResponseSchema>;
 
+// GET /api/membership/guest-checkout/:sessionId, polled by the success page of
+// the payment-first join. `paid` is the backend's own confirmation;
+// `sessionStatus` is Stripe's view, which tells "payment made, still
+// confirming" apart from "never paid".
+export const guestCheckoutStatusSchema = z.object({
+  paid: z.boolean(),
+  sessionStatus: z.enum(["open", "complete", "expired"]).nullable(),
+  needsSetup: z.boolean(),
+  email: z.string().nullable(),
+});
+export type GuestCheckoutStatus = z.infer<typeof guestCheckoutStatusSchema>;
+
 // Contract §4: status is one of these strings, or `null` for "never
 // subscribed" — distinct from "expired" ("was a member, isn't now").
 export const membershipStatusSchema = z

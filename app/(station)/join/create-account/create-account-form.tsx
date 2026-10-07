@@ -12,7 +12,6 @@ import {
   accountSecondaryButtonClassName,
   accountSurfaceStaticClassName,
 } from "../../account/components/account-surface";
-import PasswordInput from "../../components/forms/password-input";
 import ResendVerification from "../../verify-email/resend-verification";
 import JoinSteps from "../join-steps";
 import { createAccountAction, type CreateAccountState } from "./actions";
@@ -34,7 +33,7 @@ function SubmitButton() {
         "h-12 w-full px-6 text-base",
       )}
     >
-      {pending ? "Creating account…" : "Create account"}
+      {pending ? "Taking you to payment…" : "Continue to payment"}
     </button>
   );
 }
@@ -55,7 +54,7 @@ function AccountPass({ amount, cadence }: { amount: string; cadence: string }) {
   const passRows = [
     ["Contribution", contribution ?? "Voices membership"],
     ["Billing", cadence || "Selected at checkout"],
-    ["Next", "Secure checkout"],
+    ["Next", "Secure payment"],
   ];
 
   return (
@@ -99,82 +98,61 @@ export default function CreateAccountForm({
     }
   }, [state]);
 
-  if (state?.status === "checkout_error") {
-    return (
-      <div
-        className="mx-auto max-w-[480px] px-4 py-16 text-center md:px-0"
-        role="alert"
-      >
-        <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-          Your account is ready
-        </h1>
-        <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
-          {state.message} You&rsquo;re signed in, so you can pick up checkout
-          again whenever you&rsquo;re ready.
-        </p>
-        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link
-            href={amount ? `/join?cadence=${cadence}` : "/join"}
-            className={cn(accountPrimaryButtonClassName, "h-12 px-6 text-base")}
-          >
-            Try again
-          </Link>
-          <Link
-            href="/account"
-            className={cn(
-              accountSecondaryButtonClassName,
-              "h-12 px-6 text-base",
-            )}
-          >
-            Go to your account
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (state?.status === "verify_email") {
+  if (state?.status === "account_exists") {
+    const resume = `/join/checkout?amount=${amount}&cadence=${cadence}`;
     return (
       <div
         className="mx-auto max-w-[480px] px-4 py-16 text-center md:px-0"
         role="status"
       >
         <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
-          Check your email
+          You already have an account
         </h1>
         <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
-          We&rsquo;ve sent a verification link to <strong>{state.email}</strong>
-          {contribution
-            ? `. Open the link and we'll sign you in and pick your ${contribution} membership straight back up.`
-            : ". Open the link and we'll sign you in."}
+          There&rsquo;s already a Voices account for{" "}
+          <strong>{state.email}</strong>. Sign in and we&rsquo;ll take you
+          straight to payment{contribution ? ` for your ${contribution} membership` : ""}.
         </p>
-        <Link
-          href={
-            amount
-              ? `/sign-in?next=${encodeURIComponent(
-                  `/join/checkout?amount=${amount}&cadence=${cadence}`,
-                )}`
-              : "/sign-in"
-          }
-          className={cn(
-            accountPrimaryButtonClassName,
-            "mt-8 h-12 px-6 text-base",
-          )}
-        >
-          Go to sign in
-        </Link>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link
+            href={`/sign-in?next=${encodeURIComponent(resume)}`}
+            className={cn(accountPrimaryButtonClassName, "h-12 px-6 text-base")}
+          >
+            Sign in
+          </Link>
+          <Link
+            href={`/forgot-password?next=${encodeURIComponent(resume)}`}
+            className={cn(
+              accountSecondaryButtonClassName,
+              "h-12 px-6 text-base",
+            )}
+          >
+            Forgot password?
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (state?.status === "setup_pending") {
+    return (
+      <div
+        className="mx-auto max-w-[480px] px-4 py-16 text-center md:px-0"
+        role="status"
+      >
+        <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
+          You&rsquo;ve already joined
+        </h1>
+        <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
+          Your payment for <strong>{state.email}</strong> went through, but your
+          account isn&rsquo;t set up yet. We&rsquo;ve just emailed a new link to
+          confirm your email and create your password.
+        </p>
         <div className="mt-8 border-t border-voicesNext-border pt-6">
           <p className="mb-3 font-gabarito text-sm text-voicesNext-cream/70">
             Nothing arrived? Check your spam folder, or:
           </p>
-          <ResendVerification
-            email={state.email}
-            next={
-              amount
-                ? `/join/checkout?amount=${amount}&cadence=${cadence}`
-                : "/account"
-            }
-          />
+          <ResendVerification email={state.email} next="/account" />
         </div>
       </div>
     );
@@ -191,11 +169,11 @@ export default function CreateAccountForm({
         <JoinSteps current={2} />
         <AccountPageIntro
           eyebrow="Join Voices"
-          title="Create your account"
+          title="Your details"
           description={
             contribution
-              ? `Setting up your ${contribution} membership.`
-              : "Create an account to join Voices."
+              ? `Joining at ${contribution}. Pay next, then choose your password from the email we send you.`
+              : "Tell us who you are, then pay. You'll choose your password afterwards."
           }
         />
 
@@ -305,41 +283,6 @@ export default function CreateAccountForm({
                   className="font-asap text-sm text-voicesNext-orange"
                 >
                   {fieldErrors.email}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="password"
-                className="font-gabarito text-sm font-bold text-voicesNext-cream"
-              >
-                Password
-              </label>
-              <PasswordInput
-                id="password"
-                name="password"
-                autoComplete="new-password"
-                required
-                aria-invalid={Boolean(fieldErrors?.password)}
-                aria-describedby={
-                  fieldErrors?.password ? "password-error" : "password-hint"
-                }
-                className={accountFieldClassName}
-              />
-              {fieldErrors?.password ? (
-                <p
-                  id="password-error"
-                  className="font-asap text-sm text-voicesNext-orange"
-                >
-                  {fieldErrors.password}
-                </p>
-              ) : (
-                <p
-                  id="password-hint"
-                  className="font-asap text-xs text-voicesNext-cream/70"
-                >
-                  At least 8 characters.
                 </p>
               )}
             </div>

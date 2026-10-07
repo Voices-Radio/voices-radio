@@ -309,4 +309,21 @@ describe("signInAction", () => {
     expect(state?.formError).not.toMatch(/incorrect/i);
     expect(setSessionCookies).not.toHaveBeenCalled();
   });
+
+  it("tells an account that has paid but has no password yet to use the set-up link", async () => {
+    vi.mocked(backendLogin).mockResolvedValue({
+      ok: false,
+      status: 401,
+      payload: { message: "Finish setting up your account", needsSetup: true, email: "jo@example.com" },
+    });
+
+    const state = await signInAction(
+      undefined,
+      formData({ email: "jo@example.com", password: "whatever" }),
+    );
+
+    expect(state?.needsVerificationFor).toBe("jo@example.com");
+    expect(state?.formError).toMatch(/isn't set up yet/i);
+    expect(state?.formError).not.toMatch(/incorrect/i);
+  });
 });

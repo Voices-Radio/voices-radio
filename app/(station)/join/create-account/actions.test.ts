@@ -12,251 +12,135 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-vi.mock("@/lib/voices/membership/auth-client", () => ({
-  backendRegister: vi.fn(),
-  backendLogin: vi.fn(),
+vi.mock("@/lib/site-url", () => ({
+  getBaseUrl: vi.fn(() => "https://staging.voicesradio.co.uk"),
 }));
 
-vi.mock("@/lib/voices/membership/session", () => ({
-  setSessionCookies: vi.fn(),
-}));
-
-vi.mock("@/lib/voices/membership/start-checkout", () => ({
-  startCheckout: vi.fn(),
-}));
-
-// Stands in for the request host: next/headers has no request outside Next.
-vi.mock("@/lib/voices/membership/verification-return", () => ({
-  verificationReturnUrl: vi.fn(
-    async (next: string) =>
-      `https://staging.voicesradio.co.uk/verify-email?next=${encodeURIComponent(next)}`,
-  ),
+vi.mock("@/lib/voices/membership/guest-checkout", () => ({
+  guestCheckout: vi.fn(),
 }));
 
 const { redirect } = await import("next/navigation");
-const { backendRegister, backendLogin } =
-  await import("@/lib/voices/membership/auth-client");
-const { setSessionCookies } = await import("@/lib/voices/membership/session");
-const { startCheckout } =
-  await import("@/lib/voices/membership/start-checkout");
+const { guestCheckout } = await import("@/lib/voices/membership/guest-checkout");
 const { createAccountAction } = await import("./actions");
 
 function formData(fields: Record<string, string>) {
   const data = new FormData();
-  for (const [key, value] of Object.entries(fields)) {
-    data.set(key, value);
-  }
+  for (const [key, value] of Object.entries(fields)) data.set(key, value);
   return data;
 }
 
-const validFields = {
-  firstName: "Ada",
-  lastName: "Lovelace",
-  email: "ada@example.com",
-  password: "correcthorsebattery",
+const valid = {
+  firstName: "Jo",
+  lastName: "Bloggs",
+  email: "jo@example.com",
+  amount: "599",
+  cadence: "monthly",
 };
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(guestCheckout).mockResolvedValue({
+    ok: true,
+    data: { checkoutUrl: "https://checkout.stripe.com/cs_1", sessionId: "cs_1" },
+  });
 });
 
-describe("createAccountAction", () => {
-  it("returns field errors for missing/invalid input without calling the backend", async () => {
-    const state = await createAccountAction(
-      undefined,
-      formData({
-        firstName: "",
-        lastName: "",
-        email: "not-an-email",
-        password: "short",
-      }),
-    );
+describe("createAccountAction (payment-first: details, then Stripe)", () => {
+  it("asks for no password, and sends the visitor straight to Stripe", async () => {
+    await expect(
+      createAccountAction(undefined, formData(valid)),
+    ).rejects.toThrow(RedirectSignal);
 
-    expect(state).toMatchObject({ status: "error" });
-    if (state?.status !== "error") throw new Error("expected error state");
-    expect(state.fieldErrors?.firstName).toBeTruthy();
-    expect(state.fieldErrors?.lastName).toBeTruthy();
-    expect(state.fieldErrors?.email).toBeTruthy();
-    expect(state.fieldErrors?.password).toMatch(/8 characters/i);
-    expect(backendRegister).not.toHaveBeenCalled();
+    expect(redirect).toHaveBeenCalledWith("https://checkout.stripe.com/cs_1");
+    expect(guestCheckout).toHaveBeenCalledWith({
+      firstName: "Jo",
+      lastName: "Bloggs",
+      email: "jo@example.com",
+      newsletters: false,
+      memberUpdates: false,
+      amountMinor: 599,
+      cadence: "monthly",
+      successUrl: "https://staging.voicesradio.co.uk/join/complete",
+      cancelUrl:
+        "https://staging.voicesradio.co.uk/join?cadence=monthly&checkout=cancelled",
+    });
   });
 
-  it("surfaces the backend's error message when registration fails", async () => {
-    vi.mocked(backendRegister).mockResolvedValue({
-      ok: false,
-      status: 409,
-      payload: { message: "An account with this email already exists." },
-    });
-
-    const state = await createAccountAction(undefined, formData(validFields));
-
-    expect(state).toEqual({
-      status: "error",
-      formError: "An account with this email already exists.",
-      values: {
-        firstName: validFields.firstName,
-        lastName: validFields.lastName,
-        email: validFields.email,
-        newsletters: false,
-        memberUpdates: false,
-      },
-    });
-    expect(backendLogin).not.toHaveBeenCalled();
-  });
-
-  it("echoes back what was typed so a rejected submit doesn't empty the form", async () => {
-    const state = await createAccountAction(
-      undefined,
-      formData({
-        firstName: "Ada",
-        lastName: "Lovelace",
-        email: "ada@example.test",
-        password: "short",
-        newsletters: "on",
-        memberUpdates: "on",
-      }),
-    );
-
-    if (state?.status !== "error") throw new Error("expected error state");
-    expect(state.values).toEqual({
-      firstName: "Ada",
-      lastName: "Lovelace",
-      email: "ada@example.test",
-      newsletters: true,
-      memberUpdates: true,
-    });
-    // The password is the one field deliberately not returned.
-    expect(state.values).not.toHaveProperty("password");
-  });
-
-  it("sends newsletters and memberUpdates to the backend as independent flags", async () => {
-    vi.mocked(backendRegister).mockResolvedValue({
-      ok: false,
-      status: 400,
-      payload: { message: "x" },
-    });
-
-    await createAccountAction(
-      undefined,
-      formData({ ...validFields, memberUpdates: "on" }),
-    );
-
-    expect(backendRegister).toHaveBeenCalledWith(
-      expect.objectContaining({ newsletters: false, memberUpdates: true }),
-    );
-
-    await createAccountAction(
-      undefined,
-      formData({ ...validFields, newsletters: "on" }),
-    );
-
-    expect(backendRegister).toHaveBeenLastCalledWith(
-      expect.objectContaining({ newsletters: true, memberUpdates: false }),
-    );
-  });
-
-  it("falls back to a check-your-email state when registration succeeds but login is rejected (unverified email)", async () => {
-    vi.mocked(backendRegister).mockResolvedValue({
-      ok: true,
-      status: 201,
-      payload: { user: { _id: "u1", email: validFields.email } },
-    });
-    vi.mocked(backendLogin).mockResolvedValue({
-      ok: false,
-      status: 401,
-      payload: { message: "Please verify your email first." },
-    });
-
-    const state = await createAccountAction(undefined, formData(validFields));
-
-    expect(state).toEqual({ status: "verify_email", email: validFields.email });
-    expect(setSessionCookies).not.toHaveBeenCalled();
-    expect(redirect).not.toHaveBeenCalled();
-  });
-
-  it("signs the member in and starts checkout with the chosen amount/cadence when both succeed", async () => {
-    vi.mocked(backendRegister).mockResolvedValue({
-      ok: true,
-      status: 201,
-      payload: { user: { _id: "u1" } },
-    });
-    vi.mocked(backendLogin).mockResolvedValue({
-      ok: true,
-      status: 200,
-      payload: { token: "at", refreshToken: "rt" },
-    });
-    // startCheckout() redirects internally on success and never returns —
-    // mimic that by throwing the same RedirectSignal next/navigation's
-    // redirect() throws.
-    vi.mocked(startCheckout).mockImplementation(() => {
-      throw new RedirectSignal("https://checkout.stripe.com/cs_test");
-    });
-
+  it("passes the two consents separately", async () => {
     await expect(
       createAccountAction(
         undefined,
-        formData({ ...validFields, amount: "799", cadence: "annual" }),
+        formData({ ...valid, newsletters: "on", memberUpdates: "on" }),
       ),
     ).rejects.toThrow(RedirectSignal);
 
-    expect(setSessionCookies).toHaveBeenCalledWith({
-      token: "at",
-      refreshToken: "rt",
+    expect(guestCheckout).toHaveBeenCalledWith(
+      expect.objectContaining({ newsletters: true, memberUpdates: true }),
+    );
+  });
+
+  it("returns field errors, keeps what was typed, and never calls the backend", async () => {
+    const state = await createAccountAction(
+      undefined,
+      formData({ ...valid, firstName: "", email: "nope" }),
+    );
+
+    expect(state).toMatchObject({
+      status: "error",
+      fieldErrors: {
+        firstName: expect.stringMatching(/first name/i),
+        email: expect.stringMatching(/valid email/i),
+      },
+      values: { lastName: "Bloggs", email: "nope" },
     });
-    expect(startCheckout).toHaveBeenCalledWith(799, "annual");
+    expect(guestCheckout).not.toHaveBeenCalled();
+  });
+
+  it("refuses to continue without a chosen amount, since payment is next", async () => {
+    const state = await createAccountAction(
+      undefined,
+      formData({ ...valid, amount: "" }),
+    );
+    expect(state).toMatchObject({
+      status: "error",
+      formError: expect.stringMatching(/choose a contribution/i),
+    });
+    expect(guestCheckout).not.toHaveBeenCalled();
+  });
+
+  it("sends someone with an existing account to sign in rather than paying into it", async () => {
+    vi.mocked(guestCheckout).mockResolvedValue({
+      ok: false,
+      code: "ACCOUNT_EXISTS",
+      message: "exists",
+    });
+    const state = await createAccountAction(undefined, formData(valid));
+    expect(state).toEqual({ status: "account_exists", email: "jo@example.com" });
     expect(redirect).not.toHaveBeenCalled();
   });
 
-  it("returns a checkout_error state when startCheckout fails (account is still created and signed in)", async () => {
-    vi.mocked(backendRegister).mockResolvedValue({
-      ok: true,
-      status: 201,
-      payload: { user: { _id: "u1" } },
-    });
-    vi.mocked(backendLogin).mockResolvedValue({
-      ok: true,
-      status: 200,
-      payload: { token: "at", refreshToken: "rt" },
-    });
-    vi.mocked(startCheckout).mockResolvedValue({
+  it("tells someone who already paid that a new set-up link is on its way", async () => {
+    vi.mocked(guestCheckout).mockResolvedValue({
       ok: false,
-      message: "Choose a contribution amount to continue.",
+      code: "SETUP_PENDING",
+      message: "pending",
     });
-
-    const state = await createAccountAction(undefined, formData(validFields));
-
-    expect(state).toEqual({
-      status: "checkout_error",
-      message: "Choose a contribution amount to continue.",
-    });
-    expect(setSessionCookies).toHaveBeenCalled();
+    const state = await createAccountAction(undefined, formData(valid));
+    expect(state).toEqual({ status: "setup_pending", email: "jo@example.com" });
   });
 
-  it("asks for a verification link that returns to this site and resumes checkout", async () => {
-    vi.mocked(backendRegister).mockResolvedValue({ ok: true, status: 201, payload: { user: { _id: "u1" } } });
-    vi.mocked(backendLogin).mockResolvedValue({ ok: false, status: 401, payload: {} });
-
-    await createAccountAction(undefined, formData({ ...validFields, amount: "699", cadence: "monthly" }));
-
-    expect(backendRegister).toHaveBeenCalledWith(
-      expect.objectContaining({
-        verificationReturnUrl:
-          "https://staging.voicesradio.co.uk/verify-email?next=" +
-          encodeURIComponent("/join/checkout?amount=699&cadence=monthly"),
-      }),
-    );
-  });
-
-  it("returns to the account when no membership amount was chosen", async () => {
-    vi.mocked(backendRegister).mockResolvedValue({ ok: true, status: 201, payload: { user: { _id: "u1" } } });
-    vi.mocked(backendLogin).mockResolvedValue({ ok: false, status: 401, payload: {} });
-
-    await createAccountAction(undefined, formData(validFields));
-
-    expect(backendRegister).toHaveBeenCalledWith(
-      expect.objectContaining({
-        verificationReturnUrl: "https://staging.voicesradio.co.uk/verify-email?next=%2Faccount",
-      }),
-    );
+  it("shows any other backend failure as a form error and keeps the input", async () => {
+    vi.mocked(guestCheckout).mockResolvedValue({
+      ok: false,
+      code: "PRICE_UNAVAILABLE",
+      message: "Pricing is temporarily unavailable.",
+    });
+    const state = await createAccountAction(undefined, formData(valid));
+    expect(state).toMatchObject({
+      status: "error",
+      formError: "Pricing is temporarily unavailable.",
+      values: { email: "jo@example.com" },
+    });
   });
 });

@@ -68,6 +68,16 @@ export async function signInAction(
     };
   }
 
+  // Joined and paid through the payment-first flow, but never chose a password:
+  // the account has none to check. The emailed link sets one.
+  if (status === 401 && payload?.needsSetup) {
+    return {
+      needsVerificationFor: parsed.data.email,
+      formError:
+        "Your account isn't set up yet. Use the link we emailed you to confirm your email and create your password, or get a new one below.",
+    };
+  }
+
   if (!ok || !payload?.token || !payload?.refreshToken) {
     return {
       formError:

@@ -25,6 +25,7 @@ async function authRequest<T>(
     | "/api/auth/login"
     | "/api/auth/check-email"
     | "/api/auth/resend-verification"
+    | "/api/auth/complete-setup"
     | "/api/auth/forgot-password"
     | "/api/auth/reset-password"
     | `/api/auth/verify-email/${string}`,
@@ -110,6 +111,17 @@ export async function backendResendVerification(input: {
   verificationReturnUrl?: string;
 }): Promise<BackendAuthResult> {
   return authRequest("/api/auth/resend-verification", input);
+}
+
+/**
+ * Spends the emailed account-setup token: chooses the password, confirms the
+ * email and returns the same `token` / `refreshToken` pair /login does.
+ */
+export async function backendCompleteSetup(input: {
+  token: string;
+  password: string;
+}): Promise<BackendAuthResult> {
+  return authRequest("/api/auth/complete-setup", input);
 }
 
 export async function backendLogin(input: {
