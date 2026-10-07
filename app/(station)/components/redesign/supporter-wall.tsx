@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Marquee from "react-fast-marquee";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 // Fisher–Yates. Never mutates the input — callers hold their own copy of
 // the previous order (React state), and deriving a "shuffled or not" diff
@@ -15,14 +16,52 @@ function shuffle<T>(items: readonly T[]): T[] {
   return next;
 }
 
-// The strip is five marquee rows deep. Each row shows the same names
-// rotated by a different offset so a single-supporter station still fills
-// every row, and a longer list never lines up into vertical columns.
-const ROW_COUNT = 5;
+// The wall grows with the supporter count. Below MIN_NAMES_TO_SCROLL there
+// aren't enough names to fill a row, so a marquee would just loop one name
+// back and forth — those render as a still, centred line instead. Each
+// marquee row shows the same names rotated by a different offset so a longer
+// list never lines up into vertical columns.
+const MIN_NAMES_TO_SCROLL = 4;
+const MAX_ROWS = 5;
+
+function rowCountFor(nameCount: number): number {
+  if (nameCount < MIN_NAMES_TO_SCROLL) return 0;
+  if (nameCount < 10) return 2;
+  if (nameCount < 20) return 3;
+  return MAX_ROWS;
+}
 
 // Per-row speeds/directions are deliberately uneven — five identical
 // marquees read as one moving block rather than a wall of names.
 const ROW_SPEEDS = [34, 27, 41, 30, 37];
+
+function StaticNames({
+  names,
+  centered,
+}: {
+  names: readonly string[];
+  centered: boolean;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`flex flex-wrap gap-x-2 gap-y-1 ${centered ? "justify-center" : ""}`}
+    >
+      {names.map((name, index) => (
+        <span
+          key={`${name}-${index}`}
+          data-testid="supporter-name"
+          className="font-gabarito text-[15px] font-medium text-voicesNext-cream"
+        >
+          {name}
+          {index < names.length - 1 ? (
+            <span className="ml-2 text-voicesNext-orange">·</span>
+          ) : null}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 function toRows(names: readonly string[], rowCount: number): string[][] {
   return Array.from({ length: rowCount }, (_, row) => {
@@ -50,17 +89,8 @@ function toRows(names: readonly string[], rowCount: number): string[][] {
  */
 export default function SupporterWall({ names }: { names: string[] }) {
   const [order, setOrder] = useState(names);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const reducedMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(query.matches);
-    const onChange = (event: MediaQueryListEvent) =>
-      setReducedMotion(event.matches);
-    query.addEventListener("change", onChange);
-    return () => query.removeEventListener("change", onChange);
-  }, []);
 
   useEffect(() => {
     const node = containerRef.current;
@@ -79,6 +109,8 @@ export default function SupporterWall({ names }: { names: string[] }) {
 
   if (names.length === 0) return null;
 
+  const rowCount = rowCountFor(names.length);
+
   return (
     <div ref={containerRef} className="w-full">
       <p className="mb-3 font-gabarito text-[13px] font-bold uppercase leading-[19px] tracking-wide text-white">
@@ -88,27 +120,14 @@ export default function SupporterWall({ names }: { names: string[] }) {
       {/* Decorative — the moving/looping marquee (or its static reduced-motion
           stand-in) is hidden from assistive tech; the sr-only list below it
           is the one real, non-duplicated reading of the names. */}
-      {reducedMotion ? (
-        <div aria-hidden="true" className="flex flex-wrap gap-x-2 gap-y-1">
-          {order.map((name, index) => (
-            <span
-              key={`${name}-${index}`}
-              data-testid="supporter-name"
-              className="font-gabarito text-[15px] font-medium text-voicesNext-cream"
-            >
-              {name}
-              {index < order.length - 1 ? (
-                <span className="ml-2 text-voicesNext-orange">·</span>
-              ) : null}
-            </span>
-          ))}
-        </div>
+      {rowCount === 0 || reducedMotion ? (
+        <StaticNames names={order} centered={rowCount === 0} />
       ) : (
         <div
           aria-hidden="true"
           className="flex flex-col gap-1 [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]"
         >
-          {toRows(order, ROW_COUNT).map((row, rowIndex) => (
+          {toRows(order, rowCount).map((row, rowIndex) => (
             <Marquee
               key={`row-${rowIndex}`}
               gradient={false}

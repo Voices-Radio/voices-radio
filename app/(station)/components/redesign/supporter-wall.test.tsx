@@ -67,7 +67,9 @@ describe("SupporterWall", () => {
   });
 
   it("marks the decorative marquee as aria-hidden so names aren't announced twice", () => {
-    const { container } = render(<SupporterWall names={["Ada", "Grace"]} />);
+    const { container } = render(
+      <SupporterWall names={["Ada", "Grace", "Katherine", "Hedy"]} />,
+    );
     const hiddenWrapper = container.querySelector('[aria-hidden="true"]');
     expect(hiddenWrapper).toBeInTheDocument();
     expect(
@@ -75,21 +77,32 @@ describe("SupporterWall", () => {
     ).toBeTruthy();
   });
 
-  it("renders five marquee rows so the strip reads as a wall, not a line", () => {
-    render(<SupporterWall names={["Ada", "Grace", "Katherine"]} />);
-    expect(screen.getAllByTestId("marquee-mock")).toHaveLength(5);
+  const namesOf = (count: number) =>
+    Array.from({ length: count }, (_, i) => `Supporter ${i + 1}`);
+
+  it.each([
+    [4, 2],
+    [9, 2],
+    [10, 3],
+    [19, 3],
+    [20, 5],
+    [60, 5],
+  ])("renders %i names across %i marquee rows", (count, rows) => {
+    render(<SupporterWall names={namesOf(count)} />);
+    expect(screen.getAllByTestId("marquee-mock")).toHaveLength(rows);
   });
 
-  it("gives every row the full name list, so one supporter still fills all five rows", () => {
-    render(<SupporterWall names={["Ada"]} />);
-    const rows = screen.getAllByTestId("marquee-mock");
-    for (const row of rows) {
+  it.each([1, 2, 3])(
+    "renders %i name(s) as a still, centred line with no marquee",
+    (count) => {
+      const { container } = render(<SupporterWall names={namesOf(count)} />);
       expect(
-        row.querySelectorAll('[data-testid="supporter-name"]'),
-      ).toHaveLength(1);
-      expect(row.textContent).toContain("Ada");
-    }
-  });
+        container.querySelector('[data-testid="marquee-mock"]'),
+      ).toBeNull();
+      expect(screen.getAllByTestId("supporter-name")).toHaveLength(count);
+      expect(container.querySelector(".justify-center")).toBeInTheDocument();
+    },
+  );
 
   it("renders a static (non-marquee) list under prefers-reduced-motion", () => {
     mockMatchMedia(true);
