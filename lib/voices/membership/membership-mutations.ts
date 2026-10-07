@@ -86,6 +86,8 @@ export function checkout(
     cadence: "monthly" | "annual";
     successUrl: string;
     cancelUrl: string;
+    /** Where the checkout came from; the backend only records known values. */
+    source?: "reminder";
   },
   idempotencyKey: string,
 ): Promise<MutationResult<CheckoutResponse>> {

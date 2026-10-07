@@ -14,6 +14,17 @@ import type { MembershipState } from "@/lib/voices/membership/schemas";
 const POLL_INTERVAL_MS = 2000;
 const TIMEOUT_MS = 15_000;
 
+// Statuses that mean a payment really landed. Everything else — still
+// pending, `null` (never subscribed / checkout lapsed) or `expired` — must
+// not be celebrated: this page is also reachable by back button or bookmark
+// without paying.
+const PAID_STATUSES = new Set([
+  "active",
+  "grace",
+  "cancelling",
+  "complimentary",
+]);
+
 /**
  * Stripe can redirect back here before the webhook has settled the
  * payment (contract §10). Polls GET /api/membership/me for up to ~15s
@@ -34,7 +45,11 @@ export default function CompletePoller() {
     },
   );
 
-  const reconciled = Boolean(data && data.status !== "pending_reconciliation");
+  const reconciled = Boolean(data?.status && PAID_STATUSES.has(data.status));
+  // The backend answered and there is no payment behind it.
+  const notPaid = Boolean(
+    data && data.status !== "pending_reconciliation" && !reconciled,
+  );
 
   useEffect(() => {
     if (!reconciled) return;
@@ -42,10 +57,10 @@ export default function CompletePoller() {
   }, [reconciled]);
 
   useEffect(() => {
-    if (reconciled) return;
+    if (reconciled || notPaid) return;
     const timer = setTimeout(() => setTimedOut(true), TIMEOUT_MS);
     return () => clearTimeout(timer);
-  }, [reconciled]);
+  }, [reconciled, notPaid]);
 
   if (reconciled) {
     const price =
@@ -107,12 +122,30 @@ export default function CompletePoller() {
     );
   }
 
+  if (notPaid) {
+    return (
+      <div role="status" aria-live="polite">
+        <p className="font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
+          We haven&rsquo;t received a payment, so you&rsquo;re not a member yet.
+          Nothing has been charged.
+        </p>
+        <Link
+          href="/join"
+          className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-base font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+        >
+          Back to join
+        </Link>
+      </div>
+    );
+  }
+
   if (timedOut) {
     return (
       <div role="status" aria-live="polite">
         <p className="font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
-          We&rsquo;ve got your payment — your membership will appear shortly. If
-          it doesn&rsquo;t within a few minutes,{" "}
+          Your payment is taking a little longer to confirm than usual. Your
+          membership will appear on your account once it does. If it
+          hasn&rsquo;t within a few minutes,{" "}
           <Link
             href="/support"
             className="font-bold underline underline-offset-2 hover:text-voicesNext-orange"

@@ -8,7 +8,9 @@ import {
 } from "@/lib/voices/membership/constants";
 import { parseMembershipCadence } from "@/lib/voices/membership/types";
 import { getPlans } from "@/lib/voices/membership/membership-client";
+import { getMembership } from "@/lib/voices/membership/membership-client";
 import { getSession } from "@/lib/voices/membership/session";
+import JoinStatusBanner from "./join-status-banner";
 import ContributionSummary from "../components/membership/contribution-summary";
 import MemberBenefits from "../components/membership/member-benefits";
 
@@ -22,7 +24,11 @@ export const metadata: Metadata = {
 export default async function JoinPage({
   searchParams,
 }: {
-  searchParams: Promise<{ cadence?: string; checkoutError?: string }>;
+  searchParams: Promise<{
+    cadence?: string;
+    checkoutError?: string;
+    checkout?: string;
+  }>;
 }) {
   const [cmsCopy, plansResult, session, resolvedSearchParams] =
     await Promise.all([
@@ -31,6 +37,9 @@ export default async function JoinPage({
       getSession(),
       searchParams,
     ]);
+
+  // Only for signed-in visitors; a failed lookup just means no banner.
+  const membershipResult = session ? await getMembership() : null;
 
   const copy = withMembershipCopyFallback(cmsCopy);
   const cadence = parseMembershipCadence(resolvedSearchParams.cadence);
@@ -87,6 +96,11 @@ export default async function JoinPage({
           {resolvedSearchParams.checkoutError}
         </p>
       )}
+
+      <JoinStatusBanner
+        membership={membershipResult?.ok ? membershipResult.data : null}
+        checkoutCancelled={resolvedSearchParams.checkout === "cancelled"}
+      />
 
       <ContributionSummary
         scale={scale}

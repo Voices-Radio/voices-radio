@@ -28,6 +28,9 @@ export const AUTH_RATE_LIMITS = {
   login: { name: "login", limit: 10, window: "10 m" },
   register: { name: "register", limit: 5, window: "1 h" },
   checkEmail: { name: "check-email", limit: 20, window: "10 m" },
+  // Each call sends an email, so the ceiling is low; a person who lost the
+  // first link needs two or three, not dozens.
+  resendVerification: { name: "resend-verification", limit: 5, window: "1 h" },
 } as const satisfies Record<string, RateLimitRule>;
 
 /**

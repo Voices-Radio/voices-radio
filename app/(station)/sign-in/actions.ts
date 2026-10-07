@@ -20,6 +20,8 @@ const schema = z.object({
 
 export type SignInState =
   | {
+      /** Set when the account exists but its email was never confirmed. */
+      needsVerificationFor?: string;
       formError?: string;
       fieldErrors?: Partial<Record<"email" | "password", string>>;
     }
@@ -54,6 +56,17 @@ export async function signInAction(
     email: parsed.data.email,
     password: parsed.data.password,
   });
+
+  // The backend refuses an unconfirmed account with a 401 like a wrong
+  // password. Saying "incorrect password" to someone who typed it right, and
+  // who has no way to get a new link, is the dead end this branch removes.
+  if (status === 401 && payload?.needsVerification) {
+    return {
+      needsVerificationFor: parsed.data.email,
+      formError:
+        "You need to confirm your email before signing in. We sent you a link when you signed up.",
+    };
+  }
 
   if (!ok || !payload?.token || !payload?.refreshToken) {
     return {

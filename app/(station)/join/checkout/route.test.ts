@@ -27,10 +27,11 @@ const { startCheckout } =
   await import("@/lib/voices/membership/start-checkout");
 const { GET } = await import("./route");
 
-function requestWith(amount?: string, cadence?: string) {
+function requestWith(amount?: string, cadence?: string, source?: string) {
   const params = new URLSearchParams();
   if (amount) params.set("amount", amount);
   if (cadence) params.set("cadence", cadence);
+  if (source) params.set("source", source);
   return new NextRequest(
     `https://staging.voicesradio.co.uk/join/checkout?${params.toString()}`,
   );
@@ -64,7 +65,19 @@ describe("GET /join/checkout", () => {
       RedirectSignal,
     );
 
-    expect(startCheckout).toHaveBeenCalledWith(799, "annual");
+    expect(startCheckout).toHaveBeenCalledWith(799, "annual", undefined);
+  });
+
+  it("passes the reminder source through, and ignores any other value", async () => {
+    vi.mocked(startCheckout).mockImplementation(() => {
+      throw new RedirectSignal("https://checkout.stripe.com/cs_123");
+    });
+
+    await expect(GET(requestWith("599", "monthly", "reminder"))).rejects.toThrow(RedirectSignal);
+    expect(startCheckout).toHaveBeenLastCalledWith(599, "monthly", "reminder");
+
+    await expect(GET(requestWith("599", "monthly", "<script>"))).rejects.toThrow(RedirectSignal);
+    expect(startCheckout).toHaveBeenLastCalledWith(599, "monthly", undefined);
   });
 
   it("passes undefined to startCheckout for a missing/invalid amount, rather than a bad number", async () => {
@@ -76,7 +89,7 @@ describe("GET /join/checkout", () => {
       RedirectSignal,
     );
 
-    expect(startCheckout).toHaveBeenCalledWith(undefined, "monthly");
+    expect(startCheckout).toHaveBeenCalledWith(undefined, "monthly", undefined);
   });
 
   it("redirects to /join with the failure message when startCheckout fails", async () => {

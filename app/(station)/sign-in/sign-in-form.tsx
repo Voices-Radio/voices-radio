@@ -11,6 +11,7 @@ import {
   accountPrimaryButtonClassName,
 } from "../account/components/account-surface";
 import PasswordInput from "../components/forms/password-input";
+import ResendVerification from "../verify-email/resend-verification";
 import { signInAction, type SignInState } from "./actions";
 
 const initialState: SignInState = undefined;
@@ -77,6 +78,10 @@ export default function SignInForm({ next }: { next: string }) {
               >
                 {state.formError}
               </div>
+            )}
+
+            {state?.needsVerificationFor && (
+              <ResendVerification email={state.needsVerificationFor} next={next} />
             )}
 
             <div className="flex flex-col gap-1.5">

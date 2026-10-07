@@ -13,6 +13,7 @@ import {
   formatMinorUnitsWithCadence,
 } from "@/lib/voices/membership/format";
 import type { MembershipState } from "@/lib/voices/membership/schemas";
+import { getResumableCheckout } from "@/lib/voices/membership/unfinished-checkout";
 import {
   accountPrimaryButtonClassName,
   accountSecondaryButtonClassName,
@@ -65,6 +66,40 @@ export default function MembershipStatusCard({
 }: {
   state: MembershipState;
 }) {
+  // Left at the payment step. No spinner, no "Manage membership": say what
+  // happened (nothing was charged) and offer the one thing they can do.
+  const resumable = getResumableCheckout(state);
+  if (resumable) {
+    return (
+      <div className={accountSurfaceClassName} data-testid="unfinished-checkout">
+        <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
+          Finish joining Voices
+        </h2>
+        <p className="mt-2 max-w-md font-gabarito text-sm text-voicesNext-cream/90">
+          You chose{" "}
+          <strong>
+            {formatMinorUnitsWithCadence(
+              resumable.amountMinor,
+              state.currency ?? "gbp",
+              resumable.cadence,
+            )}
+          </strong>{" "}
+          but didn&rsquo;t complete payment. Nothing has been charged &mdash;
+          pick up where you left off.
+        </p>
+        <Link
+          href={resumable.href}
+          className={cn(
+            accountPrimaryButtonClassName,
+            "mt-4 h-11 px-5 text-sm",
+          )}
+        >
+          Finish joining
+        </Link>
+      </div>
+    );
+  }
+
   if (!state.status) {
     return (
       <div className={accountSurfaceClassName}>
@@ -165,7 +200,12 @@ export default function MembershipStatusCard({
 
       {/* Exactly one primary action, per state — never more than one call to action. */}
       <div className="mt-5">
-        {state.status === "grace" ? (
+        {state.status === "pending_reconciliation" ? (
+          <p className="font-gabarito text-sm text-voicesNext-cream/70">
+            Your payment is being confirmed. This usually takes a few seconds
+            &mdash; refresh in a moment.
+          </p>
+        ) : state.status === "grace" ? (
           <Link
             href="/account/membership"
             className={cn(accountPrimaryButtonClassName, "h-11 px-5 text-sm")}

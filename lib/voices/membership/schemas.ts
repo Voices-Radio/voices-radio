@@ -108,6 +108,16 @@ export const paymentIssueSchema = z
   .nullable();
 export type PaymentIssue = z.infer<typeof paymentIssueSchema>;
 
+// An unfinished checkout: what the member chose before leaving the payment
+// step. Present while `pending_reconciliation` (payment settling, or never
+// completed) and for `status: null` after the session lapsed unpaid.
+export const unfinishedCheckoutSchema = z.object({
+  amountMinor: z.number().int().positive(),
+  cadence: membershipCadenceApiSchema,
+  startedAt: nullish(z.string()),
+});
+export type UnfinishedCheckout = z.infer<typeof unfinishedCheckoutSchema>;
+
 export const membershipStateSchema = z.object({
   status: membershipStatusSchema,
   contributionAmountMinor: nullish(z.number().int().nonnegative()),
@@ -119,6 +129,7 @@ export const membershipStateSchema = z.object({
   scheduledChange: nullish(scheduledChangeSchema),
   isFoundingMember: z.boolean(),
   paymentIssue: nullish(paymentIssueSchema),
+  checkout: nullish(unfinishedCheckoutSchema),
 });
 export type MembershipState = z.infer<typeof membershipStateSchema>;
 

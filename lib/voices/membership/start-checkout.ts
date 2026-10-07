@@ -16,6 +16,7 @@ export type StartCheckoutFailure = { ok: false; message: string };
 export async function startCheckout(
   amountMinor: number | undefined,
   cadence: string | undefined,
+  source?: "reminder",
 ): Promise<StartCheckoutFailure> {
   if (!amountMinor || !isMembershipCadence(cadence)) {
     return { ok: false, message: "Choose a contribution amount to continue." };
@@ -29,7 +30,10 @@ export async function startCheckout(
       amountMinor,
       cadence: cadence as MembershipCadence,
       successUrl: `${origin}/join/complete`,
-      cancelUrl: `${origin}/join?cadence=${cadence}`,
+      // `checkout=cancelled` lets /join say "no payment taken" to someone who
+      // backed out of Stripe, rather than dropping them on a bare pricing page.
+      cancelUrl: `${origin}/join?cadence=${cadence}&checkout=cancelled`,
+      ...(source ? { source } : {}),
     },
     idempotencyKey,
   );

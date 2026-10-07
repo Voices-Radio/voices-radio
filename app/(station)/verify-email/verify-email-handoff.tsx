@@ -8,6 +8,7 @@ import {
   accountPrimaryButtonClassName,
 } from "../account/components/account-surface";
 import { verifyEmailAction, type VerifyEmailResult } from "./actions";
+import ResendVerification from "./resend-verification";
 
 /**
  * Confirms the email as soon as the page opens, then the action redirects.
@@ -66,6 +67,12 @@ export default function VerifyEmailHandoff({
         >
           Sign in
         </Link>
+        <div className="mt-8 border-t border-voicesNext-border pt-6">
+          <p className="mb-3 font-gabarito text-sm text-voicesNext-cream/70">
+            Haven&rsquo;t confirmed your email yet? Links last 24 hours.
+          </p>
+          <ResendVerification next={next} />
+        </div>
       </div>
     );
   }

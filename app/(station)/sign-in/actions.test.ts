@@ -291,4 +291,22 @@ describe("signInAction", () => {
 
     expect(redirect).toHaveBeenCalledWith("/account");
   });
+
+  it("tells an unconfirmed account to confirm its email, instead of calling the password wrong", async () => {
+    vi.mocked(backendLogin).mockResolvedValue({
+      ok: false,
+      status: 401,
+      payload: { message: "Please verify your email before logging in", needsVerification: true, email: "jo@example.com" },
+    });
+
+    const state = await signInAction(
+      undefined,
+      formData({ email: "jo@example.com", password: "correct-horse" }),
+    );
+
+    expect(state?.needsVerificationFor).toBe("jo@example.com");
+    expect(state?.formError).toMatch(/confirm your email/i);
+    expect(state?.formError).not.toMatch(/incorrect/i);
+    expect(setSessionCookies).not.toHaveBeenCalled();
+  });
 });

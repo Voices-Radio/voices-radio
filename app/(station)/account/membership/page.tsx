@@ -4,6 +4,7 @@ import {
   getMembership,
   getPlans,
 } from "@/lib/voices/membership/membership-client";
+import { getResumableCheckout } from "@/lib/voices/membership/unfinished-checkout";
 import { mergeMembershipScale } from "@/lib/voices/membership/constants";
 import {
   formatMembershipDate,
@@ -59,7 +60,7 @@ export default async function AccountMembershipPage() {
         </div>
       </div>
 
-      {!state.status && (
+      {!state.status && !getResumableCheckout(state) && (
         <p className="font-gabarito text-sm text-voicesNext-cream/70">
           Nothing to manage yet —{" "}
           <Link
@@ -72,7 +73,10 @@ export default async function AccountMembershipPage() {
         </p>
       )}
 
+      {/* Nothing to manage until a payment has actually landed: no Stripe
+          portal or plan switchers for someone who has not paid. */}
       {state.status &&
+        state.status !== "pending_reconciliation" &&
         state.cadence &&
         state.currency &&
         state.contributionAmountMinor !== null &&

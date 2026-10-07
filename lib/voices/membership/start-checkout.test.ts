@@ -57,11 +57,24 @@ describe("startCheckout", () => {
         amountMinor: 4099,
         cadence: "annual",
         successUrl: "https://staging.voicesradio.co.uk/join/complete",
-        cancelUrl: "https://staging.voicesradio.co.uk/join?cadence=annual",
+        cancelUrl: "https://staging.voicesradio.co.uk/join?cadence=annual&checkout=cancelled",
       },
       expect.any(String),
     );
     expect(redirect).toHaveBeenCalledWith("https://checkout.stripe.com/cs_test_123");
+  });
+
+  it("passes the reminder source through to the backend, and omits it otherwise", async () => {
+    vi.mocked(checkout).mockResolvedValue({
+      ok: true,
+      data: { checkoutUrl: "https://checkout.stripe.com/cs_1", sessionId: "cs_1" },
+    });
+
+    await expect(startCheckout(599, "monthly", "reminder")).rejects.toThrow(RedirectSignal);
+    expect(vi.mocked(checkout).mock.calls[0][0]).toMatchObject({ source: "reminder" });
+
+    await expect(startCheckout(599, "monthly")).rejects.toThrow(RedirectSignal);
+    expect(vi.mocked(checkout).mock.calls[1][0]).not.toHaveProperty("source");
   });
 
   it("uses a different idempotency key on each call", async () => {

@@ -221,7 +221,12 @@ describe("authenticated reads (getMembership/getBenefits/getRedemptions/getProfi
 
     const result = await getMembership();
 
-    expect(result).toEqual({ ok: true, data: validMembershipState });
+    // `checkout` is absent from the fixture (as from an older backend) and
+    // normalises to null.
+    expect(result).toEqual({
+      ok: true,
+      data: { ...validMembershipState, checkout: null },
+    });
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("/api/membership/me"),
       expect.objectContaining({

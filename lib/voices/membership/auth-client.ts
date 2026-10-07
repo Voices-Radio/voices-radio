@@ -24,6 +24,7 @@ async function authRequest<T>(
     | "/api/auth/register"
     | "/api/auth/login"
     | "/api/auth/check-email"
+    | "/api/auth/resend-verification"
     | "/api/auth/forgot-password"
     | "/api/auth/reset-password"
     | `/api/auth/verify-email/${string}`,
@@ -96,6 +97,19 @@ export async function backendVerifyEmail(
   token: string,
 ): Promise<BackendAuthResult> {
   return authRequest(`/api/auth/verify-email/${encodeURIComponent(token)}`, {});
+}
+
+/**
+ * Sends a fresh verification email. The backend answers 404 for an address it
+ * doesn't know and 400 for one that is already verified; callers must not
+ * pass that distinction on to the visitor (it would reveal which addresses
+ * have accounts).
+ */
+export async function backendResendVerification(input: {
+  email: string;
+  verificationReturnUrl?: string;
+}): Promise<BackendAuthResult> {
+  return authRequest("/api/auth/resend-verification", input);
 }
 
 export async function backendLogin(input: {

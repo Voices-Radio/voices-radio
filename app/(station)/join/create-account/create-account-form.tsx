@@ -13,6 +13,7 @@ import {
   accountSurfaceStaticClassName,
 } from "../../account/components/account-surface";
 import PasswordInput from "../../components/forms/password-input";
+import ResendVerification from "../../verify-email/resend-verification";
 import JoinSteps from "../join-steps";
 import { createAccountAction, type CreateAccountState } from "./actions";
 import { formatMinorUnitsWithCadence } from "@/lib/voices/membership/format";
@@ -162,6 +163,19 @@ export default function CreateAccountForm({
         >
           Go to sign in
         </Link>
+        <div className="mt-8 border-t border-voicesNext-border pt-6">
+          <p className="mb-3 font-gabarito text-sm text-voicesNext-cream/70">
+            Nothing arrived? Check your spam folder, or:
+          </p>
+          <ResendVerification
+            email={state.email}
+            next={
+              amount
+                ? `/join/checkout?amount=${amount}&cadence=${cadence}`
+                : "/account"
+            }
+          />
+        </div>
       </div>
     );
   }

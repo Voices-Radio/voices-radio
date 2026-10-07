@@ -14,14 +14,19 @@ import { parseAmountMinor } from "@/lib/voices/membership/types";
 export async function GET(request: NextRequest) {
   const amount = request.nextUrl.searchParams.get("amount") ?? undefined;
   const cadence = request.nextUrl.searchParams.get("cadence") ?? undefined;
+  // Set by the "pick up where you left off" email, for the recovery metric.
+  const source =
+    request.nextUrl.searchParams.get("source") === "reminder"
+      ? "reminder"
+      : undefined;
   // Encode: these are raw query params, and interpolating them unescaped lets
   // a crafted `amount` inject extra params into the path we hand to requireSession.
   const returnTo = `/join/checkout?amount=${encodeURIComponent(
     amount ?? "",
-  )}&cadence=${encodeURIComponent(cadence ?? "")}`;
+  )}&cadence=${encodeURIComponent(cadence ?? "")}${source ? `&source=${source}` : ""}`;
 
   await requireSession(returnTo);
 
-  const failure = await startCheckout(parseAmountMinor(amount), cadence);
+  const failure = await startCheckout(parseAmountMinor(amount), cadence, source);
   redirect(`/join?checkoutError=${encodeURIComponent(failure.message)}`);
 }
