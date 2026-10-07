@@ -1,0 +1,77 @@
+.story {
+  --about-sun: #f4c95d;
+  --about-sun-halo: rgb(244 201 93 / 22%);
+  isolation: isolate;
+  overflow: clip;
+}
+
+.sunStage {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.sunSticky {
+  height: 100svh;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+}
+
+.sunPosition {
+  bottom: -17rem;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: min(78vw, 52rem);
+}
+
+.sun {
+  aspect-ratio: 1;
+  background: var(--about-sun);
+  border-radius: 999px;
+  box-shadow: 0 0 7rem var(--about-sun-halo);
+  position: relative;
+}
+
+.sunRing,
+.sunRingInner {
+  border: 1px solid rgb(244 201 93 / 28%);
+  border-radius: 999px;
+  inset: -12%;
+  position: absolute;
+}
+
+.sunRingInner {
+  inset: 11%;
+}
+
+.heroImageOverlay {
+  background: rgb(36 36 36 / 34%);
+}
+
+.bookingImageOverlay {
+  background: rgb(36 36 36 / 78%);
+}
+
+.photoFrame::after {
+  border: 1px solid rgb(248 239 224 / 25%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+@media (min-width: 768px) {
+  .sunPosition {
+    bottom: -24rem;
+    width: min(62vw, 56rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sun {
+    box-shadow: 0 0 4rem rgb(244 201 93 / 14%);
+  }
+}

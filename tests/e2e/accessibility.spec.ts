@@ -1,7 +1,13 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const pages = ["/support", "/join", "/sign-in", "/join/create-account"];
+const pages = [
+  "/about",
+  "/support",
+  "/join",
+  "/sign-in",
+  "/join/create-account",
+];
 
 for (const path of pages) {
   test(`${path} has no automatically-detectable serious/critical a11y violations`, async ({
