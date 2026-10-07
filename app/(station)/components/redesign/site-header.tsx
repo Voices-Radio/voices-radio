@@ -9,6 +9,11 @@ import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import Marquee from "react-fast-marquee";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import {
+  DEFAULT_COLLABORATE_LINKS,
+  DEFAULT_DESKTOP_MENU_LINKS,
+  type NavLink,
+} from "@/lib/voices/page-copy";
 import { cn } from "@/lib/utils";
 import { accountLinksForCapabilities } from "@/lib/voices/membership/capabilities";
 import AccountMenu, { getInitials } from "./account-menu";
@@ -22,6 +27,9 @@ type HeaderSettings = {
   storeLink?: string;
   instagramLink?: string;
   mixcloudLink?: string;
+  /** Resolved from the CMS in the shell; the built-in menus apply when omitted. */
+  desktopMenuLinks?: NavLink[];
+  collaborateLinks?: NavLink[];
 };
 
 type SearchResult = {
@@ -57,22 +65,6 @@ const searchSections: SearchSection[] = [
   { key: "artists", label: "Artists" },
   { key: "mainBlog", label: "Main blog" },
   { key: "podcastBlog", label: "Podcast blog" },
-];
-
-const desktopMenuLinks = [
-  { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
-  { href: "/podcast", label: "Podcast Studio", opensInNewTab: true },
-  { href: "/agency", label: "Agency", opensInNewTab: true },
-  { href: "/collaborate", label: "Partner with Us" },
-  { href: "/about", label: "About Us" },
-  { href: "/support", label: "Why support us" },
-];
-
-const collaborateLinks = [
-  { href: "/podcast", label: "Podcast Studio", opensInNewTab: true },
-  { href: "/agency", label: "Agency", opensInNewTab: true },
-  { href: "/collaborate", label: "Partner with Us" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -169,7 +161,13 @@ function MobileOnAirTicker() {
   );
 }
 
-function CollaborateDropdown({ pathname }: { pathname: string }) {
+function CollaborateDropdown({
+  pathname,
+  collaborateLinks,
+}: {
+  pathname: string;
+  collaborateLinks: NavLink[];
+}) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const active = collaborateLinks.some((link) => isActive(pathname, link.href));
@@ -452,6 +450,10 @@ function SearchPanel({
 export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
   const pathname = usePathname();
   const router = useRouter();
+  const desktopMenuLinks =
+    settings.desktopMenuLinks ?? DEFAULT_DESKTOP_MENU_LINKS;
+  const collaborateLinks =
+    settings.collaborateLinks ?? DEFAULT_COLLABORATE_LINKS;
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -684,7 +686,10 @@ export default function SiteHeader({ settings }: { settings: HeaderSettings }) {
           >
             Shop
           </a>
-          <CollaborateDropdown pathname={pathname} />
+          <CollaborateDropdown
+            pathname={pathname}
+            collaborateLinks={collaborateLinks}
+          />
         </nav>
 
         <div className="ml-3 flex h-[54px] items-center gap-2 md:ml-3 md:h-[72px] lg:ml-4 lg:gap-3">

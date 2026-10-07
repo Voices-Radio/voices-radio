@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { resolveSiteNavigation } from "@/lib/voices/page-copy";
 import { getSettings } from "@/sanity.client";
 import ExploreLiveStrip from "../../explore/explore-live-strip";
 import ArchiveMiniPlayer from "./archive-mini-player";
@@ -16,6 +17,7 @@ export default async function RedesignShell({
   children: React.ReactNode;
 }) {
   const settings = await getSettings();
+  const navigation = resolveSiteNavigation(settings);
 
   return (
     <ArchivePlayerProvider>
@@ -33,11 +35,18 @@ export default async function RedesignShell({
               storeLink: settings?.store_link,
               instagramLink: settings?.instagram_link,
               mixcloudLink: settings?.mixcloud_link,
+              desktopMenuLinks: navigation.desktopMenuLinks,
+              collaborateLinks: navigation.collaborateLinks,
             }}
           />
           <ExploreLiveStrip />
           {children}
-          <SiteFooter contactUrl={settings?.contact_link} />
+          <SiteFooter
+            contactUrl={settings?.contact_link}
+            links={navigation.footerLinks}
+            locations={navigation.locations}
+            copyright={navigation.copyright}
+          />
           <ArchivePlayerSpacer />
           <ArchiveMiniPlayerBoundary>
             <ArchiveMiniPlayer />

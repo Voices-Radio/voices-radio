@@ -36,6 +36,7 @@ export const singletonPlugin = definePlugin<string[]>((types) => {
 // like how "Home" is handled.
 export const pageStructure = (
   typeDefArray: DocumentDefinition[],
+  hiddenTypes: string[] = [],
 ): StructureResolver => {
   return (S) => {
     // Goes through all of the singletons that were provided and translates them into something the
@@ -59,6 +60,7 @@ export const pageStructure = (
     // The default root list items (except custom ones)
     const defaultListItems = S.documentTypeListItems().filter(
       (listItem) =>
+        !hiddenTypes.includes(String(listItem.getId())) &&
         !typeDefArray.find((singleton) => singleton.name === listItem.getId()),
     );
 

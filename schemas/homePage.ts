@@ -281,8 +281,10 @@ export default defineType({
               title: "Event",
               type: "reference",
               to: [{ type: "event" }],
+              description:
+                "Only events with a CTA link can be featured, as there is no event page on the site yet.",
               options: {
-                filter: "status == 'published'",
+                filter: "status == 'published' && defined(ctaUrl)",
               },
               validation: (rule) => rule.required(),
             }),

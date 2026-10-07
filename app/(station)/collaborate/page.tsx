@@ -1,30 +1,36 @@
-import { getSettings } from "@/sanity.client";
+import { getCollaboratePage, getSettings } from "@/sanity.client";
+import { resolveCollaboratePage } from "@/lib/voices/page-copy";
 import { VOICES_APPLY_FOR_SHOW_URL } from "@/lib/voices/config";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 const CONTACT_FALLBACK_URL = "mailto:info@voicesradio.co.uk";
 
-export const metadata: Metadata = {
-  title: "Partner with Us",
-  description:
-    "Partner with Voices Radio on programming, community projects, brand work, and show ideas.",
-  openGraph: {
-    title: "Partner with Us | Voices Radio",
-    description:
-      "Partner with Voices Radio on programming, community projects, brand work, and show ideas.",
-  },
-  twitter: {
-    title: "Partner with Us | Voices Radio",
-    description:
-      "Partner with Voices Radio on programming, community projects, brand work, and show ideas.",
-  },
-  alternates: { canonical: "/collaborate" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const page = resolveCollaboratePage(await getCollaboratePage());
+
+  return {
+    title: page.seoTitle,
+    description: page.seoDescription,
+    openGraph: {
+      title: `${page.seoTitle} | Voices Radio`,
+      description: page.seoDescription,
+    },
+    twitter: {
+      title: `${page.seoTitle} | Voices Radio`,
+      description: page.seoDescription,
+    },
+    alternates: { canonical: "/collaborate" },
+  };
+}
 
 export default async function CollaboratePage() {
-  const settings = await getSettings();
-  const applyLink = VOICES_APPLY_FOR_SHOW_URL;
+  const [settings, cmsPage] = await Promise.all([
+    getSettings(),
+    getCollaboratePage(),
+  ]);
+  const page = resolveCollaboratePage(cmsPage);
+  const applyLink = settings?.apply_link || VOICES_APPLY_FOR_SHOW_URL;
   const contactLink = settings?.contact_link || CONTACT_FALLBACK_URL;
 
   return (
@@ -33,14 +39,13 @@ export default async function CollaboratePage() {
         <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-12 md:grid-cols-[minmax(0,1fr)_360px] md:px-8 md:py-20">
           <div>
             <p className="mb-4 font-asap text-sm font-bold uppercase text-voicesNext-orange">
-              Partner with Us
+              {page.eyebrow}
             </p>
             <h1 className="max-w-4xl font-outfit text-5xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-7xl">
-              Build with Voices
+              {page.heading}
             </h1>
             <p className="mt-6 max-w-2xl font-gabarito text-lg leading-relaxed text-voicesNext-cream">
-              For partnerships, programming, community projects, and creative
-              ideas, use this page to reach the right part of the Voices team.
+              {page.intro}
             </p>
           </div>
 
@@ -51,50 +56,36 @@ export default async function CollaboratePage() {
               rel="noopener noreferrer"
               className="inline-flex h-14 items-center justify-center border border-voicesNext-orange bg-voicesNext-orange px-6 font-gabarito text-lg font-bold text-voicesNext-background transition-colors hover:bg-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
             >
-              Apply for a show
+              {page.applyCtaText}
             </a>
             <a
               href={contactLink}
               className="inline-flex h-14 items-center justify-center border border-voicesNext-cream px-6 font-gabarito text-lg font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
             >
-              Start a partnership conversation
+              {page.contactCtaText}
             </a>
           </div>
         </div>
       </section>
 
       <section className="mx-auto grid max-w-[1280px] gap-px border-b border-voicesNext-border bg-voicesNext-border px-4 py-px md:grid-cols-3 md:px-8">
-        {[
-          {
-            title: "Programming",
-            copy: "Apply to host a show or share a programme idea with the station team.",
-          },
-          {
-            title: "Partnerships",
-            copy: "Start a conversation about community projects, brand work, venue programming, or station collaborations.",
-          },
-          {
-            title: "Studio",
-            copy: "For podcast production and studio bookings, head to the Podcast Studio page.",
-            href: "/podcast",
-          },
-        ].map((item) => (
+        {page.cards.map((card) => (
           <article
-            key={item.title}
+            key={card.title}
             className="min-h-[220px] bg-voicesNext-background p-6 md:p-8"
           >
             <h2 className="font-gabarito text-2xl font-bold text-voicesNext-cream">
-              {item.title}
+              {card.title}
             </h2>
             <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-secondary">
-              {item.copy}
+              {card.copy}
             </p>
-            {item.href && (
+            {card.href && (
               <Link
-                href={item.href}
+                href={card.href}
                 className="mt-6 inline-flex font-gabarito text-sm font-bold uppercase text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
               >
-                Podcast Studio
+                {card.linkLabel || card.title}
               </Link>
             )}
           </article>

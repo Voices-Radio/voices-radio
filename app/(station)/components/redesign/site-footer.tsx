@@ -1,22 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
-
-const LOCATIONS = [
-  {
-    name: "Voices Radio",
-    address: "Unit 113 Lower Stable Street Coal Drops Yard, London N1C 4LW",
-  },
-  {
-    name: "Voices Podcast Studio",
-    address: "Upstairs at Mare Street, Lewis Cubitt Square, London N1C 4DY",
-  },
-  { name: "Voices East", address: "TBC" },
-] as const;
+import type { FooterLocation, NavLink } from "@/lib/voices/page-copy";
+import {
+  DEFAULT_FOOTER_LINKS,
+  DEFAULT_FOOTER_LOCATIONS,
+} from "@/lib/voices/page-copy";
 
 export default function SiteFooter({
   contactUrl,
+  links = DEFAULT_FOOTER_LINKS,
+  locations = DEFAULT_FOOTER_LOCATIONS,
+  copyright = `© ${new Date().getFullYear()} Voices Radio`,
 }: {
   contactUrl?: string | null;
+  links?: NavLink[];
+  locations?: FooterLocation[];
+  copyright?: string;
 }) {
   // Always the membership signup page — not settings.apply_link, which is
   // the CMS "Apply Link" field (the radio show submission Google Form).
@@ -30,14 +29,27 @@ export default function SiteFooter({
         <div className="space-y-4 text-left">
           <nav className="grid gap-1 font-gabarito text-[14px] font-medium leading-none md:gap-2 md:text-sm md:font-bold md:leading-normal">
             <p className="uppercase md:hidden">VOICES RADIO</p>
-            <Link href="/about">About</Link>
-            <Link href="/services">Work with us</Link>
-            <Link href="/support">Support Us</Link>
+            {links.map((link) =>
+              link.opensInNewTab || /^https?:/.test(link.href) ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target={link.opensInNewTab ? "_blank" : undefined}
+                  rel={link.opensInNewTab ? "noopener noreferrer" : undefined}
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link key={link.href} href={link.href}>
+                  {link.label}
+                </Link>
+              ),
+            )}
             <a href={contactHref}>Contact</a>
             <a href={ctaUrl}>Become a Supporter</a>
           </nav>
           <p className="max-w-[240px] font-gabarito text-xs text-voicesNext-secondary">
-            © 2026 Voices Radio
+            {copyright}
           </p>
         </div>
 
@@ -56,7 +68,7 @@ export default function SiteFooter({
         </Link>
 
         <address className="grid max-w-[380px] gap-2 justify-self-start font-asap text-sm not-italic leading-snug text-voicesNext-secondary md:justify-self-end md:text-left">
-          {LOCATIONS.map(({ name, address }) => (
+          {locations.map(({ name, address }) => (
             <p key={name}>
               <span className="font-bold text-voicesNext-cream">{name}:</span>{" "}
               {address}

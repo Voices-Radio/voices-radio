@@ -11,6 +11,8 @@ import {
   BlogPost,
   MembershipPage,
   MembershipBenefit,
+  ListingPagesCopy,
+  CollaboratePageCopy,
   aboutQuery,
   servicesQuery,
   homeQuery,
@@ -24,6 +26,8 @@ import {
   membershipPageQuery,
   membershipBenefitsQuery,
   membershipBenefitQuery,
+  listingPagesQuery,
+  collaboratePageQuery,
 } from "./sanity.queries";
 
 export const client = createClient({
@@ -69,6 +73,13 @@ export const getBlogPost = (slug: string) =>
 
 export const getFeaturedBlogPosts = () =>
   safeFetch<BlogPost[]>(featuredBlogPostsQuery);
+
+// Page copy
+export const getListingPages = () =>
+  safeFetch<ListingPagesCopy>(listingPagesQuery);
+
+export const getCollaboratePage = () =>
+  safeFetch<CollaboratePageCopy>(collaboratePageQuery);
 
 // Membership functions
 export const getMembershipPage = () =>

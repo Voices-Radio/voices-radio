@@ -9,6 +9,7 @@ export default defineType({
   icon: CogIcon,
   groups: [
     { name: "links", title: "Links" },
+    { name: "navigation", title: "Navigation & footer" },
     { name: "seo", title: "SEO" },
   ],
   preview: {
@@ -168,6 +169,152 @@ export default defineType({
         rule.required().uri({
           scheme: ["https"],
         }),
+    }),
+    defineField({
+      name: "header_links",
+      title: "Header menu links",
+      description:
+        "The main menu. Reorder, add or remove. Delete them all to restore the original menu.",
+      type: "array",
+      group: "navigation",
+      of: [
+        defineArrayMember({
+          name: "navLink",
+          title: "Link",
+          type: "object",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Label",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "href",
+              title: "Link",
+              type: "string",
+              description: "A path like /blog or a full https:// link.",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "opensInNewTab",
+              title: "Open in a new tab",
+              type: "boolean",
+              initialValue: false,
+            }),
+          ],
+          preview: { select: { title: "label", subtitle: "href" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "collaborate_links",
+      title: "Header 'Collaborate' links",
+      description:
+        "The Podcast Studio / Agency / Partner with Us group in the header.",
+      type: "array",
+      group: "navigation",
+      of: [
+        defineArrayMember({
+          name: "navLink",
+          title: "Link",
+          type: "object",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Label",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "href",
+              title: "Link",
+              type: "string",
+              description: "A path like /blog or a full https:// link.",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "opensInNewTab",
+              title: "Open in a new tab",
+              type: "boolean",
+              initialValue: false,
+            }),
+          ],
+          preview: { select: { title: "label", subtitle: "href" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "footer_links",
+      title: "Footer links",
+      description:
+        "Shown above Contact and Become a Supporter, which are always present.",
+      type: "array",
+      group: "navigation",
+      of: [
+        defineArrayMember({
+          name: "navLink",
+          title: "Link",
+          type: "object",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Label",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "href",
+              title: "Link",
+              type: "string",
+              description: "A path like /blog or a full https:// link.",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "opensInNewTab",
+              title: "Open in a new tab",
+              type: "boolean",
+              initialValue: false,
+            }),
+          ],
+          preview: { select: { title: "label", subtitle: "href" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "footer_locations",
+      title: "Footer locations",
+      type: "array",
+      group: "navigation",
+      of: [
+        defineArrayMember({
+          name: "footerLocation",
+          title: "Location",
+          type: "object",
+          fields: [
+            defineField({
+              name: "name",
+              title: "Name",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "address",
+              title: "Address",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: { select: { title: "name", subtitle: "address" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "footer_copyright",
+      title: "Footer copyright line",
+      description: "Leave blank for © <current year> Voices Radio",
+      type: "string",
+      group: "navigation",
     }),
   ],
 });

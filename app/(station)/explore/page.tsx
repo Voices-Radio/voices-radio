@@ -1,3 +1,5 @@
+import { resolveListingPages } from "@/lib/voices/page-copy";
+import { getListingPages } from "@/sanity.client";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import GenreBrowser from "../components/redesign/genre-browser";
@@ -154,9 +156,11 @@ function musicSummary(selectedGenres: string[], showCount: number) {
 }
 
 function MusicGrid({
+  title,
   shows,
   selectedGenres,
 }: {
+  title: string;
   shows: VoicesShow[];
   selectedGenres: string[];
 }) {
@@ -171,7 +175,7 @@ function MusicGrid({
     <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
       <div className="mb-5 md:mb-[30px]">
         <h1 className="font-gabarito text-[24px] font-bold leading-none text-voicesNext-cream md:text-[34px]">
-          Music
+          {title}
         </h1>
         <p
           className="mt-2 font-asap text-[13px] leading-tight text-voicesNext-secondary md:text-[14px]"
@@ -237,6 +241,7 @@ export default async function ExplorePage({
     isGenreKey,
   );
   const category = getSingleParam(resolvedSearchParams, "category");
+  const musicTitle = resolveListingPages(await getListingPages()).music.title;
   const showMusicGrid = category === "music" || selectedGenres.length > 0;
 
   const shows = showMusicGrid
@@ -273,7 +278,11 @@ export default async function ExplorePage({
         <>
           {!showMusicGrid && <CategoryTiles />}
           {showMusicGrid && (
-            <MusicGrid shows={visibleShows} selectedGenres={selectedGenres} />
+            <MusicGrid
+              title={musicTitle}
+              shows={visibleShows}
+              selectedGenres={selectedGenres}
+            />
           )}
         </>
       )}

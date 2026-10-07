@@ -10,7 +10,8 @@ import {
   getParamArray,
   type VoicesSearchParams,
 } from "@/lib/voices/search-params";
-import { client } from "@/sanity.client";
+import { resolveListingPages } from "@/lib/voices/page-copy";
+import { client, getListingPages } from "@/sanity.client";
 import { mainBlogPostsQuery, type MainBlogPost } from "@/sanity.queries";
 import PageHero from "../components/redesign/page-hero";
 import BlogCta from "./components/blog-cta";
@@ -78,7 +79,11 @@ export default async function BlogPage({
   const resolvedSearchParams = await searchParams;
   const selectedCategories = getParamArray(resolvedSearchParams, "category");
 
-  const allPosts = await getBlogPosts();
+  const [allPosts, listingPages] = await Promise.all([
+    getBlogPosts(),
+    getListingPages(),
+  ]);
+  const copy = resolveListingPages(listingPages).blog;
   const categories = collectCategories(allPosts);
   const posts = filterPostsByCategories(allPosts, selectedCategories);
 
@@ -116,9 +121,9 @@ export default async function BlogPage({
       />
 
       <PageHero
-        eyebrow="From the station"
-        title="Blog"
-        description="Stories, news and updates from the Voices community — what's happening in the studio, on air and around London."
+        eyebrow={copy.eyebrow}
+        title={copy.title}
+        description={copy.description}
         meta={
           allPosts.length > 0 ? (
             <dl className="flex gap-8 border-l-2 border-voicesNext-orange pl-4 md:gap-10">

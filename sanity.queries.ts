@@ -20,6 +20,24 @@ export interface Settings {
   store_link: string;
   podcast_link: string;
   apply_link: string;
+  header_links?: NavLinkConfig[];
+  collaborate_links?: NavLinkConfig[];
+  footer_links?: NavLinkConfig[];
+  footer_locations?: FooterLocationConfig[];
+  footer_copyright?: string;
+}
+
+export interface NavLinkConfig {
+  _key?: string;
+  label?: string;
+  href?: string;
+  opensInNewTab?: boolean;
+}
+
+export interface FooterLocationConfig {
+  _key?: string;
+  name?: string;
+  address?: string;
 }
 
 export const partnersQuery = groq`*[_type == "partner"] | order(name desc)`;
@@ -845,4 +863,39 @@ export interface MembershipBenefit {
   redemptionInstructions?: string;
   terms?: string;
   isCapacityLimited?: boolean;
+}
+
+export const listingPagesQuery = groq`*[_type == "listingPages"][0]`;
+
+export interface ListingPagesCopy {
+  shows?: { eyebrow?: string; title?: string; description?: string };
+  artists?: {
+    title?: string;
+    description?: string;
+    kxTitle?: string;
+    kxDescription?: string;
+    eastTitle?: string;
+    eastDescription?: string;
+  };
+  music?: { title?: string };
+  blog?: { eyebrow?: string; title?: string; description?: string };
+}
+
+export const collaboratePageQuery = groq`*[_type == "collaboratePage"][0]`;
+
+export interface CollaboratePageCopy {
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  applyCtaText?: string;
+  contactCtaText?: string;
+  cards?: Array<{
+    _key?: string;
+    title?: string;
+    copy?: string;
+    href?: string;
+    linkLabel?: string;
+  }>;
+  seoTitle?: string;
+  seoDescription?: string;
 }

@@ -7,6 +7,8 @@ import { getArtists } from "@/lib/voices/api";
 import { buildGenreHref, toggleGenre } from "@/lib/voices/genre-filter";
 import { isGenreKey, matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
 import { matchesStationOrLocation } from "@/lib/voices/normalizers";
+import { resolveListingPages } from "@/lib/voices/page-copy";
+import { getListingPages } from "@/sanity.client";
 import {
   getParamArray,
   getSingleParam,
@@ -153,7 +155,11 @@ export default async function ArtistsPage({
     );
   }
 
-  const artists = await getArtists();
+  const [artists, listingPages] = await Promise.all([
+    getArtists(),
+    getListingPages(),
+  ]);
+  const copy = resolveListingPages(listingPages).artists;
   const activeArtists = sortArtists(
     artists.filter((artist) => artist.isActive),
   );
@@ -238,16 +244,16 @@ export default async function ArtistsPage({
         <>
           <ArtistSection
             sectionKey="kx"
-            title="Voices KX"
-            description="Browse the hosts at our Kings Cross studio."
+            title={copy.kxTitle}
+            description={copy.kxDescription}
             artists={kxArtists}
             expanded={expand === "kx" || expand === "all"}
             selectedGenres={selectedGenres}
           />
           <ArtistSection
             sectionKey="east"
-            title="Voices EAST"
-            description="Browse the hosts at our Hackney Wick studio."
+            title={copy.eastTitle}
+            description={copy.eastDescription}
             artists={eastArtists}
             expanded={expand === "east" || expand === "all"}
             selectedGenres={selectedGenres}
@@ -256,8 +262,8 @@ export default async function ArtistsPage({
       ) : (
         <ArtistSection
           sectionKey="all"
-          title="Artists"
-          description="Browse all Voices artists, presenters and hosts."
+          title={copy.title}
+          description={copy.description}
           artists={activeArtists}
           expanded={expand === "all"}
           selectedGenres={selectedGenres}

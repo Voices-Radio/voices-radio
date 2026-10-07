@@ -15,6 +15,8 @@ import servicesType from "./schemas/services";
 import eventType from "./schemas/event";
 import membershipPageType from "./schemas/membershipPage";
 import membershipBenefitType from "./schemas/membershipBenefit";
+import listingPagesType from "./schemas/listingPages";
+import collaboratePageType from "./schemas/collaboratePage";
 
 const schemaTypes = [
   settingsType,
@@ -30,6 +32,8 @@ const schemaTypes = [
   eventType,
   membershipPageType,
   membershipBenefitType,
+  listingPagesType,
+  collaboratePageType,
 ];
 
 export default defineConfig({
@@ -40,20 +44,28 @@ export default defineConfig({
   schema: { types: schemaTypes },
   plugins: [
     deskTool({
-      structure: pageStructure([
-        settingsType,
-        homePageType,
-        homeType,
-        aboutType,
-        podcastType,
-        servicesType,
-        membershipPageType,
-      ]),
+      // "Home - LEGACY" stays registered (the live site still reads it) but
+      // has no place in this studio's desk.
+      structure: pageStructure(
+        [
+          homePageType,
+          listingPagesType,
+          collaboratePageType,
+          membershipPageType,
+          aboutType,
+          servicesType,
+          podcastType,
+          settingsType,
+        ],
+        [homeType.name],
+      ),
     }),
     visionTool({}),
     singletonPlugin([
       settingsType.name,
       homePageType.name,
+      listingPagesType.name,
+      collaboratePageType.name,
       homeType.name,
       aboutType.name,
       podcastType.name,
