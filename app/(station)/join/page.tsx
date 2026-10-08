@@ -12,9 +12,7 @@ import { getMembership } from "@/lib/voices/membership/membership-client";
 import { getSession } from "@/lib/voices/membership/session";
 import JoinStatusBanner from "./join-status-banner";
 import ContributionSummary from "../components/membership/contribution-summary";
-import MemberBenefits, {
-  MemberBenefitsComingSoon,
-} from "../components/membership/member-benefits";
+import MemberBenefits from "../components/membership/member-benefits";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/join" },
@@ -78,17 +76,6 @@ export default async function JoinPage({
       id="main-content"
       className="mx-auto max-w-[1120px] scroll-mt-24 px-4 py-10 md:px-8 md:py-16"
     >
-      <header className="mb-10 flex flex-col gap-3 text-center md:mb-14">
-        <h1 className="font-outfit text-4xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-6xl">
-          {copy.join_heading}
-        </h1>
-        {copy.join_subheading && (
-          <p className="mx-auto max-w-2xl font-gabarito text-base text-voicesNext-cream/90 md:text-lg">
-            {copy.join_subheading}
-          </p>
-        )}
-      </header>
-
       {resolvedSearchParams.checkoutError && (
         <p
           role="alert"
@@ -104,12 +91,26 @@ export default async function JoinPage({
         checkoutCancelled={resolvedSearchParams.checkout === "cancelled"}
       />
 
-      {/* Offer and price side by side: benefits lead on the left, the picker
-          sits sticky beside them on desktop. On mobile the benefits come first
-          in the DOM, so "What you get" is the first thing under the header. */}
-      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-12">
-        <MemberBenefits />
-        <div className="lg:sticky lg:top-24">
+      {/* Two columns: the ask on the left (heading, then the picker directly
+          beneath it), the offer on the right. Left is sticky on desktop so
+          Continue stays in view while the benefits are read. Single column
+          on mobile, with a jump link from the picker down to the offer. */}
+      <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-0">
+        <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:pr-12 xl:pr-16">
+          <header className="flex flex-col gap-3">
+            <p className="font-asap text-xs font-bold uppercase tracking-[1.2px] text-voicesNext-orangeText">
+              Membership
+            </p>
+            <h1 className="font-outfit text-4xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-5xl">
+              {copy.join_heading}
+            </h1>
+            {copy.join_subheading && (
+              <p className="max-w-lg font-gabarito text-base text-voicesNext-cream/90 md:text-lg">
+                {copy.join_subheading}
+              </p>
+            )}
+          </header>
+
           <ContributionSummary
             scale={scale}
             annual={annual}
@@ -118,10 +119,10 @@ export default async function JoinPage({
             scaleBody={copy.join_scale_body}
           />
         </div>
-      </div>
 
-      <div className="mt-12 md:mt-14">
-        <MemberBenefitsComingSoon />
+        <div className="lg:border-l lg:border-voicesNext-border/40 lg:pl-12 xl:pl-16">
+          <MemberBenefits />
+        </div>
       </div>
 
       {copy.faqs && copy.faqs.length > 0 && (

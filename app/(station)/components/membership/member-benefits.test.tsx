@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import MemberBenefits, { MemberBenefitsComingSoon } from "./member-benefits";
+import MemberBenefits from "./member-benefits";
 
 describe("MemberBenefits", () => {
   it("lists every current benefit under 'What you get'", () => {
@@ -27,7 +27,7 @@ describe("MemberBenefits", () => {
   });
 
   it("shows tracklists and the newsletter under 'Coming soon'", () => {
-    render(<MemberBenefitsComingSoon />);
+    render(<MemberBenefits />);
 
     expect(
       screen.getByRole("heading", { name: "Coming soon" }),
@@ -40,13 +40,16 @@ describe("MemberBenefits", () => {
     ).toBeInTheDocument();
   });
 
+  it("numbers live benefits 01-06 and continues 07-08 for coming soon", () => {
+    render(<MemberBenefits />);
+    const numbers = screen
+      .getAllByTestId("benefit-number")
+      .map((node) => node.textContent);
+    expect(numbers).toEqual(["01", "02", "03", "04", "05", "06", "07", "08"]);
+  });
+
   it("shows each benefit once, so nothing appears as both live and coming soon", () => {
-    render(
-      <>
-        <MemberBenefits />
-        <MemberBenefitsComingSoon />
-      </>,
-    );
+    render(<MemberBenefits />);
     expect(
       screen.getAllByRole("heading", { name: "Behind the scenes content" }),
     ).toHaveLength(1);

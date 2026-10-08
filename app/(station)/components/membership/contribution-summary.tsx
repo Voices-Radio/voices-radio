@@ -49,32 +49,35 @@ export default function ContributionSummary({
   const ctaHref = `${ctaBasePath ?? "/join/create-account"}?amount=${chosenAmount}&cadence=${cadence}`;
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-6 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6 text-center md:p-10">
+    <div className="flex w-full flex-col gap-5 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-5 md:p-6">
       <CadenceToggle
         cadence={cadence}
         annualDiscountPercent={annual?.discountPercent ?? null}
       />
 
       {cadence === "monthly" ? (
-        <div className="w-full">
-          <ContributionSlider
-            minMinor={scale.minMinor}
-            maxMinor={scale.maxMinor}
-            stepMinor={scale.stepMinor}
-            currency={scale.currency}
-            value={monthlyAmount}
-            onChange={setMonthlyAmount}
-          />
-        </div>
+        <ContributionSlider
+          minMinor={scale.minMinor}
+          maxMinor={scale.maxMinor}
+          stepMinor={scale.stepMinor}
+          currency={scale.currency}
+          value={monthlyAmount}
+          onChange={setMonthlyAmount}
+        />
       ) : annual ? (
-        <div className="flex flex-col items-center gap-2">
-          <p className="font-outfit text-5xl font-black text-voicesNext-cream">
+        <div className="flex flex-col gap-2">
+          <p className="font-asap text-xs font-bold uppercase tracking-[1.2px] text-voicesNext-cream/70">
+            Annual contribution
+          </p>
+          <p className="font-outfit text-6xl font-black leading-none tabular-nums text-voicesNext-cream">
             {formatMinorUnits(annual.amountMinor, annual.currency)}
-            <span className="ml-1 font-gabarito text-base font-medium text-voicesNext-cream/70">
+            <span className="ml-1 font-gabarito text-base font-medium tracking-normal text-voicesNext-cream/70">
               /year
             </span>
           </p>
-          <AnnualDiscountBadge discountPercent={annual.discountPercent} />
+          <div>
+            <AnnualDiscountBadge discountPercent={annual.discountPercent} />
+          </div>
         </div>
       ) : (
         <p className="font-gabarito text-sm text-voicesNext-cream/70">
@@ -84,29 +87,39 @@ export default function ContributionSummary({
       )}
 
       {scaleBody && (
-        <p className="max-w-md font-asap text-sm leading-relaxed text-voicesNext-cream/70">
+        <p className="font-asap text-sm leading-relaxed text-voicesNext-cream/70">
           {scaleBody}
         </p>
       )}
 
       {canContinue && (
-        <Link
-          href={ctaHref}
-          onClick={() =>
-            trackMembershipEvent({
-              name: "membership_amount_viewed",
-              amountMinor: chosenAmount,
-              cadence,
-            })
-          }
-          className={cn(
-            accountPrimaryButtonClassName,
-            "h-12 w-full max-w-xs px-6 text-base",
-          )}
-        >
-          Continue — {formatMinorUnits(chosenAmount, currency)}/
-          {cadence === "monthly" ? "month" : "year"}
-        </Link>
+        <div className="flex flex-col gap-3">
+          <Link
+            href={ctaHref}
+            onClick={() =>
+              trackMembershipEvent({
+                name: "membership_amount_viewed",
+                amountMinor: chosenAmount,
+                cadence,
+              })
+            }
+            className={cn(
+              accountPrimaryButtonClassName,
+              "h-12 w-full px-6 text-base",
+            )}
+          >
+            Continue — {formatMinorUnits(chosenAmount, currency)}/
+            {cadence === "monthly" ? "month" : "year"}
+          </Link>
+          {/* One tap to the offer for phone visitors, where the benefits sit
+              below the picker. Desktop shows them alongside. */}
+          <a
+            href="#member-benefits-heading"
+            className="self-center font-gabarito text-sm font-bold text-voicesNext-orangeText underline underline-offset-2 hover:text-voicesNext-cream lg:hidden"
+          >
+            See what you get ↓
+          </a>
+        </div>
       )}
     </div>
   );
