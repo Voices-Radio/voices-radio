@@ -4,6 +4,23 @@ import {
   type MemberBenefitCopy,
 } from "@/lib/voices/membership/member-benefits";
 
+function Tick() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 20 20"
+      className="h-3.5 w-3.5 text-voicesNext-background"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m4 10.5 4 4 8-9" />
+    </svg>
+  );
+}
+
 function BenefitList({
   items,
   muted = false,
@@ -12,7 +29,7 @@ function BenefitList({
   muted?: boolean;
 }) {
   return (
-    <ul className="grid gap-3 md:grid-cols-2">
+    <ul className="grid gap-3 sm:grid-cols-2">
       {items.map((item) => (
         <li
           key={item.title}
@@ -22,12 +39,14 @@ function BenefitList({
             aria-hidden="true"
             className={
               muted
-                ? "mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-voicesNext-secondary"
-                : "mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-voicesNext-orange"
+                ? "mt-0.5 h-1.5 w-1.5 shrink-0 translate-y-1.5 rounded-full bg-voicesNext-secondary"
+                : "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-voicesNext-orange"
             }
-          />
+          >
+            {!muted && <Tick />}
+          </span>
           <div>
-            <h3 className="font-gabarito text-base font-bold text-voicesNext-cream">
+            <h3 className="font-gabarito text-base font-bold leading-snug text-voicesNext-cream">
               {item.title}
             </h3>
             <p className="mt-1 font-asap text-sm leading-relaxed text-voicesNext-cream/70">
@@ -41,30 +60,38 @@ function BenefitList({
 }
 
 /**
- * What a contribution gets the member. Every amount unlocks the same list;
- * "coming soon" items sit apart so none is promised as live.
+ * What a contribution gets the member. Every amount unlocks the same list.
+ * Sits beside the amount picker on /join so the offer and the price are seen
+ * together, rather than the offer sitting below the fold.
  */
 export default function MemberBenefits() {
   return (
-    <section
-      aria-labelledby="member-benefits-heading"
-      className="mx-auto mt-14 max-w-3xl"
-    >
+    <section aria-labelledby="member-benefits-heading">
       <h2
         id="member-benefits-heading"
-        className="text-center font-outfit text-3xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-4xl"
+        className="font-outfit text-3xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-4xl"
       >
         What you get
       </h2>
-      <p className="mx-auto mt-3 max-w-xl text-center font-gabarito text-base text-voicesNext-cream/90">
+      <p className="mt-3 max-w-xl font-gabarito text-base text-voicesNext-cream/90">
         Every member gets all of this, whatever amount you choose.
       </p>
 
-      <div className="mt-8">
+      <div className="mt-6">
         <BenefitList items={MEMBER_BENEFITS} />
       </div>
+    </section>
+  );
+}
 
-      <h2 className="mt-12 text-center font-gabarito text-sm font-bold uppercase tracking-wide text-voicesNext-orangeText">
+/** Promised but not live yet — kept apart so nothing reads as available that isn't. */
+export function MemberBenefitsComingSoon() {
+  return (
+    <section aria-labelledby="member-benefits-coming-soon-heading">
+      <h2
+        id="member-benefits-coming-soon-heading"
+        className="font-gabarito text-sm font-bold uppercase tracking-wide text-voicesNext-orangeText"
+      >
         Coming soon
       </h2>
       <div className="mt-4">

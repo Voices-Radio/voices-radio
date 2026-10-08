@@ -50,9 +50,15 @@ function InvitationSummary({ invitation }: { invitation: ArtistInvitation }) {
       <p className="font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/60">
         Artist profile
       </p>
-      <h2 className="mt-1 font-gabarito text-xl font-bold text-voicesNext-cream">
-        {invitation.artist.name}
-      </h2>
+      {invitation.artist.name ? (
+        <h2 className="mt-1 font-gabarito text-xl font-bold text-voicesNext-cream">
+          {invitation.artist.name}
+        </h2>
+      ) : (
+        <p className="mt-1 font-asap text-base text-voicesNext-cream/85">
+          Your profile is ready to claim. You’ll choose your artist name below.
+        </p>
+      )}
       {invitation.artist.bio && (
         <p className="mt-2 whitespace-pre-line font-asap text-sm leading-relaxed text-voicesNext-cream/75">
           {invitation.artist.bio}

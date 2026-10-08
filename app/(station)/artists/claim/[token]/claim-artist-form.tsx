@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
 import type { ArtistInvitation } from "@/lib/voices/membership/artist-invitations-client";
@@ -47,6 +47,7 @@ function Field({
   defaultValue,
   hint,
   invalid,
+  onChange,
 }: {
   id: string;
   name: string;
@@ -55,8 +56,9 @@ function Field({
   autoComplete?: string;
   required?: boolean;
   defaultValue?: string;
-  hint?: string;
+  hint?: ReactNode;
   invalid?: boolean;
+  onChange?: (value: string) => void;
 }) {
   const hintId = hint ? `${id}-hint` : undefined;
   const inputProps = {
@@ -67,6 +69,7 @@ function Field({
     "aria-invalid": invalid || undefined,
     "aria-describedby": hintId,
     className: fieldClassName,
+    ...(onChange ? { onChange: (event: { target: { value: string } }) => onChange(event.target.value) } : {}),
   };
 
   return (
@@ -122,6 +125,44 @@ function ModeButton({
 }
 
 /**
+ * A labelled group that says who can see what it holds. The private/public
+ * split is the thing DJs most often get wrong (a legal name typed into the
+ * artist name box), so it is stated before any field is read.
+ */
+function Section({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: ReactNode;
+}) {
+  return (
+    <fieldset className="flex flex-col gap-4 border-0 p-0">
+      <legend className="p-0 font-gabarito text-base font-bold text-voicesNext-cream">
+        {title}
+      </legend>
+      <p className="-mt-2 font-asap text-sm text-voicesNext-cream/70">
+        {description}
+      </p>
+      {children}
+    </fieldset>
+  );
+}
+
+const FIRST_NAME_HINT =
+  "Your legal first name. This is private: it’s used for your account and payments, and never shown on the website. Please don’t enter your artist name here.";
+const LAST_NAME_HINT = "Your legal last name. Private, as above.";
+const ARTIST_NAME_HINT =
+  "The name you DJ or present under. It’s shown publicly on the website, the schedule and your shows. Please make sure it matches the artist name on any shows you’ve already uploaded to Mixcloud and SoundCloud, so we can link your back-catalogue to your profile.";
+
+/** Same name to a human: any case, any spacing. */
+const sameName = (a: string, b: string) =>
+  a.trim().replace(/\s+/g, " ").toLowerCase() ===
+  b.trim().replace(/\s+/g, " ").toLowerCase();
+
+/**
  * Offers the one claim path that can succeed for this address (see
  * claimModeFor). A choice of paths is shown only when the backend could not
  * say which works.
@@ -150,12 +191,31 @@ export default function ClaimArtistForm({
 
   const error = state?.status === "error" ? state : undefined;
   const values = error?.values;
-  // D4: a net-new name taken since the invite (known up front, or learned at
-  // submit) is the only case in which the DJ names the artist.
-  const askForArtistName =
-    invitation.kind === "create_new" &&
-    (invitation.nameTaken || error?.field === "artistName");
   const invitedName = invitation.artist?.name ?? "That name";
+
+  // The artist name is editable when the DJ has to choose it (a profile with
+  // none yet) or has to replace an invited one that was taken. Otherwise the
+  // name is shown read-only: changing a live one re-points RadioCult and show
+  // matching, so it goes through Voices.
+  const artistNameRequired = invitation.artist?.artistNameRequired === true;
+  const nameIsEditable =
+    artistNameRequired ||
+    (invitation.kind === "create_new" &&
+      (invitation.nameTaken || error?.field === "artistName"));
+  const publicName = invitation.artist?.name ?? null;
+
+  // Tracked only to warn when the artist name is just the legal name typed
+  // above — the likeliest mistake. The inputs stay uncontrolled.
+  const [firstNameValue, setFirstNameValue] = useState(values?.firstName ?? "");
+  const [lastNameValue, setLastNameValue] = useState(values?.lastName ?? "");
+  const [artistNameValue, setArtistNameValue] = useState(
+    values?.artistName ?? "",
+  );
+  const matchesLegalName =
+    mode === "create" &&
+    Boolean(artistNameValue.trim()) &&
+    Boolean(firstNameValue.trim() && lastNameValue.trim()) &&
+    sameName(artistNameValue, `${firstNameValue} ${lastNameValue}`);
 
   useEffect(() => {
     if (state?.status === "error") {
@@ -221,6 +281,10 @@ export default function ClaimArtistForm({
         </div>
       )}
 
+      <Section
+        title="About you (private)"
+        description="Used for your account and payments. Never shown on the website."
+      >
       {mode === "session" && (
         <div className="rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-4 font-asap text-sm text-voicesNext-cream/80">
           You are already signed in as {invitation.email}, so Voices can link
@@ -284,6 +348,8 @@ export default function ClaimArtistForm({
               autoComplete="given-name"
               required
               defaultValue={values?.firstName}
+              hint={FIRST_NAME_HINT}
+              onChange={setFirstNameValue}
             />
             <Field
               id="lastName"
@@ -292,19 +358,10 @@ export default function ClaimArtistForm({
               autoComplete="family-name"
               required
               defaultValue={values?.lastName}
+              hint={LAST_NAME_HINT}
+              onChange={setLastNameValue}
             />
           </div>
-          {askForArtistName && (
-            <Field
-              id="artistName"
-              name="artistName"
-              label="Artist name"
-              required
-              defaultValue={values?.artistName}
-              invalid={error?.field === "artistName"}
-              hint={`“${invitedName}” is already the name of another artist on Voices. Choose a variant — for example, add a word or your city.`}
-            />
-          )}
           <Field
             id="newPassword"
             name="password"
@@ -325,6 +382,66 @@ export default function ClaimArtistForm({
             Send me Voices news and updates.
           </label>
         </>
+      )}
+
+      </Section>
+
+      {(nameIsEditable || publicName) && (
+        <Section
+          title="Your artist profile (public)"
+          description="This is what listeners see on voicesradio.co.uk."
+        >
+          {nameIsEditable ? (
+            <>
+              <Field
+                id="artistName"
+                name="artistName"
+                label="Artist name"
+                required
+                defaultValue={values?.artistName}
+                invalid={error?.field === "artistName"}
+                onChange={setArtistNameValue}
+                hint={
+                  invitation.kind === "create_new" && invitation.nameTaken ? (
+                    <>
+                      “{invitedName}” is already the name of another artist on
+                      Voices. Choose a variant — for example, add a word or your
+                      city. {ARTIST_NAME_HINT}
+                    </>
+                  ) : (
+                    ARTIST_NAME_HINT
+                  )
+                }
+              />
+              {matchesLegalName && (
+                <p
+                  role="status"
+                  className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface px-4 py-3 font-asap text-sm text-voicesNext-cream/85"
+                >
+                  This matches your first and last name. That’s fine if you
+                  perform under your own name — otherwise, enter the name you
+                  DJ under.
+                </p>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col gap-1.5">
+              <p className="font-gabarito text-sm font-bold text-voicesNext-cream">
+                Artist name
+              </p>
+              <p className="font-gabarito text-xl font-bold text-voicesNext-cream">
+                {publicName}
+              </p>
+              <p className="font-asap text-xs text-voicesNext-cream/70">
+                This is the name on your public profile. Need to change it?{" "}
+                <a href="mailto:info@voicesradio.co.uk" className={linkClassName}>
+                  Contact Voices
+                </a>
+                .
+              </p>
+            </div>
+          )}
+        </Section>
       )}
 
       <SubmitButton label="Claim artist profile" />

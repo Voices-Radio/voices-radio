@@ -114,11 +114,19 @@ export async function claimArtistInvitationAction(
     Boolean(accessToken) &&
     session?.email?.toLowerCase() === invitationEmail.toLowerCase();
 
+  // Sent in every mode: an artist imported with a legal name has no public
+  // artist name yet, so the DJ chooses one whichever way they authenticate.
+  // The backend ignores it for an artist that already has one.
+  const artistNameField = parsed.data.artistName
+    ? { artistName: parsed.data.artistName }
+    : {};
+
   let body: Record<string, unknown> = {};
   let bearerToken: string | undefined;
 
   if (mode === "session" && sessionMatchesInvitation) {
     bearerToken = accessToken;
+    body = { ...artistNameField };
   } else if (mode === "create") {
     if (!parsed.data.firstName || !parsed.data.lastName || !password) {
       return {
@@ -142,7 +150,7 @@ export async function claimArtistInvitationAction(
       firstName: parsed.data.firstName,
       lastName: parsed.data.lastName,
       password,
-      ...(parsed.data.artistName ? { artistName: parsed.data.artistName } : {}),
+      ...artistNameField,
       newsletters: parsed.data.newsletters === "on",
     };
   } else if (mode === "set_password") {
@@ -156,7 +164,7 @@ export async function claimArtistInvitationAction(
         message: SHORT_PASSWORD_MESSAGE,
       };
     }
-    body = { password };
+    body = { password, ...artistNameField };
   } else {
     if (!password) {
       return {
@@ -167,7 +175,7 @@ export async function claimArtistInvitationAction(
       };
     }
 
-    body = { password };
+    body = { password, ...artistNameField };
   }
 
   const result = await claimArtistInvitation(token, body, bearerToken);
@@ -179,10 +187,10 @@ export async function claimArtistInvitationAction(
 
     // Fixable on the same form: the invitation is still pending, so the DJ
     // picks a variant and resubmits with everything else still filled in.
-    if (result.code === "NAME_TAKEN") {
+    if (result.code === "NAME_TAKEN" || result.code === "ARTIST_NAME_REQUIRED") {
       return {
         status: "error",
-        mode: "create",
+        mode: mode === "session" ? "existing" : mode,
         field: "artistName",
         message: result.message,
         values,

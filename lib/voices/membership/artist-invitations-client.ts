@@ -13,7 +13,13 @@ const invitationArtistSchema = z
     // production failure: every create_new claim link failed schema
     // validation and rendered "could not be loaded" instead of the form.
     id: z.string().nullable(),
-    name: z.string(),
+    // The PUBLIC artist name only. Null when the artist has none yet (a
+    // legal-name roster import): the backend never sends `name` for those, as
+    // it may be the DJ's real name. Pair with artistNameRequired below.
+    name: z.string().nullable(),
+    // True when the DJ must choose an artist name to claim. .default(false)
+    // so a backend that predates the field still renders a claimable page.
+    artistNameRequired: z.boolean().default(false),
     // .default(null) — an omitted key must be treated exactly like an explicit
     // null, the same rule schemas.ts applies for the same reason. The backend
     // builds this block by reading fields straight off the Artist document,
@@ -118,6 +124,17 @@ function errorResult(
       code: "EXPIRED_INVITATION",
       reason: "expired",
       message: "This invitation link has expired.",
+    };
+  }
+
+  // A claim of a profile with no artist name yet, submitted without one.
+  if (status === 400 && reason === "artist_name_required") {
+    return {
+      ok: false,
+      status,
+      code: "ARTIST_NAME_REQUIRED",
+      reason,
+      message: message ?? "Enter your artist name.",
     };
   }
 

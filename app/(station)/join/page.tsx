@@ -12,7 +12,9 @@ import { getMembership } from "@/lib/voices/membership/membership-client";
 import { getSession } from "@/lib/voices/membership/session";
 import JoinStatusBanner from "./join-status-banner";
 import ContributionSummary from "../components/membership/contribution-summary";
-import MemberBenefits from "../components/membership/member-benefits";
+import MemberBenefits, {
+  MemberBenefitsComingSoon,
+} from "../components/membership/member-benefits";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/join" },
@@ -102,15 +104,25 @@ export default async function JoinPage({
         checkoutCancelled={resolvedSearchParams.checkout === "cancelled"}
       />
 
-      <ContributionSummary
-        scale={scale}
-        annual={annual}
-        cadence={cadence}
-        ctaBasePath={ctaBasePath}
-        scaleBody={copy.join_scale_body}
-      />
+      {/* Offer and price side by side: benefits lead on the left, the picker
+          sits sticky beside them on desktop. On mobile the benefits come first
+          in the DOM, so "What you get" is the first thing under the header. */}
+      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-12">
+        <MemberBenefits />
+        <div className="lg:sticky lg:top-24">
+          <ContributionSummary
+            scale={scale}
+            annual={annual}
+            cadence={cadence}
+            ctaBasePath={ctaBasePath}
+            scaleBody={copy.join_scale_body}
+          />
+        </div>
+      </div>
 
-      <MemberBenefits />
+      <div className="mt-12 md:mt-14">
+        <MemberBenefitsComingSoon />
+      </div>
 
       {copy.faqs && copy.faqs.length > 0 && (
         <section className="mt-16 border-t border-voicesNext-border pt-10">

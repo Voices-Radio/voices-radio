@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import MemberBenefits from "./member-benefits";
+import MemberBenefits, { MemberBenefitsComingSoon } from "./member-benefits";
 
 describe("MemberBenefits", () => {
   it("lists every current benefit under 'What you get'", () => {
@@ -27,7 +27,7 @@ describe("MemberBenefits", () => {
   });
 
   it("shows tracklists and the newsletter under 'Coming soon'", () => {
-    render(<MemberBenefits />);
+    render(<MemberBenefitsComingSoon />);
 
     expect(
       screen.getByRole("heading", { name: "Coming soon" }),

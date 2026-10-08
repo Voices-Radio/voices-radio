@@ -49,7 +49,7 @@ export default function ContributionSummary({
   const ctaHref = `${ctaBasePath ?? "/join/create-account"}?amount=${chosenAmount}&cadence=${cadence}`;
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center gap-6 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6 text-center md:p-10">
+    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-6 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6 text-center md:p-10">
       <CadenceToggle
         cadence={cadence}
         annualDiscountPercent={annual?.discountPercent ?? null}

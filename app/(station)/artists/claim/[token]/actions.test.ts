@@ -296,6 +296,106 @@ describe("claimArtistInvitationAction", () => {
     });
   });
 
+  it.each([
+    ["existing", { password: "correct-password" }],
+    ["set_password", { password: "a-new-web-password" }],
+  ])(
+    "%s: sends the artist name too, since a claimed profile can still lack one",
+    async (mode, extra) => {
+      await expect(
+        claimArtistInvitationAction(
+          undefined,
+          formData({
+            token: "invite-token",
+            invitationEmail: "dj@example.com",
+            mode,
+            artistName: "Haylo",
+            ...extra,
+          }),
+        ),
+      ).rejects.toThrow(RedirectSignal);
+
+      expect(claimArtistInvitation).toHaveBeenCalledWith(
+        "invite-token",
+        { ...extra, artistName: "Haylo" },
+        undefined,
+      );
+    },
+  );
+
+  it("session: sends the artist name with the bearer token", async () => {
+    vi.mocked(getSession).mockResolvedValue({ _id: "u1", email: "dj@example.com" });
+    vi.mocked(getAccessToken).mockResolvedValue("existing-access");
+
+    await expect(
+      claimArtistInvitationAction(
+        undefined,
+        formData({
+          token: "invite-token",
+          invitationEmail: "dj@example.com",
+          mode: "session",
+          artistName: "Haylo",
+        }),
+      ),
+    ).rejects.toThrow(RedirectSignal);
+
+    expect(claimArtistInvitation).toHaveBeenCalledWith(
+      "invite-token",
+      { artistName: "Haylo" },
+      "existing-access",
+    );
+  });
+
+  it("a missing artist name comes back as a fixable field error in the mode the DJ was in", async () => {
+    vi.mocked(claimArtistInvitation).mockResolvedValue({
+      ok: false,
+      status: 400,
+      code: "ARTIST_NAME_REQUIRED",
+      reason: "artist_name_required",
+      message: "Enter your artist name.",
+    });
+
+    const result = await claimArtistInvitationAction(
+      undefined,
+      formData({
+        token: "invite-token",
+        invitationEmail: "dj@example.com",
+        mode: "existing",
+        password: "correct-password",
+      }),
+    );
+
+    expect(result).toMatchObject({
+      status: "error",
+      mode: "existing",
+      field: "artistName",
+      message: "Enter your artist name.",
+    });
+  });
+
+  it("a taken artist name keeps the DJ in the mode they were in (it used to force create)", async () => {
+    vi.mocked(claimArtistInvitation).mockResolvedValue({
+      ok: false,
+      status: 409,
+      code: "NAME_TAKEN",
+      reason: "name_taken",
+      message: '"Haylo" is already the name of another artist on Voices.',
+    });
+
+    const result = await claimArtistInvitationAction(
+      undefined,
+      formData({
+        token: "invite-token",
+        invitationEmail: "dj@example.com",
+        mode: "existing",
+        password: "correct-password",
+        artistName: "Haylo",
+      }),
+    );
+
+    expect(result).toMatchObject({ status: "error", mode: "existing", field: "artistName" });
+  });
+
   it("never echoes the password back in the form values", async () => {
     vi.mocked(claimArtistInvitation).mockResolvedValue({
       ok: false,

@@ -183,6 +183,79 @@ describe("validateArtistInvitation", () => {
   });
 });
 
+describe("validateArtistInvitation — artist name", () => {
+  const base = {
+    id: "invite-1",
+    email: "dj@example.com",
+    expiresAt: "2027-01-01T00:00:00Z",
+    kind: "claim_existing",
+    account: { exists: false, passwordSet: false },
+  };
+
+  it("accepts an artist with no public name yet, flagged as required", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        response({
+          invitation: {
+            ...base,
+            artist: { id: "artist-1", name: null, artistNameRequired: true },
+          },
+        }),
+      ),
+    );
+
+    const result = await validateArtistInvitation("tok");
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.invitation.artist?.name).toBeNull();
+      expect(result.data.invitation.artist?.artistNameRequired).toBe(true);
+    }
+  });
+
+  it("treats a backend that does not send artistNameRequired as not required", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        response({
+          invitation: { ...base, artist: { id: "artist-1", name: "Aeron Darka" } },
+        }),
+      ),
+    );
+
+    const result = await validateArtistInvitation("tok");
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.invitation.artist?.artistNameRequired).toBe(false);
+    }
+  });
+});
+
+describe("claimArtistInvitation — artist name", () => {
+  it("maps artist_name_required to a fixable field error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        response(
+          { reason: "artist_name_required", message: "Enter your artist name." },
+          400,
+        ),
+      ),
+    );
+
+    const result = await claimArtistInvitation("tok", {});
+
+    expect(result).toMatchObject({
+      ok: false,
+      code: "ARTIST_NAME_REQUIRED",
+      reason: "artist_name_required",
+      message: "Enter your artist name.",
+    });
+  });
+});
+
 describe("renewArtistInvitation", () => {
   it("treats the backend's 202 as asked-for, carrying its wording", async () => {
     const fetchMock = vi
