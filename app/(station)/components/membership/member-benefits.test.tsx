@@ -41,7 +41,12 @@ describe("MemberBenefits", () => {
   });
 
   it("shows each benefit once, so nothing appears as both live and coming soon", () => {
-    render(<MemberBenefits />);
+    render(
+      <>
+        <MemberBenefits />
+        <MemberBenefitsComingSoon />
+      </>,
+    );
     expect(
       screen.getAllByRole("heading", { name: "Behind the scenes content" }),
     ).toHaveLength(1);
