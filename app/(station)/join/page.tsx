@@ -10,6 +10,10 @@ import { parseMembershipCadence } from "@/lib/voices/membership/types";
 import { getPlans } from "@/lib/voices/membership/membership-client";
 import { getMembership } from "@/lib/voices/membership/membership-client";
 import { getSession } from "@/lib/voices/membership/session";
+import { safeAccountNextPath } from "@/lib/voices/membership/capabilities";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { accountSecondaryButtonClassName } from "../account/components/account-surface";
 import JoinStatusBanner from "./join-status-banner";
 import ContributionSummary from "../components/membership/contribution-summary";
 import MemberBenefits from "../components/membership/member-benefits";
@@ -28,6 +32,7 @@ export default async function JoinPage({
     cadence?: string;
     checkoutError?: string;
     checkout?: string;
+    next?: string;
   }>;
 }) {
   const [cmsCopy, plansResult, session, resolvedSearchParams] =
@@ -47,6 +52,13 @@ export default async function JoinPage({
   // starts the Stripe handoff directly. Signed-out visitors go through
   // /join/create-account, which creates the account first.
   const ctaBasePath = session ? "/join/checkout" : "/join/create-account";
+  // Where the visitor was headed (e.g. back to the artist whose heart they
+  // tapped). Only ever a same-site path; carried through so signing in lands
+  // them there with their save replayed.
+  const next = safeAccountNextPath(resolvedSearchParams.next);
+  const signInHref = next
+    ? `/sign-in?next=${encodeURIComponent(next)}`
+    : "/sign-in";
 
   // Prices are money, not marketing copy: the backend is the source of
   // truth for what's actually charged (contract §2). If it's unreachable,
@@ -109,6 +121,17 @@ export default async function JoinPage({
                 {copy.join_subheading}
               </p>
             )}
+            {!session && (
+              <Link
+                href={signInHref}
+                className={cn(
+                  accountSecondaryButtonClassName,
+                  "mt-2 h-11 self-start px-5 text-sm",
+                )}
+              >
+                Already have an account? Sign in
+              </Link>
+            )}
           </header>
 
           <ContributionSummary
@@ -116,6 +139,7 @@ export default async function JoinPage({
             annual={annual}
             cadence={cadence}
             ctaBasePath={ctaBasePath}
+            ctaNext={session ? undefined : next}
             scaleBody={copy.join_scale_body}
           />
         </div>

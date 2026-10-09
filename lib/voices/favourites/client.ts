@@ -12,6 +12,9 @@ import {
   saveResponseSchema,
   favouritesResponseSchema,
   messageResponseSchema,
+  artistStatusResponseSchema,
+  artistSaveResponseSchema,
+  type ArtistStatusMap,
   type FavouriteListApi,
   type FavouriteStatusMap,
 } from "./schemas";
@@ -321,6 +324,44 @@ export function unsaveShow(
   return authedCall(
     `/api/favourites/${encodeURIComponent(showId)}`,
     messageResponseSchema,
+    jsonInit("DELETE"),
+  );
+}
+
+// --- Hearted artists (plain on/off, no lists) ---------------------------
+
+/** Bulk hearted-state lookup for a page of artist cards — one call, not N. */
+export async function getArtistFavouritesStatus(
+  artistIds: string[],
+): Promise<FavouritesResult<ArtistStatusMap>> {
+  if (artistIds.length === 0) return { ok: true, data: {} };
+
+  const query = new URLSearchParams({
+    artistIds: artistIds.join(","),
+  }).toString();
+  const result = await authedCall(
+    `/api/favourites/artists/status?${query}`,
+    artistStatusResponseSchema,
+  );
+  return result.ok ? { ok: true, data: result.data.statuses } : result;
+}
+
+export function saveArtist(
+  artistId: string,
+): Promise<FavouritesResult<{ artistId: string; saved: boolean }>> {
+  return authedCall(
+    `/api/favourites/artists/${encodeURIComponent(artistId)}`,
+    artistSaveResponseSchema,
+    jsonInit("PUT"),
+  );
+}
+
+export function unsaveArtist(
+  artistId: string,
+): Promise<FavouritesResult<{ artistId: string; saved: boolean }>> {
+  return authedCall(
+    `/api/favourites/artists/${encodeURIComponent(artistId)}`,
+    artistSaveResponseSchema,
     jsonInit("DELETE"),
   );
 }

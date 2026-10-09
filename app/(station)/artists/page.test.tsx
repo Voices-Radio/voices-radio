@@ -8,6 +8,11 @@ vi.mock("@/lib/voices/api", () => ({
   getArtists: () => getArtists(),
 }));
 
+// The heart needs the shell's FavouritesProvider; it's covered by its own tests.
+vi.mock("../components/redesign/save-artist-button", () => ({
+  default: () => null,
+}));
+
 function buildArtist(
   overrides: Partial<VoicesArtist> & Pick<VoicesArtist, "id" | "name">,
 ): VoicesArtist {

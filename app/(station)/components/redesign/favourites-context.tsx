@@ -16,11 +16,18 @@ export type SaveStatus = { saved: boolean; listIds: string[] };
 
 const UNSAVED: SaveStatus = { saved: false, listIds: [] };
 
+export type ArtistSaveStatus = { saved: boolean };
+
+const ARTIST_UNSAVED: ArtistSaveStatus = { saved: false };
+
 type FavouritesContextValue = {
   isSignedIn: boolean;
   getStatus: (showId: string) => SaveStatus;
   registerShowIds: (showIds: string[]) => void;
   applyStatus: (showId: string, status: SaveStatus) => void;
+  getArtistStatus: (artistId: string) => ArtistSaveStatus;
+  registerArtistIds: (artistIds: string[]) => void;
+  applyArtistStatus: (artistId: string, status: ArtistSaveStatus) => void;
   lists: FavouriteListApi[] | null;
   listsLoading: boolean;
   ensureListsLoaded: () => void;
@@ -115,6 +122,79 @@ export function FavouritesProvider({ children }: { children: ReactNode }) {
     setStatuses((prev) => ({ ...prev, [showId]: nextStatus }));
   }, []);
 
+  // Hearted artists: the same batched-lookup idea as shows above, but a
+  // plain on/off flag (no lists), keyed by artist id.
+  const [artistStatuses, setArtistStatuses] = useState<
+    Record<string, ArtistSaveStatus>
+  >({});
+  const knownArtistIds = useRef<Set<string>>(new Set());
+  const pendingArtistIds = useRef<Set<string>>(new Set());
+  const artistFlushScheduled = useRef(false);
+
+  const flushArtists = useCallback(() => {
+    artistFlushScheduled.current = false;
+    const ids = Array.from(pendingArtistIds.current);
+    pendingArtistIds.current.clear();
+    if (ids.length === 0) return;
+
+    const query = ids.map(encodeURIComponent).join(",");
+    fetch(`/api/favourites/artists/status?artistIds=${query}`, {
+      cache: "no-store",
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then(
+        (payload: { statuses?: Record<string, ArtistSaveStatus> } | null) => {
+          const fetched = payload?.statuses ?? {};
+          setArtistStatuses((prev) => {
+            const next = { ...prev };
+            for (const id of ids) next[id] = fetched[id] ?? ARTIST_UNSAVED;
+            return next;
+          });
+        },
+      )
+      .catch(() => {
+        // Same degrade-to-unhearted rule as the show lookup above.
+        setArtistStatuses((prev) => {
+          const next = { ...prev };
+          for (const id of ids) if (!(id in next)) next[id] = ARTIST_UNSAVED;
+          return next;
+        });
+      });
+  }, []);
+
+  const registerArtistIds = useCallback(
+    (artistIds: string[]) => {
+      if (!isSignedIn || artistIds.length === 0) return;
+      let hasNew = false;
+      for (const id of artistIds) {
+        if (!knownArtistIds.current.has(id)) {
+          knownArtistIds.current.add(id);
+          pendingArtistIds.current.add(id);
+          hasNew = true;
+        }
+      }
+      if (hasNew && !artistFlushScheduled.current) {
+        artistFlushScheduled.current = true;
+        queueMicrotask(flushArtists);
+      }
+    },
+    [flushArtists, isSignedIn],
+  );
+
+  const getArtistStatus = useCallback(
+    (artistId: string): ArtistSaveStatus =>
+      artistStatuses[artistId] ?? ARTIST_UNSAVED,
+    [artistStatuses],
+  );
+
+  const applyArtistStatus = useCallback(
+    (artistId: string, nextStatus: ArtistSaveStatus) => {
+      knownArtistIds.current.add(artistId);
+      setArtistStatuses((prev) => ({ ...prev, [artistId]: nextStatus }));
+    },
+    [],
+  );
+
   // The caller's lists (My Favourites + custom lists), shared across every
   // save-to-list-sheet on the page so opening the sheet on a second card
   // doesn't re-fetch — only the first open per page view does.
@@ -165,6 +245,9 @@ export function FavouritesProvider({ children }: { children: ReactNode }) {
       getStatus,
       registerShowIds,
       applyStatus,
+      getArtistStatus,
+      registerArtistIds,
+      applyArtistStatus,
       lists,
       listsLoading,
       ensureListsLoaded,
@@ -177,6 +260,9 @@ export function FavouritesProvider({ children }: { children: ReactNode }) {
       getStatus,
       registerShowIds,
       applyStatus,
+      getArtistStatus,
+      registerArtistIds,
+      applyArtistStatus,
       lists,
       listsLoading,
       ensureListsLoaded,

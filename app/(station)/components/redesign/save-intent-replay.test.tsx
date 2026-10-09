@@ -197,4 +197,79 @@ describe("SaveIntentReplay", () => {
       /couldn't save/i,
     );
   });
+
+  describe("artist hearts", () => {
+    const ARTIST_ID = "507f1f77bcf86cd799439041";
+
+    function artistFetch(user: unknown, putOk = true) {
+      return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (url.includes("/api/auth/session")) {
+          return new Response(JSON.stringify({ user }), { status: 200 });
+        }
+        if (
+          url === `/api/favourites/artists/${ARTIST_ID}` &&
+          init?.method === "PUT"
+        ) {
+          return putOk
+            ? new Response(
+                JSON.stringify({ artistId: ARTIST_ID, saved: true }),
+                { status: 200 },
+              )
+            : new Response("{}", { status: 500 });
+        }
+        return new Response(JSON.stringify({ statuses: {} }), { status: 200 });
+      });
+    }
+
+    function renderReplay() {
+      render(
+        <SessionProvider>
+          <FavouritesProvider>
+            <SaveIntentReplay />
+          </FavouritesProvider>
+        </SessionProvider>,
+      );
+    }
+
+    it("hearts the artist, strips the param, and confirms", async () => {
+      searchParamsString = `saveArtist=${ARTIST_ID}&genre=disco`;
+      const fetchMock = artistFetch(SIGNED_IN_USER);
+      vi.stubGlobal("fetch", fetchMock);
+      renderReplay();
+
+      expect(
+        await screen.findByText("Saved to your favourite artists"),
+      ).toBeTruthy();
+      expect(replace).toHaveBeenCalledWith("/shows?genre=disco", {
+        scroll: false,
+      });
+    });
+
+    it("ignores a malformed artist id", async () => {
+      searchParamsString = "saveArtist=not-an-object-id";
+      const fetchMock = artistFetch(SIGNED_IN_USER);
+      vi.stubGlobal("fetch", fetchMock);
+      renderReplay();
+
+      await waitFor(() =>
+        expect(
+          fetchMock.mock.calls.some(([input]) =>
+            String(input).includes("/api/auth/session"),
+          ),
+        ).toBe(true),
+      );
+      expect(replace).not.toHaveBeenCalled();
+    });
+
+    it("tells the member when the heart fails", async () => {
+      searchParamsString = `saveArtist=${ARTIST_ID}`;
+      vi.stubGlobal("fetch", artistFetch(SIGNED_IN_USER, false));
+      renderReplay();
+
+      expect(
+        await screen.findByText("Couldn't save that artist. Please try again."),
+      ).toBeTruthy();
+    });
+  });
 });

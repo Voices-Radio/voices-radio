@@ -26,6 +26,7 @@ export default function ContributionSummary({
   annual,
   cadence,
   ctaBasePath,
+  ctaNext,
   scaleBody,
 }: {
   scale: MembershipScaleView;
@@ -37,6 +38,12 @@ export default function ContributionSummary({
    * default for a signed-out one.
    */
   ctaBasePath?: string;
+  /**
+   * Where a visitor was headed before /join (e.g. the artist page whose
+   * heart they tapped). Carried on to account creation so an existing
+   * account can sign in and land back there.
+   */
+  ctaNext?: string;
   /** Sanity-authored, tier-free copy shown under the picker. */
   scaleBody?: string;
 }) {
@@ -46,7 +53,9 @@ export default function ContributionSummary({
   const currency = annualAvailable ? annual.currency : scale.currency;
   const canContinue = cadence === "monthly" || Boolean(annual);
 
-  const ctaHref = `${ctaBasePath ?? "/join/create-account"}?amount=${chosenAmount}&cadence=${cadence}`;
+  const ctaHref = `${ctaBasePath ?? "/join/create-account"}?amount=${chosenAmount}&cadence=${cadence}${
+    ctaNext ? `&next=${encodeURIComponent(ctaNext)}` : ""
+  }`;
 
   return (
     <div className="flex w-full flex-col gap-5 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-5 md:p-6">

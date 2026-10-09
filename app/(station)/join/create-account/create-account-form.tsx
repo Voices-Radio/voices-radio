@@ -84,9 +84,12 @@ function AccountPass({ amount, cadence }: { amount: string; cadence: string }) {
 export default function CreateAccountForm({
   amount,
   cadence,
+  next,
 }: {
   amount: string;
   cadence: string;
+  /** Same-site path the visitor was headed to before /join, if any. */
+  next?: string;
 }) {
   const contribution = displayContribution(amount, cadence);
   const [state, formAction] = useFormState(createAccountAction, initialState);
@@ -99,7 +102,10 @@ export default function CreateAccountForm({
   }, [state]);
 
   if (state?.status === "account_exists") {
-    const resume = `/join/checkout?amount=${amount}&cadence=${cadence}`;
+    // A visitor who came here from a heart/bookmark wants to get back to it;
+    // otherwise resume the payment they were in the middle of.
+    const resume =
+      next ?? `/join/checkout?amount=${amount}&cadence=${cadence}`;
     return (
       <div
         className="mx-auto max-w-[480px] px-4 py-16 text-center md:px-0"
@@ -111,7 +117,9 @@ export default function CreateAccountForm({
         <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
           There&rsquo;s already a Voices account for{" "}
           <strong>{state.email}</strong>. Sign in and we&rsquo;ll take you
-          straight to payment{contribution ? ` for your ${contribution} membership` : ""}.
+          {next
+            ? " straight back."
+            : ` straight to payment${contribution ? ` for your ${contribution} membership` : ""}.`}
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
@@ -316,9 +324,9 @@ export default function CreateAccountForm({
         </AccountSurface>
 
         <p className="mt-6 font-gabarito text-sm text-voicesNext-cream/70">
-          Already a member?{" "}
+          Already have an account?{" "}
           <Link
-            href="/sign-in"
+            href={next ? `/sign-in?next=${encodeURIComponent(next)}` : "/sign-in"}
             className="font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
           >
             Sign in

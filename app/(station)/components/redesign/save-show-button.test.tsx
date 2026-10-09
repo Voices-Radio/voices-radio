@@ -57,7 +57,7 @@ afterEach(() => {
 });
 
 describe("SaveShowButton — signed out", () => {
-  it("routes to /sign-in with a next carrying the save intent, and never calls the backend", async () => {
+  it("routes to /join with a next carrying the save intent, and never calls the backend", async () => {
     const fetchMock = mockFetch({ user: null });
     vi.stubGlobal("fetch", fetchMock);
     const user = userEvent.setup();
@@ -76,7 +76,7 @@ describe("SaveShowButton — signed out", () => {
     await user.click(button);
 
     expect(push).toHaveBeenCalledWith(
-      `/sign-in?next=${encodeURIComponent(`/shows?save=${SHOW_ID}`)}`,
+      `/join?next=${encodeURIComponent(`/shows?save=${SHOW_ID}`)}`,
     );
     expect(
       fetchMock.mock.calls.some(

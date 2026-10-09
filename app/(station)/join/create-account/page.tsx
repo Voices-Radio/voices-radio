@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { parseAmountMinor, parseMembershipCadence } from "@/lib/voices/membership/types";
+import { safeAccountNextPath } from "@/lib/voices/membership/capabilities";
 import CreateAccountForm from "./create-account-form";
 
 export const metadata: Metadata = {
@@ -12,9 +13,9 @@ export const metadata: Metadata = {
 export default async function CreateAccountPage({
   searchParams,
 }: {
-  searchParams: Promise<{ amount?: string; cadence?: string }>;
+  searchParams: Promise<{ amount?: string; cadence?: string; next?: string }>;
 }) {
-  const { amount, cadence } = await searchParams;
+  const { amount, cadence, next } = await searchParams;
 
   // Payment comes straight after this step, so an amount is required. Without
   // one (an old bookmark, a hand-typed URL) send them to choose first.
@@ -24,6 +25,7 @@ export default async function CreateAccountPage({
     <CreateAccountForm
       amount={amount ?? ""}
       cadence={parseMembershipCadence(cadence)}
+      next={safeAccountNextPath(next)}
     />
   );
 }

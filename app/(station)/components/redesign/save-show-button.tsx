@@ -4,6 +4,10 @@ import { Bookmark } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
+import {
+  SAVE_SHOW_PARAM,
+  joinHrefForSaveIntent,
+} from "@/lib/voices/favourites/save-intent";
 import { useFavourites } from "./favourites-context";
 import dynamic from "next/dynamic";
 
@@ -14,8 +18,6 @@ const SaveToListSheet = dynamic(() => import("./save-to-list-sheet"), {
   ssr: false,
 });
 
-const SAVE_INTENT_PARAM = "save";
-
 /**
  * The bottom-right bookmark on ShowCard (Figma node 1159-15832), now wired
  * up. Sits as a sibling of the card's stretched `<Link>`, never nested
@@ -25,8 +27,9 @@ const SAVE_INTENT_PARAM = "save";
  * Interaction: a tap when unsaved saves straight to "My Favourites" (the
  * common case, one tap); a tap when already saved opens the list picker to
  * manage which lists it's in or remove it. Signed-out visitors are routed
- * to /sign-in?next=… with the intended save encoded in the query string;
- * see use-save-intent-replay.ts for how it's replayed after sign-in.
+ * to /join?next=… (which offers "Already have an account? Sign in") with
+ * the intended save encoded in `next`; see save-intent-replay.tsx for how
+ * it's replayed afterwards.
  */
 export default function SaveShowButton({
   showId,
@@ -87,10 +90,9 @@ export default function SaveShowButton({
     if (!isSignedIn) {
       const search =
         typeof window !== "undefined" ? window.location.search : "";
-      const query = new URLSearchParams(search);
-      query.set(SAVE_INTENT_PARAM, showId);
-      const next = `${pathname}?${query.toString()}`;
-      router.push(`/sign-in?next=${encodeURIComponent(next)}`);
+      router.push(
+        joinHrefForSaveIntent(pathname, search, SAVE_SHOW_PARAM, showId),
+      );
       return;
     }
 

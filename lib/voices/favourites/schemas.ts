@@ -44,6 +44,20 @@ export const statusResponseSchema = z.object({
 });
 export type FavouriteStatusMap = z.infer<typeof statusResponseSchema>["statuses"];
 
+export const artistStatusResponseSchema = z.object({
+  // Keyed by artistId; absent means not hearted — see
+  // voices_backend/routes/artistFavourites.js's GET /status handler.
+  statuses: z.record(z.string(), z.object({ saved: z.literal(true) })),
+});
+export type ArtistStatusMap = z.infer<
+  typeof artistStatusResponseSchema
+>["statuses"];
+
+export const artistSaveResponseSchema = z.object({
+  artistId: z.string(),
+  saved: z.boolean(),
+});
+
 export const saveResponseSchema = z.object({
   showId: z.string(),
   listIds: z.array(z.string()),
