@@ -8,6 +8,7 @@ describe("MemberBenefits", () => {
 
     const section = screen.getByRole("region", { name: "What you get" });
     for (const title of [
+      "Save your favourite artists & shows",
       "Merch discount",
       "Event discounts",
       "Early release tickets",
@@ -40,12 +41,12 @@ describe("MemberBenefits", () => {
     ).toBeInTheDocument();
   });
 
-  it("numbers live benefits 01-06 and continues 07-08 for coming soon", () => {
+  it("numbers live benefits 01-07 and continues 08-09 for coming soon", () => {
     render(<MemberBenefits />);
     const numbers = screen
       .getAllByTestId("benefit-number")
       .map((node) => node.textContent);
-    expect(numbers).toEqual(["01", "02", "03", "04", "05", "06", "07", "08"]);
+    expect(numbers).toEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09"]);
   });
 
   it("shows each benefit once, so nothing appears as both live and coming soon", () => {
