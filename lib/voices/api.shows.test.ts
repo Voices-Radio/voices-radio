@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getShowsForArtist } from "./api";
+import { getShows, getShowsForArtist, getShowsForCuration } from "./api";
 
 const ARTIST_ID = "686c1b20fa25d315f33f61cc";
 
@@ -58,5 +58,122 @@ describe("getShowsForArtist", () => {
     const shows = await getShowsForArtist(ARTIST_ID);
 
     expect(shows.map((show) => show.id)).toEqual(["own-1", "own-2"]);
+  });
+});
+
+describe("artist embedding and bulk curation fetch", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("does not fetch artists for shows the backend already embedded", async () => {
+    const fetchMock = vi.fn((url: URL) =>
+      Promise.resolve(
+        jsonResponse([
+          {
+            ...rawShow("s1", null),
+            artistId: {
+              _id: "art-1",
+              name: "DJ One",
+              imageUrl: "https://x/y.jpg",
+            },
+          },
+        ]),
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const shows = await getShows({ limit: 1 });
+
+    expect(shows[0].artist?.name).toBe("DJ One");
+    // Exactly one request: the list. No GET /api/artists/:id follow-up.
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("still joins artists for shows whose artistId came back as a bare id", async () => {
+    const fetchMock = vi.fn((url: URL) =>
+      Promise.resolve(
+        jsonResponse(
+          url.pathname === "/api/shows"
+            ? [rawShow("s1", ARTIST_ID)]
+            : { _id: ARTIST_ID, name: "Joined", genres: [] },
+        ),
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const shows = await getShows({ limit: 1 });
+
+    expect(shows[0].artist?.name).toBe("Joined");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("getShowsForCuration sends one ?ids= request and ignores shows it did not ask for", async () => {
+    // An older backend ignores `ids` and returns the latest shows instead.
+    const fetchMock = vi.fn(() =>
+      Promise.resolve(
+        jsonResponse([
+          {
+            ...rawShow("want", null),
+            artistId: { _id: "a", name: "A" },
+          },
+          {
+            ...rawShow("unrelated", null),
+            artistId: { _id: "b", name: "B" },
+          },
+        ]),
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const found = await getShowsForCuration(["want", "want", "gone"]);
+
+    expect([...found.keys()]).toEqual(["want"]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const url = (fetchMock.mock.calls[0] as unknown as [URL])[0];
+    expect(url.searchParams.get("ids")).toBe("want,gone");
+  });
+});
+
+describe("missing records versus backend faults", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const respond = (status: number) =>
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.resolve(new Response("{}", { status }))),
+    );
+
+  const VALID_ID = "686c1b20fa25d315f33f61cc";
+
+  it.each([400, 404])(
+    "getShow returns null on %i so the page can 404",
+    async (status) => {
+      respond(status);
+      const { getShow } = await import("./api");
+      expect(await getShow(VALID_ID)).toBeNull();
+    },
+  );
+
+  it("rejects a malformed id without calling the backend (which would 500)", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { getShow, getArtist } = await import("./api");
+
+    expect(await getShow("definitely-not-an-id")).toBeNull();
+    expect(await getArtist("definitely-not-an-id")).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("getShow throws on a 5xx, so a backend blip is never cached as a 404", async () => {
+    respond(503);
+    const { getShow } = await import("./api");
+    await expect(getShow(VALID_ID)).rejects.toThrow("503");
+  });
+
+  it("getArtist returns null on 404 and throws on 500", async () => {
+    const { getArtist } = await import("./api");
+    respond(404);
+    expect(await getArtist(VALID_ID)).toBeNull();
+    respond(500);
+    await expect(getArtist(VALID_ID)).rejects.toThrow("500");
   });
 });

@@ -1,6 +1,8 @@
 "use server";
 
 import { z } from "zod";
+import { actionRateLimited } from "@/lib/voices/action-rate-limit";
+import { AUTH_RATE_LIMITS } from "@/lib/voices/rate-limit";
 import { safeInternalPathOrUndefined } from "@/lib/voices/membership/paths";
 import {
   backendCheckEmail,
@@ -35,6 +37,9 @@ export async function forgotPasswordAction(
   _prevState: ForgotPasswordState,
   formData: FormData,
 ): Promise<ForgotPasswordState> {
+  const limited = await actionRateLimited(AUTH_RATE_LIMITS.forgotPassword);
+  if (limited) return { status: "error", formError: limited };
+
   const parsed = schema.safeParse({
     email: formData.get("email"),
     next: formData.get("next") || undefined,

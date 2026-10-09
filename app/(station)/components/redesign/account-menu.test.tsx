@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AccountMenu, { getInitials } from "./account-menu";
+import { SessionProvider } from "./session-context";
 
 const push = vi.fn();
 const refresh = vi.fn();
@@ -64,7 +65,11 @@ describe("getInitials", () => {
 describe("AccountMenu", () => {
   it("renders Sign in and Support Us for a signed-out visitor", async () => {
     mockSessionFetch(null);
-    render(<AccountMenu />);
+    render(
+      <SessionProvider>
+        <AccountMenu />
+      </SessionProvider>,
+    );
 
     expect(
       await screen.findByRole("link", { name: /sign in/i }),
@@ -78,7 +83,11 @@ describe("AccountMenu", () => {
   it("renders the avatar with initials and the five account links for a signed-in member", async () => {
     mockSessionFetch(SIGNED_IN_USER);
     const user = userEvent.setup();
-    render(<AccountMenu />);
+    render(
+      <SessionProvider>
+        <AccountMenu />
+      </SessionProvider>,
+    );
 
     const trigger = await screen.findByRole("button", {
       name: /account menu for jack/i,
@@ -107,7 +116,11 @@ describe("AccountMenu", () => {
   it("closes the dropdown on Escape and returns focus to the trigger", async () => {
     mockSessionFetch(SIGNED_IN_USER);
     const user = userEvent.setup();
-    render(<AccountMenu />);
+    render(
+      <SessionProvider>
+        <AccountMenu />
+      </SessionProvider>,
+    );
 
     const trigger = await screen.findByRole("button", {
       name: /account menu for jack/i,
@@ -125,10 +138,10 @@ describe("AccountMenu", () => {
     mockSessionFetch(SIGNED_IN_USER);
     const user = userEvent.setup();
     render(
-      <div>
+      <SessionProvider>
         <AccountMenu />
         <button type="button">outside</button>
-      </div>,
+      </SessionProvider>,
     );
 
     const trigger = await screen.findByRole("button", {
@@ -147,7 +160,11 @@ describe("AccountMenu", () => {
   it("signs out, hits the logout route, and redirects home", async () => {
     mockSessionFetch(SIGNED_IN_USER);
     const user = userEvent.setup();
-    render(<AccountMenu />);
+    render(
+      <SessionProvider>
+        <AccountMenu />
+      </SessionProvider>,
+    );
 
     const trigger = await screen.findByRole("button", {
       name: /account menu for jack/i,

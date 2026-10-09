@@ -19,11 +19,23 @@ function toMetaDescription(bio: string | undefined | null, fallback: string) {
   return bio ? bio.replace(/\s+/g, " ").trim() || fallback : fallback;
 }
 
+// Rendered on first request, then served from cache and refreshed in the
+// background. The upstream fetches already cache for 5 minutes, so rendering
+// per request only added latency.
+export const revalidate = 300;
+
+// No pages are prebuilt (the catalogue is large and changes daily), but exporting
+// this opts the route into ISR: each id renders once on first request, then
+// is cached. Without it a dynamic segment is rendered on every request.
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: ArtistPageProps): Promise<Metadata> {
   const { id } = await params;
-  const artist = await getArtist(id).catch(() => null);
+  const artist = await getArtist(id);
 
   if (!artist) {
     return { title: "Artist not found" };
@@ -46,7 +58,9 @@ export async function generateMetadata({
   };
 }
 
-function getArtistLinks(artist: Awaited<ReturnType<typeof getArtist>>) {
+function getArtistLinks(
+  artist: NonNullable<Awaited<ReturnType<typeof getArtist>>>,
+) {
   return [
     artist.mixcloudUsername && {
       label: "Mixcloud",
@@ -77,7 +91,7 @@ function getArtistLinks(artist: Awaited<ReturnType<typeof getArtist>>) {
 
 export default async function ArtistDetailPage({ params }: ArtistPageProps) {
   const { id } = await params;
-  const artist = await getArtist(id).catch(() => null);
+  const artist = await getArtist(id);
 
   if (!artist) {
     notFound();

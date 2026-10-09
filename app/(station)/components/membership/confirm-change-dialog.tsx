@@ -43,7 +43,7 @@ export default function ConfirmChangeDialog({
   title: string;
   currency?: string;
   loadPreview: () => Promise<PreviewResult>;
-  onConfirm: () => Promise<ConfirmResult>;
+  onConfirm: (idempotencyKey: string) => Promise<ConfirmResult>;
   confirmLabel: string;
   onSuccess?: () => void;
 }) {
@@ -53,11 +53,16 @@ export default function ConfirmChangeDialog({
   const [confirmError, setConfirmError] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
   const triggerRef = useRef<HTMLButtonElement>(null);
+  // One key per open dialog: a double-click or a retry after a network error
+  // re-sends the SAME key, which the backend dedupes. Reset on each open so a
+  // deliberate second change gets its own.
+  const idempotencyKeyRef = useRef<string>(crypto.randomUUID());
   const duration = shouldReduceMotion ? 0.01 : 0.2;
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
     if (nextOpen) {
+      idempotencyKeyRef.current = crypto.randomUUID();
       setPreview(null);
       setConfirmError(null);
       void loadPreview().then(setPreview);
@@ -67,8 +72,14 @@ export default function ConfirmChangeDialog({
   async function handleConfirm() {
     setConfirming(true);
     setConfirmError(null);
-    const result = await onConfirm();
-    setConfirming(false);
+    let result: ConfirmResult;
+    try {
+      result = await onConfirm(idempotencyKeyRef.current);
+    } catch {
+      result = { ok: false, message: "Something went wrong. Please try again." };
+    } finally {
+      setConfirming(false);
+    }
 
     if (result.ok) {
       setOpen(false);
@@ -125,7 +136,7 @@ export default function ConfirmChangeDialog({
                       <Dialog.Title className="font-gabarito text-lg font-bold text-voicesNext-cream">
                         {title}
                       </Dialog.Title>
-                      <Dialog.Close className="shrink-0 rounded-full p-1 text-voicesNext-cream/70 transition-colors hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange">
+                      <Dialog.Close className="shrink-0 rounded-full p-1 text-voicesNext-cream/70 transition-colors hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange">
                         <X aria-hidden="true" size={18} />
                         <span className="sr-only">Close</span>
                       </Dialog.Close>

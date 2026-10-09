@@ -77,11 +77,11 @@ export function AmountSwitcher({
             previewChangeAction({ action: direction, toAmountMinor: amount })
           }
           confirmLabel={`Confirm ${direction === "upgrade" ? "increase" : "reduction"}`}
-          onConfirm={async () => {
+          onConfirm={async (key) => {
             const result =
               direction === "upgrade"
-                ? await upgradeAction(amount)
-                : await downgradeAction(amount);
+                ? await upgradeAction(amount, key)
+                : await downgradeAction(amount, key);
             if (result.ok) {
               trackMembershipEvent(
                 direction === "upgrade"
@@ -139,8 +139,8 @@ export function CadenceSwitcher({
         })
       }
       confirmLabel="Confirm change"
-      onConfirm={async () => {
-        const result = await changeCadenceAction(targetCadence);
+      onConfirm={async (key) => {
+        const result = await changeCadenceAction(targetCadence, key);
         if (result.ok) {
           trackMembershipEvent({
             name: "membership_cadence_changed",

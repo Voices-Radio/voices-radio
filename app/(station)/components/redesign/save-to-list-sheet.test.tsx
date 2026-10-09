@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import SaveToListSheet from "./save-to-list-sheet";
 import { FavouritesProvider } from "./favourites-context";
+import { SessionProvider } from "./session-context";
 
 const SHOW_ID = "507f1f77bcf86cd799439021";
 const DEFAULT_LIST = {
@@ -28,7 +29,9 @@ function mockFetch({
     const method = init?.method ?? "GET";
 
     if (url.includes("/api/auth/session")) {
-      return new Response(JSON.stringify({ user: { _id: "u1" } }), { status: 200 });
+      return new Response(JSON.stringify({ user: { _id: "u1" } }), {
+        status: 200,
+      });
     }
     if (url.includes("/api/favourites/status")) {
       return new Response(JSON.stringify({ statuses: {} }), { status: 200 });
@@ -44,7 +47,12 @@ function mockFetch({
       return postListStatus === 201
         ? new Response(
             JSON.stringify({
-              list: { id: "list-new", name: body.name, isDefault: false, showCount: 0 },
+              list: {
+                id: "list-new",
+                name: body.name,
+                isDefault: false,
+                showCount: 0,
+              },
             }),
             { status: 201 },
           )
@@ -60,7 +68,9 @@ function mockFetch({
         : new Response(JSON.stringify({ message: "nope" }), { status: 500 });
     }
     if (url === `/api/favourites/${SHOW_ID}` && method === "DELETE") {
-      return new Response(JSON.stringify({ message: "removed" }), { status: 200 });
+      return new Response(JSON.stringify({ message: "removed" }), {
+        status: 200,
+      });
     }
     return new Response(JSON.stringify({}), { status: 200 });
   });
@@ -75,18 +85,20 @@ function Harness({
 }) {
   const triggerRef = createRef<HTMLButtonElement>();
   return (
-    <FavouritesProvider>
-      <button ref={triggerRef}>trigger</button>
-      <SaveToListSheet
-        open
-        onOpenChange={() => {}}
-        showId={SHOW_ID}
-        title="Late Night Sessions"
-        listIds={listIds}
-        onListIdsChange={onChange}
-        triggerRef={triggerRef}
-      />
-    </FavouritesProvider>
+    <SessionProvider>
+      <FavouritesProvider>
+        <button ref={triggerRef}>trigger</button>
+        <SaveToListSheet
+          open
+          onOpenChange={() => {}}
+          showId={SHOW_ID}
+          title="Late Night Sessions"
+          listIds={listIds}
+          onListIdsChange={onChange}
+          triggerRef={triggerRef}
+        />
+      </FavouritesProvider>
+    </SessionProvider>
   );
 }
 
@@ -185,7 +197,9 @@ describe("SaveToListSheet", () => {
     render(<Harness listIds={[DEFAULT_LIST.id]} onChange={onChange} />);
     await screen.findByRole("checkbox", { name: /my favourites/i });
 
-    await user.click(screen.getByRole("button", { name: /remove from favourites/i }));
+    await user.click(
+      screen.getByRole("button", { name: /remove from favourites/i }),
+    );
 
     await waitFor(() => expect(onChange).toHaveBeenCalledWith([]));
     expect(
@@ -209,7 +223,9 @@ describe("SaveToListSheet", () => {
     await user.type(screen.getByLabelText(/new list name/i), "Jazz Digs");
     await user.click(screen.getByRole("button", { name: /create list/i }));
 
-    const newCheckbox = await screen.findByRole("checkbox", { name: /jazz digs/i });
+    const newCheckbox = await screen.findByRole("checkbox", {
+      name: /jazz digs/i,
+    });
     expect(newCheckbox).toBeChecked();
 
     await user.click(screen.getByRole("button", { name: /^done$/i }));
@@ -231,7 +247,9 @@ describe("SaveToListSheet", () => {
     const user = userEvent.setup();
 
     render(<Harness listIds={[]} onChange={onChange} />);
-    const customCheckbox = await screen.findByRole("checkbox", { name: /late night/i });
+    const customCheckbox = await screen.findByRole("checkbox", {
+      name: /late night/i,
+    });
     await user.click(customCheckbox);
     await user.click(screen.getByRole("button", { name: /^done$/i }));
 

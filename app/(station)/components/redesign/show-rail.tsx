@@ -18,7 +18,7 @@ export default function ShowRail({
         {shows.length > 0 ? (
           <div className="mt-3 flex gap-3 overflow-x-auto px-2 pb-6 md:mt-7 md:gap-4 md:px-0">
             {shows.map((show, index) => (
-              <ShowCard key={show.id} show={show} priority={index === 0} rail />
+              <ShowCard key={show.id} show={show} rail />
             ))}
           </div>
         ) : (

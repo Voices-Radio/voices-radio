@@ -17,7 +17,7 @@ import { Redis } from "@upstash/redis";
  *    enforce nothing while appearing to work.
  */
 
-type RateLimitRule = {
+export type RateLimitRule = {
   /** Distinct prefix per endpoint so limits don't share a bucket. */
   name: string;
   limit: number;
@@ -28,6 +28,12 @@ export const AUTH_RATE_LIMITS = {
   login: { name: "login", limit: 10, window: "10 m" },
   register: { name: "register", limit: 5, window: "1 h" },
   checkEmail: { name: "check-email", limit: 20, window: "10 m" },
+  // Server actions (the real UI path) — see lib/voices/action-rate-limit.ts.
+  // Sign-in and create-account deliberately share the buckets above with their
+  // /api/auth/* twins: same IP, same purpose, one budget.
+  forgotPassword: { name: "forgot-password", limit: 5, window: "1 h" },
+  // Reset/create-password tokens are guessable-in-principle secrets; cap tries.
+  passwordToken: { name: "password-token", limit: 10, window: "10 m" },
   // Each call sends an email, so the ceiling is low; a person who lost the
   // first link needs two or three, not dozens.
   resendVerification: { name: "resend-verification", limit: 5, window: "1 h" },
@@ -133,11 +139,12 @@ function getLimiter(rule: RateLimitRule) {
  *
  * Exported for tests.
  */
-export function getClientIp(request: Request) {
-  const realIp = request.headers.get("x-real-ip")?.trim();
+export function getClientIp(source: Request | Headers) {
+  const headers = source instanceof Headers ? source : source.headers;
+  const realIp = headers.get("x-real-ip")?.trim();
   if (realIp) return realIp;
 
-  const forwarded = request.headers.get("x-forwarded-for");
+  const forwarded = headers.get("x-forwarded-for");
   if (forwarded) {
     const first = forwarded.split(",")[0]?.trim();
     if (first) return first;
@@ -146,38 +153,55 @@ export function getClientIp(request: Request) {
   return "unknown";
 }
 
+export type RateLimitCheck =
+  | { limited: false }
+  | { limited: true; retryAfterSeconds: number };
+
 /**
- * Returns null when the request may proceed, or a ready-to-return 429.
+ * The shared check behind both entry points: route handlers (which need a
+ * Response) and server actions (which need a message in form state).
  */
-export async function enforceRateLimit(request: Request, rule: RateLimitRule) {
+export async function checkRateLimit(
+  source: Request | Headers,
+  rule: RateLimitRule,
+): Promise<RateLimitCheck> {
   const limiter = getLimiter(rule);
 
   if (!limiter) {
     reportMissingRedis();
-    return null;
+    return { limited: false };
   }
 
   try {
-    const { success, reset } = await limiter.limit(getClientIp(request));
-    if (success) return null;
+    const { success, reset } = await limiter.limit(getClientIp(source));
+    if (success) return { limited: false };
 
-    const retryAfterSeconds = Math.max(
-      1,
-      Math.ceil((reset - Date.now()) / 1000),
-    );
-
-    return Response.json(
-      {
-        error: {
-          code: "RATE_LIMITED",
-          message: "Too many attempts. Please wait a moment and try again.",
-        },
-      },
-      { status: 429, headers: { "Retry-After": String(retryAfterSeconds) } },
-    );
+    return {
+      limited: true,
+      retryAfterSeconds: Math.max(1, Math.ceil((reset - Date.now()) / 1000)),
+    };
   } catch (error) {
     // Fail open — see the note at the top of this file.
     console.error(`Rate limit check failed for ${rule.name}:`, error);
-    return null;
+    return { limited: false };
   }
+}
+
+export const RATE_LIMITED_MESSAGE =
+  "Too many attempts. Please wait a moment and try again.";
+
+/**
+ * Returns null when the request may proceed, or a ready-to-return 429.
+ */
+export async function enforceRateLimit(request: Request, rule: RateLimitRule) {
+  const result = await checkRateLimit(request, rule);
+  if (!result.limited) return null;
+
+  return Response.json(
+    { error: { code: "RATE_LIMITED", message: RATE_LIMITED_MESSAGE } },
+    {
+      status: 429,
+      headers: { "Retry-After": String(result.retryAfterSeconds) },
+    },
+  );
 }

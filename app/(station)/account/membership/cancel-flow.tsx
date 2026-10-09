@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import ConfirmChangeDialog from "../../components/membership/confirm-change-dialog";
 import { trackMembershipEvent } from "@/lib/voices/membership/analytics";
@@ -43,6 +43,8 @@ export default function CancelFlow({
   retentionOffer: RetentionOffer | null;
 }) {
   const router = useRouter();
+  // One key per mount: a double-click or retry of Resume dedupes upstream.
+  const resumeKeyRef = useRef<string>(crypto.randomUUID());
   const [resuming, setResuming] = useState(false);
   const [resumeError, setResumeError] = useState<string | null>(null);
 
@@ -62,8 +64,14 @@ export default function CancelFlow({
           onClick={async () => {
             setResuming(true);
             setResumeError(null);
-            const result = await resumeAction();
-            setResuming(false);
+            let result: Awaited<ReturnType<typeof resumeAction>>;
+            try {
+              result = await resumeAction(resumeKeyRef.current);
+            } catch {
+              result = { ok: false, message: "Something went wrong. Please try again." };
+            } finally {
+              setResuming(false);
+            }
             if (result.ok) {
               trackMembershipEvent({ name: "membership_resumed" });
               router.refresh();
@@ -120,8 +128,11 @@ export default function CancelFlow({
               })
             }
             confirmLabel="Confirm reduction"
-            onConfirm={async () => {
-              const result = await downgradeAction(retentionOffer.amountMinor);
+            onConfirm={async (key) => {
+              const result = await downgradeAction(
+                retentionOffer.amountMinor,
+                key,
+              );
               if (result.ok) {
                 trackMembershipEvent({
                   name: "membership_downgrade_scheduled",
@@ -144,8 +155,8 @@ export default function CancelFlow({
           currency={currency}
           loadPreview={() => previewChangeAction({ action: "cancel" })}
           confirmLabel="Confirm cancellation"
-          onConfirm={async () => {
-            const result = await cancelAction();
+          onConfirm={async (key) => {
+            const result = await cancelAction(key);
             if (result.ok) {
               trackMembershipEvent({ name: "membership_cancelled" });
             }

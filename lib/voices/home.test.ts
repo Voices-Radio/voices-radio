@@ -12,6 +12,7 @@ vi.mock("@/sanity.image", () => ({
 
 vi.mock("./api", () => ({
   getShowForCuration: vi.fn(),
+  getShowsForCuration: vi.fn(),
   getShows: vi.fn(),
 }));
 
@@ -20,7 +21,7 @@ vi.mock("./artwork", () => ({
 }));
 
 import { getHomePage } from "@/sanity.client";
-import { getShowForCuration, getShows } from "./api";
+import { getShowForCuration, getShows, getShowsForCuration } from "./api";
 import { getHomePageContent } from "./home";
 
 function show(id: string): VoicesShow {
@@ -64,6 +65,7 @@ function cms(overrides: Partial<HomePage>): HomePage {
 }
 
 beforeEach(() => {
+  vi.mocked(getShowsForCuration).mockResolvedValue(new Map());
   vi.mocked(getShows).mockResolvedValue([show("latest-1"), show("latest-2")]);
   vi.mocked(getShowForCuration).mockImplementation(async (id: string) =>
     show(id),
@@ -126,6 +128,35 @@ describe("getHomePageContent", () => {
 
     expect(content.featured.title).toBe("Staff Favourites");
     expect(content.featured.shows.map(({ id }) => id)).toEqual(["b", "a"]);
+  });
+
+  it("hydrates curated shows with one bulk request, falling back per show only for misses", async () => {
+    vi.mocked(getShowsForCuration).mockResolvedValue(
+      new Map([
+        ["a", show("a")],
+        ["b", show("b")],
+      ]),
+    );
+    vi.mocked(getHomePage).mockResolvedValue(
+      cms({
+        featuredLane: {
+          title: "Staff Favourites",
+          shows: [pick("a"), pick("b"), pick("missing")],
+        },
+      }),
+    );
+
+    const content = await getHomePageContent();
+
+    expect(content.featured.shows.map(({ id }) => id)).toEqual([
+      "a",
+      "b",
+      "missing",
+    ]);
+    // Only the show the bulk call could not resolve hits the per-show path.
+    expect(getShowForCuration).toHaveBeenCalledWith("missing");
+    expect(getShowForCuration).not.toHaveBeenCalledWith("a");
+    expect(getShowForCuration).not.toHaveBeenCalledWith("b");
   });
 
   it("uses an image override on a featured pick", async () => {

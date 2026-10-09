@@ -42,7 +42,6 @@ export type VoicesLiveStationConfig = {
 export const voicesMediaConfig = {
   radioCultApiBaseUrl:
     process.env.RADIOCULT_API_BASE_URL ?? "https://api.radiocult.fm",
-  radioCultApiKey: process.env.NEXT_PUBLIC_RADIOCULT_API_KEY,
   radioCult: {
     kxStationId: process.env.NEXT_PUBLIC_RADIOCULT_KX_STATION_ID,
     eastStationId: process.env.NEXT_PUBLIC_RADIOCULT_EAST_STATION_ID,

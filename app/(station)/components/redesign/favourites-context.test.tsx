@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useEffect } from "react";
 import { FavouritesProvider, useFavourites } from "./favourites-context";
+import { SessionProvider } from "./session-context";
 
 const SIGNED_IN_USER = {
   _id: "user-1",
@@ -64,9 +65,11 @@ describe("FavouritesProvider — signed-out visitor", () => {
     const user = userEvent.setup();
 
     render(
-      <FavouritesProvider>
-        <Probe />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <Probe />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() =>
@@ -102,10 +105,12 @@ describe("FavouritesProvider — signed-in member", () => {
     }
 
     render(
-      <FavouritesProvider>
-        <RegisteringCard showId="507f1f77bcf86cd799439021" />
-        <RegisteringCard showId="507f1f77bcf86cd799439022" />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <RegisteringCard showId="507f1f77bcf86cd799439021" />
+          <RegisteringCard showId="507f1f77bcf86cd799439022" />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() => {
@@ -128,9 +133,11 @@ describe("FavouritesProvider — signed-in member", () => {
     const user = userEvent.setup();
 
     render(
-      <FavouritesProvider>
-        <Probe />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <Probe />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() =>
@@ -160,9 +167,11 @@ describe("FavouritesProvider — signed-in member", () => {
     const user = userEvent.setup();
 
     render(
-      <FavouritesProvider>
-        <Probe />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <Probe />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() =>
@@ -204,9 +213,11 @@ describe("FavouritesProvider — signed-in member", () => {
     const user = userEvent.setup();
 
     render(
-      <FavouritesProvider>
-        <Probe />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <Probe />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() =>

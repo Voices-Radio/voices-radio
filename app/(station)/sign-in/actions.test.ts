@@ -25,6 +25,7 @@ const { redirect } = await import("next/navigation");
 const { backendLogin } = await import("@/lib/voices/membership/auth-client");
 const { getCapabilities, setSessionCookies } =
   await import("@/lib/voices/membership/session");
+const { actionRateLimited } = await import("@/lib/voices/action-rate-limit");
 const { signInAction } = await import("./actions");
 
 function formData(fields: Record<string, string>) {
@@ -38,6 +39,22 @@ function formData(fields: Record<string, string>) {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(getCapabilities).mockResolvedValue(null);
+});
+
+describe("signInAction rate limiting", () => {
+  it("refuses before touching the backend when the caller is over the limit", async () => {
+    vi.mocked(actionRateLimited).mockResolvedValueOnce(
+      "Too many attempts. Please wait a moment and try again.",
+    );
+
+    const state = await signInAction(
+      undefined,
+      formData({ email: "a@b.co", password: "hunter22" }),
+    );
+
+    expect(state?.formError).toMatch(/too many attempts/i);
+    expect(backendLogin).not.toHaveBeenCalled();
+  });
 });
 
 describe("signInAction", () => {

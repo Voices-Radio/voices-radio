@@ -54,13 +54,13 @@ export default async function CollaboratePage() {
               href={applyLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-14 items-center justify-center border border-voicesNext-orange bg-voicesNext-orange px-6 font-gabarito text-lg font-bold text-voicesNext-background transition-colors hover:bg-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+              className="inline-flex h-14 items-center justify-center border border-voicesNext-orange bg-voicesNext-orange px-6 font-gabarito text-lg font-bold text-voicesNext-background transition-colors hover:bg-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
             >
               {page.applyCtaText}
             </a>
             <a
               href={contactLink}
-              className="inline-flex h-14 items-center justify-center border border-voicesNext-cream px-6 font-gabarito text-lg font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+              className="inline-flex h-14 items-center justify-center border border-voicesNext-cream px-6 font-gabarito text-lg font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
             >
               {page.contactCtaText}
             </a>
@@ -83,7 +83,7 @@ export default async function CollaboratePage() {
             {card.href && (
               <Link
                 href={card.href}
-                className="mt-6 inline-flex font-gabarito text-sm font-bold uppercase text-voicesNext-orange focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background"
+                className="mt-6 inline-flex font-gabarito text-sm font-bold uppercase text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
               >
                 {card.linkLabel || card.title}
               </Link>

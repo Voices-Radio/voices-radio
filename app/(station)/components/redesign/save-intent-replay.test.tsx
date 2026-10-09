@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import SaveIntentReplay from "./save-intent-replay";
 import { FavouritesProvider } from "./favourites-context";
+import { SessionProvider } from "./session-context";
 
 const replace = vi.fn();
 let searchParamsString = "";
@@ -58,9 +59,11 @@ describe("SaveIntentReplay", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     render(
-      <FavouritesProvider>
-        <SaveIntentReplay />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveIntentReplay />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() =>
@@ -85,9 +88,11 @@ describe("SaveIntentReplay", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     render(
-      <FavouritesProvider>
-        <SaveIntentReplay />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveIntentReplay />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() =>
@@ -111,9 +116,11 @@ describe("SaveIntentReplay", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     render(
-      <FavouritesProvider>
-        <SaveIntentReplay />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveIntentReplay />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() =>
@@ -137,9 +144,11 @@ describe("SaveIntentReplay", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     render(
-      <FavouritesProvider>
-        <SaveIntentReplay />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveIntentReplay />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     await waitFor(() => {
@@ -158,14 +167,18 @@ describe("SaveIntentReplay", () => {
         String(input) === `/api/favourites/${VALID_SHOW_ID}` &&
         (reqInit as RequestInit | undefined)?.method === "PUT",
     )!;
-    expect(JSON.parse((init as RequestInit).body as string)).toEqual({ listIds: [] });
+    expect(JSON.parse((init as RequestInit).body as string)).toEqual({
+      listIds: [],
+    });
 
     expect(await screen.findByRole("status")).toHaveTextContent(
       "Saved to My Favourites",
     );
 
     // The intent param is stripped, but the rest of the query survives.
-    expect(replace).toHaveBeenCalledWith("/shows?station=kx", { scroll: false });
+    expect(replace).toHaveBeenCalledWith("/shows?station=kx", {
+      scroll: false,
+    });
   });
 
   it("shows a visible error when the replayed save fails, rather than failing silently", async () => {
@@ -173,13 +186,15 @@ describe("SaveIntentReplay", () => {
     vi.stubGlobal("fetch", mockFetch(SIGNED_IN_USER, 500));
 
     render(
-      <FavouritesProvider>
-        <SaveIntentReplay />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveIntentReplay />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
-    expect(
-      await screen.findByRole("status"),
-    ).toHaveTextContent(/couldn't save/i);
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      /couldn't save/i,
+    );
   });
 });

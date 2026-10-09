@@ -50,3 +50,10 @@ if (typeof globalThis.ResizeObserver === "undefined") {
     disconnect() {}
   } as unknown as typeof ResizeObserver;
 }
+
+// actionRateLimited() reads next/headers, which throws outside a request
+// scope. Default it to "not limited" so action tests exercise their own logic;
+// a test that cares overrides it per-case (see sign-in/actions.test.ts).
+vi.mock("@/lib/voices/action-rate-limit", () => ({
+  actionRateLimited: vi.fn(async () => null),
+}));

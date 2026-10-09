@@ -21,7 +21,13 @@ export async function GET(request: Request) {
   }
 
   try {
-    return NextResponse.json(await fetchRadioCultLiveMetadata(station));
+    return NextResponse.json(await fetchRadioCultLiveMetadata(station), {
+      // Lets the CDN absorb the shell's 30s poll: one upstream call per
+      // window regardless of visitor count.
+      headers: {
+        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+      },
+    });
   } catch {
     return NextResponse.json(
       { message: "Radio Cult live metadata unavailable" },

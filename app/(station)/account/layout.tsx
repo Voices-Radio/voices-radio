@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+import { REQUESTED_PATH_HEADER } from "@/lib/voices/requested-path";
 import {
   getCapabilities,
   requireSession,
@@ -17,7 +19,11 @@ export default async function AccountLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await requireSession("/account");
+  // Come back to the exact page that was asked for (e.g. /account/membership),
+  // not the account home, once an expired session has been refreshed.
+  const requestedPath =
+    (await headers()).get(REQUESTED_PATH_HEADER) ?? "/account";
+  await requireSession(requestedPath);
   const capabilities = await getCapabilities();
 
   return (

@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { actionRateLimited } from "@/lib/voices/action-rate-limit";
+import { AUTH_RATE_LIMITS } from "@/lib/voices/rate-limit";
 import { getBaseUrl } from "@/lib/site-url";
 import { guestCheckout } from "@/lib/voices/membership/guest-checkout";
 import { isMembershipCadence, parseAmountMinor } from "@/lib/voices/membership/types";
@@ -65,6 +67,9 @@ export async function createAccountAction(
     newsletters: formData.get("newsletters") === "on",
     memberUpdates: formData.get("memberUpdates") === "on",
   };
+
+  const limited = await actionRateLimited(AUTH_RATE_LIMITS.register);
+  if (limited) return { status: "error", formError: limited, values };
 
   const parsed = schema.safeParse({
     firstName: formData.get("firstName"),

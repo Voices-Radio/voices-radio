@@ -13,14 +13,19 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
+  // Fails soft (getSupporters) — a failed/unavailable request renders the
+  // supporter strip exactly as it looked before the wall existed, never
+  // breaks the homepage. Fetched alongside the rest so it adds no latency.
   const [
     { featuredItems, latestKx, featured, applyBanner, swimlanes, liveStreams },
     settings,
-  ] = await Promise.all([getHomePageContent(), getSettings()]);
+    supportersResult,
+  ] = await Promise.all([
+    getHomePageContent(),
+    getSettings(),
+    getSupporters(),
+  ]);
   const applyUrl = settings?.apply_link || VOICES_APPLY_FOR_SHOW_URL;
-  // Fails soft — a failed/unavailable request renders the supporter strip
-  // exactly as it looked before the wall existed, never breaks the homepage.
-  const supportersResult = await getSupporters();
   const supporterNames = supportersResult.ok ? supportersResult.data : [];
 
   return (
@@ -75,7 +80,7 @@ export default async function Home() {
               href={applyUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-[10px] inline-flex h-9 items-center justify-center rounded-full bg-voicesNext-orange px-5 font-gabarito text-[16px] font-medium text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface md:mt-6 md:text-sm md:font-bold"
+              className="mt-[10px] inline-flex h-9 items-center justify-center rounded-full bg-voicesNext-orange px-5 font-gabarito text-[16px] font-medium text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface md:mt-6 md:text-sm md:font-bold"
             >
               {applyBanner.ctaText}
             </a>

@@ -57,6 +57,8 @@ export interface VoicesShowRaw {
   playCount?: number;
   featured?: boolean;
   artistId?: string | VoicesArtistRaw | null;
+  /** Set by /api/shows/optimized, which joins the artist beside a string artistId. */
+  artist?: VoicesArtistRaw | null;
   mixcloudKey?: string | null;
   soundcloudId?: string | null;
   platform?: VoicesPlatform;

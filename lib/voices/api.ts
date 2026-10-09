@@ -8,6 +8,7 @@ import {
 } from "./config";
 import {
   getArtistIdFromShow,
+  getPopulatedArtistFromShow,
   isPublicMatchedShow,
   matchesStationOrLocation,
   normalizeArtist,
@@ -49,10 +50,50 @@ async function voicesFetch<T>(path: string, searchParams?: SearchParams) {
   });
 
   if (!response.ok) {
-    throw new Error(`Voices API request failed: ${response.status}`);
+    throw new VoicesApiError(response.status);
   }
 
   return response.json() as Promise<T>;
+}
+
+/** Carries the upstream status so callers can tell "no such record" from "backend down". */
+export class VoicesApiError extends Error {
+  constructor(readonly status: number) {
+    super(`Voices API request failed: ${status}`);
+  }
+}
+
+/**
+ * 400 (malformed id) and 404 mean the record does not exist; anything else is
+ * a fault. Detail pages are cached (ISR), so treating a 5xx as "not found"
+ * would pin a 404 on a perfectly good page for the whole revalidate window.
+ */
+function isMissingRecord(error: unknown) {
+  return (
+    error instanceof VoicesApiError &&
+    (error.status === 404 || error.status === 400)
+  );
+}
+
+const OBJECT_ID_PATTERN = /^[a-f0-9]{24}$/i;
+
+/**
+ * Ids are Mongo ObjectIds. The backend answers a malformed one with a 500
+ * (a cast error), which would read as an outage — so reject it here as
+ * "no such record" before spending a request.
+ */
+async function nullIfMissing<T>(
+  id: string,
+  request: () => Promise<T>,
+): Promise<T | null> {
+  if (!OBJECT_ID_PATTERN.test(id)) return null;
+
+  try {
+    return await request();
+  } catch (error) {
+    if (isMissingRecord(error)) return null;
+    throw error;
+  }
 }
 
 function unwrapList<T>(payload: T[] | VoicesListResponse<T>) {
@@ -60,8 +101,16 @@ function unwrapList<T>(payload: T[] | VoicesListResponse<T>) {
 }
 
 async function joinArtistsForShows(rawShows: VoicesShowRaw[]) {
+  // Only shows whose artist the backend did NOT embed need a follow-up fetch.
+  // The list endpoints now embed name/avatar/banner, which previously cost one
+  // GET /api/artists/:id per distinct artist on every list render.
   const artistIds = Array.from(
-    new Set(rawShows.map(getArtistIdFromShow).filter(Boolean)),
+    new Set(
+      rawShows
+        .filter((show) => !getPopulatedArtistFromShow(show))
+        .map(getArtistIdFromShow)
+        .filter(Boolean),
+    ),
   ) as string[];
 
   const artists = await Promise.all(
@@ -111,8 +160,10 @@ export async function getArtists({
 }
 
 export async function getArtist(id: string) {
-  const artist = await voicesFetch<VoicesArtistRaw>(`/api/artists/${id}`);
-  return normalizeArtist(artist);
+  const artist = await nullIfMissing(id, () =>
+    voicesFetch<VoicesArtistRaw>(`/api/artists/${id}`),
+  );
+  return artist ? normalizeArtist(artist) : null;
 }
 
 export async function getShows({
@@ -185,25 +236,64 @@ export async function getFeaturedShows({
     .map((show) => normalizeShow(show));
 }
 
-export async function getShow(id: string) {
-  const rawShow = await voicesFetch<VoicesShowRaw>(`/api/shows/${id}`);
+/** Embedded artist when the backend sent one, else a single follow-up fetch. */
+async function resolveShowArtist(rawShow: VoicesShowRaw) {
+  if (getPopulatedArtistFromShow(rawShow)) return undefined;
 
-  if (!isPublicMatchedShow(rawShow)) {
+  const artistId = getArtistIdFromShow(rawShow);
+  if (!artistId) return undefined;
+
+  return (await getArtist(artistId).catch(() => null)) ?? undefined;
+}
+
+export async function getShow(id: string) {
+  const rawShow = await nullIfMissing(id, () =>
+    voicesFetch<VoicesShowRaw>(`/api/shows/${id}`),
+  );
+
+  if (!rawShow || !isPublicMatchedShow(rawShow)) {
     return null;
   }
 
-  const artistId = getArtistIdFromShow(rawShow);
-  const artist = artistId ? await getArtist(artistId).catch(() => null) : null;
-
-  return normalizeShow(rawShow, artist ?? undefined);
+  return normalizeShow(rawShow, await resolveShowArtist(rawShow));
 }
 
 export async function getShowForCuration(id: string) {
   const rawShow = await voicesFetch<VoicesShowRaw>(`/api/shows/${id}`);
-  const artistId = getArtistIdFromShow(rawShow);
-  const artist = artistId ? await getArtist(artistId).catch(() => null) : null;
+  return normalizeShow(rawShow, await resolveShowArtist(rawShow));
+}
 
-  return normalizeShow(rawShow, artist ?? undefined);
+/**
+ * Curated shows by id in ONE request (backend `?ids=`), replacing a
+ * GET /api/shows/:id (+ artist) per show on the homepage.
+ *
+ * Returns a map of the shows it could resolve. Defensive about an older
+ * backend that ignores `ids` and returns the latest shows instead: results are
+ * filtered to the ids asked for, and the caller falls back to per-id fetches
+ * for anything missing.
+ */
+export async function getShowsForCuration(ids: string[]) {
+  const unique = Array.from(new Set(ids.filter(Boolean)));
+  const found = new Map<string, VoicesShow>();
+  if (unique.length === 0) return found;
+
+  const wanted = new Set(unique);
+  const raws = await voicesFetch<VoicesShowRaw[]>("/api/shows", {
+    ids: unique.join(","),
+    limit: unique.length,
+  });
+
+  const matched = raws.filter((raw) => wanted.has(raw._id));
+  const artistsById = await joinArtistsForShows(matched);
+
+  for (const raw of matched) {
+    found.set(
+      raw._id,
+      normalizeShow(raw, artistsById.get(getArtistIdFromShow(raw) ?? "")),
+    );
+  }
+
+  return found;
 }
 
 export async function getShowsForArtist(

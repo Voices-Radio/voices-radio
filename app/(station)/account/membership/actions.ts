@@ -37,6 +37,20 @@ export async function previewChangeAction(input: {
     : { ok: false, message: result.message };
 }
 
+/**
+ * The idempotency key is minted by the CLIENT, once per confirmation attempt,
+ * and reused if that attempt is retried or double-submitted. Minting it here
+ * gave every retry a fresh key, so the backend could not dedupe them and a
+ * double-click applied the change twice. It arrives from the browser, so it is
+ * validated rather than trusted.
+ */
+function requireKey(idempotencyKey: string): string {
+  if (!/^[\w-]{8,100}$/.test(idempotencyKey)) {
+    throw new Error("Invalid idempotency key.");
+  }
+  return idempotencyKey;
+}
+
 function afterMutation(result: { ok: boolean; message?: string }): ActionResult {
   if (result.ok) {
     // Every mutation returns the authoritative new state; refreshing here
@@ -51,32 +65,40 @@ function afterMutation(result: { ok: boolean; message?: string }): ActionResult 
 
 export async function upgradeAction(
   toAmountMinor: number,
+  idempotencyKey: string,
 ): Promise<ActionResult> {
-  const result = await upgrade(toAmountMinor, crypto.randomUUID());
+  const result = await upgrade(toAmountMinor, requireKey(idempotencyKey));
   return afterMutation(result);
 }
 
 export async function downgradeAction(
   toAmountMinor: number,
+  idempotencyKey: string,
 ): Promise<ActionResult> {
-  const result = await downgrade(toAmountMinor, crypto.randomUUID());
+  const result = await downgrade(toAmountMinor, requireKey(idempotencyKey));
   return afterMutation(result);
 }
 
 export async function changeCadenceAction(
   toCadence: "monthly" | "annual",
+  idempotencyKey: string,
 ): Promise<ActionResult> {
-  const result = await changeCadence(toCadence, crypto.randomUUID());
+  const result = await changeCadence(toCadence, requireKey(idempotencyKey));
   return afterMutation(result);
 }
 
-export async function cancelAction(reason?: string): Promise<ActionResult> {
-  const result = await cancelMembership(reason, crypto.randomUUID());
+export async function cancelAction(
+  idempotencyKey: string,
+  reason?: string,
+): Promise<ActionResult> {
+  const result = await cancelMembership(reason, requireKey(idempotencyKey));
   return afterMutation(result);
 }
 
-export async function resumeAction(): Promise<ActionResult> {
-  const result = await resumeMembership(crypto.randomUUID());
+export async function resumeAction(
+  idempotencyKey: string,
+): Promise<ActionResult> {
+  const result = await resumeMembership(requireKey(idempotencyKey));
   return afterMutation(result);
 }
 

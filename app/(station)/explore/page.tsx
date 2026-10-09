@@ -241,15 +241,16 @@ export default async function ExplorePage({
     isGenreKey,
   );
   const category = getSingleParam(resolvedSearchParams, "category");
-  const musicTitle = resolveListingPages(await getListingPages()).music.title;
   const showMusicGrid = category === "music" || selectedGenres.length > 0;
 
-  const shows = showMusicGrid
-    ? await getShows({
-        genres: selectedGenres,
-        limit: 100,
-      })
-    : [];
+  // Independent upstreams — fetched together so the slower one sets latency.
+  const [listingPages, shows] = await Promise.all([
+    getListingPages(),
+    showMusicGrid
+      ? getShows({ genres: selectedGenres, limit: 100 })
+      : Promise.resolve([]),
+  ]);
+  const musicTitle = resolveListingPages(listingPages).music.title;
   const visibleShows = sortShows(
     shows.filter(
       (show) =>

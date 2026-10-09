@@ -201,7 +201,7 @@ export default function SaveToListSheet({
                       <Dialog.Title className="font-gabarito text-lg font-bold text-voicesNext-cream">
                         Save to…
                       </Dialog.Title>
-                      <Dialog.Close className="shrink-0 rounded-full p-1 text-voicesNext-cream/70 transition-colors hover:text-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange">
+                      <Dialog.Close className="shrink-0 rounded-full p-1 text-voicesNext-cream/70 transition-colors hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange">
                         <X aria-hidden="true" size={18} />
                         <span className="sr-only">Close</span>
                       </Dialog.Close>
@@ -259,7 +259,7 @@ export default function SaveToListSheet({
                         onChange={(event) => setNewListName(event.target.value)}
                         placeholder="New list name"
                         maxLength={60}
-                        className="h-10 flex-1 border border-voicesNext-border bg-transparent px-3 font-gabarito text-sm text-voicesNext-cream placeholder:text-voicesNext-cream/40 focus:outline-none focus:ring-2 focus:ring-voicesNext-orange"
+                        className="h-10 flex-1 border border-voicesNext-border bg-transparent px-3 font-gabarito text-sm text-voicesNext-cream placeholder:text-voicesNext-cream/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange"
                       />
                       <button
                         type="submit"

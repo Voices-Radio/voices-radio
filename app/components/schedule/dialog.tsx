@@ -38,7 +38,7 @@ export default function ScheduleDialog({
 
             <div className="sticky bottom-6 flex justify-center pb-6">
               <Dialog.Close asChild>
-                <button className="rounded-full bg-black px-14 py-3 text-mobile-inter-small text-white focus:outline-none focus:ring-2 focus:ring-white md:px-16 md:text-mobile-inter-text">
+                <button className="rounded-full bg-black px-14 py-3 text-mobile-inter-small text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white md:px-16 md:text-mobile-inter-text">
                   Close
                 </button>
               </Dialog.Close>

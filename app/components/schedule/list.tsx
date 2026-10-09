@@ -38,7 +38,7 @@ export default function ScheduleList({
                 indexSet(0);
               }}
               className={cn(
-                "rounded-full px-5 py-2 text-mobile-inter-small font-black uppercase text-white/70 transition-colors focus:outline-none focus:ring-2 focus:ring-white",
+                "rounded-full px-5 py-2 text-mobile-inter-small font-black uppercase text-white/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white",
                 station === item.id && "bg-white text-black",
               )}
               aria-pressed={station === item.id}
@@ -50,7 +50,7 @@ export default function ScheduleList({
         <div className="border-white/15 sticky top-3 z-10 mx-auto mb-4 grid w-fit max-w-full grid-cols-[2.25rem_auto_2.25rem] items-center gap-3 rounded-full border bg-black/40 px-3 py-2 shadow-lg shadow-black/20 backdrop-blur-xl md:mb-5 md:gap-5 md:px-4">
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center justify-self-end rounded-full text-mobile-inter-text text-white transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white disabled:text-white/40 disabled:hover:bg-transparent md:text-inter-text-small"
+            className="inline-flex h-9 w-9 items-center justify-center justify-self-end rounded-full text-mobile-inter-text text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:text-white/40 disabled:hover:bg-transparent md:text-inter-text-small"
             disabled={index <= 0}
             onClick={() => indexSet(index - 1)}
           >
@@ -63,7 +63,7 @@ export default function ScheduleList({
 
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center justify-self-start rounded-full text-mobile-inter-text text-white transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white disabled:text-white/40 disabled:hover:bg-transparent md:text-inter-text-small"
+            className="inline-flex h-9 w-9 items-center justify-center justify-self-start rounded-full text-mobile-inter-text text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:text-white/40 disabled:hover:bg-transparent md:text-inter-text-small"
             onClick={() => indexSet(index + 1)}
             disabled={index >= entries.length - 1}
           >

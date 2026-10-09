@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { actionRateLimited } from "@/lib/voices/action-rate-limit";
+import { AUTH_RATE_LIMITS } from "@/lib/voices/rate-limit";
 import { backendCompleteSetup } from "@/lib/voices/membership/auth-client";
 import { setSessionCookies } from "@/lib/voices/membership/session";
 
@@ -46,6 +48,9 @@ export async function createPasswordAction(
   _prevState: CreatePasswordState,
   formData: FormData,
 ): Promise<CreatePasswordState> {
+  const limited = await actionRateLimited(AUTH_RATE_LIMITS.passwordToken);
+  if (limited) return { status: "error", formError: limited };
+
   const parsed = schema.safeParse({
     token: formData.get("token"),
     password: formData.get("password"),

@@ -37,11 +37,23 @@ function formatDuration(duration?: number) {
     : `${hours} hr`;
 }
 
+// Rendered on first request, then served from cache and refreshed in the
+// background. The upstream fetches already cache for 5 minutes, so rendering
+// per request only added latency.
+export const revalidate = 300;
+
+// No pages are prebuilt (the catalogue is large and changes daily), but exporting
+// this opts the route into ISR: each id renders once on first request, then
+// is cached. Without it a dynamic segment is rendered on every request.
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: ShowPageProps): Promise<Metadata> {
   const { id } = await params;
-  const show = await getShow(id).catch(() => null);
+  const show = await getShow(id);
 
   if (!show) {
     return { title: "Show not found" };

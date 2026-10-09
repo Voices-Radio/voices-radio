@@ -37,14 +37,14 @@ export function Hero() {
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <a
               href={briefHref}
-              className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full bg-voices-purple px-8 py-4 text-base font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-slate-950 sm:w-auto"
+              className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full bg-voices-purple px-8 py-4 text-base font-black text-white transition hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-voices-purple focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto"
             >
               Start a brief
               <ArrowRight className="h-5 w-5" />
             </a>
             <a
               href="#work"
-              className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-white px-8 py-4 text-base font-black text-white transition hover:bg-white hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-950 sm:w-auto"
+              className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-white px-8 py-4 text-base font-black text-white transition hover:bg-white hover:text-slate-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto"
             >
               See our work
             </a>

@@ -32,8 +32,14 @@ export default function RedeemButton({
   async function handleClick() {
     setLoading(true);
     setError(null);
-    const result = await redeemAction(benefitId, idempotencyKeyRef.current!);
-    setLoading(false);
+    let result: Awaited<ReturnType<typeof redeemAction>>;
+    try {
+      result = await redeemAction(benefitId, idempotencyKeyRef.current!);
+    } catch {
+      result = { ok: false, message: "Something went wrong. Please try again." };
+    } finally {
+      setLoading(false);
+    }
 
     if (result.ok) {
       trackMembershipEvent({ name: "membership_benefit_redeemed", benefitSlug });
@@ -50,7 +56,7 @@ export default function RedeemButton({
         onClick={handleClick}
         disabled={loading}
         aria-busy={loading}
-        className="inline-flex h-10 items-center justify-center rounded-full bg-voicesNext-orangeButton px-4 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus:ring-2 focus:ring-voicesNext-orange disabled:opacity-60"
+        className="inline-flex h-10 items-center justify-center rounded-full bg-voicesNext-orangeButton px-4 font-gabarito text-sm font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange disabled:opacity-60"
       >
         {loading ? "Working…" : label}
       </button>

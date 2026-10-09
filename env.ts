@@ -37,6 +37,14 @@ export const env = createEnv({
     KV_REST_API_TOKEN: z.string().optional(),
 
     RADIOCULT_API_BASE_URL: z.string().url().optional(),
+    // Server-only. Was NEXT_PUBLIC_RADIOCULT_API_KEY, which shipped it to every
+    // browser. Read in lib/voices/radio-cult.ts.
+    RADIOCULT_API_KEY: z.string().optional(),
+
+    // Shared with voices_backend (WEBSITE_PROXY_SECRET). Lets the backend
+    // rate-limit per real visitor instead of per Vercel egress IP. Unset =
+    // backend keys on req.ip (previous behaviour).
+    WEBSITE_PROXY_SECRET: z.string().min(16).optional(),
 
     ENABLE_STAGING_AUTH: z.string().optional(),
     STAGING_AUTH_USER: z.string().optional(),
@@ -59,6 +67,8 @@ export const env = createEnv({
     KV_REST_API_URL: process.env.KV_REST_API_URL,
     KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN,
     RADIOCULT_API_BASE_URL: process.env.RADIOCULT_API_BASE_URL,
+    RADIOCULT_API_KEY: process.env.RADIOCULT_API_KEY,
+    WEBSITE_PROXY_SECRET: process.env.WEBSITE_PROXY_SECRET,
     ENABLE_STAGING_AUTH: process.env.ENABLE_STAGING_AUTH,
     STAGING_AUTH_USER: process.env.STAGING_AUTH_USER,
     STAGING_PASSWORD: process.env.STAGING_PASSWORD,

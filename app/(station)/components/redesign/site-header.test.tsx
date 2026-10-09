@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SiteHeader from "./site-header";
+import { SessionProvider } from "./session-context";
 
 const push = vi.fn();
 const refresh = vi.fn();
@@ -23,7 +24,11 @@ beforeEach(() => {
 
 describe("SiteHeader", () => {
   it("lets iOS Safari sample the safe-area tint from the mobile header shell", () => {
-    const { container } = render(<SiteHeader settings={{}} />);
+    const { container } = render(
+      <SessionProvider>
+        <SiteHeader settings={{}} />
+      </SessionProvider>,
+    );
 
     const header = container.querySelector("header");
     const safeAreaStrip = header?.querySelector("[aria-hidden='true']");
@@ -35,7 +40,11 @@ describe("SiteHeader", () => {
   });
 
   it("orders the desktop nav with Shop before Collaborate and keeps actions tight", () => {
-    const { container } = render(<SiteHeader settings={{}} />);
+    const { container } = render(
+      <SessionProvider>
+        <SiteHeader settings={{}} />
+      </SessionProvider>,
+    );
 
     const primaryNav = screen.getByRole("navigation", { name: "Primary" });
     const searchButton = screen.getByRole("button", { name: "Open search" });
@@ -57,7 +66,11 @@ describe("SiteHeader", () => {
 
   it("opens Podcast Studio and Agency menu entries in new tabs", async () => {
     const user = userEvent.setup();
-    render(<SiteHeader settings={{}} />);
+    render(
+      <SessionProvider>
+        <SiteHeader settings={{}} />
+      </SessionProvider>,
+    );
 
     await user.click(screen.getByRole("button", { name: /collaborate/i }));
 

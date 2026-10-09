@@ -5,7 +5,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 import { useFavourites } from "./favourites-context";
-import SaveToListSheet from "./save-to-list-sheet";
+import dynamic from "next/dynamic";
+
+// The sheet (framer-motion, list management) only matters once someone opens
+// it, but every ShowCard on a page mounts a SaveShowButton — so it was being
+// shipped to, and evaluated for, every visitor. Load it on first open.
+const SaveToListSheet = dynamic(() => import("./save-to-list-sheet"), {
+  ssr: false,
+});
 
 const SAVE_INTENT_PARAM = "save";
 
@@ -36,6 +43,8 @@ export default function SaveShowButton({
     useFavourites();
   const [pending, setPending] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  // Stays true after the first open so the sheet keeps its exit animation.
+  const [sheetRequested, setSheetRequested] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -88,6 +97,7 @@ export default function SaveShowButton({
     if (pending) return;
 
     if (status.saved) {
+      setSheetRequested(true);
       setSheetOpen(true);
     } else {
       void saveToDefault();
@@ -132,7 +142,7 @@ export default function SaveShowButton({
         />
       </button>
 
-      {isSignedIn && (
+      {isSignedIn && sheetRequested && (
         <SaveToListSheet
           open={sheetOpen}
           onOpenChange={setSheetOpen}

@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { REQUESTED_PATH_HEADER } from "@/lib/voices/requested-path";
 
 const DEFAULT_STAGING_USER = "voices";
 
@@ -44,9 +45,26 @@ function unauthorizedResponse() {
   });
 }
 
+/**
+ * Forwards the requested path to Server Components. Layouts cannot see their
+ * own URL, so /account's guard could only ever send an expired session back to
+ * "/account" — losing a deep link to /account/membership or a filtered
+ * favourites list. Set unconditionally (overwriting anything the client sent),
+ * and consumers still pass it through safeInternalPath().
+ */
+function proceed(request: NextRequest) {
+  const forwarded = new Headers(request.headers);
+  forwarded.set(
+    REQUESTED_PATH_HEADER,
+    `${request.nextUrl.pathname}${request.nextUrl.search}`,
+  );
+
+  return NextResponse.next({ request: { headers: forwarded } });
+}
+
 export function middleware(request: NextRequest) {
   if (!isStagingAuthEnabled()) {
-    return NextResponse.next();
+    return proceed(request);
   }
 
   const credentials = getBasicAuthCredentials(request);
@@ -56,7 +74,7 @@ export function middleware(request: NextRequest) {
     credentials?.username === expectedUser &&
     credentials.password === process.env.STAGING_PASSWORD
   ) {
-    return NextResponse.next();
+    return proceed(request);
   }
 
   return unauthorizedResponse();

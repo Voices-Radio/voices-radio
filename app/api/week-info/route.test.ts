@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Station config is read from the environment at import time, so it has to be
 // in place before the route module loads.
-process.env.NEXT_PUBLIC_RADIOCULT_API_KEY = "test-key";
+process.env.RADIOCULT_API_KEY = "test-key";
 process.env.NEXT_PUBLIC_RADIOCULT_KX_STATION_ID = "kx-station";
 
 const { GET } = await import("./route");

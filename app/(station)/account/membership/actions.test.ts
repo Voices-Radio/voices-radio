@@ -42,6 +42,8 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+const KEY = "11111111-2222-4333-8444-555555555555";
+
 describe("previewChangeAction", () => {
   it("returns the preview data on success without touching revalidatePath", async () => {
     vi.mocked(previewChange).mockResolvedValue({
@@ -78,10 +80,10 @@ describe("mutation actions", () => {
       data: { applied: "immediate", contributionAmountMinor: 1599, cadence: "monthly", scheduledChange: null, unlockedBenefits: [] },
     });
 
-    const result = await upgradeAction(1599);
+    const result = await upgradeAction(1599, KEY);
 
     expect(result).toEqual({ ok: true });
-    expect(upgrade).toHaveBeenCalledWith(1599, expect.any(String));
+    expect(upgrade).toHaveBeenCalledWith(1599, KEY);
     expect(revalidatePath).toHaveBeenCalledWith("/account");
     expect(revalidatePath).toHaveBeenCalledWith("/account/membership");
   });
@@ -93,24 +95,30 @@ describe("mutation actions", () => {
       message: "You're already at this amount.",
     });
 
-    const result = await upgradeAction(1599);
+    const result = await upgradeAction(1599, KEY);
 
     expect(result).toEqual({ ok: false, message: "You're already at this amount." });
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
-  it("downgradeAction and changeCadenceAction pass a fresh idempotency key each call", async () => {
+  it("forwards the caller-supplied idempotency key, so a retry is deduped upstream", async () => {
     vi.mocked(downgrade).mockResolvedValue({
       ok: true,
       data: { applied: "scheduled", contributionAmountMinor: 399, cadence: "monthly", scheduledChange: null },
     });
 
-    await downgradeAction(399);
-    await downgradeAction(399);
+    await downgradeAction(399, KEY);
+    await downgradeAction(399, KEY);
 
-    const [firstKey] = vi.mocked(downgrade).mock.calls[0].slice(1);
-    const [secondKey] = vi.mocked(downgrade).mock.calls[1].slice(1);
-    expect(firstKey).not.toBe(secondKey);
+    expect(vi.mocked(downgrade).mock.calls[0][1]).toBe(KEY);
+    expect(vi.mocked(downgrade).mock.calls[1][1]).toBe(KEY);
+  });
+
+  it("rejects a malformed idempotency key before calling the backend", async () => {
+    await expect(downgradeAction(399, "")).rejects.toThrow("Invalid idempotency key.");
+    await expect(cancelAction("x y!")).rejects.toThrow("Invalid idempotency key.");
+    expect(downgrade).not.toHaveBeenCalled();
+    expect(cancelMembership).not.toHaveBeenCalled();
   });
 
   it("changeCadenceAction forwards the target cadence", async () => {
@@ -119,8 +127,8 @@ describe("mutation actions", () => {
       data: { applied: "scheduled", contributionAmountMinor: 799, cadence: "annual", scheduledChange: null },
     });
 
-    await changeCadenceAction("annual");
-    expect(changeCadence).toHaveBeenCalledWith("annual", expect.any(String));
+    await changeCadenceAction("annual", KEY);
+    expect(changeCadence).toHaveBeenCalledWith("annual", KEY);
   });
 
   it("cancelAction forwards an optional reason", async () => {
@@ -129,8 +137,8 @@ describe("mutation actions", () => {
       data: { status: "cancelling", paidThroughAt: "2027-01-01T00:00:00Z" },
     });
 
-    await cancelAction("too expensive");
-    expect(cancelMembership).toHaveBeenCalledWith("too expensive", expect.any(String));
+    await cancelAction(KEY, "too expensive");
+    expect(cancelMembership).toHaveBeenCalledWith("too expensive", KEY);
   });
 
   it("resumeAction reports failure without revalidating", async () => {
@@ -140,7 +148,7 @@ describe("mutation actions", () => {
       message: "Your membership has already ended, so it can't be resumed.",
     });
 
-    const result = await resumeAction();
+    const result = await resumeAction(KEY);
 
     expect(result).toEqual({
       ok: false,

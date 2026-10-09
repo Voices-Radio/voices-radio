@@ -52,7 +52,7 @@ export default function CadenceToggle({
             aria-pressed={active}
             onClick={() => handleChange(option.value)}
             className={cn(
-              "flex h-11 min-w-[104px] items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 font-gabarito text-sm font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface",
+              "flex h-11 min-w-[104px] items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 font-gabarito text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-surface",
               active
                 ? "bg-voicesNext-orangeButton text-white"
                 : "text-voicesNext-cream hover:text-voicesNext-orange",

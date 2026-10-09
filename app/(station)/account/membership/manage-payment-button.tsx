@@ -17,7 +17,12 @@ export default function ManagePaymentButton() {
   async function handleClick() {
     setLoading(true);
     setError(null);
-    const result = await portalSessionAction();
+    let result: Awaited<ReturnType<typeof portalSessionAction>>;
+    try {
+      result = await portalSessionAction();
+    } catch {
+      result = { ok: false, message: "Something went wrong. Please try again." };
+    }
     if (result.ok) {
       window.location.href = result.url;
       return;

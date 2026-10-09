@@ -13,7 +13,7 @@ import type {
 } from "@/sanity.queries";
 import { urlForImage } from "@/sanity.image";
 import type { Image } from "sanity";
-import { getShowForCuration, getShows } from "./api";
+import { getShowForCuration, getShows, getShowsForCuration } from "./api";
 import { enhanceArtworkUrl } from "./artwork";
 import { VOICES_FALLBACK_ARTWORK } from "./config";
 import type { VoicesShow } from "./types";
@@ -257,7 +257,19 @@ async function hydrateShow(selection?: HomeShowSelection) {
 }
 
 async function hydrateShows(selections: Array<HomeShowSelection | undefined>) {
-  const shows = await Promise.all(selections.map(hydrateShow));
+  // One bulk request for the whole set; anything it can't resolve (unknown id,
+  // or a backend that predates `?ids=`) falls back to the per-show path, which
+  // also supplies the CMS-cached copy if the show is unreachable.
+  const bulk = await getShowsForCuration(
+    selections.map(getShowId).filter((id): id is string => Boolean(id)),
+  ).catch(() => new Map<string, VoicesShow>());
+
+  const shows = await Promise.all(
+    selections.map((selection) => {
+      const showId = getShowId(selection);
+      return (showId && bulk.get(showId)) || hydrateShow(selection);
+    }),
+  );
   const byId = new Map<string, VoicesShow>();
 
   for (const show of shows) {

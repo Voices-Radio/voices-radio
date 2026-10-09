@@ -29,14 +29,14 @@ export function CallToAction() {
         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <a
             href={briefHref}
-            className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full bg-voices-purple px-8 py-4 text-base font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-white sm:w-auto"
+            className="min-h-12 inline-flex w-full items-center justify-center gap-2 rounded-full bg-voices-purple px-8 py-4 text-base font-black text-white transition hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-voices-purple focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:w-auto"
           >
             Start your brief
             <ArrowRight className="h-5 w-5" />
           </a>
           <a
             href="mailto:bookings@voicesradio.co.uk"
-            className="min-h-12 inline-flex w-full items-center justify-center gap-2 break-all rounded-full border-2 border-slate-900 px-6 py-4 text-sm font-black text-slate-900 transition hover:bg-slate-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 focus:ring-offset-white sm:w-auto sm:px-8 sm:text-base"
+            className="min-h-12 inline-flex w-full items-center justify-center gap-2 break-all rounded-full border-2 border-slate-900 px-6 py-4 text-sm font-black text-slate-900 transition hover:bg-slate-900 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:w-auto sm:px-8 sm:text-base"
           >
             bookings@voicesradio.co.uk
           </a>

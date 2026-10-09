@@ -1,7 +1,8 @@
 import { env } from "@/env";
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import { SanityDocument } from "next-sanity";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
+import { SANITY_CACHE_TAG } from "@/lib/sanity-cache";
 import { headers } from "next/headers";
 import {
   enforceRateLimit,
@@ -52,34 +53,16 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    // Body is only parsed to confirm it is a well-formed Sanity document; any
+    // publish expires every Sanity read (see lib/sanity-cache.ts for why).
     const { _type } = JSON.parse(body) as SanityDocument;
 
-    const pathsToInvalidate = new Set<string>();
-
-    switch (_type) {
-      case "home":
-      case "partner":
-        pathsToInvalidate.add("/");
-
-        break;
-      case "about":
-        pathsToInvalidate.add("/about");
-
-        break;
-      default:
-        pathsToInvalidate.add("/about");
-        pathsToInvalidate.add("/");
-
-        break;
-    }
-
-    pathsToInvalidate.forEach((tag) => {
-      revalidatePath(tag);
-    });
+    revalidateTag(SANITY_CACHE_TAG);
 
     return NextResponse.json({
       success: true,
-      revalidated: [...Array.from(pathsToInvalidate)],
+      revalidated: SANITY_CACHE_TAG,
+      type: _type,
     });
   } catch (err) {
     // An oversize body is the caller's fault, not ours — 413, and don't page

@@ -65,8 +65,12 @@ export type RadioCultScheduleEvent = {
   endDate?: string;
 };
 
+/**
+ * Server-only. The key is deliberately NOT NEXT_PUBLIC_ — it must never reach
+ * the browser bundle. Only /api/radio-cult/live and server components call this.
+ */
 export function getRadioCultHeaders() {
-  const apiKey = voicesMediaConfig.radioCultApiKey;
+  const apiKey = process.env.RADIOCULT_API_KEY;
 
   if (!apiKey) return null;
 

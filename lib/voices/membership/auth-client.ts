@@ -1,6 +1,7 @@
 import "server-only";
 import { VOICES_MEMBERSHIP_API_BASE_URL } from "@/lib/voices/config";
 import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
+import { backendClientHeaders } from "./backend-headers";
 
 /**
  * Thin wrappers around the existing (mobile-oriented) backend auth
@@ -34,7 +35,10 @@ async function authRequest<T>(
   try {
     const response = await fetch(`${VOICES_MEMBERSHIP_API_BASE_URL}${path}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(await backendClientHeaders()),
+      },
       body: JSON.stringify(input),
       cache: "no-store",
     });
@@ -55,6 +59,7 @@ async function authRequest<T>(
 async function authGetRequest<T>(path: string): Promise<BackendAuthResult<T>> {
   try {
     const response = await fetch(`${VOICES_MEMBERSHIP_API_BASE_URL}${path}`, {
+      headers: await backendClientHeaders(),
       cache: "no-store",
     });
 

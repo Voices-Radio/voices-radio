@@ -5,7 +5,14 @@ import { notFound } from "next/navigation";
 import { client } from "@/sanity.client";
 import { blogPostQuery, blogPostsQuery, type BlogPost } from "@/sanity.queries";
 import { PortableText } from "@portabletext/react";
-import { Calendar, User, ArrowLeft, ArrowRight, Share2, Clock } from "lucide-react";
+import {
+  Calendar,
+  User,
+  ArrowLeft,
+  ArrowRight,
+  Share2,
+  Clock,
+} from "lucide-react";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -18,10 +25,12 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await client.fetch(blogPostQuery, { slug });
-  
+
   if (!post) {
     return {
       title: "Post Not Found | Voices Studio",
@@ -30,7 +39,10 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   const title = post.metaTitle || post.title;
   const description = post.metaDescription || post.excerpt;
-  const image = post.ogImage?.asset?.url || post.featuredImage?.asset?.url || "/studio-1.jpg";
+  const image =
+    post.ogImage?.asset?.url ||
+    post.featuredImage?.asset?.url ||
+    "/studio-1.jpg";
 
   return {
     title: `${title} | Voices Studio Blog`,
@@ -75,7 +87,7 @@ async function getRelatedPosts(currentPost: BlogPost): Promise<BlogPost[]> {
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = await getBlogPost(slug);
-  
+
   if (!post) {
     notFound();
   }
@@ -104,7 +116,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const estimateReadingTime = (content: any[]) => {
     const text = content
       .filter((block) => block._type === "block")
-      .map((block) => block.children?.map((child: any) => child.text).join("") || "")
+      .map(
+        (block) =>
+          block.children?.map((child: any) => child.text).join("") || "",
+      )
       .join(" ");
     const wordsPerMinute = 200;
     const wordCount = text.split(" ").length;
@@ -117,18 +132,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <div className="min-h-screen bg-slate-50">
       {/* Navigation */}
       <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <Link
               href="/podcast/blog"
-              className="flex items-center text-slate-600 hover:text-accent transition-colors"
+              className="flex items-center text-slate-600 transition-colors hover:text-accent"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Blog
             </Link>
             <Link
               href="/podcast"
-              className="text-slate-600 hover:text-accent transition-colors"
+              className="text-slate-600 transition-colors hover:text-accent"
             >
               Voices Studio
             </Link>
@@ -137,48 +152,50 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </nav>
 
       {/* Article Header */}
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Categories */}
         {post.categories && post.categories.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="mb-6 flex flex-wrap gap-2">
             {post.categories.map((category) => (
               <span
                 key={category}
-                className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(category)}`}
+                className={`rounded-full px-3 py-1 text-sm font-medium ${getCategoryColor(category)}`}
               >
-                {category.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase())}
+                {category
+                  .replace("-", " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
               </span>
             ))}
           </div>
         )}
 
         {/* Title */}
-        <h1 className="text-4xl sm:text-5xl font-bold text-slate-800 mb-6 leading-tight">
+        <h1 className="mb-6 text-4xl font-bold leading-tight text-slate-800 sm:text-5xl">
           {post.title}
         </h1>
 
         {/* Meta Information */}
-        <div className="flex flex-wrap items-center gap-6 mb-8 text-slate-600">
+        <div className="mb-8 flex flex-wrap items-center gap-6 text-slate-600">
           <div className="flex items-center">
-            <User className="h-5 w-5 mr-2" />
+            <User className="mr-2 h-5 w-5" />
             <span className="font-medium">{post.author}</span>
           </div>
           <div className="flex items-center">
-            <Calendar className="h-5 w-5 mr-2" />
+            <Calendar className="mr-2 h-5 w-5" />
             <span>{formatDate(post.publishedAt)}</span>
           </div>
           <div className="flex items-center">
-            <Clock className="h-5 w-5 mr-2" />
+            <Clock className="mr-2 h-5 w-5" />
             <span>{readingTime} min read</span>
           </div>
-          <button className="flex items-center text-accent hover:text-orange-700 transition-colors">
-            <Share2 className="h-5 w-5 mr-2" />
+          <button className="flex items-center text-accent transition-colors hover:text-orange-700">
+            <Share2 className="mr-2 h-5 w-5" />
             Share
           </button>
         </div>
 
         {/* Featured Image */}
-        <div className="relative h-96 mb-12 rounded-2xl overflow-hidden shadow-xl">
+        <div className="relative mb-12 h-96 overflow-hidden rounded-2xl shadow-xl">
           <Image
             src={post.featuredImage?.asset?.url || "/studio-1.jpg"}
             alt={post.title}
@@ -190,7 +207,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         {/* Excerpt */}
-        <div className="text-xl text-slate-600 mb-12 leading-relaxed font-medium">
+        <div className="mb-12 text-xl font-medium leading-relaxed text-slate-600">
           {post.excerpt}
         </div>
 
@@ -211,7 +228,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         className="rounded-lg shadow-md"
                       />
                       {value.caption && (
-                        <p className="text-sm text-slate-500 mt-2 text-center italic">
+                        <p className="mt-2 text-center text-sm italic text-slate-500">
                           {value.caption}
                         </p>
                       )}
@@ -220,27 +237,29 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 },
                 block: {
                   h2: ({ children }) => (
-                    <h2 className="text-3xl font-bold text-slate-800 mt-12 mb-6">
+                    <h2 className="mb-6 mt-12 text-3xl font-bold text-slate-800">
                       {children}
                     </h2>
                   ),
                   h3: ({ children }) => (
-                    <h3 className="text-2xl font-bold text-slate-800 mt-10 mb-4">
+                    <h3 className="mb-4 mt-10 text-2xl font-bold text-slate-800">
                       {children}
                     </h3>
                   ),
                   h4: ({ children }) => (
-                    <h4 className="text-xl font-bold text-slate-800 mt-8 mb-3">
+                    <h4 className="mb-3 mt-8 text-xl font-bold text-slate-800">
                       {children}
                     </h4>
                   ),
                   blockquote: ({ children }) => (
-                    <blockquote className="border-l-4 border-accent pl-6 py-4 my-8 bg-slate-50 rounded-r-lg">
-                      <p className="text-lg text-slate-700 italic">{children}</p>
+                    <blockquote className="my-8 rounded-r-lg border-l-4 border-accent bg-slate-50 py-4 pl-6">
+                      <p className="text-lg italic text-slate-700">
+                        {children}
+                      </p>
                     </blockquote>
                   ),
                   normal: ({ children }) => (
-                    <p className="text-lg text-slate-700 leading-relaxed mb-6">
+                    <p className="mb-6 text-lg leading-relaxed text-slate-700">
                       {children}
                     </p>
                   ),
@@ -249,7 +268,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   link: ({ children, value }) => (
                     <a
                       href={value.href}
-                      className="text-accent hover:text-orange-700 underline font-medium"
+                      className="font-medium text-accent underline hover:text-orange-700"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -257,7 +276,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     </a>
                   ),
                   strong: ({ children }) => (
-                    <strong className="font-bold text-slate-800">{children}</strong>
+                    <strong className="font-bold text-slate-800">
+                      {children}
+                    </strong>
                   ),
                   em: ({ children }) => (
                     <em className="italic text-slate-700">{children}</em>
@@ -265,12 +286,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 },
                 list: {
                   bullet: ({ children }) => (
-                    <ul className="list-disc list-inside mb-6 space-y-2 text-lg text-slate-700">
+                    <ul className="mb-6 list-inside list-disc space-y-2 text-lg text-slate-700">
                       {children}
                     </ul>
                   ),
                   number: ({ children }) => (
-                    <ol className="list-decimal list-inside mb-6 space-y-2 text-lg text-slate-700">
+                    <ol className="mb-6 list-inside list-decimal space-y-2 text-lg text-slate-700">
                       {children}
                     </ol>
                   ),
@@ -282,13 +303,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-slate-200">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Tags</h3>
+          <div className="mt-12 border-t border-slate-200 pt-8">
+            <h3 className="mb-4 text-lg font-semibold text-slate-800">Tags</h3>
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm"
+                  className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700"
                 >
                   #{tag}
                 </span>
@@ -301,41 +322,43 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
         <section className="bg-white py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-slate-800 mb-8 text-center">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 className="mb-8 text-center text-3xl font-bold text-slate-800">
               Related Posts
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               {relatedPosts.map((relatedPost) => (
                 <Link
                   key={relatedPost._id}
                   href={`/podcast/blog/${relatedPost.slug.current}`}
-                  className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                  className="group overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-lg"
                 >
                   <div className="relative h-48">
                     <Image
-                      src={relatedPost.featuredImage?.asset?.url || "/studio-1.jpg"}
+                      src={
+                        relatedPost.featuredImage?.asset?.url || "/studio-1.jpg"
+                      }
                       alt={relatedPost.title}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 group-hover:text-accent transition-colors">
+                    <h3 className="mb-2 line-clamp-2 text-lg font-bold text-slate-800 transition-colors group-hover:text-accent">
                       {relatedPost.title}
                     </h3>
-                    <p className="text-slate-600 mb-4 line-clamp-3 text-sm">
+                    <p className="mb-4 line-clamp-3 text-sm text-slate-600">
                       {relatedPost.excerpt}
                     </p>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-xs text-slate-500">
-                        <User className="h-3 w-3 mr-1" />
+                        <User className="mr-1 h-3 w-3" />
                         {relatedPost.author}
                       </div>
-                      <div className="flex items-center text-accent group-hover:text-orange-700 transition-colors">
+                      <div className="flex items-center text-accent transition-colors group-hover:text-orange-700">
                         <span className="text-sm font-medium">Read More</span>
-                        <ArrowRight className="h-3 w-3 ml-1" />
+                        <ArrowRight className="ml-1 h-3 w-3" />
                       </div>
                     </div>
                   </div>
@@ -348,25 +371,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-accent to-orange-600 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-4 text-3xl font-bold text-white">
             Ready to Create Your Podcast?
           </h2>
-          <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-            Book our professional studio and bring your podcast ideas to life with state-of-the-art equipment and expert support.
+          <p className="mx-auto mb-8 max-w-3xl text-xl text-white/90">
+            Book our professional studio and bring your podcast ideas to life
+            with state-of-the-art equipment and expert support.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link
               href="https://voicesradio.spaces.nexudus.com/bookings?tab=Resources&view=card"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white text-accent px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="transform rounded-full bg-white px-8 py-4 text-lg font-bold text-accent shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-100"
             >
               Book Studio Now
             </Link>
             <Link
               href="/podcast/blog"
-              className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-accent transition-all duration-300"
+              className="rounded-full border-2 border-white px-8 py-4 text-lg font-bold text-white transition-all duration-300 hover:bg-white hover:text-accent"
             >
               Read More Posts
             </Link>

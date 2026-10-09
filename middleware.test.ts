@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { config } from "./middleware";
+import { NextRequest } from "next/server";
+import { config, middleware } from "./middleware";
 
 /**
  * The staging gate is enforced entirely by this matcher, so a subtle regex
@@ -48,5 +49,29 @@ describe("staging auth matcher", () => {
     expect(isGated("/sitemap.xml")).toBe(false);
     expect(isGated("/logo.png")).toBe(false);
     expect(isGated("/fonts/inter.woff2")).toBe(false);
+  });
+});
+
+describe("requested path forwarding", () => {
+  it("forwards path and query so layouts can build a return URL", () => {
+    const response = middleware(
+      new NextRequest("https://site.test/account/favourites?listId=abc"),
+    );
+
+    expect(response.headers.get("x-middleware-request-x-voices-path")).toBe(
+      "/account/favourites?listId=abc",
+    );
+  });
+
+  it("overwrites a client-supplied value rather than trusting it", () => {
+    const response = middleware(
+      new NextRequest("https://site.test/account", {
+        headers: { "x-voices-path": "https://evil.example" },
+      }),
+    );
+
+    expect(response.headers.get("x-middleware-request-x-voices-path")).toBe(
+      "/account",
+    );
   });
 });

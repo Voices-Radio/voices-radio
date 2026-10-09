@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SaveShowButton from "./save-show-button";
 import { FavouritesProvider } from "./favourites-context";
+import { SessionProvider } from "./session-context";
 
 const push = vi.fn();
 
@@ -62,9 +63,11 @@ describe("SaveShowButton — signed out", () => {
     const user = userEvent.setup();
 
     render(
-      <FavouritesProvider>
-        <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     const button = await screen.findByRole("button", {
@@ -92,9 +95,11 @@ describe("SaveShowButton — signed in, not yet saved", () => {
     const user = userEvent.setup();
 
     render(
-      <FavouritesProvider>
-        <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     const button = await screen.findByRole("button", {
@@ -141,9 +146,11 @@ describe("SaveShowButton — signed in, not yet saved", () => {
     const user = userEvent.setup();
 
     render(
-      <FavouritesProvider>
-        <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     const button = await screen.findByRole("button", {
@@ -164,9 +171,11 @@ describe("SaveShowButton — hover affordance", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     render(
-      <FavouritesProvider>
-        <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     const button = await screen.findByRole("button", {
@@ -196,9 +205,11 @@ describe("SaveShowButton — signed in, already saved", () => {
     const user = userEvent.setup();
 
     render(
-      <FavouritesProvider>
-        <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
-      </FavouritesProvider>,
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+        </FavouritesProvider>
+      </SessionProvider>,
     );
 
     const button = await screen.findByRole("button", {

@@ -82,11 +82,20 @@ export function getArtistIdFromShow(raw: VoicesShowRaw): string | undefined {
   return raw.artistId._id;
 }
 
+/**
+ * The artist the backend already embedded in the show, if any: either
+ * populated into `artistId` (/api/shows, /api/shows/:id) or joined beside it as
+ * `artist` (/api/shows/optimized). When present there is no need for a second
+ * request per artist.
+ */
 export function getPopulatedArtistFromShow(
   raw: VoicesShowRaw,
 ): VoicesArtist | undefined {
-  if (!raw.artistId || typeof raw.artistId === "string") return undefined;
-  return normalizeArtist(raw.artistId);
+  if (raw.artistId && typeof raw.artistId !== "string") {
+    return normalizeArtist(raw.artistId);
+  }
+  if (raw.artist) return normalizeArtist(raw.artist);
+  return undefined;
 }
 
 export function isPublicMatchedShow(raw: VoicesShowRaw) {

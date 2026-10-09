@@ -10,6 +10,7 @@ import type {
   ArtistCapabilityProfile,
   MemberCapabilityProfile,
 } from "./capabilities";
+import { backendClientHeaders } from "./backend-headers";
 import { safeInternalPath } from "./paths";
 
 const ACCESS_COOKIE = "voices_at";
@@ -198,7 +199,10 @@ export async function refreshTokens(): Promise<AuthTokens | null> {
           `${VOICES_MEMBERSHIP_API_BASE_URL}/api/auth/refresh`,
           {
             method: "POST",
-            headers: { Authorization: `Bearer ${refreshToken}` },
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+              ...(await backendClientHeaders()),
+            },
             cache: "no-store",
           },
         );

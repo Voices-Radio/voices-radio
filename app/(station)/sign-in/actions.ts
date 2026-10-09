@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { actionRateLimited } from "@/lib/voices/action-rate-limit";
+import { AUTH_RATE_LIMITS } from "@/lib/voices/rate-limit";
 import { backendLogin } from "@/lib/voices/membership/auth-client";
 import { resolvePostLoginPath } from "@/lib/voices/membership/capabilities";
 import {
@@ -31,6 +33,11 @@ export async function signInAction(
   _prevState: SignInState,
   formData: FormData,
 ): Promise<SignInState> {
+  // Before any work: this is the real sign-in path, and the one an attacker
+  // brute-forces.
+  const limited = await actionRateLimited(AUTH_RATE_LIMITS.login);
+  if (limited) return { formError: limited };
+
   const parsed = schema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
