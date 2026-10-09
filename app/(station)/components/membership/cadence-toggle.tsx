@@ -36,7 +36,7 @@ export default function CadenceToggle({
     <div
       role="group"
       aria-label="Billing cadence"
-      className="inline-flex rounded-full border border-voicesNext-border bg-voicesNext-surface p-1"
+      className="grid w-fit grid-cols-2 rounded-full border border-voicesNext-border bg-voicesNext-background p-1"
     >
       {(
         [
@@ -52,18 +52,21 @@ export default function CadenceToggle({
             aria-pressed={active}
             onClick={() => handleChange(option.value)}
             className={cn(
-              "flex min-w-[112px] items-center justify-center gap-1.5 rounded-full px-5 font-gabarito text-sm font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface",
+              "flex h-11 min-w-[104px] items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 font-gabarito text-sm font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-surface",
               active
                 ? "bg-voicesNext-orangeButton text-white"
                 : "text-voicesNext-cream hover:text-voicesNext-orange",
             )}
           >
             {option.label}
-            {/* The badge's own orange background would wash out against an
-                already-orange active pill, so it only shows as an enticement
-                on the inactive option — exactly when it's doing its job. */}
+            {/* The saving is plain accent text, and only shows on the inactive
+                option — exactly when it's doing its job. Once Annual is
+                selected the price readout carries the saving instead. */}
             {option.value === "annual" && !active && (
-              <AnnualDiscountBadge discountPercent={annualDiscountPercent} />
+              <AnnualDiscountBadge
+                discountPercent={annualDiscountPercent}
+                variant="inline"
+              />
             )}
           </button>
         );
