@@ -11,11 +11,14 @@ import type { MembershipScaleApi, MembershipAnnualApi } from "./schemas";
  */
 export const MEMBERSHIP_FALLBACK_SCALE: MembershipScaleView = {
   minMinor: 399,
-  maxMinor: 1599,
+  maxMinor: 1999,
   defaultMinor: 599,
   stepMinor: 100,
   currency: "gbp",
-  points: [399, 499, 599, 699, 799, 899, 999, 1099, 1199, 1299, 1399, 1499, 1599],
+  points: [
+    399, 499, 599, 699, 799, 899, 999, 1099, 1199, 1299, 1399, 1499, 1599,
+    1699, 1799, 1899, 1999,
+  ],
 };
 
 export const MEMBERSHIP_FALLBACK_ANNUAL: MembershipAnnualView = {
@@ -39,7 +42,7 @@ export const MEMBERSHIP_FALLBACK_COPY: MembershipPage = {
   join_subheading:
     "Slide to set your monthly contribution, or save by paying annually. Every amount keeps the station running.",
   join_scale_body:
-    "There's no tier to pick — just the amount that feels right, from £3.99 to £15.99 a month.",
+    "There's no tier to pick — just the amount that feels right, from £3.99 to £19.99 a month.",
   founding_member_badge_text: "FOUNDING MEMBER · VOICES · 2026",
   retention_offer_heading: "Reduce to £3.99/month",
   retention_offer_body: "Keep supporting Voices at our lowest level.",

@@ -9,21 +9,21 @@ import {
 import type { MembershipScaleApi, MembershipAnnualApi } from "./schemas";
 
 describe("MEMBERSHIP_FALLBACK_SCALE", () => {
-  it("spans £3.99 to £15.99 with a £5.99 default, matching docs/plans/sliding-scale-membership.md", () => {
+  it("spans £3.99 to £19.99 with a £5.99 default, matching docs/plans/sliding-scale-membership.md", () => {
     expect(MEMBERSHIP_FALLBACK_SCALE.minMinor).toBe(399);
-    expect(MEMBERSHIP_FALLBACK_SCALE.maxMinor).toBe(1599);
+    expect(MEMBERSHIP_FALLBACK_SCALE.maxMinor).toBe(1999);
     expect(MEMBERSHIP_FALLBACK_SCALE.defaultMinor).toBe(599);
     expect(MEMBERSHIP_FALLBACK_SCALE.stepMinor).toBe(100);
   });
 
-  it("has exactly 13 points, one per £1 step", () => {
-    expect(MEMBERSHIP_FALLBACK_SCALE.points).toHaveLength(13);
+  it("has exactly 17 points, one per £1 step", () => {
+    expect(MEMBERSHIP_FALLBACK_SCALE.points).toHaveLength(17);
     expect(MEMBERSHIP_FALLBACK_SCALE.points[0]).toBe(399);
     expect(
       MEMBERSHIP_FALLBACK_SCALE.points[
         MEMBERSHIP_FALLBACK_SCALE.points.length - 1
       ],
-    ).toBe(1599);
+    ).toBe(1999);
   });
 });
 

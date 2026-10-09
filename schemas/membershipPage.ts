@@ -117,7 +117,7 @@ export default defineType({
       rows: 2,
       group: "join",
       initialValue:
-        "There's no tier to pick — just the amount that feels right, from £3.99 to £15.99 a month.",
+        "There's no tier to pick — just the amount that feels right, from £3.99 to £19.99 a month.",
     }),
 
     // FAQs
