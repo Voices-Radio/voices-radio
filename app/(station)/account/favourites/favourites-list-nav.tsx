@@ -42,7 +42,7 @@ export default function FavouritesListNav({
       );
       if (!response.ok) {
         const payload = await response.json().catch(() => null);
-        setError(payload?.message || "Couldn't delete that list. Please try again.");
+        setError(payload?.message || "Couldn't delete that playlist. Please try again.");
         return;
       }
       if (activeListId === list.id) {
@@ -51,7 +51,7 @@ export default function FavouritesListNav({
         router.refresh();
       }
     } catch {
-      setError("Couldn't delete that list. Please try again.");
+      setError("Couldn't delete that playlist. Please try again.");
     } finally {
       setDeletingId(null);
     }

@@ -17,6 +17,7 @@ const SIGNED_IN_USER = {
   email: "jack@example.com",
   firstName: "Jack",
   lastName: "Onslow",
+  member: { status: "active", contributionAmountMinor: 500, cadence: "monthly" },
 };
 
 const SHOW_ID = "507f1f77bcf86cd799439021";
@@ -57,7 +58,7 @@ afterEach(() => {
 });
 
 describe("SaveShowButton — signed out", () => {
-  it("routes to /join with a next carrying the save intent, and never calls the backend", async () => {
+  it("routes to /sign-in with a next carrying the save intent, and never calls the backend", async () => {
     const fetchMock = mockFetch({ user: null });
     vi.stubGlobal("fetch", fetchMock);
     const user = userEvent.setup();
@@ -76,7 +77,7 @@ describe("SaveShowButton — signed out", () => {
     await user.click(button);
 
     expect(push).toHaveBeenCalledWith(
-      `/join?next=${encodeURIComponent(`/shows?save=${SHOW_ID}`)}`,
+      `/sign-in?next=${encodeURIComponent(`/shows?save=${SHOW_ID}`)}`,
     );
     expect(
       fetchMock.mock.calls.some(
@@ -196,7 +197,7 @@ describe("SaveShowButton — hover affordance", () => {
 });
 
 describe("SaveShowButton — signed in, already saved", () => {
-  it("opens the list picker instead of toggling straight off", async () => {
+  it("opens the picker instead of toggling straight off", async () => {
     const fetchMock = mockFetch({
       user: SIGNED_IN_USER,
       statuses: { [SHOW_ID]: { saved: true, listIds: ["default-list"] } },
@@ -213,7 +214,7 @@ describe("SaveShowButton — signed in, already saved", () => {
     );
 
     const button = await screen.findByRole("button", {
-      name: /manage lists for late night sessions/i,
+      name: /manage late night sessions in your favourites/i,
     });
     expect(button).toHaveAttribute("aria-pressed", "true");
 

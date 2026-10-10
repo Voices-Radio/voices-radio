@@ -56,6 +56,9 @@ export default async function JoinPage({
   // tapped). Only ever a same-site path; carried through so signing in lands
   // them there with their save replayed.
   const next = safeAccountNextPath(resolvedSearchParams.next);
+  const createAccountHref = next
+    ? `/create-account?next=${encodeURIComponent(next)}`
+    : "/create-account";
   const signInHref = next
     ? `/sign-in?next=${encodeURIComponent(next)}`
     : "/sign-in";
@@ -131,6 +134,17 @@ export default async function JoinPage({
               >
                 Already have an account? Sign in
               </Link>
+            )}
+            {!session && (
+              <p className="font-gabarito text-sm text-voicesNext-cream/70">
+                Just want to save favourites?{" "}
+                <Link
+                  href={createAccountHref}
+                  className="font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
+                >
+                  Create a free account
+                </Link>
+              </p>
             )}
           </header>
 

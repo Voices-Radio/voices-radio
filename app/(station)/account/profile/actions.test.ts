@@ -138,4 +138,19 @@ describe("updateProfileAction", () => {
     expect(result?.status).toBe("error");
     expect(updateProfile).not.toHaveBeenCalled();
   });
+
+  it("for a free account sends only the newsletter choice, never the member-only fields", async () => {
+    await updateProfileAction(
+      undefined,
+      formData({ freeAccount: "1", marketingConsent: "on", displayName: "x", memberUpdates: "on" }),
+    );
+
+    expect(updateProfile).toHaveBeenCalledWith({ marketingConsent: true });
+  });
+
+  it("for a free account, unticking the newsletter sends false", async () => {
+    await updateProfileAction(undefined, formData({ freeAccount: "1" }));
+
+    expect(updateProfile).toHaveBeenCalledWith({ marketingConsent: false });
+  });
 });

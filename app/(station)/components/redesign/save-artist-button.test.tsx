@@ -78,7 +78,7 @@ afterEach(() => {
 });
 
 describe("SaveArtistButton", () => {
-  it("sends a signed-out visitor to /join with the heart encoded in next, without calling the backend", async () => {
+  it("sends a signed-out visitor to /sign-in with the heart encoded in next, without calling the backend", async () => {
     const fetchMock = mockFetch({ user: null });
     vi.stubGlobal("fetch", fetchMock);
     const user = userEvent.setup();
@@ -89,7 +89,7 @@ describe("SaveArtistButton", () => {
     );
 
     expect(push).toHaveBeenCalledWith(
-      `/join?next=${encodeURIComponent(`/artists?saveArtist=${ARTIST_ID}`)}`,
+      `/sign-in?next=${encodeURIComponent(`/artists?saveArtist=${ARTIST_ID}`)}`,
     );
     expect(calls(fetchMock, "PUT")).toHaveLength(0);
   });

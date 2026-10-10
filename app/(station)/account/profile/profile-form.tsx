@@ -42,9 +42,12 @@ function SaveButton() {
 export default function ProfileForm({
   profile,
   showAddress,
+  freeAccount = false,
 }: {
   profile: MembershipProfile;
   showAddress: boolean;
+  /** A non-member: only the newsletter choice applies, so the rest is hidden. */
+  freeAccount?: boolean;
 }) {
   const [state, formAction] = useFormState(updateProfileAction, initialState);
   const statusRef = useRef<HTMLDivElement>(null);
@@ -75,35 +78,41 @@ export default function ProfileForm({
         </div>
       )}
 
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="displayName"
-          className="font-gabarito text-sm font-bold text-voicesNext-cream"
-        >
-          Recognition name
-        </label>
-        <input
-          id="displayName"
-          name="displayName"
-          type="text"
-          defaultValue={profile.displayName ?? ""}
-          maxLength={80}
-          className={accountFieldClassName}
-        />
-        <p className="font-asap text-xs text-voicesNext-cream/70">
-          Shown on the supporter wall, if you opt in below.
-        </p>
-      </div>
+      {freeAccount ? (
+        <input type="hidden" name="freeAccount" value="1" />
+      ) : (
+        <>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="displayName"
+              className="font-gabarito text-sm font-bold text-voicesNext-cream"
+            >
+              Recognition name
+            </label>
+            <input
+              id="displayName"
+              name="displayName"
+              type="text"
+              defaultValue={profile.displayName ?? ""}
+              maxLength={80}
+              className={accountFieldClassName}
+            />
+            <p className="font-asap text-xs text-voicesNext-cream/70">
+              Shown on the supporter wall, if you opt in below.
+            </p>
+          </div>
 
-      <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
-        <input
-          type="checkbox"
-          name="supporterWallOptIn"
-          defaultChecked={profile.supporterWallOptIn}
-          className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background motion-reduce:transition-none"
-        />
-        List me on the public supporter wall.
-      </label>
+          <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
+            <input
+              type="checkbox"
+              name="supporterWallOptIn"
+              defaultChecked={profile.supporterWallOptIn}
+              className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background motion-reduce:transition-none"
+            />
+            List me on the public supporter wall.
+          </label>
+        </>
+      )}
 
       {/* Deliberately a separate control from supporter-wall opt-in — one
           is public recognition, the other is transactional-vs-marketing
@@ -118,17 +127,19 @@ export default function ProfileForm({
         Send me the Voices newsletter.
       </label>
 
-      <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
-        <input
-          type="checkbox"
-          name="memberUpdates"
-          defaultChecked={profile.memberUpdates}
-          className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background motion-reduce:transition-none"
-        />
-        Send me member-only updates.
-      </label>
+      {!freeAccount && (
+        <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
+          <input
+            type="checkbox"
+            name="memberUpdates"
+            defaultChecked={profile.memberUpdates}
+            className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background motion-reduce:transition-none"
+          />
+          Send me member-only updates.
+        </label>
+      )}
 
-      {showAddress && (
+      {!freeAccount && showAddress && (
         <fieldset className="flex flex-col gap-3 border-0 p-0">
           <legend className="font-gabarito text-sm font-bold text-voicesNext-cream">
             Postal address

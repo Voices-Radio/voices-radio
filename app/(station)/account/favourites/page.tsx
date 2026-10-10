@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { getFavouriteLists, getFavourites } from "@/lib/voices/favourites/client";
+import { canOrganisePlaylists } from "@/lib/voices/membership/capabilities";
+import { lookupCapabilities } from "@/lib/voices/membership/session";
 import { AccountPageIntro } from "../components/account-surface";
+import PlaylistsUpsell from "./playlists-upsell";
 import FavouritesListNav from "./favourites-list-nav";
 import FavouritesLoadMore from "./favourites-load-more";
 
@@ -16,20 +19,37 @@ export default async function AccountFavouritesPage({
 }) {
   const { list } = await searchParams;
 
-  const [listsResult, favouritesResult] = await Promise.all([
+  const [listsResult, favouritesResult, capabilities] = await Promise.all([
     getFavouriteLists(),
     getFavourites({ listId: list }),
+    lookupCapabilities(),
   ]);
+
+  // Playlists are for members. Only a confirmed non-member sees the upsell: if
+  // the lookup is down we say nothing rather than tell a member to join.
+  const isFreeAccount =
+    capabilities.status === "ok" &&
+    !canOrganisePlaylists(capabilities.data.member);
 
   return (
     <div>
       <AccountPageIntro
         eyebrow="Saved"
         title="Your favourites"
-        description="Shows you've saved, organised into My Favourites and any lists you've created from a show's save button."
+        description={
+          isFreeAccount
+            ? "The artists and shows you've saved."
+            : "Shows you've saved, organised into My Favourites and any playlists you've created from a show's save button."
+        }
       />
 
-      {listsResult.ok && listsResult.data.length > 0 && (
+      {isFreeAccount && (
+        <div className="mt-4">
+          <PlaylistsUpsell />
+        </div>
+      )}
+
+      {!isFreeAccount && listsResult.ok && listsResult.data.length > 0 && (
         <div className="mt-6">
           <FavouritesListNav lists={listsResult.data} activeListId={list} />
         </div>
@@ -46,7 +66,7 @@ export default async function AccountFavouritesPage({
         ) : favouritesResult.data.favourites.length === 0 ? (
           <p className="font-gabarito text-sm text-voicesNext-cream/70">
             {list
-              ? "Nothing saved to this list yet."
+              ? "Nothing saved to this playlist yet."
               : "Nothing saved yet — tap the bookmark on any show to save it here."}
           </p>
         ) : (

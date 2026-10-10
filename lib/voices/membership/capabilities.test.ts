@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   accountHomeDecision,
   accountLinksForCapabilities,
+  canOrganisePlaylists,
   resolvePostLoginPath,
   type AccountCapabilities,
 } from "./capabilities";
@@ -70,6 +71,7 @@ describe("accountLinksForCapabilities", () => {
     expect(accountLinksForCapabilities([])).toEqual([
       { href: "/account", label: "Account" },
       { href: "/account/favourites", label: "Favourites" },
+      { href: "/account/profile", label: "Profile" },
     ]);
   });
 });
@@ -173,5 +175,26 @@ describe("resolvePostLoginPath — the sign-in matrix (plan §4a)", () => {
         capabilities: capabilities(["member"]),
       }),
     ).toBe("/account/membership");
+  });
+});
+
+describe("canOrganisePlaylists", () => {
+  it.each(["active", "grace", "cancelling", "complimentary"])(
+    "allows a %s membership",
+    (status) => {
+      expect(canOrganisePlaylists({ status })).toBe(true);
+    },
+  );
+
+  it.each(["pending_reconciliation", "expired", "unknown", null])(
+    "does not allow a %s membership",
+    (status) => {
+      expect(canOrganisePlaylists({ status })).toBe(false);
+    },
+  );
+
+  it("does not allow an account with no membership at all", () => {
+    expect(canOrganisePlaylists(null)).toBe(false);
+    expect(canOrganisePlaylists(undefined)).toBe(false);
   });
 });

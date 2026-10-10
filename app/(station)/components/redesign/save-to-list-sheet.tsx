@@ -4,14 +4,18 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Loader2, Plus, X } from "lucide-react";
 import { useEffect, useState, type FormEvent, type RefObject } from "react";
+import Link from "next/link";
+import { canOrganisePlaylists } from "@/lib/voices/membership/capabilities";
 import { useFavourites } from "./favourites-context";
+import { useSessionUser } from "./session-context";
 
 const GENERIC_ERROR = "Something went wrong. Please try again.";
 
 /**
- * The list picker a save button opens once a show is already saved
- * somewhere — lets a member choose which of their lists it sits in, or
- * remove it entirely. Modelled on confirm-change-dialog.tsx, the existing
+ * The playlist picker a save button opens once a show is already saved
+ * somewhere — lets a member choose which of their playlists it sits in, or
+ * remove it entirely. Free accounts have one list ("My Favourites"), so they
+ * get a simple "Saved" view with a remove action and a nudge to join instead. Modelled on confirm-change-dialog.tsx, the existing
  * Radix dialog pattern in this repo (real Dialog.Title, onCloseAutoFocus
  * returning focus to the button that opened it).
  *
@@ -40,6 +44,8 @@ export default function SaveToListSheet({
 }) {
   const { lists, listsLoading, ensureListsLoaded, addListToCache } =
     useFavourites();
+  const { user } = useSessionUser();
+  const canOrganise = canOrganisePlaylists(user?.member);
   const [pendingListIds, setPendingListIds] = useState<string[]>(listIds);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,13 +64,13 @@ export default function SaveToListSheet({
     if (open) {
       setPendingListIds(listIds);
       setError(null);
-      ensureListsLoaded();
+      if (canOrganise) ensureListsLoaded();
     }
     // listIds is intentionally excluded: it can change while the sheet is
     // open (an optimistic update elsewhere) and re-syncing pendingListIds
     // from it mid-edit would clobber whatever the member is choosing.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, ensureListsLoaded]);
+  }, [open, ensureListsLoaded, canOrganise]);
 
   function toggleList(listId: string) {
     setPendingListIds((prev) =>
@@ -146,7 +152,8 @@ export default function SaveToListSheet({
       const payload = await response.json().catch(() => null);
       if (!response.ok || !payload?.list) {
         setError(
-          payload?.message || "Couldn't create that list. Please try again.",
+          payload?.message ||
+            "Couldn't create that playlist. Please try again.",
         );
         return;
       }
@@ -154,7 +161,7 @@ export default function SaveToListSheet({
       setPendingListIds((prev) => [...prev, payload.list.id]);
       setNewListName("");
     } catch {
-      setError("Couldn't create that list. Please try again.");
+      setError("Couldn't create that playlist. Please try again.");
     } finally {
       setCreating(false);
     }
@@ -199,7 +206,7 @@ export default function SaveToListSheet({
                   >
                     <div className="flex items-start justify-between gap-4">
                       <Dialog.Title className="font-gabarito text-lg font-bold text-voicesNext-cream">
-                        Save to…
+                        {canOrganise ? "Save to…" : "Saved to My Favourites"}
                       </Dialog.Title>
                       <Dialog.Close className="shrink-0 rounded-full p-1 text-voicesNext-cream/70 transition-colors hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange">
                         <X aria-hidden="true" size={18} />
@@ -208,23 +215,40 @@ export default function SaveToListSheet({
                     </div>
 
                     <Dialog.Description className="sr-only">
-                      Choose which of your lists {title} should be saved to.
+                      {canOrganise
+                        ? `Choose which of your playlists ${title} should be saved to.`
+                        : `${title} is saved to your favourites.`}
                     </Dialog.Description>
 
-                    {listsLoading && !lists && (
+                    {!canOrganise && (
+                      <div className="flex flex-col gap-3">
+                        <p className="font-gabarito text-sm text-voicesNext-cream/80">
+                          Organise your favourites into playlists with a Voices
+                          membership.
+                        </p>
+                        <Link
+                          href="/join"
+                          className="font-gabarito text-sm font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
+                        >
+                          Become a member
+                        </Link>
+                      </div>
+                    )}
+
+                    {canOrganise && listsLoading && !lists && (
                       <div className="flex items-center gap-2 font-gabarito text-sm text-voicesNext-cream/70">
                         <Loader2
                           aria-hidden="true"
                           size={16}
                           className="animate-spin"
                         />
-                        Loading your lists…
+                        Loading your playlists…
                       </div>
                     )}
 
-                    {lists && lists.length > 0 && (
+                    {canOrganise && lists && lists.length > 0 && (
                       <fieldset className="flex max-h-[240px] flex-col gap-1 overflow-y-auto">
-                        <legend className="sr-only">Your lists</legend>
+                        <legend className="sr-only">Your playlists</legend>
                         {lists.map((list) => (
                           <label
                             key={list.id}
@@ -245,39 +269,46 @@ export default function SaveToListSheet({
                       </fieldset>
                     )}
 
-                    <form
-                      onSubmit={handleCreateList}
-                      className="flex items-center gap-2"
-                    >
-                      <label htmlFor={`new-list-${showId}`} className="sr-only">
-                        New list name
-                      </label>
-                      <input
-                        id={`new-list-${showId}`}
-                        type="text"
-                        value={newListName}
-                        onChange={(event) => setNewListName(event.target.value)}
-                        placeholder="New list name"
-                        maxLength={60}
-                        className="h-10 flex-1 border border-voicesNext-border bg-transparent px-3 font-gabarito text-sm text-voicesNext-cream placeholder:text-voicesNext-cream/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange"
-                      />
-                      <button
-                        type="submit"
-                        disabled={!newListName.trim() || creating}
-                        aria-label="Create list"
-                        className="flex h-10 w-10 shrink-0 items-center justify-center border border-voicesNext-border text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange disabled:opacity-40"
+                    {canOrganise && (
+                      <form
+                        onSubmit={handleCreateList}
+                        className="flex items-center gap-2"
                       >
-                        {creating ? (
-                          <Loader2
-                            aria-hidden="true"
-                            size={16}
-                            className="animate-spin"
-                          />
-                        ) : (
-                          <Plus aria-hidden="true" size={16} />
-                        )}
-                      </button>
-                    </form>
+                        <label
+                          htmlFor={`new-list-${showId}`}
+                          className="sr-only"
+                        >
+                          New playlist name
+                        </label>
+                        <input
+                          id={`new-list-${showId}`}
+                          type="text"
+                          value={newListName}
+                          onChange={(event) =>
+                            setNewListName(event.target.value)
+                          }
+                          placeholder="New playlist name"
+                          maxLength={60}
+                          className="h-10 flex-1 border border-voicesNext-border bg-transparent px-3 font-gabarito text-sm text-voicesNext-cream placeholder:text-voicesNext-cream/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange"
+                        />
+                        <button
+                          type="submit"
+                          disabled={!newListName.trim() || creating}
+                          aria-label="Create playlist"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center border border-voicesNext-border text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange disabled:opacity-40"
+                        >
+                          {creating ? (
+                            <Loader2
+                              aria-hidden="true"
+                              size={16}
+                              className="animate-spin"
+                            />
+                          ) : (
+                            <Plus aria-hidden="true" size={16} />
+                          )}
+                        </button>
+                      </form>
+                    )}
 
                     {error && (
                       <p
@@ -301,15 +332,17 @@ export default function SaveToListSheet({
                       ) : (
                         <span />
                       )}
-                      <button
-                        type="button"
-                        onClick={handleSave}
-                        disabled={saving}
-                        aria-busy={saving}
-                        className="h-11 shrink-0 bg-voicesNext-orange px-5 font-gabarito text-sm font-bold text-voicesNext-background transition-opacity hover:opacity-90 disabled:opacity-60"
-                      >
-                        {saving ? "Saving…" : "Done"}
-                      </button>
+                      {canOrganise && (
+                        <button
+                          type="button"
+                          onClick={handleSave}
+                          disabled={saving}
+                          aria-busy={saving}
+                          className="h-11 shrink-0 bg-voicesNext-orange px-5 font-gabarito text-sm font-bold text-voicesNext-background transition-opacity hover:opacity-90 disabled:opacity-60"
+                        >
+                          {saving ? "Saving…" : "Done"}
+                        </button>
+                      )}
                     </div>
                   </motion.div>
                 </motion.div>

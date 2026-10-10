@@ -48,6 +48,10 @@ export default function SignInForm({ next }: { next: string }) {
     next ? `?next=${encodeURIComponent(next)}` : ""
   }`;
 
+  const createAccountHref = `/create-account${
+    next ? `?next=${encodeURIComponent(next)}` : ""
+  }`;
+
   useEffect(() => {
     if (state?.formError) {
       errorRef.current?.focus();
@@ -60,7 +64,7 @@ export default function SignInForm({ next }: { next: string }) {
         <AccountPageIntro
           eyebrow="Voices account"
           title="Sign in"
-          description="Sign in to manage your Voices membership or artist profile."
+          description="Sign in to your Voices account, membership or artist profile."
         />
 
         <AccountSurface className="mt-6">
@@ -154,6 +158,15 @@ export default function SignInForm({ next }: { next: string }) {
         </AccountSurface>
 
         <p className="mt-6 font-gabarito text-sm text-voicesNext-cream/70">
+          Don&rsquo;t have an account?{" "}
+          <Link
+            href={createAccountHref}
+            className="font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
+          >
+            Create one here
+          </Link>
+        </p>
+        <p className="mt-2 font-gabarito text-sm text-voicesNext-cream/70">
           New to Voices?{" "}
           <Link
             href="/join"

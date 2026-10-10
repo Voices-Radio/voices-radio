@@ -6,7 +6,7 @@ import { useEffect, useState, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 import {
   SAVE_ARTIST_PARAM,
-  joinHrefForSaveIntent,
+  signInHrefForSaveIntent,
 } from "@/lib/voices/favourites/save-intent";
 import { useFavourites } from "./favourites-context";
 
@@ -15,7 +15,7 @@ import { useFavourites } from "./favourites-context";
  * the card's stretched `<Link>`, never inside it — a `<button>` in an `<a>`
  * is invalid HTML and would fire both the toggle and the navigation.
  *
- * Signed-out visitors are sent to /join?next=…, with the intended heart
+ * Signed-out visitors are sent to /sign-in?next=…, with the intended heart
  * encoded in `next`; save-intent-replay.tsx completes it after they join or
  * sign in. See save-show-button.tsx for the show equivalent.
  */
@@ -64,7 +64,7 @@ export default function SaveArtistButton({
       const search =
         typeof window !== "undefined" ? window.location.search : "";
       router.push(
-        joinHrefForSaveIntent(
+        signInHrefForSaveIntent(
           pathname ?? "/artists",
           search,
           SAVE_ARTIST_PARAM,

@@ -20,16 +20,27 @@ const CUSTOM_LIST = {
   showCount: 1,
 };
 
+const ACTIVE_MEMBER = {
+  status: "active",
+  contributionAmountMinor: 500,
+  cadence: "monthly",
+};
+
 function mockFetch({
   putStatus = 200,
   postListStatus = 201,
-}: { putStatus?: number; postListStatus?: number } = {}) {
+  member = ACTIVE_MEMBER as typeof ACTIVE_MEMBER | null,
+}: {
+  putStatus?: number;
+  postListStatus?: number;
+  member?: typeof ACTIVE_MEMBER | null;
+} = {}) {
   return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
     const method = init?.method ?? "GET";
 
     if (url.includes("/api/auth/session")) {
-      return new Response(JSON.stringify({ user: { _id: "u1" } }), {
+      return new Response(JSON.stringify({ user: { _id: "u1", member } }), {
         status: 200,
       });
     }
@@ -220,8 +231,8 @@ describe("SaveToListSheet", () => {
     render(<Harness listIds={[]} onChange={onChange} />);
     await screen.findByRole("checkbox", { name: /my favourites/i });
 
-    await user.type(screen.getByLabelText(/new list name/i), "Jazz Digs");
-    await user.click(screen.getByRole("button", { name: /create list/i }));
+    await user.type(screen.getByLabelText(/new playlist name/i), "Jazz Digs");
+    await user.click(screen.getByRole("button", { name: /create playlist/i }));
 
     const newCheckbox = await screen.findByRole("checkbox", {
       name: /jazz digs/i,
@@ -255,5 +266,58 @@ describe("SaveToListSheet", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("nope");
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  describe("for a free (non-member) account", () => {
+    it("shows one saved list with a remove action and a playlists upsell, but no playlist controls", async () => {
+      vi.stubGlobal("fetch", mockFetch({ member: null }));
+      render(<Harness listIds={[DEFAULT_LIST.id]} onChange={vi.fn()} />);
+
+      expect(
+        await screen.findByRole("heading", { name: /saved to my favourites/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: /become a member/i }),
+      ).toHaveAttribute("href", "/join");
+      expect(screen.getByText(/organise your favourites into playlists/i)).toBeInTheDocument();
+
+      expect(screen.queryByRole("checkbox")).toBeNull();
+      expect(screen.queryByLabelText(/new playlist name/i)).toBeNull();
+      expect(screen.queryByRole("button", { name: /create playlist/i })).toBeNull();
+    });
+
+    it("can still remove the show from favourites", async () => {
+      const fetchMock = mockFetch({ member: null });
+      vi.stubGlobal("fetch", fetchMock);
+      const onChange = vi.fn();
+      const user = userEvent.setup();
+
+      render(<Harness listIds={[DEFAULT_LIST.id]} onChange={onChange} />);
+      await user.click(
+        await screen.findByRole("button", { name: /remove from favourites/i }),
+      );
+
+      await waitFor(() => expect(onChange).toHaveBeenCalledWith([]));
+      expect(
+        fetchMock.mock.calls.some(
+          ([input, init]) =>
+            String(input) === `/api/favourites/${SHOW_ID}` &&
+            (init as RequestInit).method === "DELETE",
+        ),
+      ).toBe(true);
+    });
+  });
+
+  it("treats a lapsed membership like a free account", async () => {
+    vi.stubGlobal(
+      "fetch",
+      mockFetch({ member: { ...ACTIVE_MEMBER, status: "expired" } }),
+    );
+    render(<Harness listIds={[DEFAULT_LIST.id]} onChange={vi.fn()} />);
+
+    expect(
+      await screen.findByRole("link", { name: /become a member/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText(/new playlist name/i)).toBeNull();
   });
 });

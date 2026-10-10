@@ -43,6 +43,21 @@ export function hasCapability(
   return capabilities?.capabilities.includes(capability) ?? false;
 }
 
+/**
+ * Membership statuses that unlock custom playlists. Mirrors the backend's
+ * PLAYLIST_ENTITLED_STATUSES (voices_backend/services/membership/
+ * playlistEntitlement.js), which is what actually enforces it; this only
+ * decides what the UI offers. Not the same as having the "member" capability,
+ * which includes lapsed and cancelled memberships.
+ */
+const PLAYLIST_ENTITLED_STATUSES = ["active", "grace", "cancelling", "complimentary"];
+
+export function canOrganisePlaylists(
+  member: Pick<MemberCapabilityProfile, "status"> | null | undefined,
+) {
+  return member?.status != null && PLAYLIST_ENTITLED_STATUSES.includes(member.status);
+}
+
 export function safeAccountNextPath(next: string | undefined) {
   return next && next.startsWith("/") && !next.startsWith("//")
     ? next
@@ -121,6 +136,7 @@ export function accountLinksForCapabilities(
     return [
       { href: "/account", label: "Account" },
       { href: "/account/favourites", label: "Favourites" },
+      { href: "/account/profile", label: "Profile" },
     ];
   }
 

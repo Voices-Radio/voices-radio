@@ -14,6 +14,7 @@ import {
   getSession,
   lookupCapabilities,
 } from "@/lib/voices/membership/session";
+import FreeAccountHome from "./components/free-account-home";
 import MembershipStatusCard from "../components/membership/membership-status-card";
 import {
   AccountPageIntro,
@@ -28,33 +29,6 @@ export const metadata: Metadata = {
 };
 
 const USABLE_BENEFIT_STATES = new Set(["available", "requires_action"]);
-
-function EmptyAccountState() {
-  return (
-    <div>
-      <AccountPageIntro eyebrow="Account desk" title="Your account" />
-      <AccountSurface className="mt-6">
-        <h2 className="font-gabarito text-xl font-bold text-voicesNext-cream">
-          Nothing active yet
-        </h2>
-        <p className="mt-3 font-asap text-sm leading-relaxed text-voicesNext-cream/75">
-          This login is not linked to a membership or an artist profile right
-          now. Join as a member, or use the invitation link from Voices to claim
-          an artist profile.
-        </p>
-        <Link
-          href="/join"
-          className={cn(
-            accountPrimaryButtonClassName,
-            "mt-5 h-11 px-5 text-sm",
-          )}
-        >
-          Join as a member
-        </Link>
-      </AccountSurface>
-    </div>
-  );
-}
 
 /**
  * Shown when the capabilities lookup fails, in place of EmptyAccountState.
@@ -123,7 +97,10 @@ export default async function AccountPage() {
   }
 
   if (decision.kind === "empty") {
-    return <EmptyAccountState />;
+    // No membership and no artist profile: a free account, which is complete
+    // in itself (favourites, contact preferences), not an error state.
+    const user = await getSession();
+    return <FreeAccountHome firstName={user?.firstName} />;
   }
 
   const [user, membershipResult, benefitsResult] = await Promise.all([

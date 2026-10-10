@@ -30,7 +30,7 @@ export type ProfileState =
   { status: "success" } | { status: "error"; message: string } | undefined;
 
 /**
- * supporterWallOptIn, marketingConsent and memberUpdates are independently
+ * For members: supporterWallOptIn, marketingConsent and memberUpdates are independently
  * controlled (contract §9 / brief test #16) — this always sends the form's
  * current checked state for all three, so unchecking one never touches the
  * others.
@@ -39,6 +39,18 @@ export async function updateProfileAction(
   _prevState: ProfileState,
   formData: FormData,
 ): Promise<ProfileState> {
+  // A free (non-member) account only has the newsletter choice. The form marks
+  // itself, and we send nothing else so a stray field can't touch member-only
+  // settings (supporter wall, member updates, recognition name, address).
+  if (formData.get("freeAccount")) {
+    const result = await updateProfile({
+      marketingConsent: formData.get("marketingConsent") === "on",
+    });
+    if (!result.ok) return { status: "error", message: result.message };
+    revalidatePath("/account/profile");
+    return { status: "success" };
+  }
+
   const parsed = schema.safeParse({
     displayName: formData.get("displayName") || undefined,
     supporterWallOptIn: formData.get("supporterWallOptIn") ?? undefined,

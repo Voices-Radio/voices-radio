@@ -7,6 +7,8 @@ import {
   AccountPageIntro,
   AccountSurface,
 } from "../components/account-surface";
+import { hasCapability } from "@/lib/voices/membership/capabilities";
+import { getCapabilities } from "@/lib/voices/membership/session";
 import ProfileForm from "./profile-form";
 
 export const metadata: Metadata = {
@@ -15,10 +17,15 @@ export const metadata: Metadata = {
 };
 
 export default async function AccountProfilePage() {
-  const [profileResult, benefitsResult] = await Promise.all([
+  const [profileResult, benefitsResult, capabilities] = await Promise.all([
     getProfile(),
     getBenefits(),
+    getCapabilities(),
   ]);
+
+  // Only a confirmed non-member gets the trimmed-down form: if the capabilities
+  // lookup is down we show the full one rather than hide a member's settings.
+  const freeAccount = capabilities !== null && !hasCapability(capabilities, "member");
 
   if (!profileResult.ok) {
     return (
@@ -41,12 +48,20 @@ export default async function AccountProfilePage() {
   return (
     <div>
       <AccountPageIntro
-        eyebrow="Member desk"
+        eyebrow={freeAccount ? "Account desk" : "Member desk"}
         title="Your profile"
-        description="Set the details used for member recognition and benefit fulfilment."
+        description={
+          freeAccount
+            ? "Choose how Voices contacts you."
+            : "Set the details used for member recognition and benefit fulfilment."
+        }
       />
       <div className="mt-6">
-        <ProfileForm profile={profileResult.data} showAddress={showAddress} />
+        <ProfileForm
+          profile={profileResult.data}
+          showAddress={showAddress}
+          freeAccount={freeAccount}
+        />
       </div>
     </div>
   );

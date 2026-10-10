@@ -15,7 +15,7 @@ const CONFIRMATION_DURATION_MS = 4000;
  * Replays a save that was interrupted by a join / sign-in redirect. A
  * signed-out tap on a show's bookmark (save-show-button.tsx) or an artist's
  * heart (save-artist-button.tsx) sends the visitor to
- * `/join?next=<path>?save=<showId>` (or `?saveArtist=<artistId>`), from
+ * `/sign-in?next=<path>?save=<showId>` (or `?saveArtist=<artistId>`), from
  * where they join or sign in; once back here signed in, this reads the
  * param, saves to the caller's default list (shows) or hearts the artist,
  * and shows a brief confirmation.

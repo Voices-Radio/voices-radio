@@ -12,9 +12,9 @@ export interface MemberBenefitCopy {
  */
 export const MEMBER_BENEFITS: readonly MemberBenefitCopy[] = [
   {
-    title: "Save your favourite artists & shows",
+    title: "Organise your favourites into playlists",
     description:
-      "Save your Favourite Artists & Shows to your account, so they're always easy to find.",
+      "Group the shows you save into your own playlists, so they're always easy to find. Anyone with a free account can save favourites; playlists are for members.",
   },
   {
     title: "Merch discount",

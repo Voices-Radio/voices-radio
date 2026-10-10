@@ -8,7 +8,7 @@ describe("MemberBenefits", () => {
 
     const section = screen.getByRole("region", { name: "What you get" });
     for (const title of [
-      "Save your favourite artists & shows",
+      "Organise your favourites into playlists",
       "Merch discount",
       "Event discounts",
       "Early release tickets",
@@ -20,6 +20,13 @@ describe("MemberBenefits", () => {
         within(section).getByRole("heading", { name: title }),
       ).toBeInTheDocument();
     }
+  });
+
+  it("no longer lists saving favourites, which a free account already gets", () => {
+    render(<MemberBenefits />);
+    expect(
+      screen.queryByRole("heading", { name: "Save your favourite artists & shows" }),
+    ).toBeNull();
   });
 
   it("states that the benefits don't depend on the amount chosen", () => {

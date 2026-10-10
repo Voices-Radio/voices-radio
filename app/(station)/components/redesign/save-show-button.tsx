@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 import {
   SAVE_SHOW_PARAM,
-  joinHrefForSaveIntent,
+  signInHrefForSaveIntent,
 } from "@/lib/voices/favourites/save-intent";
 import { useFavourites } from "./favourites-context";
 import dynamic from "next/dynamic";
@@ -25,9 +25,9 @@ const SaveToListSheet = dynamic(() => import("./save-to-list-sheet"), {
  * both the save and the navigation on one tap.
  *
  * Interaction: a tap when unsaved saves straight to "My Favourites" (the
- * common case, one tap); a tap when already saved opens the list picker to
- * manage which lists it's in or remove it. Signed-out visitors are routed
- * to /join?next=… (which offers "Already have an account? Sign in") with
+ * common case, one tap); a tap when already saved opens the picker to
+ * manage which playlists it's in (members) or remove it. Signed-out visitors are routed
+ * to /sign-in?next=… (which offers "Create one here" and "Join as a member") with
  * the intended save encoded in `next`; see save-intent-replay.tsx for how
  * it's replayed afterwards.
  */
@@ -91,7 +91,7 @@ export default function SaveShowButton({
       const search =
         typeof window !== "undefined" ? window.location.search : "";
       router.push(
-        joinHrefForSaveIntent(pathname, search, SAVE_SHOW_PARAM, showId),
+        signInHrefForSaveIntent(pathname, search, SAVE_SHOW_PARAM, showId),
       );
       return;
     }
@@ -115,7 +115,7 @@ export default function SaveShowButton({
         disabled={pending}
         aria-pressed={status.saved}
         aria-label={
-          status.saved ? `Manage lists for ${title}` : `Save ${title}`
+          status.saved ? `Manage ${title} in your favourites` : `Save ${title}`
         }
         className={cn(
           // p-3/-m-3 grows the tap target to 44px (WCAG 2.5.5) without
