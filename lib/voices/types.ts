@@ -9,6 +9,8 @@ export type VoicesLocationTag = "kx" | "east" | "london" | "world" | string;
 export interface VoicesArtistRaw {
   _id: string;
   name: string;
+  artistName?: string | null;
+  showName?: string | null;
   bio?: string | null;
   imageUrl?: string | null;
   bannerUrl?: string | null;
@@ -83,6 +85,7 @@ export interface VoicesShowRaw {
 export interface VoicesArtist {
   id: string;
   name: string;
+  showName?: string;
   bio: string;
   imageUrl?: string;
   bannerUrl?: string;

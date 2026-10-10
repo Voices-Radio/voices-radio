@@ -52,7 +52,7 @@ beforeEach(() => {
 });
 
 describe("updateArtistProfileAction", () => {
-  it("sends only the backend's self-editable artist profile fields", async () => {
+  it("submits name changes for moderation while excluding producer-owned fields", async () => {
     const result = await updateArtistProfileAction(
       undefined,
       formData({
@@ -73,6 +73,9 @@ describe("updateArtistProfileAction", () => {
 
     expect(result).toEqual({ status: "success" });
     expect(updateArtistProfile).toHaveBeenCalledWith({
+      name: "Malicious Rename",
+      artistName: undefined,
+      showName: undefined,
       bio: "Updated",
       imageUrl: "https://example.com/profile.jpg",
       bannerUrl: "https://example.com/banner.jpg",
@@ -88,9 +91,6 @@ describe("updateArtistProfileAction", () => {
         facebook: "",
       },
     });
-    expect(
-      JSON.stringify(vi.mocked(updateArtistProfile).mock.calls[0][0]),
-    ).not.toContain("Malicious Rename");
     expect(
       JSON.stringify(vi.mocked(updateArtistProfile).mock.calls[0][0]),
     ).not.toContain("attacker@example.com");
@@ -193,10 +193,10 @@ describe("uploadArtistImageAction", () => {
     expect(uploadArtistProfileImage).not.toHaveBeenCalled();
   });
 
-  it("uploads the file and revalidates on success", async () => {
+  it("stages an uploaded file for the main review submission", async () => {
     vi.mocked(uploadArtistProfileImage).mockResolvedValue({
       ok: true,
-      data: { ...DEFAULT_PROFILE, imageUrl: "https://blob.example/photo.jpg" },
+      data: { field: "imageUrl", stagedImageUrl: "https://blob.example/photo.jpg" },
     });
     const body = new FormData();
     body.append("image", new File(["bytes"], "photo.jpg", { type: "image/jpeg" }));
@@ -209,9 +209,10 @@ describe("uploadArtistImageAction", () => {
     );
     expect(result).toEqual({
       status: "success",
-      profile: { ...DEFAULT_PROFILE, imageUrl: "https://blob.example/photo.jpg" },
+      field: "imageUrl",
+      stagedImageUrl: "https://blob.example/photo.jpg",
     });
-    expect(revalidatePath).toHaveBeenCalledWith("/account/artist");
+    expect(revalidatePath).not.toHaveBeenCalled();
   });
 
   it("surfaces the backend's error message on failure", async () => {

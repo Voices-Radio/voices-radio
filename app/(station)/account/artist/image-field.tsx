@@ -81,8 +81,8 @@ export default function ImageField({
     input.value = "";
 
     if (result.status === "success") {
-      setPreviewUrl(result.profile[fieldName]);
-      setMessage({ tone: "success", text: "Image updated." });
+      setPreviewUrl(result.stagedImageUrl);
+      setMessage({ tone: "success", text: "Image staged for review." });
     } else {
       setMessage({ tone: "error", text: result.message });
     }
@@ -99,6 +99,7 @@ export default function ImageField({
 
       {mode === "upload" ? (
         <div className="group/image flex flex-col gap-3 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background p-4 transition-[border-color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-voicesNext-orange/70 hover:bg-voicesNext-surface motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+          <input type="hidden" name={fieldName} value={previewUrl ?? ""} />
           <div className="flex items-center gap-4">
             {previewUrl ? (
               // Externally hosted (Vercel Blob, or whatever URL a DJ entered

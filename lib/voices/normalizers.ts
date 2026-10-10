@@ -58,7 +58,8 @@ export function normalizeArtist(raw: VoicesArtistRaw): VoicesArtist {
 
   return {
     id: raw._id,
-    name: raw.name,
+    name: raw.artistName ?? raw.name,
+    showName: raw.showName ?? undefined,
     bio: raw.bio ?? "",
     imageUrl,
     bannerUrl: raw.bannerUrl ?? undefined,

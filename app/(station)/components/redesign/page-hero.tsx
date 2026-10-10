@@ -3,11 +3,13 @@ import type { ReactNode } from "react";
 export default function PageHero({
   eyebrow,
   title,
+  subtitle,
   description,
   meta,
 }: {
   eyebrow?: string;
   title: string;
+  subtitle?: string;
   description?: string;
   /**
    * Optional readout pinned to the right of the title on desktop. The hero's
@@ -29,6 +31,11 @@ export default function PageHero({
           <h1 className="text-balance max-w-4xl font-outfit text-5xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-7xl">
             {title}
           </h1>
+          {subtitle && (
+            <p className="mt-3 font-gabarito text-lg font-bold text-voicesNext-orangeText md:text-xl">
+              {subtitle}
+            </p>
+          )}
           {description && (
             <p className="mt-5 max-w-3xl whitespace-pre-line font-gabarito text-lg leading-relaxed text-voicesNext-cream">
               {description}

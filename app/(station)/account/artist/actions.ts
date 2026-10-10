@@ -9,12 +9,14 @@ import {
   type ArtistImageKind,
   type ProfileLookupPlatform,
 } from "@/lib/voices/membership/artist-profile-client";
-import type { ArtistProfile } from "@/lib/voices/membership/schemas";
 
 const optionalText = z.string().max(2_000).optional();
 const optionalUrl = z.string().url().or(z.literal("")).optional();
 
 const schema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  artistName: z.string().min(1).max(200).optional(),
+  showName: z.string().max(200).optional(),
   bio: optionalText,
   imageUrl: optionalUrl,
   bannerUrl: optionalUrl,
@@ -93,6 +95,9 @@ export async function updateArtistProfileAction(
   formData: FormData,
 ): Promise<ArtistProfileState> {
   const parsed = schema.safeParse({
+    name: presentValue(formData, "name"),
+    artistName: presentValue(formData, "artistName"),
+    showName: presentValue(formData, "showName"),
     bio: presentValue(formData, "bio"),
     imageUrl: presentValue(formData, "imageUrl"),
     bannerUrl: presentValue(formData, "bannerUrl"),
@@ -120,6 +125,9 @@ export async function updateArtistProfileAction(
   );
 
   const result = await updateArtistProfile({
+    name: parsed.data.name,
+    artistName: parsed.data.artistName,
+    showName: parsed.data.showName,
     bio: parsed.data.bio,
     imageUrl: parsed.data.imageUrl,
     bannerUrl: parsed.data.bannerUrl,
@@ -138,7 +146,7 @@ export async function updateArtistProfileAction(
 }
 
 export type ImageUploadState =
-  | { status: "success"; profile: ArtistProfile }
+  | { status: "success"; stagedImageUrl: string; field: "imageUrl" | "bannerUrl" }
   | { status: "error"; message: string };
 
 /**
@@ -162,8 +170,7 @@ export async function uploadArtistImageAction(
     return { status: "error", message: result.message };
   }
 
-  revalidatePath("/account/artist");
-  return { status: "success", profile: result.data };
+  return { status: "success", ...result.data };
 }
 
 export type LookupState =

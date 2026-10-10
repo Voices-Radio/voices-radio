@@ -276,6 +276,8 @@ export type ArtistSocialLinks = z.infer<typeof artistSocialLinksSchema>;
 export const artistProfileSchema = z.object({
   id: z.string(),
   name: z.string(),
+  artistName: z.string().nullable().optional(),
+  showName: z.string().nullable().optional(),
   bio: nullish(z.string()),
   imageUrl: nullish(z.string()),
   bannerUrl: nullish(z.string()),
@@ -284,6 +286,17 @@ export const artistProfileSchema = z.object({
   soundcloudUsername: nullish(z.string()),
   programmingEmail: nullish(z.string()),
   socialLinks: artistSocialLinksSchema,
+  profileReview: z.object({
+    id: z.string(),
+    submittedAt: z.string().or(z.date()),
+    pending: z.boolean(),
+    fields: z.array(z.object({
+      field: z.string(),
+      proposed: z.unknown(),
+      status: z.enum(["pending", "approved", "rejected"]),
+      rejectionReason: nullish(z.string()),
+    })),
+  }).nullable().optional(),
 });
 export type ArtistProfile = z.infer<typeof artistProfileSchema>;
 

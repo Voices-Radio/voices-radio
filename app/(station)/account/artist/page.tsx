@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 const INTRO_DESCRIPTION =
-  "Update the profile details shown on Voices. Artist name and programming email are managed by the station team so the website stays aligned with scheduling.";
+  "Submit profile updates for the station team to review before they are published. Programming email remains managed by the station team.";
 
 /**
  * Shown when the artist is linked to this account but the account's role

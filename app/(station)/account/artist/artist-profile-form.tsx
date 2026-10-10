@@ -17,16 +17,16 @@ import UsernameField from "./username-field";
 
 const initialState: ArtistProfileState = undefined;
 
-function SaveButton() {
+function SaveButton({ disabled = false }: { disabled?: boolean }) {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || disabled}
       aria-busy={pending}
       className={cn(accountPrimaryButtonClassName, "h-11 px-6 text-sm")}
     >
-      {pending ? "Saving…" : "Save artist profile"}
+      {pending ? "Submitting…" : "Submit for review"}
     </button>
   );
 }
@@ -73,6 +73,7 @@ export default function ArtistProfileForm({
     initialState,
   );
   const statusRef = useRef<HTMLDivElement>(null);
+  const review = profile.profileReview;
 
   useEffect(() => {
     if (state?.status) statusRef.current?.focus();
@@ -96,15 +97,42 @@ export default function ArtistProfileForm({
           className="rounded-voices-sm border border-voicesNext-orange bg-voicesNext-surface px-4 py-3 font-gabarito text-sm text-voicesNext-cream focus:outline-none"
         >
           {state.status === "success"
-            ? "Your artist profile has been updated."
+            ? "Your profile update has been submitted for review."
             : state.message}
         </div>
       )}
+
+      {review && (
+        <div className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 py-3 font-asap text-sm text-voicesNext-cream/80">
+          <p className="font-gabarito font-bold text-voicesNext-cream">
+            {review.pending ? "Profile update awaiting review" : "Latest profile review"}
+          </p>
+          <ul className="mt-2 list-disc pl-5">
+            {review.fields.map((field) => (
+              <li key={field.field}>
+                {field.field}: {field.status}
+                {field.rejectionReason ? ` — ${field.rejectionReason}` : ""}
+              </li>
+            ))}
+          </ul>
+          {review.pending && <p className="mt-2">Further changes unlock after every field has been reviewed.</p>}
+        </div>
+      )}
+
+      <fieldset disabled={review?.pending} className="flex flex-col gap-5 border-0 p-0 disabled:opacity-60">
 
       <div className="grid gap-4 rounded-voices-md border border-voicesNext-border bg-voicesNext-background p-4 sm:grid-cols-2">
         <div>
           <p className="font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/60">
             Artist name
+          </p>
+          <p className="mt-1 font-gabarito text-base font-bold text-voicesNext-cream">
+            {profile.artistName ?? "Not set"}
+          </p>
+        </div>
+        <div>
+          <p className="font-gabarito text-xs font-bold uppercase tracking-wide text-voicesNext-cream/60">
+            Name (private)
           </p>
           <p className="mt-1 font-gabarito text-base font-bold text-voicesNext-cream">
             {profile.name}
@@ -120,6 +148,12 @@ export default function ArtistProfileForm({
             </p>
           </div>
         )}
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <TextField id="name" name="name" label="Name (private)" defaultValue={profile.name} />
+        <TextField id="artistName" name="artistName" label="Artist name" defaultValue={profile.artistName} />
+        <TextField id="showName" name="showName" label="Show name" defaultValue={profile.showName} />
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -200,7 +234,8 @@ export default function ArtistProfileForm({
         />
       </fieldset>
 
-      <SaveButton />
+      </fieldset>
+      <SaveButton disabled={Boolean(review?.pending)} />
     </form>
   );
 }

@@ -112,6 +112,7 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
         <PageHero
           eyebrow="Artist"
           title={artist.name}
+          subtitle={artist.showName}
           description={artist.bio || "Voices Radio artist profile."}
         />
       </div>
@@ -137,6 +138,11 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
               {locationLabel}
             </span>
           </div>
+          {artist.showName && (
+            <p className="mt-3 font-gabarito text-base font-bold text-voicesNext-orange">
+              {artist.showName}
+            </p>
+          )}
         </div>
 
         <div className="mx-auto max-w-[360px] px-0 py-10">

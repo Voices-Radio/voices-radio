@@ -1,5 +1,5 @@
 import "server-only";
-import type { z } from "zod";
+import { z } from "zod";
 import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
 import { authedFetch } from "./session";
 import { describeErrorResponse } from "./membership-client";
@@ -65,6 +65,9 @@ export function getArtistProfile() {
 }
 
 export function updateArtistProfile(input: {
+  name?: string;
+  artistName?: string;
+  showName?: string;
   bio?: string;
   imageUrl?: string;
   bannerUrl?: string;
@@ -84,13 +87,17 @@ export function updateArtistProfile(input: {
 }
 
 export type ArtistImageKind = "profile" | "banner";
+const stagedArtistImageSchema = z.object({
+  field: z.enum(["imageUrl", "bannerUrl"]),
+  stagedImageUrl: z.string().url(),
+});
+export type StagedArtistImage = z.infer<typeof stagedArtistImageSchema>;
 
 /**
  * Uploads a DJ's profile or banner image. A dedicated call rather than a
  * variant of updateArtistProfile(): that call sends JSON, this sends
- * multipart form data, and the two can't share a body encoding. Saves
- * immediately, independent of the rest of the profile form — see
- * routes/artists.js's POST /presenter/my-profile/image.
+ * multipart form data, and the two can't share a body encoding. The result
+ * is staged until the main profile request is approved.
  *
  * No explicit Content-Type header: fetch sets the multipart boundary itself
  * from the FormData body, and overriding it here would drop the boundary.
@@ -99,9 +106,9 @@ export function uploadArtistProfileImage(kind: ArtistImageKind, file: File) {
   const body = new FormData();
   body.append("image", file);
 
-  return artistProfileRequest<ArtistProfile>(
+  return artistProfileRequest<StagedArtistImage>(
     { method: "POST", body },
-    artistProfileSchema,
+    stagedArtistImageSchema,
     `${MY_PROFILE_PATH}/image?kind=${kind}`,
   );
 }
