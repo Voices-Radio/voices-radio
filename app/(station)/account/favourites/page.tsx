@@ -6,6 +6,8 @@ import { AccountPageIntro } from "../components/account-surface";
 import PlaylistsUpsell from "./playlists-upsell";
 import FavouritesListNav from "./favourites-list-nav";
 import FavouritesLoadMore from "./favourites-load-more";
+import NewPlaylistForm from "./new-playlist-form";
+import PlaylistHeader from "./playlist-header";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -31,6 +33,11 @@ export default async function AccountFavouritesPage({
     capabilities.status === "ok" &&
     !canOrganisePlaylists(capabilities.data.member);
 
+  const activeCustomList =
+    list && listsResult.ok
+      ? listsResult.data.find((l) => l.id === list && !l.isDefault)
+      : undefined;
+
   return (
     <div>
       <AccountPageIntro
@@ -39,7 +46,7 @@ export default async function AccountFavouritesPage({
         description={
           isFreeAccount
             ? "The artists and shows you've saved."
-            : "Shows you've saved, organised into My Favourites and any playlists you've created from a show's save button."
+            : "Shows you've saved, organised into My Favourites and your own playlists."
         }
       />
 
@@ -49,9 +56,13 @@ export default async function AccountFavouritesPage({
         </div>
       )}
 
-      {!isFreeAccount && listsResult.ok && listsResult.data.length > 0 && (
-        <div className="mt-6">
-          <FavouritesListNav lists={listsResult.data} activeListId={list} />
+      {!isFreeAccount && (
+        <div className="mt-6 flex flex-col gap-4">
+          <NewPlaylistForm />
+          {listsResult.ok && listsResult.data.length > 0 && (
+            <FavouritesListNav lists={listsResult.data} activeListId={list} />
+          )}
+          {activeCustomList && <PlaylistHeader list={activeCustomList} />}
         </div>
       )}
 
@@ -66,7 +77,7 @@ export default async function AccountFavouritesPage({
         ) : favouritesResult.data.favourites.length === 0 ? (
           <p className="font-gabarito text-sm text-voicesNext-cream/70">
             {list
-              ? "Nothing saved to this playlist yet."
+              ? "Nothing in this playlist yet — tap the bookmark on any show and choose it."
               : "Nothing saved yet — tap the bookmark on any show to save it here."}
           </p>
         ) : (

@@ -4,11 +4,13 @@ import { Bookmark } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
+import { canOrganisePlaylists } from "@/lib/voices/membership/capabilities";
 import {
   SAVE_SHOW_PARAM,
   signInHrefForSaveIntent,
 } from "@/lib/voices/favourites/save-intent";
 import { useFavourites } from "./favourites-context";
+import { useSessionUser } from "./session-context";
 import dynamic from "next/dynamic";
 
 // The sheet (framer-motion, list management) only matters once someone opens
@@ -26,7 +28,9 @@ const SaveToListSheet = dynamic(() => import("./save-to-list-sheet"), {
  *
  * Interaction: a tap when unsaved saves straight to "My Favourites" (the
  * common case, one tap); a tap when already saved opens the picker to
- * manage which playlists it's in (members) or remove it. Signed-out visitors are routed
+ * manage which playlists it's in (members) or remove it. A member's first
+ * save also opens the picker (My Favourites already ticked), so choosing or
+ * creating a playlist is part of saving; Done/Esc keeps the default. Signed-out visitors are routed
  * to /sign-in?next=… (which offers "Create one here" and "Join as a member") with
  * the intended save encoded in `next`; see save-intent-replay.tsx for how
  * it's replayed afterwards.
@@ -44,6 +48,8 @@ export default function SaveShowButton({
   const pathname = usePathname();
   const { isSignedIn, getStatus, registerShowIds, applyStatus } =
     useFavourites();
+  const { user } = useSessionUser();
+  const canOrganise = canOrganisePlaylists(user?.member);
   const [pending, setPending] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   // Stays true after the first open so the sheet keeps its exit animation.
@@ -72,6 +78,10 @@ export default function SaveShowButton({
       if (!response.ok) throw new Error("save failed");
       const payload = await response.json();
       applyStatus(showId, { saved: true, listIds: payload.listIds ?? [] });
+      if (canOrganise) {
+        setSheetRequested(true);
+        setSheetOpen(true);
+      }
     } catch {
       applyStatus(showId, previous);
     } finally {

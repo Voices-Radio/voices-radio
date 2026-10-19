@@ -15,6 +15,7 @@ import servicesType from "./schemas/services";
 import eventType from "./schemas/event";
 import membershipPageType from "./schemas/membershipPage";
 import membershipBenefitType from "./schemas/membershipBenefit";
+import membershipTransactionalEmailType from "./schemas/membershipTransactionalEmail";
 import listingPagesType from "./schemas/listingPages";
 import collaboratePageType from "./schemas/collaboratePage";
 
@@ -32,6 +33,7 @@ const schemaTypes = [
   eventType,
   membershipPageType,
   membershipBenefitType,
+  membershipTransactionalEmailType,
   listingPagesType,
   collaboratePageType,
 ];

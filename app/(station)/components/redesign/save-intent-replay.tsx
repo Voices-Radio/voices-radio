@@ -1,12 +1,19 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import {
   SAVE_ARTIST_PARAM,
   SAVE_SHOW_PARAM,
 } from "@/lib/voices/favourites/save-intent";
+import { canOrganisePlaylists } from "@/lib/voices/membership/capabilities";
 import { useFavourites } from "./favourites-context";
+import { useSessionUser } from "./session-context";
+
+const SaveToListSheet = dynamic(() => import("./save-to-list-sheet"), {
+  ssr: false,
+});
 
 const OBJECT_ID_RE = /^[a-f0-9]{24}$/i;
 const CONFIRMATION_DURATION_MS = 4000;
@@ -33,7 +40,13 @@ export default function SaveIntentReplay() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isSignedIn, applyStatus, applyArtistStatus } = useFavourites();
+  const { user } = useSessionUser();
+  const canOrganise = canOrganisePlaylists(user?.member);
   const [message, setMessage] = useState<string | null>(null);
+  // A member's replayed save opens the playlist picker, as a live tap does.
+  const [pickerShowId, setPickerShowId] = useState<string | null>(null);
+  const pickerTriggerRef = useRef<HTMLButtonElement>(null);
+  const { getStatus } = useFavourites();
 
   useEffect(() => {
     if (!isSignedIn) return;
@@ -58,6 +71,7 @@ export default function SaveIntentReplay() {
           const payload = await response.json().catch(() => null);
           applyStatus(showId, { saved: true, listIds: payload?.listIds ?? [] });
           setMessage("Saved to My Favourites");
+          if (canOrganise) setPickerShowId(showId);
         } else {
           setMessage("Couldn't save that show. Please try again.");
         }
@@ -136,15 +150,34 @@ export default function SaveIntentReplay() {
     return () => clearTimeout(timer);
   }, [message]);
 
-  if (!message) return null;
+  const picker = pickerShowId && (
+    <SaveToListSheet
+      open
+      onOpenChange={(open) => {
+        if (!open) setPickerShowId(null);
+      }}
+      showId={pickerShowId}
+      title="this show"
+      listIds={getStatus(pickerShowId).listIds}
+      onListIdsChange={(listIds) =>
+        applyStatus(pickerShowId, { saved: listIds.length > 0, listIds })
+      }
+      triggerRef={pickerTriggerRef}
+    />
+  );
+
+  if (!message) return picker || null;
 
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="fixed bottom-4 left-1/2 z-[60] -translate-x-1/2 border border-voicesNext-orange bg-voicesNext-background px-4 py-3 font-gabarito text-sm text-voicesNext-cream shadow-lg"
-    >
-      {message}
-    </div>
+    <>
+      {picker}
+      <div
+        role="status"
+        aria-live="polite"
+        className="fixed bottom-4 left-1/2 z-[60] -translate-x-1/2 border border-voicesNext-orange bg-voicesNext-background px-4 py-3 font-gabarito text-sm text-voicesNext-cream shadow-lg"
+      >
+        {message}
+      </div>
+    </>
   );
 }

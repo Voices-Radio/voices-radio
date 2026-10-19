@@ -272,4 +272,43 @@ describe("SaveIntentReplay", () => {
       ).toBeTruthy();
     });
   });
+
+  it("opens the playlist picker after replaying a save for an entitled member", async () => {
+    searchParamsString = `save=${VALID_SHOW_ID}`;
+    vi.stubGlobal(
+      "fetch",
+      mockFetch({
+        ...SIGNED_IN_USER,
+        member: { status: "active", contributionAmountMinor: 500, cadence: "monthly" },
+      }),
+    );
+
+    render(
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveIntentReplay />
+        </FavouritesProvider>
+      </SessionProvider>,
+    );
+
+    expect(
+      await screen.findByRole("dialog", { name: /save to/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("only shows the confirmation (no picker) for a free account", async () => {
+    searchParamsString = `save=${VALID_SHOW_ID}`;
+    vi.stubGlobal("fetch", mockFetch(SIGNED_IN_USER));
+
+    render(
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveIntentReplay />
+        </FavouritesProvider>
+      </SessionProvider>,
+    );
+
+    expect(await screen.findByText(/saved to my favourites/i)).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
 });

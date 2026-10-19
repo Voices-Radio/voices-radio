@@ -108,7 +108,7 @@ export default function CompletePoller() {
         </dl>
 
         <p className="mt-6 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
-          A receipt is on its way to your inbox. Your benefits are live now —
+          We&rsquo;ve emailed you a confirmation. Your benefits are live now —
           you can see and claim them from your account.
         </p>
 

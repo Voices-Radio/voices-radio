@@ -166,6 +166,89 @@ describe("SaveShowButton — signed in, not yet saved", () => {
   });
 });
 
+describe("SaveShowButton — first save offers playlists to members", () => {
+  function renderButton() {
+    return render(
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+        </FavouritesProvider>
+      </SessionProvider>,
+    );
+  }
+
+  it("saves to My Favourites and opens the playlist picker straight away for an entitled member", async () => {
+    const fetchMock = mockFetch({ user: SIGNED_IN_USER });
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+
+    renderButton();
+    await user.click(
+      await screen.findByRole("button", { name: /save late night sessions/i }),
+    );
+
+    expect(
+      await screen.findByRole("dialog", { name: /save to/i }),
+    ).toBeInTheDocument();
+    expect(
+      fetchMock.mock.calls.some(
+        ([input, init]) =>
+          String(input) === `/api/favourites/${SHOW_ID}` &&
+          (init as RequestInit | undefined)?.method === "PUT",
+      ),
+    ).toBe(true);
+  });
+
+  it("does not open the picker for a free account — one tap just saves", async () => {
+    const fetchMock = mockFetch({
+      user: { ...SIGNED_IN_USER, member: null },
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+
+    renderButton();
+    const button = await screen.findByRole("button", {
+      name: /save late night sessions/i,
+    });
+    await user.click(button);
+
+    await waitFor(() => expect(button).toHaveAttribute("aria-pressed", "true"));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("does not open the picker when the save fails", async () => {
+    const fetchMock = vi.fn(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (url.includes("/api/auth/session")) {
+          return new Response(JSON.stringify({ user: SIGNED_IN_USER }), {
+            status: 200,
+          });
+        }
+        if (url === `/api/favourites/${SHOW_ID}` && init?.method === "PUT") {
+          return new Response(JSON.stringify({ message: "nope" }), {
+            status: 500,
+          });
+        }
+        return new Response(JSON.stringify({ statuses: {} }), { status: 200 });
+      },
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+
+    renderButton();
+    const button = await screen.findByRole("button", {
+      name: /save late night sessions/i,
+    });
+    await user.click(button);
+
+    await waitFor(() =>
+      expect(button).toHaveAttribute("aria-pressed", "false"),
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+});
+
 describe("SaveShowButton — hover affordance", () => {
   it("lights the bookmark icon up on hover/focus via a scoped named group", async () => {
     const fetchMock = mockFetch({ user: null });
