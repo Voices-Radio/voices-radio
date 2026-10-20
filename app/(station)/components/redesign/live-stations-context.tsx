@@ -32,7 +32,7 @@ function fallbackStations(): LiveStations {
 const LiveStationsContext = createContext<LiveStations | null>(null);
 
 async function fetchStation(stationId: VoicesLiveStationId) {
-  const response = await fetch(`/api/radio-cult/live?station=${stationId}`);
+  const response = await fetch(`/api/live?station=${stationId}`);
   if (!response.ok) return null;
   return (await response.json()) as VoicesLiveMetadata;
 }
@@ -43,8 +43,8 @@ async function fetchStation(stationId: VoicesLiveStationId) {
  * the RadioCult API key shipped to the browser; the mobile and desktop strips
  * both mount (CSS hides one), so a page held 4–6 sockets.
  *
- * Now the key stays server-side: /api/radio-cult/live proxies RadioCult and is
- * CDN-cached for 30s, so this poll costs one upstream call per 30s however many
+ * Now the key stays server-side: /api/live proxies Airtime or RadioCult (per
+ * station `liveSource`) and is CDN-cached for 30s, so this poll costs one upstream call per 30s however many
  * visitors there are. Polling pauses while the tab is hidden.
  */
 export function LiveStationsProvider({ children }: { children: ReactNode }) {
@@ -52,9 +52,11 @@ export function LiveStationsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    const active = STATION_IDS.filter(
-      (id) => getVoicesLiveStation(id)?.radioCultStationId,
-    );
+    // Airtime stations need no ids; RadioCult ones are skipped until configured.
+    const active = STATION_IDS.filter((id) => {
+      const station = getVoicesLiveStation(id);
+      return station?.liveSource === "airtime" || station?.radioCultStationId;
+    });
     if (active.length === 0) return;
 
     async function refresh() {

@@ -9,11 +9,30 @@ import type { VoicesLiveStationId } from "@/lib/voices/config";
 import useRadioCultLiveMetadata from "@/hooks/use-radio-cult-live-metadata";
 import { isSafeRestreamUrl } from "./restream-video-modal";
 
-// Shared by both KX actions. Colours come from `actionActive` so the pair always
-// swaps together; transitioning only the properties that change keeps the
-// swap smooth, and the press scale gives a click response.
+// Shared by both KX actions. The pair swaps colours together while either is
+// hovered or focused. Two colours can't also say *which* button is hovered (the
+// default is one of the two states), so the hovered button lifts instead.
+// Transitioning only the properties that change keeps it smooth.
 const KX_ACTION_CLASS =
-  "inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-3 font-gabarito text-xs font-bold shadow-lg transition-[background-color,color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-10 md:gap-2 md:px-5 md:text-sm";
+  "inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-3 font-gabarito text-xs font-bold transition-[background-color,color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 motion-reduce:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-10 md:gap-2 md:px-5 md:text-sm";
+
+// Handlers live on a wrapper rather than the control: a disabled <button> (while
+// connecting) doesn't reliably fire pointer-leave, which would leave the swap
+// stuck on.
+function hoverHandlers(
+  action: "watch" | "listen",
+  set: (value: "watch" | "listen" | null) => void,
+) {
+  return {
+    onPointerEnter: () => set(action),
+    onPointerLeave: () => set(null),
+    onFocusCapture: () => set(action),
+    onBlurCapture: () => set(null),
+  };
+}
+
+const LIFT = "scale-[1.04] shadow-xl";
+const FLAT = "scale-100 shadow-lg";
 
 export default function LiveStationCard({
   cardRef,
@@ -55,10 +74,16 @@ export default function LiveStationCard({
   const liveMetadata = useRadioCultLiveMetadata(stationId);
   const [mouseHovering, setMouseHovering] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
-  // True while the pointer or keyboard focus is on either KX action.
-  const [actionActive, setActionActive] = useState(false);
+  // Which KX action the pointer or keyboard focus is on, if any.
+  const [hoveredAction, setHoveredAction] = useState<"watch" | "listen" | null>(
+    null,
+  );
+  const actionsSwapped = hoveredAction !== null;
   const displayTitle = liveMetadata.title || title;
   const videoAvailable = isSafeRestreamUrl(videoUrl);
+  // Only the artwork greys, and only while the stream plays.
+  const artworkGrey =
+    station === "KX" ? listenPlaying : selected || !videoAvailable;
   const showKxLiveActions =
     station === "KX" && (selected || mouseHovering || focusWithin);
   const showWatchLive =
@@ -85,22 +110,19 @@ export default function LiveStationCard({
         }
       }}
     >
-      <div
-        className={cn(
-          "transition-[filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          (selected || (!videoAvailable && station !== "KX")) && "grayscale",
-        )}
-      >
+      <div>
         <div className="hidden h-[34px] items-center justify-between bg-voicesNext-cream px-[14px] text-voicesNext-background md:flex">
           <span className="font-outfit text-[24px] font-black uppercase leading-none tracking-[1px]">
             {station}
           </span>
-          <Video
-            aria-hidden="true"
-            className={cn(!cardInteractive && "opacity-40")}
-            size={26}
-            strokeWidth={2.6}
-          />
+          {station !== "KX" && (
+            <Video
+              aria-hidden="true"
+              className={cn(!cardInteractive && "opacity-40")}
+              size={26}
+              strokeWidth={2.6}
+            />
+          )}
         </div>
 
         <div className="hidden h-[13px] overflow-hidden border-y border-voicesNext-cream bg-voicesNext-background font-outfit text-[10px] font-bold uppercase leading-none tracking-[2px] text-voicesNext-secondary md:block">
@@ -117,7 +139,12 @@ export default function LiveStationCard({
           </div>
         </div>
 
-        <div className="relative h-[126px] md:h-[269px]">
+        <div
+          className={cn(
+            "relative h-[126px] transition-[filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-[269px]",
+            artworkGrey && "grayscale",
+          )}
+        >
           <Image
             src={artwork ?? "/VOICESLOGO_LIGHTBOX.png"}
             alt={artworkAlt ?? `${station} live show artwork`}
@@ -127,6 +154,13 @@ export default function LiveStationCard({
             priority={station === "KX"}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent from-[57%] to-voicesNext-background/60" />
+          <div
+            aria-hidden="true"
+            className={cn(
+              "bg-[#8d8d8d]/55 pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              artworkGrey && "opacity-100",
+            )}
+          />
           <h2 className="absolute bottom-2 left-2 right-3 line-clamp-2 font-gabarito text-[16px] font-bold leading-[1.08] text-voicesNext-cream md:bottom-3 md:left-[10px] md:right-6 md:text-[20px]">
             {displayTitle}
           </h2>
@@ -137,7 +171,6 @@ export default function LiveStationCard({
         aria-hidden="true"
         className={cn(
           "bg-[#8d8d8d]/55 pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          selected && "opacity-100",
           !cardInteractive && "opacity-45",
         )}
       />
@@ -161,62 +194,65 @@ export default function LiveStationCard({
             showKxLiveActions &&
               "pointer-events-auto -translate-y-1/2 opacity-100",
           )}
-          onPointerEnter={() => setActionActive(true)}
-          onPointerLeave={() => setActionActive(false)}
-          onFocusCapture={() => setActionActive(true)}
-          onBlurCapture={() => setActionActive(false)}
         >
-          <a
-            href={watchLiveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            tabIndex={showKxLiveActions ? 0 : -1}
-            className={cn(
-              KX_ACTION_CLASS,
-              actionActive
-                ? "bg-voicesNext-orange text-voicesNext-cream"
-                : "bg-voicesNext-cream text-voicesNext-background",
-            )}
-            aria-label="Watch Voices live on Mixcloud"
-          >
-            <ExternalLink aria-hidden="true" size={15} strokeWidth={2.6} />
-            Watch live
-          </a>
-          <button
-            type="button"
-            disabled={!canListenLive || listenLoading}
-            aria-busy={listenLoading || undefined}
-            tabIndex={showKxLiveActions ? 0 : -1}
-            onClick={onListenLive}
-            className={cn(
-              KX_ACTION_CLASS,
-              "disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary",
-              actionActive
-                ? "bg-voicesNext-cream text-voicesNext-background"
-                : "bg-voicesNext-orange text-voicesNext-cream",
-            )}
-            aria-label={
-              listenLoading
-                ? "Connecting to Voices KX live"
-                : listenPlaying
-                  ? "Stop Voices KX live"
-                  : "Listen to Voices KX live"
-            }
-          >
-            {listenLoading ? (
-              <Spinner className="h-[15px] w-[15px]" />
-            ) : listenPlaying ? (
-              <Square
-                aria-hidden="true"
-                size={13}
-                strokeWidth={2.6}
-                fill="currentColor"
-              />
-            ) : (
-              <Radio aria-hidden="true" size={15} strokeWidth={2.6} />
-            )}
-            {listenPlaying ? "Stop" : "Listen live"}
-          </button>
+          <div {...hoverHandlers("watch", setHoveredAction)} className="flex">
+            <a
+              href={watchLiveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              tabIndex={showKxLiveActions ? 0 : -1}
+              className={cn(
+                KX_ACTION_CLASS,
+                "w-full",
+                hoveredAction === "watch" ? LIFT : FLAT,
+                actionsSwapped
+                  ? "bg-voicesNext-orange text-voicesNext-cream"
+                  : "bg-voicesNext-cream text-voicesNext-background",
+              )}
+              aria-label="Watch Voices live on Mixcloud"
+            >
+              <ExternalLink aria-hidden="true" size={15} strokeWidth={2.6} />
+              Watch live
+            </a>
+          </div>
+          <div {...hoverHandlers("listen", setHoveredAction)} className="flex">
+            <button
+              type="button"
+              disabled={!canListenLive || listenLoading}
+              aria-busy={listenLoading || undefined}
+              tabIndex={showKxLiveActions ? 0 : -1}
+              onClick={onListenLive}
+              className={cn(
+                KX_ACTION_CLASS,
+                "w-full disabled:cursor-not-allowed disabled:bg-voicesNext-border disabled:text-voicesNext-secondary",
+                hoveredAction === "listen" ? LIFT : FLAT,
+                actionsSwapped
+                  ? "bg-voicesNext-cream text-voicesNext-background"
+                  : "bg-voicesNext-orange text-voicesNext-cream",
+              )}
+              aria-label={
+                listenLoading
+                  ? "Connecting to Voices KX live"
+                  : listenPlaying
+                    ? "Stop Voices KX live"
+                    : "Listen to Voices KX live"
+              }
+            >
+              {listenLoading ? (
+                <Spinner className="h-[15px] w-[15px]" />
+              ) : listenPlaying ? (
+                <Square
+                  aria-hidden="true"
+                  size={13}
+                  strokeWidth={2.6}
+                  fill="currentColor"
+                />
+              ) : (
+                <Radio aria-hidden="true" size={15} strokeWidth={2.6} />
+              )}
+              {listenPlaying ? "Stop" : "Listen live"}
+            </button>
+          </div>
         </div>
       )}
       {station !== "KX" && (

@@ -54,10 +54,41 @@ describe("LiveStationsProvider", () => {
     await act(async () => {});
 
     expect(fetchMock.mock.calls.map(([url]) => url).sort()).toEqual([
-      "/api/radio-cult/live?station=east",
-      "/api/radio-cult/live?station=kx",
+      "/api/live?station=east",
+      "/api/live?station=kx",
     ]);
     expect(screen.getAllByTestId("kx")[0]).toHaveTextContent("Breakfast Show");
+  });
+
+  it("still polls an Airtime station that has no RadioCult id", async () => {
+    vi.resetModules();
+    vi.doMock("@/lib/voices/config", async (importOriginal) => {
+      const actual =
+        await importOriginal<typeof import("@/lib/voices/config")>();
+      return {
+        ...actual,
+        getVoicesLiveStation: (id: string) => ({
+          ...actual.getVoicesLiveStation(id as "kx" | "east"),
+          radioCultStationId: undefined,
+          liveSource: id === "kx" ? "airtime" : "radiocult",
+        }),
+      };
+    });
+    const { LiveStationsProvider: Provider } =
+      await import("./live-stations-context");
+    fetchMock.mockImplementation(async () => payload("Airtime Show"));
+
+    render(
+      <Provider>
+        <span />
+      </Provider>,
+    );
+    await act(async () => {});
+
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+      "/api/live?station=kx",
+    ]);
+    vi.doUnmock("@/lib/voices/config");
   });
 
   it("refreshes every 30s and keeps the last good value when a poll fails", async () => {

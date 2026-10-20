@@ -29,10 +29,22 @@ export const VOICES_MIXCLOUD_LIVE_URL =
 
 export type VoicesLiveStationId = "kx" | "east";
 
+/**
+ * Where a station's stream, now-playing and schedule come from. Airtime is the
+ * source of truth until RadioCult is ready and producers are trained.
+ */
+export type VoicesLiveSource = "airtime" | "radiocult";
+
+/** Anything other than "radiocult" means Airtime, so a typo can't blank KX. */
+export function resolveLiveSource(value: string | undefined): VoicesLiveSource {
+  return value?.trim().toLowerCase() === "radiocult" ? "radiocult" : "airtime";
+}
+
 export type VoicesLiveStationConfig = {
   id: VoicesLiveStationId;
   label: "KX" | "EAST";
   title: string;
+  liveSource: VoicesLiveSource;
   radioCultStationId?: string;
   streamUrl?: string;
   videoUrl?: string;
@@ -48,25 +60,44 @@ export const voicesMediaConfig = {
     kxStreamUrl: process.env.NEXT_PUBLIC_RADIOCULT_KX_STREAM_URL,
     eastStreamUrl: process.env.NEXT_PUBLIC_RADIOCULT_EAST_STREAM_URL,
   },
+  airtime: {
+    // Server-only: read by the /api routes, never by the browser bundle.
+    apiBaseUrl:
+      process.env.AIRTIME_API_BASE_URL ?? "https://voicesradio.airtime.pro",
+    kxStreamUrl:
+      process.env.NEXT_PUBLIC_AIRTIME_KX_STREAM_URL ??
+      "https://voicesradio.out.airtime.pro/voicesradio_a",
+  },
   restream: {
     kxEmbedUrl: process.env.NEXT_PUBLIC_RESTREAM_KX_EMBED_URL,
     eastEmbedUrl: process.env.NEXT_PUBLIC_RESTREAM_EAST_EMBED_URL,
   },
 };
 
+// Flip KX to RadioCult by setting NEXT_PUBLIC_VOICES_KX_LIVE_SOURCE=radiocult
+// and redeploying (NEXT_PUBLIC_ values are inlined at build time).
+const kxLiveSource = resolveLiveSource(
+  process.env.NEXT_PUBLIC_VOICES_KX_LIVE_SOURCE,
+);
+
 export const voicesLiveStations: VoicesLiveStationConfig[] = [
   {
     id: "kx",
     label: "KX",
     title: "Live from Voices KX",
+    liveSource: kxLiveSource,
     radioCultStationId: voicesMediaConfig.radioCult.kxStationId,
-    streamUrl: voicesMediaConfig.radioCult.kxStreamUrl,
+    streamUrl:
+      kxLiveSource === "airtime"
+        ? voicesMediaConfig.airtime.kxStreamUrl
+        : voicesMediaConfig.radioCult.kxStreamUrl,
     videoUrl: voicesMediaConfig.restream.kxEmbedUrl,
   },
   {
     id: "east",
     label: "EAST",
     title: "Live from Voices East",
+    liveSource: "radiocult",
     radioCultStationId: voicesMediaConfig.radioCult.eastStationId,
     streamUrl: voicesMediaConfig.radioCult.eastStreamUrl,
     videoUrl: voicesMediaConfig.restream.eastEmbedUrl,

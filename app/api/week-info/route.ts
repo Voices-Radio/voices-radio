@@ -10,6 +10,7 @@ import {
   type RadioCultScheduleEvent,
 } from "@/lib/voices/radio-cult";
 import { unescapeString } from "@/lib/unescape";
+import { fetchAirtimeSchedule } from "@/lib/voices/airtime";
 import { addDays, format, isAfter, isBefore, parseISO } from "date-fns";
 import { formatInTimeZone, zonedTimeToUtc } from "date-fns-tz";
 import { NextResponse } from "next/server";
@@ -67,10 +68,13 @@ function getScheduleWindow(tz: string, now: Date) {
   const today = parseISO(formatInTimeZone(now, tz, DAY_FORMAT));
   const dateAt = (offset: number) => format(addDays(today, offset), DAY_FORMAT);
 
-  const days: ScheduleDay[] = Array.from({ length: DAYS_SHOWN }, (_, offset) => {
-    const date = dateAt(offset);
-    return { date, key: midnightInTimeZone(date, tz).toISOString() };
-  });
+  const days: ScheduleDay[] = Array.from(
+    { length: DAYS_SHOWN },
+    (_, offset) => {
+      const date = dateAt(offset);
+      return { date, key: midnightInTimeZone(date, tz).toISOString() };
+    },
+  );
 
   return {
     days,
@@ -117,9 +121,7 @@ async function fetchRadioCultSchedule(
 }
 
 function emptyWeekDays(days: ScheduleDay[]) {
-  return Object.fromEntries(
-    days.map(({ key }) => [key, [] as ProcessedDay[]]),
-  );
+  return Object.fromEntries(days.map(({ key }) => [key, [] as ProcessedDay[]]));
 }
 
 function toDatedEvents(events: RadioCultScheduleEvent[]) {
@@ -147,22 +149,33 @@ function processSchedule(
     days.map(({ date, key }) => [
       key,
       datedEvents
-        .filter(({ starts }) => formatInTimeZone(starts, tz, DAY_FORMAT) === date)
-        .map(
-          ({ event, starts, ends }, index): ProcessedDay => ({
-            id: Number(event.id) || index,
-            station,
-            name: unescapeString(event.title ?? `${stationLabel} Show`),
-            start_timestamp: starts.toISOString(),
-            end_timestamp: ends?.toISOString() ?? "",
-            show_start_hour: formatInTimeZone(starts, tz, "HH:mm"),
-            show_end_hour: ends ? formatInTimeZone(ends, tz, "HH:mm") : "",
-            is_past: ends ? isBefore(ends, now) : false,
-            is_live: ends ? isBefore(starts, now) && isAfter(ends, now) : false,
-          }),
-        ),
+        .filter(
+          ({ starts }) => formatInTimeZone(starts, tz, DAY_FORMAT) === date,
+        )
+        .map(({ event, starts, ends }, index): ProcessedDay => ({
+          id: Number(event.id) || index,
+          station,
+          name: unescapeString(event.title ?? `${stationLabel} Show`),
+          start_timestamp: starts.toISOString(),
+          end_timestamp: ends?.toISOString() ?? "",
+          show_start_hour: formatInTimeZone(starts, tz, "HH:mm"),
+          show_end_hour: ends ? formatInTimeZone(ends, tz, "HH:mm") : "",
+          is_past: ends ? isBefore(ends, now) : false,
+          is_live: ends ? isBefore(starts, now) && isAfter(ends, now) : false,
+        })),
     ]),
   );
+}
+
+/** Schedule from whichever source the station is switched to. */
+function fetchSchedule(
+  station: VoicesLiveStationId,
+  startDate: Date,
+  endDate: Date,
+) {
+  return getVoicesLiveStation(station)?.liveSource === "airtime"
+    ? fetchAirtimeSchedule()
+    : fetchRadioCultSchedule(station, startDate, endDate);
 }
 
 export async function GET(request: Request) {
@@ -183,7 +196,7 @@ export async function GET(request: Request) {
     const schedules = await Promise.all(
       stations.map(
         async (station) =>
-          [station, await fetchRadioCultSchedule(station, start, end)] as const,
+          [station, await fetchSchedule(station, start, end)] as const,
       ),
     );
     const weekInfo = schedules.reduce<ProcessedWeekInfo>(
@@ -196,9 +209,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json(weekInfo);
   } catch (error) {
-    console.error("Radio Cult schedule unavailable", error);
+    console.error("Schedule unavailable", error);
     return NextResponse.json(
-      { message: "Radio Cult schedule unavailable" },
+      { message: "Schedule unavailable" },
       { status: 502 },
     );
   }

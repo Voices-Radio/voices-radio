@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Station config is read from the environment at import time, so it has to be
 // in place before the route module loads.
+process.env.NEXT_PUBLIC_VOICES_KX_LIVE_SOURCE = "radiocult";
 process.env.RADIOCULT_API_KEY = "test-key";
 process.env.NEXT_PUBLIC_RADIOCULT_KX_STATION_ID = "kx-station";
 
@@ -70,9 +71,9 @@ describe("GET /api/week-info", () => {
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(payload.kx[SUN_13].map((show: { name: string }) => show.name)).toEqual(
-      ["Morning Show", "Lunch Live"],
-    );
+    expect(
+      payload.kx[SUN_13].map((show: { name: string }) => show.name),
+    ).toEqual(["Morning Show", "Lunch Live"]);
   });
 
   it("groups shows by the viewer's calendar day, not the UTC day", async () => {
@@ -148,10 +149,13 @@ describe("GET /api/week-info", () => {
     expect(response.status).toBe(502);
   });
 
-  it.each([null, "Not/AZone"])("rejects a missing or invalid tz (%s)", async (tz) => {
-    const response = await requestWeekInfo(tz);
+  it.each([null, "Not/AZone"])(
+    "rejects a missing or invalid tz (%s)",
+    async (tz) => {
+      const response = await requestWeekInfo(tz);
 
-    expect(response.status).toBe(400);
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
+      expect(response.status).toBe(400);
+      expect(fetchMock).not.toHaveBeenCalled();
+    },
+  );
 });

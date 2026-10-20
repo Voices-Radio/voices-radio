@@ -59,7 +59,7 @@ describe("LiveStationCard", () => {
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(watchLive).toHaveAttribute("tabindex", "0");
     expect(listenLive).toHaveAttribute("tabindex", "0");
-    expect(watchLive.parentElement).toHaveClass("opacity-100");
+    expect(watchLive.parentElement?.parentElement).toHaveClass("opacity-100");
 
     await user.click(listenLive);
 
@@ -136,5 +136,68 @@ describe("LiveStationCard", () => {
     expect(
       screen.getByRole("button", { name: /connecting to voices kx live/i }),
     ).toBeDisabled();
+  });
+
+  it("lifts only the hovered action, so moving between them is visible", async () => {
+    const user = userEvent.setup();
+    renderKx();
+
+    const watchLive = screen.getByRole("link", { name: /watch voices live/i });
+    const listenLive = screen.getByRole("button", {
+      name: /listen to voices kx live/i,
+    });
+
+    expect(watchLive).toHaveClass("scale-100");
+    expect(listenLive).toHaveClass("scale-100");
+
+    await user.hover(watchLive);
+    expect(watchLive).toHaveClass("scale-[1.04]");
+    expect(listenLive).toHaveClass("scale-100");
+
+    // Straight from one to the other: the lift and the colours both follow.
+    await user.hover(listenLive);
+    expect(listenLive).toHaveClass("scale-[1.04]");
+    expect(watchLive).toHaveClass("scale-100");
+    expect(watchLive).toHaveClass("bg-voicesNext-orange");
+    expect(listenLive).toHaveClass("bg-voicesNext-cream");
+
+    await user.unhover(listenLive);
+    expect(listenLive).toHaveClass("scale-100");
+    expect(listenLive).toHaveClass("bg-voicesNext-orange");
+  });
+
+  it("greys only the artwork, and only while the stream plays", () => {
+    const { container, rerender } = renderKx({ selected: true });
+
+    // Selecting the tile no longer greys anything.
+    expect(container.querySelector(".grayscale")).toBeNull();
+
+    rerender(
+      <LiveStationCard
+        cardRef={createRef<HTMLButtonElement>()}
+        stationId="kx"
+        station="KX"
+        title="Live from Voices KX"
+        watchLiveUrl="https://www.mixcloud.com/live/VoicesRadio/"
+        canListenLive
+        listenPlaying
+        selected
+        onSelect={vi.fn()}
+        onWatchLive={vi.fn()}
+        onListenLive={vi.fn()}
+      />,
+    );
+
+    const grey = container.querySelector(".grayscale");
+    expect(grey).not.toBeNull();
+    // The header strip ("KX" label) sits outside the greyed block.
+    expect(grey).toContainElement(screen.getByRole("heading", { level: 2 }));
+    expect(grey).not.toContainElement(screen.getByText("KX"));
+  });
+
+  it("does not show the video icon on the KX tile", () => {
+    const { container } = renderKx();
+
+    expect(container.querySelector(".lucide-video")).toBeNull();
   });
 });
