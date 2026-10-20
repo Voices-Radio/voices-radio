@@ -219,7 +219,10 @@ describe("validateArtistInvitation — artist name", () => {
       "fetch",
       vi.fn().mockResolvedValue(
         response({
-          invitation: { ...base, artist: { id: "artist-1", name: "Aeron Darka" } },
+          invitation: {
+            ...base,
+            artist: { id: "artist-1", name: "Aeron Darka" },
+          },
         }),
       ),
     );
@@ -237,12 +240,17 @@ describe("claimArtistInvitation — artist name", () => {
   it("maps artist_name_required to a fixable field error", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        response(
-          { reason: "artist_name_required", message: "Enter your artist name." },
-          400,
+      vi
+        .fn()
+        .mockResolvedValue(
+          response(
+            {
+              reason: "artist_name_required",
+              message: "Enter your artist name.",
+            },
+            400,
+          ),
         ),
-      ),
     );
 
     const result = await claimArtistInvitation("tok", {});
@@ -284,6 +292,27 @@ describe("renewArtistInvitation", () => {
 });
 
 describe("claimArtistInvitation", () => {
+  // The DJ's chosen artist name is queued for review, so the claim answers
+  // with no public name yet. That is a successful claim, not a bad response.
+  it("accepts a successful claim whose public artist name awaits review", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        response({
+          message: "Artist profile claimed successfully",
+          user: { id: "u1", email: "dj@example.com", role: "presenter" },
+          artist: { id: "a1", name: null },
+          token: "signed.jwt",
+        }),
+      ),
+    );
+
+    await expect(claimArtistInvitation("token", {})).resolves.toMatchObject({
+      ok: true,
+      data: { artist: { id: "a1", name: null }, token: "signed.jwt" },
+    });
+  });
+
   it("passes through bearer auth when a matching signed-in session is used", async () => {
     const fetchMock = vi.fn().mockResolvedValue(response({ token: "at" }));
     vi.stubGlobal("fetch", fetchMock);

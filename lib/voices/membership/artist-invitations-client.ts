@@ -69,7 +69,8 @@ const claimSuccessSchema = z.object({
     lastName: z.string().optional(),
     role: z.string().optional(),
   }),
-  artist: z.object({ id: z.string(), name: z.string() }),
+  // The public name only. Null while the name the DJ chose awaits review.
+  artist: z.object({ id: z.string(), name: z.string().nullable() }),
   token: z.string(),
 });
 
