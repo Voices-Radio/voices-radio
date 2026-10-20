@@ -69,11 +69,12 @@ describe("claim form — what each field is for", () => {
   it("separates private account details from the public artist profile", () => {
     renderForm(invitation());
 
+    // The badge is part of each group's name, so the split is announced.
     expect(
-      screen.getByRole("group", { name: /about you \(private\)/i }),
+      screen.getByRole("group", { name: /about you.*private/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("group", { name: /your artist profile \(public\)/i }),
+      screen.getByRole("group", { name: /your artist profile.*public/i }),
     ).toBeInTheDocument();
   });
 
@@ -89,10 +90,12 @@ describe("claim form — what each field is for", () => {
       last.getAttribute("aria-describedby") ?? "",
     );
 
-    expect(firstHint).toHaveTextContent(/private/i);
-    expect(firstHint).toHaveTextContent(/never shown on the website/i);
-    expect(firstHint).toHaveTextContent(/don.t enter your artist name here/i);
-    expect(lastHint).toHaveTextContent(/private/i);
+    // The privacy rule is stated once, on the section the names sit in.
+    const group = screen.getByRole("group", { name: /about you.*private/i });
+    expect(group).toHaveTextContent(/never shown on the website/i);
+    expect(firstHint).toHaveTextContent(/legal first name/i);
+    expect(firstHint).toHaveTextContent(/not your artist name/i);
+    expect(lastHint).toHaveTextContent(/legal last name/i);
   });
 
   it("tells the DJ the artist name is public and must match their Mixcloud and SoundCloud shows", () => {
@@ -133,9 +136,11 @@ describe("claim form — what each field is for", () => {
 
     expect(screen.queryByLabelText("Artist name")).not.toBeInTheDocument();
     const group = screen.getByRole("group", {
-      name: /your artist profile \(public\)/i,
+      name: /your artist profile.*public/i,
     });
-    expect(within(group).getByText("Aeron Darka")).toBeInTheDocument();
+    // The name itself is shown once, in the card above the form.
+    expect(within(group).queryByText("Aeron Darka")).not.toBeInTheDocument();
+    expect(group).toHaveTextContent(/name is the one shown above/i);
     // The address itself is the link text, so it still reads as a way to get
     // help in a browser with no mail handler.
     const contactLink = within(group).getByRole("link", {

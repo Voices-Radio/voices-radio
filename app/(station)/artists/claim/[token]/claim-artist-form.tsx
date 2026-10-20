@@ -3,12 +3,17 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import type { ArtistInvitation } from "@/lib/voices/membership/artist-invitations-client";
 import {
   canChooseClaimMode,
   claimModeFor,
   type ClaimMode,
 } from "@/lib/voices/membership/claim-mode";
+import {
+  accountFieldClassName,
+  accountPrimaryButtonClassName,
+} from "../../../account/components/account-surface";
 import PasswordInput from "../../../components/forms/password-input";
 import {
   claimArtistInvitationAction,
@@ -16,9 +21,6 @@ import {
 } from "./actions";
 
 const initialState: ClaimArtistInvitationState = undefined;
-
-const fieldClassName =
-  "h-12 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background px-4 font-gabarito text-base text-voicesNext-cream outline-none focus:border-voicesNext-orange focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background";
 
 const linkClassName =
   "font-gabarito font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange";
@@ -30,7 +32,10 @@ function SubmitButton({ label }: { label: string }) {
       type="submit"
       disabled={pending}
       aria-busy={pending}
-      className="inline-flex h-12 w-full items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-base font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange disabled:opacity-60"
+      className={cn(
+        accountPrimaryButtonClassName,
+        "h-12 w-full px-6 text-base",
+      )}
     >
       {pending ? "Claiming…" : label}
     </button>
@@ -68,7 +73,7 @@ function Field({
     required,
     "aria-invalid": invalid || undefined,
     "aria-describedby": hintId,
-    className: fieldClassName,
+    className: accountFieldClassName,
     ...(onChange
       ? {
           onChange: (event: { target: { value: string } }) =>
@@ -130,25 +135,50 @@ function ModeButton({
 }
 
 /**
- * A labelled group that says who can see what it holds. The private/public
- * split is the thing DJs most often get wrong (a legal name typed into the
- * artist name box), so it is stated before any field is read.
+ * A numbered, labelled group that says who can see what it holds. The
+ * private/public split is the thing DJs most often get wrong (a legal name
+ * typed into the artist name box), so each section is badged before any field
+ * is read.
  */
 function Section({
+  step,
   title,
+  audience,
   description,
   children,
 }: {
+  step: number;
   title: string;
+  audience: "Private" | "Public";
   description: string;
   children: ReactNode;
 }) {
   return (
     <fieldset className="flex flex-col gap-4 border-0 p-0">
-      <legend className="p-0 font-gabarito text-base font-bold text-voicesNext-cream">
-        {title}
+      <legend className="w-full p-0">
+        <span className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-voicesNext-border font-gabarito text-xs font-bold text-voicesNext-cream/80"
+          >
+            {step}
+          </span>
+          <span className="font-gabarito text-base font-bold text-voicesNext-cream">
+            {title}
+          </span>
+          <span
+            className={cn(
+              "ml-auto rounded-full border px-2.5 py-0.5 font-gabarito text-xs font-bold uppercase tracking-wide",
+              audience === "Private"
+                ? "border-voicesNext-border text-voicesNext-cream/70"
+                : "border-voicesNext-orange/60 text-voicesNext-orangeText",
+            )}
+          >
+            {audience}
+          </span>
+        </span>
       </legend>
-      <p className="-mt-2 font-asap text-sm text-voicesNext-cream/70">
+      <p className="font-asap text-sm text-voicesNext-cream/70">
         {description}
       </p>
       {children}
@@ -156,11 +186,10 @@ function Section({
   );
 }
 
-const FIRST_NAME_HINT =
-  "Your legal first name. This is private: it’s used for your account and payments, and never shown on the website. Please don’t enter your artist name here.";
-const LAST_NAME_HINT = "Your legal last name. Private, as above.";
+const FIRST_NAME_HINT = "Your legal first name, not your artist name.";
+const LAST_NAME_HINT = "Your legal last name.";
 const ARTIST_NAME_HINT =
-  "The name you DJ or present under. It’s shown publicly on the website, the schedule and your shows. Please make sure it matches the artist name on any shows you’ve already uploaded to Mixcloud and SoundCloud, so we can link your back-catalogue to your profile.";
+  "The name you DJ or present under, shown publicly on the website and schedule. Please match the artist name on your Mixcloud and SoundCloud shows, so we can link your back-catalogue.";
 
 /** Same name to a human: any case, any spacing. */
 const sameName = (a: string, b: string) =>
@@ -239,7 +268,7 @@ export default function ClaimArtistForm({
         ref={statusRef}
         role="alert"
         tabIndex={-1}
-        className="mt-8 rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-6 font-gabarito text-sm text-voicesNext-cream"
+        className="mt-6 rounded-voices-sm border border-voicesNext-border bg-voicesNext-background p-4 font-gabarito text-sm text-voicesNext-cream"
       >
         <p>{state.message}</p>
         <p className="mt-3 font-asap">
@@ -254,7 +283,7 @@ export default function ClaimArtistForm({
   }
 
   return (
-    <form action={formAction} className="mt-8 flex max-w-lg flex-col gap-5">
+    <form action={formAction} className="mt-6 flex w-full flex-col gap-6">
       <input type="hidden" name="token" value={token} />
       <input type="hidden" name="invitationEmail" value={invitation.email} />
       <input type="hidden" name="mode" value={mode} />
@@ -290,7 +319,9 @@ export default function ClaimArtistForm({
       )}
 
       <Section
-        title="About you (private)"
+        step={1}
+        title="About you"
+        audience="Private"
         description="Used for your account and payments. Never shown on the website."
       >
         {mode === "session" && (
@@ -395,7 +426,9 @@ export default function ClaimArtistForm({
 
       {(nameIsEditable || publicName) && (
         <Section
-          title="Your artist profile (public)"
+          step={2}
+          title="Your artist profile"
+          audience="Public"
           description="This is what listeners see on voicesradio.co.uk."
         >
           {nameIsEditable ? (
@@ -432,25 +465,16 @@ export default function ClaimArtistForm({
               )}
             </>
           ) : (
-            <div className="flex flex-col gap-1.5">
-              <p className="font-gabarito text-sm font-bold text-voicesNext-cream">
-                Artist name
-              </p>
-              <p className="font-gabarito text-xl font-bold text-voicesNext-cream">
-                {publicName}
-              </p>
-              <p className="font-asap text-xs text-voicesNext-cream/70">
-                This is the name on your public profile. Need to change it?
-                Email{" "}
-                <a
-                  href="mailto:info@voicesradio.co.uk"
-                  className={`${linkClassName} select-all break-all`}
-                >
-                  info@voicesradio.co.uk
-                </a>
-                .
-              </p>
-            </div>
+            <p className="font-asap text-sm text-voicesNext-cream/70">
+              Your artist name is the one shown above. Need to change it? Email{" "}
+              <a
+                href="mailto:info@voicesradio.co.uk"
+                className={`${linkClassName} select-all whitespace-nowrap`}
+              >
+                info@voicesradio.co.uk
+              </a>
+              .
+            </p>
           )}
         </Section>
       )}
