@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowRight } from "lucide-react";
-import { briefHref } from "../content";
+import { BRIEF_EMAIL, briefHref } from "../content";
 
 export function Hero() {
   return (
@@ -49,6 +49,15 @@ export function Hero() {
               See our work
             </a>
           </div>
+          <p className="mt-4 text-sm text-slate-300">
+            Or email{" "}
+            <a
+              href={briefHref}
+              className="select-all break-all font-black text-white underline underline-offset-4 transition hover:text-voices-purple focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+            >
+              {BRIEF_EMAIL}
+            </a>
+          </p>
         </div>
       </div>
 

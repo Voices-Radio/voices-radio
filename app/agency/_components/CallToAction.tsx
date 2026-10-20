@@ -1,5 +1,5 @@
 import { ArrowRight, ClipboardList } from "lucide-react";
-import { briefHref } from "../content";
+import { BRIEF_EMAIL, briefHref } from "../content";
 
 export function CallToAction() {
   return (
@@ -35,10 +35,10 @@ export function CallToAction() {
             <ArrowRight className="h-5 w-5" />
           </a>
           <a
-            href="mailto:bookings@voicesradio.co.uk"
+            href={`mailto:${BRIEF_EMAIL}`}
             className="min-h-12 inline-flex w-full items-center justify-center gap-2 break-all rounded-full border-2 border-slate-900 px-6 py-4 text-sm font-black text-slate-900 transition hover:bg-slate-900 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:w-auto sm:px-8 sm:text-base"
           >
-            bookings@voicesradio.co.uk
+            {BRIEF_EMAIL}
           </a>
         </div>
       </div>

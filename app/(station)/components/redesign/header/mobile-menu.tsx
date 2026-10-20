@@ -7,7 +7,9 @@ import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { cn } from "@/lib/utils";
 import type { NavLink } from "@/lib/voices/page-copy";
+import { readEmailFromMailto } from "@/lib/voices/mailto";
 import BrandMark from "../brand-mark";
+import ContactEmailCopy from "../contact-email-copy";
 import { MobileAccountLinks } from "./mobile-account-links";
 import { MobileHeaderArtwork } from "./mobile-header-parts";
 import { isActive } from "./nav";
@@ -56,6 +58,7 @@ export function MobileMenu({
   onSearchNavigate,
 }: MobileMenuProps) {
   const router = useRouter();
+  const contactEmail = readEmailFromMailto(contactLink);
 
   function handleMobileSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -250,6 +253,13 @@ export function MobileMenu({
               >
                 Contact
               </a>
+              {contactEmail && (
+                <ContactEmailCopy
+                  email={contactEmail}
+                  className="-mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 font-gabarito text-xs font-medium text-voicesNext-secondary"
+                  addressClassName="select-all break-all text-voicesNext-cream"
+                />
+              )}
             </nav>
 
             <MobileAccountLinks

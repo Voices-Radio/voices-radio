@@ -1,14 +1,5 @@
-"use client";
-
-import { useState } from "react";
-
-const COPY_RESET_MS = 2000;
-
-function readEmail(href: string): string | null {
-  if (!href.toLowerCase().startsWith("mailto:")) return null;
-  const address = href.slice("mailto:".length).split("?")[0];
-  return address ? decodeURIComponent(address) : null;
-}
+import { readEmailFromMailto } from "@/lib/voices/mailto";
+import ContactEmailCopy from "../components/redesign/contact-email-copy";
 
 /**
  * A `mailto:` link silently does nothing in a browser with no registered mail
@@ -22,22 +13,7 @@ export default function ContactCta({
   href: string;
   label: string;
 }) {
-  const email = readEmail(href);
-  const [copied, setCopied] = useState(false);
-
-  async function copyEmail() {
-    if (!email) return;
-
-    try {
-      await navigator.clipboard.writeText(email);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), COPY_RESET_MS);
-    } catch {
-      // Clipboard access can be denied. The address stays visible, so the
-      // visitor can still select it by hand.
-      setCopied(false);
-    }
-  }
+  const email = readEmailFromMailto(href);
 
   return (
     <div className="flex flex-col gap-2">
@@ -48,21 +24,12 @@ export default function ContactCta({
         {label}
       </a>
       {email && (
-        <p className="flex flex-wrap items-center gap-2 font-gabarito text-sm text-voicesNext-secondary">
-          <span>Or email</span>
-          <span className="select-all text-voicesNext-cream">{email}</span>
-          <button
-            type="button"
-            onClick={copyEmail}
-            aria-label={`Copy email address ${email}`}
-            className="font-bold uppercase text-voicesNext-orange underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-          >
-            Copy
-          </button>
-          <span aria-live="polite" className="text-voicesNext-cream">
-            {copied ? "Copied" : ""}
-          </span>
-        </p>
+        <ContactEmailCopy
+          email={email}
+          prefix="Or email"
+          className="flex flex-wrap items-center gap-x-2 gap-y-1 font-gabarito text-sm text-voicesNext-secondary"
+          addressClassName="select-all break-all text-voicesNext-cream"
+        />
       )}
     </div>
   );

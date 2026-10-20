@@ -13,7 +13,14 @@ vi.mock("react-dom", async (importOriginal) => ({
   useFormStatus: () => ({ pending: false }),
 }));
 vi.mock("next/link", () => ({
-  default: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => (
+  default: ({
+    href,
+    children,
+    ...rest
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => (
     <a href={href} {...rest}>
       {children}
     </a>
@@ -50,7 +57,11 @@ function invitation(overrides: InvitationOverrides = {}): ArtistInvitation {
 
 function renderForm(inv: ArtistInvitation, sessionMatchesInvitation = false) {
   return render(
-    <ClaimArtistForm token="tok" invitation={inv} sessionMatchesInvitation={sessionMatchesInvitation} />,
+    <ClaimArtistForm
+      token="tok"
+      invitation={inv}
+      sessionMatchesInvitation={sessionMatchesInvitation}
+    />,
   );
 }
 
@@ -58,8 +69,12 @@ describe("claim form — what each field is for", () => {
   it("separates private account details from the public artist profile", () => {
     renderForm(invitation());
 
-    expect(screen.getByRole("group", { name: /about you \(private\)/i })).toBeInTheDocument();
-    expect(screen.getByRole("group", { name: /your artist profile \(public\)/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: /about you \(private\)/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: /your artist profile \(public\)/i }),
+    ).toBeInTheDocument();
   });
 
   it("says first and last name are the DJ's own, private, and not their artist name", () => {
@@ -67,8 +82,12 @@ describe("claim form — what each field is for", () => {
 
     const first = screen.getByLabelText("First name");
     const last = screen.getByLabelText("Last name");
-    const firstHint = document.getElementById(first.getAttribute("aria-describedby") ?? "");
-    const lastHint = document.getElementById(last.getAttribute("aria-describedby") ?? "");
+    const firstHint = document.getElementById(
+      first.getAttribute("aria-describedby") ?? "",
+    );
+    const lastHint = document.getElementById(
+      last.getAttribute("aria-describedby") ?? "",
+    );
 
     expect(firstHint).toHaveTextContent(/private/i);
     expect(firstHint).toHaveTextContent(/never shown on the website/i);
@@ -80,7 +99,9 @@ describe("claim form — what each field is for", () => {
     renderForm(invitation());
 
     const input = screen.getByLabelText("Artist name");
-    const hint = document.getElementById(input.getAttribute("aria-describedby") ?? "");
+    const hint = document.getElementById(
+      input.getAttribute("aria-describedby") ?? "",
+    );
 
     expect(input).toBeRequired();
     expect(hint).toHaveTextContent(/shown publicly/i);
@@ -90,7 +111,9 @@ describe("claim form — what each field is for", () => {
   it("asks for the artist name whichever way the DJ signs in, not just when creating an account", () => {
     renderForm(invitation({ account: { exists: true, passwordSet: true } }));
 
-    expect(screen.getByLabelText("Existing account password")).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("Existing account password"),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText("Artist name")).toBeRequired();
     expect(screen.queryByLabelText("First name")).not.toBeInTheDocument();
   });
@@ -102,12 +125,26 @@ describe("claim form — what each field is for", () => {
   });
 
   it("shows an artist name that is already set read-only, with how to change it", () => {
-    renderForm(invitation({ artist: { name: "Aeron Darka", artistNameRequired: false } }));
+    renderForm(
+      invitation({
+        artist: { name: "Aeron Darka", artistNameRequired: false },
+      }),
+    );
 
     expect(screen.queryByLabelText("Artist name")).not.toBeInTheDocument();
-    const group = screen.getByRole("group", { name: /your artist profile \(public\)/i });
+    const group = screen.getByRole("group", {
+      name: /your artist profile \(public\)/i,
+    });
     expect(within(group).getByText("Aeron Darka")).toBeInTheDocument();
-    expect(within(group).getByText(/contact voices/i)).toBeInTheDocument();
+    // The address itself is the link text, so it still reads as a way to get
+    // help in a browser with no mail handler.
+    const contactLink = within(group).getByRole("link", {
+      name: "info@voicesradio.co.uk",
+    });
+    expect(contactLink).toHaveAttribute(
+      "href",
+      "mailto:info@voicesradio.co.uk",
+    );
   });
 
   it("keeps the taken-name guidance for a net-new artist whose invited name was taken", () => {
@@ -120,8 +157,12 @@ describe("claim form — what each field is for", () => {
     );
 
     const input = screen.getByLabelText("Artist name");
-    const hint = document.getElementById(input.getAttribute("aria-describedby") ?? "");
-    expect(hint).toHaveTextContent(/“osBrain” is already the name of another artist/);
+    const hint = document.getElementById(
+      input.getAttribute("aria-describedby") ?? "",
+    );
+    expect(hint).toHaveTextContent(
+      /“osBrain” is already the name of another artist/,
+    );
     expect(hint).toHaveTextContent(/mixcloud and soundcloud/i);
   });
 });
@@ -137,8 +178,12 @@ describe("claim form — artist name that looks like a legal name", () => {
 
     await user.type(screen.getByLabelText("Artist name"), "hayley  newsam");
 
-    expect(screen.getByRole("status")).toHaveTextContent(/matches your first and last name/i);
-    expect(screen.getByRole("button", { name: /claim artist profile/i })).toBeEnabled();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      /matches your first and last name/i,
+    );
+    expect(
+      screen.getByRole("button", { name: /claim artist profile/i }),
+    ).toBeEnabled();
   });
 
   it("does not warn for a different artist name", async () => {

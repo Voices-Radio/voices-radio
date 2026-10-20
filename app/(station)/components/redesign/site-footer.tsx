@@ -5,6 +5,8 @@ import {
   DEFAULT_FOOTER_LINKS,
   DEFAULT_FOOTER_LOCATIONS,
 } from "@/lib/voices/page-copy";
+import { readEmailFromMailto } from "@/lib/voices/mailto";
+import ContactEmailCopy from "./contact-email-copy";
 
 export default function SiteFooter({
   contactUrl,
@@ -22,6 +24,7 @@ export default function SiteFooter({
   // See site-header.tsx for the same fix.
   const ctaUrl = "/join";
   const contactHref = contactUrl || "/chat";
+  const contactEmail = readEmailFromMailto(contactHref);
 
   return (
     <footer className="border-t border-voicesNext-border bg-black text-voicesNext-cream">
@@ -46,6 +49,13 @@ export default function SiteFooter({
               ),
             )}
             <a href={contactHref}>Contact</a>
+            {contactEmail && (
+              <ContactEmailCopy
+                email={contactEmail}
+                className="flex flex-wrap items-center gap-x-2 gap-y-1 font-gabarito text-xs font-medium text-voicesNext-secondary"
+                addressClassName="select-all break-all text-voicesNext-cream"
+              />
+            )}
             <a href={ctaUrl}>Become a Supporter</a>
           </nav>
           <p className="max-w-[240px] font-gabarito text-xs text-voicesNext-secondary">

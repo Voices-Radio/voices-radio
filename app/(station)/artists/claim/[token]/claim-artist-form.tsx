@@ -69,7 +69,12 @@ function Field({
     "aria-invalid": invalid || undefined,
     "aria-describedby": hintId,
     className: fieldClassName,
-    ...(onChange ? { onChange: (event: { target: { value: string } }) => onChange(event.target.value) } : {}),
+    ...(onChange
+      ? {
+          onChange: (event: { target: { value: string } }) =>
+            onChange(event.target.value),
+        }
+      : {}),
   };
 
   return (
@@ -183,7 +188,10 @@ export default function ClaimArtistForm({
   const [mode, setMode] = useState<ClaimMode>(() =>
     claimModeFor({ sessionMatchesInvitation, invitation }),
   );
-  const canChoose = canChooseClaimMode({ sessionMatchesInvitation, invitation });
+  const canChoose = canChooseClaimMode({
+    sessionMatchesInvitation,
+    invitation,
+  });
   const statusRef = useRef<HTMLDivElement>(null);
   const forgotPasswordHref = `/forgot-password?email=${encodeURIComponent(
     invitation.email,
@@ -285,105 +293,104 @@ export default function ClaimArtistForm({
         title="About you (private)"
         description="Used for your account and payments. Never shown on the website."
       >
-      {mode === "session" && (
-        <div className="rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-4 font-asap text-sm text-voicesNext-cream/80">
-          You are already signed in as {invitation.email}, so Voices can link
-          this artist profile without asking for your password again.
-        </div>
-      )}
+        {mode === "session" && (
+          <div className="rounded-voices-md border border-voicesNext-border bg-voicesNext-surface p-4 font-asap text-sm text-voicesNext-cream/80">
+            You are already signed in as {invitation.email}, so Voices can link
+            this artist profile without asking for your password again.
+          </div>
+        )}
 
-      {mode === "existing" && (
-        <div className="flex flex-col gap-2">
-          {!canChoose && (
-            <p className="font-asap text-sm text-voicesNext-cream/80">
-              You already have a Voices account with {invitation.email}. Enter
-              its password to link this artist profile to it.
-            </p>
-          )}
-          <Field
-            id="password"
-            name="password"
-            label="Existing account password"
-            password
-            autoComplete="current-password"
-            required
-          />
-          <p className="font-asap text-sm text-voicesNext-cream/70">
-            Forgot your password?{" "}
-            <Link href={forgotPasswordHref} className={linkClassName}>
-              Reset it first
-            </Link>
-            , then return here to link this artist profile.
-          </p>
-        </div>
-      )}
-
-      {mode === "set_password" && (
-        <div className="flex flex-col gap-2">
-          <p className="font-asap text-sm text-voicesNext-cream/80">
-            Your Voices account for {invitation.email} uses Sign in with Apple.
-            Choose a password to use it on the website too — Sign in with Apple
-            keeps working in the app.
-          </p>
-          <Field
-            id="newPassword"
-            name="password"
-            label="Choose a password"
-            password
-            autoComplete="new-password"
-            required
-            hint="At least 8 characters."
-            invalid={error?.field === "password"}
-          />
-        </div>
-      )}
-
-      {mode === "create" && (
-        <>
-          <div className="grid gap-4 sm:grid-cols-2">
+        {mode === "existing" && (
+          <div className="flex flex-col gap-2">
+            {!canChoose && (
+              <p className="font-asap text-sm text-voicesNext-cream/80">
+                You already have a Voices account with {invitation.email}. Enter
+                its password to link this artist profile to it.
+              </p>
+            )}
             <Field
-              id="firstName"
-              name="firstName"
-              label="First name"
-              autoComplete="given-name"
+              id="password"
+              name="password"
+              label="Existing account password"
+              password
+              autoComplete="current-password"
               required
-              defaultValue={values?.firstName}
-              hint={FIRST_NAME_HINT}
-              onChange={setFirstNameValue}
             />
+            <p className="font-asap text-sm text-voicesNext-cream/70">
+              Forgot your password?{" "}
+              <Link href={forgotPasswordHref} className={linkClassName}>
+                Reset it first
+              </Link>
+              , then return here to link this artist profile.
+            </p>
+          </div>
+        )}
+
+        {mode === "set_password" && (
+          <div className="flex flex-col gap-2">
+            <p className="font-asap text-sm text-voicesNext-cream/80">
+              Your Voices account for {invitation.email} uses Sign in with
+              Apple. Choose a password to use it on the website too — Sign in
+              with Apple keeps working in the app.
+            </p>
             <Field
-              id="lastName"
-              name="lastName"
-              label="Last name"
-              autoComplete="family-name"
+              id="newPassword"
+              name="password"
+              label="Choose a password"
+              password
+              autoComplete="new-password"
               required
-              defaultValue={values?.lastName}
-              hint={LAST_NAME_HINT}
-              onChange={setLastNameValue}
+              hint="At least 8 characters."
+              invalid={error?.field === "password"}
             />
           </div>
-          <Field
-            id="newPassword"
-            name="password"
-            label="Choose a password"
-            password
-            autoComplete="new-password"
-            required
-            hint="At least 8 characters."
-            invalid={error?.field === "password"}
-          />
-          <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
-            <input
-              type="checkbox"
-              name="newsletters"
-              defaultChecked={values?.newsletters}
-              className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-            />
-            Send me Voices news and updates.
-          </label>
-        </>
-      )}
+        )}
 
+        {mode === "create" && (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                id="firstName"
+                name="firstName"
+                label="First name"
+                autoComplete="given-name"
+                required
+                defaultValue={values?.firstName}
+                hint={FIRST_NAME_HINT}
+                onChange={setFirstNameValue}
+              />
+              <Field
+                id="lastName"
+                name="lastName"
+                label="Last name"
+                autoComplete="family-name"
+                required
+                defaultValue={values?.lastName}
+                hint={LAST_NAME_HINT}
+                onChange={setLastNameValue}
+              />
+            </div>
+            <Field
+              id="newPassword"
+              name="password"
+              label="Choose a password"
+              password
+              autoComplete="new-password"
+              required
+              hint="At least 8 characters."
+              invalid={error?.field === "password"}
+            />
+            <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
+              <input
+                type="checkbox"
+                name="newsletters"
+                defaultChecked={values?.newsletters}
+                className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+              />
+              Send me Voices news and updates.
+            </label>
+          </>
+        )}
       </Section>
 
       {(nameIsEditable || publicName) && (
@@ -416,11 +423,11 @@ export default function ClaimArtistForm({
               {matchesLegalName && (
                 <p
                   role="status"
-                  className="rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface px-4 py-3 font-asap text-sm text-voicesNext-cream/85"
+                  className="text-voicesNext-cream/85 rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface px-4 py-3 font-asap text-sm"
                 >
                   This matches your first and last name. That’s fine if you
-                  perform under your own name — otherwise, enter the name you
-                  DJ under.
+                  perform under your own name — otherwise, enter the name you DJ
+                  under.
                 </p>
               )}
             </>
@@ -433,9 +440,13 @@ export default function ClaimArtistForm({
                 {publicName}
               </p>
               <p className="font-asap text-xs text-voicesNext-cream/70">
-                This is the name on your public profile. Need to change it?{" "}
-                <a href="mailto:info@voicesradio.co.uk" className={linkClassName}>
-                  Contact Voices
+                This is the name on your public profile. Need to change it?
+                Email{" "}
+                <a
+                  href="mailto:info@voicesradio.co.uk"
+                  className={`${linkClassName} select-all break-all`}
+                >
+                  info@voicesradio.co.uk
                 </a>
                 .
               </p>
