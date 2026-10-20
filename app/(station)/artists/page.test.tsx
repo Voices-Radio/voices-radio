@@ -13,6 +13,11 @@ vi.mock("../components/redesign/save-artist-button", () => ({
   default: () => null,
 }));
 
+// The search field reads the router; it is covered by its own tests.
+vi.mock("../components/redesign/artist-search-field", () => ({
+  default: () => <div data-testid="artist-search-field" />,
+}));
+
 function buildArtist(
   overrides: Partial<VoicesArtist> & Pick<VoicesArtist, "id" | "name">,
 ): VoicesArtist {
@@ -37,6 +42,12 @@ const artists = [
   buildArtist({ id: "1", name: "Techno Host", genres: ["Techno"] }),
   buildArtist({ id: "2", name: "Jazz Host", genres: ["Jazz"] }),
   buildArtist({ id: "3", name: "Techno Dub Host", genres: ["Techno", "Dub"] }),
+  buildArtist({
+    id: "4",
+    name: "Station East Host",
+    station: "east",
+    aliases: ["Hackney Selector"],
+  }),
 ];
 
 describe("ArtistsPage", () => {
@@ -137,5 +148,75 @@ describe("ArtistsPage", () => {
     expect(
       screen.getByText(/No artists match all of these genres/),
     ).toBeInTheDocument();
+  });
+
+  it("renders the search field on the artists tab but not on the genres tab", async () => {
+    const { default: ArtistsPage } = await import("./page");
+    const { unmount } = render(
+      await ArtistsPage({ searchParams: Promise.resolve({}) }),
+    );
+    expect(screen.getByTestId("artist-search-field")).toBeInTheDocument();
+    unmount();
+
+    render(
+      await ArtistsPage({ searchParams: Promise.resolve({ tab: "genres" }) }),
+    );
+    expect(screen.queryByTestId("artist-search-field")).not.toBeInTheDocument();
+  });
+
+  it("filters artists by name from the q param", async () => {
+    const { default: ArtistsPage } = await import("./page");
+    render(
+      await ArtistsPage({ searchParams: Promise.resolve({ q: "jazz" }) }),
+    );
+
+    expect(screen.getByRole("link", { name: /Jazz Host/ })).toBeVisible();
+    expect(
+      screen.queryByRole("link", { name: /Techno Host/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("matches aliases and shows matches from every station in one list", async () => {
+    const { default: ArtistsPage } = await import("./page");
+    render(
+      await ArtistsPage({ searchParams: Promise.resolve({ q: "hackney" }) }),
+    );
+
+    expect(
+      screen.getByRole("link", { name: /Station East Host/ }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("heading", { name: "Voices KX" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("combines q with a selected genre", async () => {
+    const { default: ArtistsPage } = await import("./page");
+    render(
+      await ArtistsPage({
+        searchParams: Promise.resolve({ genre: TECHNO_KEY, q: "dub" }),
+      }),
+    );
+
+    expect(screen.getByRole("link", { name: /Techno Dub Host/ })).toBeVisible();
+    expect(
+      screen.queryByRole("link", { name: /^Techno Host/ }),
+    ).not.toBeInTheDocument();
+    // Removing the genre chip keeps the search.
+    expect(
+      screen.getByRole("link", { name: `Remove ${TECHNO_KEY} filter` }),
+    ).toHaveAttribute("href", "/artists?q=dub");
+  });
+
+  it("explains when no artist matches the search and links to clear it", async () => {
+    const { default: ArtistsPage } = await import("./page");
+    render(
+      await ArtistsPage({ searchParams: Promise.resolve({ q: "zzzz" }) }),
+    );
+
+    expect(screen.getByText(/No artists match/)).toHaveTextContent("zzzz");
+    expect(
+      screen.getByRole("link", { name: "Clear search" }),
+    ).toHaveAttribute("href", "/artists");
   });
 });

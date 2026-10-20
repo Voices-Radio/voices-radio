@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ObjectInputProps } from "sanity";
 import { PatchEvent, set, unset, useClient } from "sanity";
-import { studioAuthHeaders } from "./studio-auth-headers";
+import {
+  STUDIO_TOKEN_MISSING_MESSAGE,
+  studioAuthHeaders,
+  useStudioAuth,
+} from "./studio-auth-headers";
 
 const API_VERSION = "2023-06-21";
 
@@ -102,6 +106,7 @@ export default function ShowPickerInput(
 ) {
   const { value, onChange } = props;
   const client = useClient({ apiVersion: API_VERSION });
+  const { token, canSignInAgain, signInAgain } = useStudioAuth(client);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -136,9 +141,17 @@ export default function ShowPickerInput(
       setError("");
 
       try {
+        // The route answers 401 without a token, so say what to do about it
+        // rather than spending a request on a known failure.
+        if (!token) {
+          throw new Error(STUDIO_TOKEN_MISSING_MESSAGE);
+        }
+
         const response = await fetch(
           `/api/voices/admin-show-search?${params.toString()}`,
-          { headers: studioAuthHeaders(client, { Accept: "application/json" }) },
+          {
+            headers: studioAuthHeaders(client, { Accept: "application/json" }),
+          },
         );
         const payload = await readShowSearchResponse(response);
 
@@ -172,7 +185,7 @@ export default function ShowPickerInput(
     return () => {
       cancelled = true;
     };
-  }, [client, debouncedQuery, page]);
+  }, [client, debouncedQuery, page, token]);
 
   const selectedLabel = useMemo(() => {
     if (!value?.showId) return "No show selected";
@@ -234,9 +247,16 @@ export default function ShowPickerInput(
       </label>
 
       {error ? (
-        <p style={{ color: "var(--card-critical-fg-color)", margin: 0 }}>
-          {error}
-        </p>
+        <div style={{ display: "grid", gap: 8, justifyItems: "start" }}>
+          <p style={{ color: "var(--card-critical-fg-color)", margin: 0 }}>
+            {error}
+          </p>
+          {!token && canSignInAgain ? (
+            <button type="button" onClick={signInAgain}>
+              Sign in again
+            </button>
+          ) : null}
+        </div>
       ) : null}
 
       <div style={{ display: "grid", gap: 8 }}>

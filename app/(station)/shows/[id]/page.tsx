@@ -256,11 +256,13 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
       </section>
 
       {relatedShows.length > 0 && (
-        <ShowRail
-          title={`More from ${show.artist?.name ?? "this artist"}`}
-          description="Related matched shows from the same associated artist."
-          shows={relatedShows}
-        />
+        <div className="mx-auto max-w-[1280px] px-2 md:px-8">
+          <ShowRail
+            title={`More from ${show.artist?.name ?? "this artist"}`}
+            description="Related matched shows from the same associated artist."
+            shows={relatedShows}
+          />
+        </div>
       )}
       <SupporterBlock />
     </main>

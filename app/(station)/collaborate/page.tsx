@@ -3,6 +3,7 @@ import { resolveCollaboratePage } from "@/lib/voices/page-copy";
 import { VOICES_APPLY_FOR_SHOW_URL } from "@/lib/voices/config";
 import type { Metadata } from "next";
 import Link from "next/link";
+import ContactCta from "./contact-cta";
 
 const CONTACT_FALLBACK_URL = "mailto:info@voicesradio.co.uk";
 
@@ -58,12 +59,7 @@ export default async function CollaboratePage() {
             >
               {page.applyCtaText}
             </a>
-            <a
-              href={contactLink}
-              className="inline-flex h-14 items-center justify-center border border-voicesNext-cream px-6 font-gabarito text-lg font-bold text-voicesNext-cream transition-colors hover:border-voicesNext-orange hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-            >
-              {page.contactCtaText}
-            </a>
+            <ContactCta href={contactLink} label={page.contactCtaText} />
           </div>
         </div>
       </section>

@@ -43,6 +43,13 @@ export default defineConfig({
   projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   title: "Studio",
   dataset: env.NEXT_PUBLIC_SANITY_DATASET,
+  // This Studio is embedded on our own domain, so the api.sanity.io session is
+  // a third-party cookie. The default "dual" method prefers that cookie and
+  // leaves the Studio client with no token, which the custom inputs need to
+  // call our gated /api/voices/admin-* routes (see schemas/inputs/
+  // studio-auth-headers.ts). "token" keeps the session cookieless, so a token
+  // is always stored and always sent.
+  auth: { loginMethod: "token" },
   schema: { types: schemaTypes },
   plugins: [
     deskTool({

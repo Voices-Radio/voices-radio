@@ -158,7 +158,7 @@ export function resolveListingPages(
         "Browse the hosts at our Hackney Wick studio.",
       ),
     },
-    music: { title: pick(cms?.music?.title, "Music") },
+    music: { title: pick(cms?.music?.title, "Shows") },
     blog: {
       eyebrow: pick(cms?.blog?.eyebrow, "From the station"),
       title: pick(cms?.blog?.title, "Blog"),

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 const categoryTiles = [
   {
-    label: "Music",
+    label: "Shows",
     href: "/explore?category=music",
     description: "Recent KX shows and mixes",
     index: "01",

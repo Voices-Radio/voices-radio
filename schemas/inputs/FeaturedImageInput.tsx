@@ -4,7 +4,11 @@ import { Button, Card, Spinner, Stack, Text } from "@sanity/ui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ImageValue, ObjectInputProps, Path } from "sanity";
 import { PatchEvent, set, useClient, useFormValue } from "sanity";
-import { studioAuthHeaders } from "./studio-auth-headers";
+import {
+  STUDIO_TOKEN_MISSING_MESSAGE,
+  studioAuthHeaders,
+  useStudioAuth,
+} from "./studio-auth-headers";
 import { enhanceArtworkUrl } from "@/lib/voices/artwork";
 
 type FeaturedImageValue = ImageValue & {
@@ -85,14 +89,13 @@ export default function FeaturedImageInput(
 ) {
   const { onChange } = props;
   const client = useClient({ apiVersion: API_VERSION });
+  const { token, canSignInAgain, signInAgain } = useStudioAuth(client);
   const parentPath = useMemo(() => getParentPath(props.path), [props.path]);
   const itemType = useFormValue([...parentPath, "_type"]) as string | undefined;
   const blog = useFormValue([...parentPath, "blog"]) as
-    | ReferenceValue
-    | undefined;
+    ReferenceValue | undefined;
   const event = useFormValue([...parentPath, "event"]) as
-    | ReferenceValue
-    | undefined;
+    ReferenceValue | undefined;
   const show = useFormValue([...parentPath, "show"]) as ShowValue | undefined;
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const [error, setError] = useState("");
@@ -195,10 +198,14 @@ export default function FeaturedImageInput(
           };
         }
 
+        // The proxy route answers 401 without a token, so say what to do about
+        // it rather than spending a request on a known failure.
+        if (!token) {
+          throw new Error(STUDIO_TOKEN_MISSING_MESSAGE);
+        }
+
         const response = await fetch(
-          `/api/voices/admin-image-proxy?url=${encodeURIComponent(
-            sourceUrl,
-          )}`,
+          `/api/voices/admin-image-proxy?url=${encodeURIComponent(sourceUrl)}`,
           { headers: studioAuthHeaders(client, { Accept: "image/*" }) },
         );
         const blob = await readProxyResponse(response);
@@ -281,6 +288,7 @@ export default function FeaturedImageInput(
     show?.showId,
     show?.title,
     sourceKey,
+    token,
   ]);
 
   return (
@@ -300,12 +308,21 @@ export default function FeaturedImageInput(
         <Card border padding={3} radius={2} tone="critical">
           <Stack space={3}>
             <Text size={1}>{error}</Text>
-            <Button
-              mode="ghost"
-              onClick={() => setManualImportKey((current) => current + 1)}
-              text="Try importing again"
-              tone="critical"
-            />
+            {!token && canSignInAgain ? (
+              <Button
+                mode="ghost"
+                onClick={signInAgain}
+                text="Sign in again"
+                tone="critical"
+              />
+            ) : (
+              <Button
+                mode="ghost"
+                onClick={() => setManualImportKey((current) => current + 1)}
+                text="Try importing again"
+                tone="critical"
+              />
+            )}
           </Stack>
         </Card>
       ) : null}

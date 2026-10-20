@@ -36,7 +36,7 @@ export default defineType({
   groups: [
     { name: "shows", title: "/shows" },
     { name: "artists", title: "/artists" },
-    { name: "music", title: "/explore (Music)" },
+    { name: "music", title: "/explore (Shows)" },
     { name: "blog", title: "/blog" },
   ],
   fields: [
@@ -102,11 +102,11 @@ export default defineType({
     }),
     defineField({
       name: "music",
-      title: "Music (Explore) page",
+      title: "Shows (Explore) page",
       type: "object",
       group: "music",
       fields: copyFields([
-        { name: "title", title: "Heading", placeholder: "Music" },
+        { name: "title", title: "Heading", placeholder: "Shows" },
       ]),
     }),
     defineField({

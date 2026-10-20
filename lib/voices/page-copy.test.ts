@@ -17,7 +17,7 @@ describe("resolveListingPages", () => {
     expect(copy.shows.title).toBe("Listen back");
     expect(copy.blog.eyebrow).toBe("From the station");
     expect(copy.artists.kxTitle).toBe("Voices KX");
-    expect(copy.music.title).toBe("Music");
+    expect(copy.music.title).toBe("Shows");
   });
 
   it("no longer exposes developer wording on the public shows page", () => {

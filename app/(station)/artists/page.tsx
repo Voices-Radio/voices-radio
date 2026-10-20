@@ -1,9 +1,11 @@
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import ArtistCard from "../components/redesign/artist-card";
+import ArtistSearchField from "../components/redesign/artist-search-field";
 import GenreBrowser from "../components/redesign/genre-browser";
 import GenreFilterChips from "../components/redesign/genre-filter-chips";
 import { getArtists } from "@/lib/voices/api";
+import { filterArtistsByQuery } from "@/lib/voices/artist-search";
 import { buildGenreHref, toggleGenre } from "@/lib/voices/genre-filter";
 import { isGenreKey, matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
 import { matchesStationOrLocation } from "@/lib/voices/normalizers";
@@ -70,6 +72,7 @@ function ArtistSection({
   artists,
   expanded,
   selectedGenres,
+  query,
 }: {
   sectionKey: string;
   title: string;
@@ -77,12 +80,14 @@ function ArtistSection({
   artists: VoicesArtist[];
   expanded: boolean;
   selectedGenres: string[];
+  query?: string;
 }) {
   if (!artists.length) return null;
 
   const visibleArtists = expanded ? artists : artists.slice(0, COLLAPSED_LIMIT);
   const expandHref = `${buildGenreHref(ARTISTS_BASE_PATH, selectedGenres, {
     expand: sectionKey,
+    q: query,
   })}#${sectionKey}`;
 
   return (
@@ -124,6 +129,31 @@ function ArtistSection({
   );
 }
 
+function NoSearchResults({
+  query,
+  selectedGenres,
+}: {
+  query: string;
+  selectedGenres: string[];
+}) {
+  return (
+    <section className="mx-auto max-w-[1280px] px-4 py-10 md:px-[70px] md:py-[54px]">
+      <div className="border border-voicesNext-border p-6 font-gabarito text-voicesNext-secondary">
+        <p>
+          No artists match &ldquo;{query}&rdquo;
+          {selectedGenres.length > 0 ? " in the selected genres" : ""}.
+        </p>
+        <Link
+          href={buildGenreHref(ARTISTS_BASE_PATH, selectedGenres)}
+          className="mt-3 inline-block text-voicesNext-orangeText underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange"
+        >
+          Clear search
+        </Link>
+      </div>
+    </section>
+  );
+}
+
 export default async function ArtistsPage({
   searchParams,
 }: {
@@ -138,6 +168,7 @@ export default async function ArtistsPage({
     isGenreKey,
   );
   const expand = getSingleParam(resolvedSearchParams, "expand");
+  const query = (getSingleParam(resolvedSearchParams, "q") ?? "").trim();
   const buildToggleHref = (genreKey: string) =>
     buildGenreHref(ARTISTS_BASE_PATH, toggleGenre(selectedGenres, genreKey));
 
@@ -161,7 +192,10 @@ export default async function ArtistsPage({
   ]);
   const copy = resolveListingPages(listingPages).artists;
   const activeArtists = sortArtists(
-    artists.filter((artist) => artist.isActive),
+    filterArtistsByQuery(
+      artists.filter((artist) => artist.isActive),
+      query,
+    ),
   );
 
   if (selectedGenres.length > 0) {
@@ -176,10 +210,12 @@ export default async function ArtistsPage({
     return (
       <main id="main-content" className="scroll-mt-24">
         <ArtistTabs activeTab="artists" />
+        <ArtistSearchField />
         <section className="mx-auto max-w-[1280px] px-4 pt-10 md:px-[70px] md:pt-[54px]">
           <GenreFilterChips
             genres={selectedGenres}
             basePath={ARTISTS_BASE_PATH}
+            extraParams={{ q: query || undefined }}
           />
           <details className="group" open={false}>
             <summary className="inline-flex min-h-[35px] w-auto cursor-pointer list-none items-center gap-2 rounded-full border border-voicesNext-cream py-[6px] pl-4 pr-3 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background [&::-webkit-details-marker]:hidden">
@@ -209,7 +245,10 @@ export default async function ArtistsPage({
             artists={filteredArtists}
             expanded={expand === "genre"}
             selectedGenres={selectedGenres}
+            query={query}
           />
+        ) : query ? (
+          <NoSearchResults query={query} selectedGenres={selectedGenres} />
         ) : (
           <section className="mx-auto max-w-[1280px] px-4 py-10 md:px-[70px] md:py-[54px]">
             <div className="mb-[30px]">
@@ -240,7 +279,24 @@ export default async function ArtistsPage({
   return (
     <main id="main-content" className="scroll-mt-24">
       <ArtistTabs activeTab="artists" />
-      {hasExplicitStationGroups ? (
+      <ArtistSearchField />
+      {query ? (
+        activeArtists.length > 0 ? (
+          <ArtistSection
+            sectionKey="all"
+            title={`Results for \u201c${query}\u201d`}
+            description={`${activeArtists.length} ${
+              activeArtists.length === 1 ? "artist" : "artists"
+            } found.`}
+            artists={activeArtists}
+            expanded={expand === "all"}
+            selectedGenres={selectedGenres}
+            query={query}
+          />
+        ) : (
+          <NoSearchResults query={query} selectedGenres={selectedGenres} />
+        )
+      ) : hasExplicitStationGroups ? (
         <>
           <ArtistSection
             sectionKey="kx"
