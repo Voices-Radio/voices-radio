@@ -4,16 +4,15 @@ import { CalendarDays, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
-  getVoicesHeaderPlayerId,
   voicesLiveStations,
   type VoicesLiveStationConfig,
 } from "@/lib/voices/config";
 import { getScheduleContext } from "@/lib/voices/schedule-context";
 import useRadioCultLiveMetadata from "@/hooks/use-radio-cult-live-metadata";
-import useStationAudio from "@/hooks/use-station-audio";
 import useWeekInfo from "@/hooks/use-week-info";
 import ScheduleDialog from "@/app/components/schedule/dialog";
 import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
+import { useLiveAudio } from "../components/redesign/live-audio-context";
 import StationPlayButton from "../components/redesign/station-play-button";
 
 /**
@@ -30,10 +29,7 @@ function MobileStationControl({
   station: VoicesLiveStationConfig;
 }) {
   const liveMetadata = useRadioCultLiveMetadata(station.id);
-  const { audioRef, error, loading, playing, toggle } = useStationAudio(
-    station.streamUrl,
-    getVoicesHeaderPlayerId(station.id),
-  );
+  const { error, loading, playing, toggle } = useLiveAudio(station.id);
   const unavailable = !station.streamUrl || Boolean(station.comingSoon);
   // A failed stream used to be silent here — `error` wasn't read at all, so
   // the button simply returned to idle and the listener had no way to tell a
@@ -51,7 +47,6 @@ function MobileStationControl({
 
   return (
     <div className="grid min-h-[52px] min-w-0 grid-cols-[minmax(0,1fr)_auto] items-stretch overflow-hidden bg-voicesNext-cream text-voicesNext-background">
-      <audio ref={audioRef} src={station.streamUrl} preload="none" />
       <div className="min-w-0 px-2 py-[7px]">
         <div className="flex items-center gap-1">
           <span className="font-outfit text-[20px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
@@ -226,15 +221,11 @@ export default function ExploreLiveStrip() {
 
 function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
   const liveMetadata = useRadioCultLiveMetadata(station.id);
-  const { audioRef, error, loading, playing, toggle } = useStationAudio(
-    station.streamUrl,
-    getVoicesHeaderPlayerId(station.id),
-  );
+  const { error, loading, playing, toggle } = useLiveAudio(station.id);
   const status = liveMetadata.status === "offAir" ? "OFF AIR" : "ON AIR";
 
   return (
     <div className="flex h-[34px] border-b border-black last:border-b-0">
-      <audio ref={audioRef} src={station.streamUrl} preload="none" />
       <div className="grid min-w-0 flex-1 grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-5 px-2">
         <span className="font-outfit text-[19px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
           {station.label}

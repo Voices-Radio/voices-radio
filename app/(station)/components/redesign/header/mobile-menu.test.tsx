@@ -57,3 +57,30 @@ describe("MobileMenu contact", () => {
     ).toBeNull();
   });
 });
+
+describe("MobileMenu layout", () => {
+  it("links Archive to the shows page in the phone and tablet menus", async () => {
+    await openMenu("/chat");
+
+    const archiveLinks = screen.getAllByRole("link", { name: "Archive" });
+    expect(archiveLinks).toHaveLength(2);
+    for (const link of archiveLinks) {
+      expect(link).toHaveAttribute("href", "/shows");
+    }
+  });
+
+  it("scrolls the menu panel when the content is taller than the screen", async () => {
+    await openMenu("/chat");
+
+    expect(screen.getByRole("dialog")).toHaveClass("overflow-y-auto");
+  });
+
+  it("keeps Join Voices on a solid background so the browser toolbar is not tinted orange", async () => {
+    await openMenu("/chat");
+
+    const join = screen.getByRole("link", { name: "Join Voices" });
+    const footer = join.parentElement?.parentElement;
+    expect(footer).toHaveClass("sticky", "bottom-0");
+    expect(footer).toHaveClass("bg-voicesNext-background");
+  });
+});

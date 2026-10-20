@@ -11,6 +11,7 @@ vi.hoisted(() => {
     "https://example.test/east.mp3";
 });
 
+import { LiveAudioProvider } from "../components/redesign/live-audio-context";
 import ExploreLiveStrip from "./explore-live-strip";
 
 vi.mock("@/hooks/use-radio-cult-live-metadata", () => ({
@@ -35,9 +36,27 @@ function mobileControls() {
   return screen.getByLabelText("Mobile live controls");
 }
 
+function renderStrip() {
+  return render(
+    <LiveAudioProvider>
+      <ExploreLiveStrip />
+    </LiveAudioProvider>,
+  );
+}
+
+describe("ExploreLiveStrip audio", () => {
+  it("renders exactly one audio element per station, shared by both strips", () => {
+    const { container } = renderStrip();
+
+    // Mobile and desktop strips both mount. A second element per station is
+    // what made "Listen live" start the stream twice.
+    expect(container.querySelectorAll("audio")).toHaveLength(2);
+  });
+});
+
 describe("ExploreLiveStrip mobile controls", () => {
   it("stacks the two stations full-width instead of splitting them in half", () => {
-    render(<ExploreLiveStrip />);
+    renderStrip();
 
     const controls = mobileControls();
 
@@ -47,7 +66,7 @@ describe("ExploreLiveStrip mobile controls", () => {
   });
 
   it("gives each station its own schedule and chat control", () => {
-    render(<ExploreLiveStrip />);
+    renderStrip();
 
     const controls = mobileControls();
 
@@ -63,7 +82,7 @@ describe("ExploreLiveStrip mobile controls", () => {
   });
 
   it("keeps East's play control disabled while it is still coming soon", () => {
-    render(<ExploreLiveStrip />);
+    renderStrip();
 
     const controls = mobileControls();
 
@@ -76,7 +95,7 @@ describe("ExploreLiveStrip mobile controls", () => {
   });
 
   it("no longer renders the previous/now/next row on mobile", () => {
-    render(<ExploreLiveStrip />);
+    renderStrip();
 
     // The only remaining schedule-context block is the desktop one, which is
     // inside the `hidden md:flex` row rather than the mobile controls.
@@ -87,7 +106,7 @@ describe("ExploreLiveStrip mobile controls", () => {
 
 describe("ExploreLiveStrip desktop controls", () => {
   it("shows only Now and Next in the schedule context, not Previous", () => {
-    render(<ExploreLiveStrip />);
+    renderStrip();
 
     const context = screen.getByLabelText("KX schedule context");
 
@@ -98,7 +117,7 @@ describe("ExploreLiveStrip desktop controls", () => {
   });
 
   it("reserves room for two 34px station rows plus the player borders", () => {
-    const { container } = render(<ExploreLiveStrip />);
+    const { container } = renderStrip();
 
     const desktopPlayer = container.querySelector(
       'section[aria-label="Live player"] > div.hidden',

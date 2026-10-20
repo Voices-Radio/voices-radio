@@ -21,6 +21,12 @@ import type { SiteSearch } from "./use-site-search";
 // submission form, so it must not be the fallback for "Join Voices".
 const SUPPORTER_LINK = "/join";
 
+const ARCHIVE_LINK: NavLink = {
+  href: "/shows",
+  label: "Archive",
+  opensInNewTab: false,
+};
+
 type MobileMenuProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -59,6 +65,14 @@ export function MobileMenu({
 }: MobileMenuProps) {
   const router = useRouter();
   const contactEmail = readEmailFromMailto(contactLink);
+  // Archive is built in rather than CMS-supplied, so it shows even when Sanity
+  // provides its own menu list. It sits straight after Home.
+  const homeIndex = desktopMenuLinks.findIndex((link) => link.href === "/");
+  const tabletMenuLinks: NavLink[] = [
+    ...desktopMenuLinks.slice(0, homeIndex + 1),
+    ARCHIVE_LINK,
+    ...desktopMenuLinks.slice(homeIndex + 1),
+  ];
 
   function handleMobileSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -75,7 +89,7 @@ export function MobileMenu({
       <Dialog.Portal>
         <Dialog.Content
           id="site-navigation-menu"
-          className="min-h-dvh fixed inset-0 z-50 overscroll-contain bg-voicesNext-background text-voicesNext-cream focus:outline-none"
+          className="min-h-dvh fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-voicesNext-background text-voicesNext-cream focus:outline-none"
           aria-label="Navigation menu"
           aria-describedby={undefined}
         >
@@ -192,6 +206,18 @@ export function MobileMenu({
               >
                 Explore
               </Link>
+              <Link
+                href="/shows"
+                className={cn(
+                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
+                  isActive(pathname, "/shows")
+                    ? "text-voicesNext-orange"
+                    : "text-voicesNext-cream",
+                )}
+                aria-current={isActive(pathname, "/shows") ? "page" : undefined}
+              >
+                Archive
+              </Link>
               <a
                 href={shopLink}
                 target="_blank"
@@ -267,7 +293,13 @@ export function MobileMenu({
               onNavigate={() => onOpenChange(false)}
             />
 
-            <div className="mt-auto">
+            {/*
+                Solid background + sticky: the pill used to sit flush against
+                the iOS Safari toolbar, which sampled its orange as the toolbar
+                tint. Now the toolbar samples the dark panel, and the CTA stays
+                reachable while the menu scrolls.
+              */}
+            <div className="sticky bottom-0 mt-auto bg-voicesNext-background">
               <div className="px-[23px] pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6">
                 <a
                   href={SUPPORTER_LINK}
@@ -293,7 +325,7 @@ export function MobileMenu({
             </div>
 
             <nav className="mt-12 flex flex-col gap-7" aria-label="Menu">
-              {desktopMenuLinks.map((link) => (
+              {tabletMenuLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}

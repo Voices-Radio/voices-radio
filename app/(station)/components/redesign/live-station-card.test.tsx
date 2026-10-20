@@ -75,4 +75,66 @@ describe("LiveStationCard", () => {
       }),
     ).toBeNull();
   });
+
+  function renderKx(
+    props: Partial<React.ComponentProps<typeof LiveStationCard>> = {},
+  ) {
+    return render(
+      <LiveStationCard
+        cardRef={createRef<HTMLButtonElement>()}
+        stationId="kx"
+        station="KX"
+        title="Live from Voices KX"
+        watchLiveUrl="https://www.mixcloud.com/live/VoicesRadio/"
+        canListenLive
+        selected
+        onSelect={vi.fn()}
+        onWatchLive={vi.fn()}
+        onListenLive={vi.fn()}
+        {...props}
+      />,
+    );
+  }
+
+  it("shows opposite colours on the two KX actions while either is hovered", async () => {
+    const user = userEvent.setup();
+    renderKx();
+
+    const watchLive = screen.getByRole("link", { name: /watch voices live/i });
+    const listenLive = screen.getByRole("button", {
+      name: /listen to voices kx live/i,
+    });
+
+    expect(watchLive).toHaveClass("bg-voicesNext-cream");
+    expect(listenLive).toHaveClass("bg-voicesNext-orange");
+
+    await user.hover(watchLive);
+    expect(watchLive).toHaveClass("bg-voicesNext-orange");
+    expect(listenLive).toHaveClass("bg-voicesNext-cream");
+
+    await user.unhover(watchLive);
+    await user.hover(listenLive);
+    expect(watchLive).toHaveClass("bg-voicesNext-orange");
+    expect(listenLive).toHaveClass("bg-voicesNext-cream");
+
+    await user.unhover(listenLive);
+    expect(watchLive).toHaveClass("bg-voicesNext-cream");
+    expect(listenLive).toHaveClass("bg-voicesNext-orange");
+  });
+
+  it("turns Listen live into Stop while the stream plays", () => {
+    renderKx({ listenPlaying: true });
+
+    expect(
+      screen.getByRole("button", { name: /stop voices kx live/i }),
+    ).toHaveTextContent("Stop");
+  });
+
+  it("disables Listen live while the stream connects", () => {
+    renderKx({ listenLoading: true });
+
+    expect(
+      screen.getByRole("button", { name: /connecting to voices kx live/i }),
+    ).toBeDisabled();
+  });
 });

@@ -7,6 +7,7 @@ import ArchiveMiniPlayerBoundary from "./archive-mini-player-boundary";
 import { ArchivePlayerProvider } from "./archive-player-context";
 import ArchivePlayerSpacer from "./archive-player-spacer";
 import { FavouritesProvider } from "./favourites-context";
+import { LiveAudioProvider } from "./live-audio-context";
 import { LiveStationsProvider } from "./live-stations-context";
 import SaveIntentReplay from "./save-intent-replay";
 import { SessionProvider } from "./session-context";
@@ -26,42 +27,44 @@ export default async function RedesignShell({
       <SessionProvider>
         <FavouritesProvider>
           <LiveStationsProvider>
-            <div className="min-h-screen bg-voicesNext-background px-2 text-voicesNext-cream md:px-0">
-              <a
-                href="#main-content"
-                className="sr-only z-[60] rounded-full bg-voicesNext-cream px-4 py-2 font-gabarito text-sm font-bold text-voicesNext-background focus:not-sr-only focus:fixed focus:left-2 focus:top-2"
-              >
-                Skip to content
-              </a>
-              <SiteHeader
-                settings={{
-                  contactLink: settings?.contact_link,
-                  storeLink: settings?.store_link,
-                  instagramLink: settings?.instagram_link,
-                  mixcloudLink: settings?.mixcloud_link,
-                  desktopMenuLinks: navigation.desktopMenuLinks,
-                  collaborateLinks: navigation.collaborateLinks,
-                }}
-              />
-              <ExploreLiveStrip />
-              {children}
-              <SiteFooter
-                contactUrl={settings?.contact_link}
-                links={navigation.footerLinks}
-                locations={navigation.locations}
-                copyright={navigation.copyright}
-              />
-              <ArchivePlayerSpacer />
-              <ArchiveMiniPlayerBoundary>
-                <ArchiveMiniPlayer />
-              </ArchiveMiniPlayerBoundary>
-              {/* useSearchParams() inside requires its own Suspense boundary
+            <LiveAudioProvider>
+              <div className="min-h-screen bg-voicesNext-background px-2 text-voicesNext-cream md:px-0">
+                <a
+                  href="#main-content"
+                  className="sr-only z-[60] rounded-full bg-voicesNext-cream px-4 py-2 font-gabarito text-sm font-bold text-voicesNext-background focus:not-sr-only focus:fixed focus:left-2 focus:top-2"
+                >
+                  Skip to content
+                </a>
+                <SiteHeader
+                  settings={{
+                    contactLink: settings?.contact_link,
+                    storeLink: settings?.store_link,
+                    instagramLink: settings?.instagram_link,
+                    mixcloudLink: settings?.mixcloud_link,
+                    desktopMenuLinks: navigation.desktopMenuLinks,
+                    collaborateLinks: navigation.collaborateLinks,
+                  }}
+                />
+                <ExploreLiveStrip />
+                {children}
+                <SiteFooter
+                  contactUrl={settings?.contact_link}
+                  links={navigation.footerLinks}
+                  locations={navigation.locations}
+                  copyright={navigation.copyright}
+                />
+                <ArchivePlayerSpacer />
+                <ArchiveMiniPlayerBoundary>
+                  <ArchiveMiniPlayer />
+                </ArchiveMiniPlayerBoundary>
+                {/* useSearchParams() inside requires its own Suspense boundary
               so it never opts the rest of this (otherwise static) shell
               into client-only rendering. */}
-              <Suspense fallback={null}>
-                <SaveIntentReplay />
-              </Suspense>
-            </div>
+                <Suspense fallback={null}>
+                  <SaveIntentReplay />
+                </Suspense>
+              </div>
+            </LiveAudioProvider>
           </LiveStationsProvider>
         </FavouritesProvider>
       </SessionProvider>

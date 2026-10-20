@@ -41,16 +41,16 @@ export function MobileHeaderArtwork() {
       </Link>
       <Link
         href="/"
-        className="block h-[28px] w-[41px] justify-self-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+        className="block h-[34px] w-[49px] justify-self-center focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         aria-label="Voices Radio home"
       >
         {/* Text only — the circular mark is already the top-left logo. */}
         <Image
           src="/voices-wordmark-text.svg"
           alt=""
-          width={41}
-          height={28}
-          className="h-[28px] w-[41px] object-contain"
+          width={49}
+          height={34}
+          className="h-[34px] w-[49px] object-contain"
           priority
         />
       </Link>

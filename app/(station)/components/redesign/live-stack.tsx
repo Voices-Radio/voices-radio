@@ -2,15 +2,15 @@
 
 import { useRef, useState } from "react";
 import {
-  getVoicesHeaderPlayerId,
   getVoicesLiveStation,
   VOICES_MIXCLOUD_LIVE_URL,
   type VoicesLiveStationId,
 } from "@/lib/voices/config";
 import type { HomeLiveStreamConfig } from "@/lib/voices/home";
 import type { VoicesShow } from "@/lib/voices/types";
-import { playLiveAudio, stopLiveAudio } from "@/hooks/use-station-audio";
+import { stopLiveAudio } from "@/hooks/use-station-audio";
 import { EastComingSoonCard } from "./east-coming-soon";
+import { useLiveAudio } from "./live-audio-context";
 import LiveStationCard from "./live-station-card";
 import RestreamVideoModal from "./restream-video-modal";
 
@@ -62,6 +62,8 @@ export default function LiveStack({
     null,
   );
   const [videoOpen, setVideoOpen] = useState(false);
+  const kxAudio = useLiveAudio("kx");
+  const eastAudio = useLiveAudio("east");
   const kxCardRef = useRef<HTMLButtonElement>(null);
   const eastCardRef = useRef<HTMLButtonElement>(null);
   const activeVideoStation = videoStation
@@ -84,7 +86,8 @@ export default function LiveStack({
 
     setSelectedStation(stationId);
     setVideoOpen(false);
-    playLiveAudio(getVoicesHeaderPlayerId(stationId));
+    // Same instance the header strip uses, so this and its play/pause stay in step.
+    void (stationId === "kx" ? kxAudio : eastAudio).toggle();
   }
 
   function handleVideoOpenChange(open: boolean) {
@@ -105,6 +108,8 @@ export default function LiveStack({
           videoUrl={kxStation?.videoUrl}
           watchLiveUrl={mixcloudLiveUrl ?? VOICES_MIXCLOUD_LIVE_URL}
           canListenLive={Boolean(kxStation?.streamUrl)}
+          listenPlaying={kxAudio.playing}
+          listenLoading={kxAudio.loading}
           selected={selectedStation === "kx"}
           onSelect={() => setSelectedStation("kx")}
           onWatchLive={() => watchLive("kx")}
@@ -122,6 +127,8 @@ export default function LiveStack({
             artworkAlt={eastArtwork.alt}
             videoUrl={eastStation?.videoUrl}
             canListenLive={Boolean(eastStation?.streamUrl)}
+            listenPlaying={eastAudio.playing}
+            listenLoading={eastAudio.loading}
             selected={selectedStation === "east"}
             onSelect={() => setSelectedStation("east")}
             onWatchLive={() => watchLive("east")}
