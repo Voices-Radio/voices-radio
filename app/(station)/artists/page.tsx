@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import ArtistCard from "../components/redesign/artist-card";
+import ArtistGrid from "../components/redesign/artist-grid";
 import ArtistSearchField from "../components/redesign/artist-search-field";
 import GenreBrowser from "../components/redesign/genre-browser";
 import GenreFilterChips from "../components/redesign/genre-filter-chips";
@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 };
 
 const COLLAPSED_LIMIT = 9;
+const LOAD_MORE_BATCH = 12;
 const ARTISTS_BASE_PATH = "/artists";
 
 function sortArtists(artists: VoicesArtist[]) {
@@ -84,7 +85,13 @@ function ArtistSection({
 }) {
   if (!artists.length) return null;
 
-  const visibleArtists = expanded ? artists : artists.slice(0, COLLAPSED_LIMIT);
+  // Only what the card reads crosses to the client (~32 KB vs ~197 KB for 141).
+  const cardArtists = artists.map(({ id, name, imageUrl, genres }) => ({
+    id,
+    name,
+    imageUrl,
+    genres,
+  }));
   const expandHref = `${buildGenreHref(ARTISTS_BASE_PATH, selectedGenres, {
     expand: sectionKey,
     q: query,
@@ -108,23 +115,12 @@ function ArtistSection({
           a → z
         </span>
       </div>
-      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {visibleArtists.map((artist) => (
-          <div key={artist.id} className="h-[350px] w-full max-w-[350px]">
-            <ArtistCard artist={artist} />
-          </div>
-        ))}
-      </div>
-      {!expanded && artists.length > COLLAPSED_LIMIT && (
-        <div className="mt-10 text-center">
-          <Link
-            href={expandHref}
-            className="inline-flex rounded-full border border-voicesNext-cream px-[17px] py-1 font-asap text-[16px] font-bold uppercase text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-          >
-            Load More
-          </Link>
-        </div>
-      )}
+      <ArtistGrid
+        artists={cardArtists}
+        initialVisible={expanded ? cardArtists.length : COLLAPSED_LIMIT}
+        batchSize={LOAD_MORE_BATCH}
+        expandHref={expandHref}
+      />
     </section>
   );
 }
@@ -297,6 +293,8 @@ export default async function ArtistsPage({
           <NoSearchResults query={query} selectedGenres={selectedGenres} />
         )
       ) : hasExplicitStationGroups ? (
+        // Dormant today: the API sends no station/locationTags, so this never
+        // runs. It waits on East launching (see tasks/artists-load-more-plan.md §12).
         <>
           <ArtistSection
             sectionKey="kx"

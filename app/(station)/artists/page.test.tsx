@@ -219,4 +219,37 @@ describe("ArtistsPage", () => {
       screen.getByRole("link", { name: "Clear search" }),
     ).toHaveAttribute("href", "/artists");
   });
+
+  describe("load more", () => {
+    const many = Array.from({ length: 30 }, (_, i) =>
+      buildArtist({ id: `m${i}`, name: `Many ${String(i).padStart(2, "0")}` }),
+    );
+
+    it("collapses to 9 behind a button, not a navigating link", async () => {
+      getArtists.mockResolvedValue(many);
+      const { default: ArtistsPage } = await import("./page");
+      render(await ArtistsPage({ searchParams: Promise.resolve({}) }));
+
+      expect(screen.getAllByRole("link", { name: /^Open Many/ })).toHaveLength(9);
+      expect(
+        screen.getByRole("button", { name: /load more \(21 left\)/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("link", { name: "Load More" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("still shows every artist for a shared ?expand=all link", async () => {
+      getArtists.mockResolvedValue(many);
+      const { default: ArtistsPage } = await import("./page");
+      render(
+        await ArtistsPage({ searchParams: Promise.resolve({ expand: "all" }) }),
+      );
+
+      expect(screen.getAllByRole("link", { name: /^Open Many/ })).toHaveLength(30);
+      expect(
+        screen.queryByRole("button", { name: /load more/i }),
+      ).not.toBeInTheDocument();
+    });
+  });
 });

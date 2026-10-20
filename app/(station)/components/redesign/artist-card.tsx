@@ -3,7 +3,19 @@ import Link from "next/link";
 import type { VoicesArtist } from "@/lib/voices/types";
 import SaveArtistButton from "./save-artist-button";
 
-export default function ArtistCard({ artist }: { artist: VoicesArtist }) {
+/** The fields the card reads; lets listings send a slim payload to the client. */
+export type ArtistCardArtist = Pick<
+  VoicesArtist,
+  "id" | "name" | "imageUrl" | "genres"
+>;
+
+export default function ArtistCard({
+  artist,
+  priority = false,
+}: {
+  artist: ArtistCardArtist;
+  priority?: boolean;
+}) {
   return (
     <article className="group relative h-full w-full overflow-hidden bg-voicesNext-background">
       {/*
@@ -23,6 +35,7 @@ export default function ArtistCard({ artist }: { artist: VoicesArtist }) {
             src={artist.imageUrl ?? "/VOICESLOGO_LIGHTBOX.png"}
             alt={artist.imageUrl ? artist.name : "Voices Radio"}
             fill
+            priority={priority}
             sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 90vw"
             className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
