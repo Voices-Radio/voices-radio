@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type KeyboardEvent,
+} from "react";
 import { lookupUsernameAction, type LookupState } from "./actions";
 import type { ProfileLookupPlatform } from "@/lib/voices/membership/artist-profile-client";
 import { accountFieldClassName } from "../components/account-surface";
@@ -41,7 +47,7 @@ export default function UsernameField({
     [],
   );
 
-  function scheduleCheck(next: string) {
+  function scheduleCheck(next: string, delay = DEBOUNCE_MS) {
     if (timerRef.current) clearTimeout(timerRef.current);
 
     if (!next.trim()) {
@@ -57,12 +63,17 @@ export default function UsernameField({
         // A later keystroke already started a newer check — drop this reply.
         if (requestIdRef.current === requestId) setLookup(result);
       });
-    }, DEBOUNCE_MS);
+    }, delay);
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setValue(event.target.value);
     scheduleCheck(event.target.value);
+  }
+
+  // Enter means "look this up" here. The form ignores it, so it never saves.
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") scheduleCheck(value, 0);
   }
 
   const platformLabel = platform === "mixcloud" ? "Mixcloud" : "SoundCloud";
@@ -81,6 +92,7 @@ export default function UsernameField({
         type="text"
         value={value}
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
         className={accountFieldClassName}
       />
       <p role="status" aria-live="polite" className="font-gabarito text-xs">

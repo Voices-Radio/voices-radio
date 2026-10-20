@@ -8,8 +8,11 @@ import {
   accountSecondaryButtonClassName,
 } from "../components/account-surface";
 import { cn } from "@/lib/utils";
+import { MAX_UPLOAD_BYTES, prepareImageForUpload } from "./prepare-image";
 
-const MAX_FILE_BYTES = 8 * 1024 * 1024; // matches the backend's multer limit
+// Chosen files are shrunk before upload, so this only guards against files too
+// large for the browser to decode.
+const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 /**
@@ -65,26 +68,44 @@ export default function ImageField({
     if (file.size > MAX_FILE_BYTES) {
       setMessage({
         tone: "error",
-        text: "That image is over 8MB. Please choose a smaller file.",
+        text: "That image is over 25MB. Please choose a smaller file.",
       });
       input.value = "";
       return;
     }
 
-    const body = new FormData();
-    body.append("image", file);
-
     setPending(true);
     setMessage(null);
-    const result = await uploadArtistImageAction(kind, body);
-    setPending(false);
-    input.value = "";
+    try {
+      const prepared = await prepareImageForUpload(file);
+      if (prepared.size > MAX_UPLOAD_BYTES) {
+        setMessage({
+          tone: "error",
+          text: "That image is too large to upload. Please choose a smaller one.",
+        });
+        return;
+      }
 
-    if (result.status === "success") {
-      setPreviewUrl(result.stagedImageUrl);
-      setMessage({ tone: "success", text: "Image staged for review." });
-    } else {
-      setMessage({ tone: "error", text: result.message });
+      const body = new FormData();
+      body.append("image", prepared);
+      const result = await uploadArtistImageAction(kind, body);
+
+      if (result.status === "success") {
+        setPreviewUrl(result.stagedImageUrl);
+        setMessage({ tone: "success", text: "Image staged for review." });
+      } else {
+        setMessage({ tone: "error", text: result.message });
+      }
+    } catch {
+      // A server action throws (rather than returning an error) when the
+      // request is rejected before it runs, e.g. a body over the size limit.
+      setMessage({
+        tone: "error",
+        text: "We couldn’t upload that image. Please try again, or choose a smaller one.",
+      });
+    } finally {
+      setPending(false);
+      input.value = "";
     }
   }
 

@@ -67,6 +67,11 @@ const config = {
       },
     ];
   },
+  experimental: {
+    // Image uploads go through a server action. The default is 1MB, below the
+    // size of most phone photos. Vercel's own request limit is 4.5MB.
+    serverActions: { bodySizeLimit: "4mb" },
+  },
   images: {
     remotePatterns: [
       { hostname: "cdn.sanity.io" },
