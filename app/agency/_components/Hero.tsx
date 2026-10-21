@@ -1,5 +1,6 @@
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { BRIEF_EMAIL, briefHref } from "../content";
+import { ScrollCue } from "./ScrollCue";
 
 export function Hero() {
   return (
@@ -12,7 +13,7 @@ export function Hero() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 18% 22%, rgba(95, 92, 243, 0.35), transparent 28%), linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.76)), url('/studio-2.jpg')",
+              "radial-gradient(circle at 18% 22%, rgba(95, 92, 243, 0.35), transparent 28%), linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.76)), url('/agency-hero.webp')",
           }}
         />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950 to-transparent" />
@@ -62,16 +63,7 @@ export function Hero() {
       </div>
 
       <div className="absolute bottom-8 left-0 right-0 hidden justify-center sm:flex">
-        <a
-          href="#offer"
-          aria-label="Scroll to offer"
-          className="text-white/85 flex flex-col items-center gap-2 transition hover:text-voices-purple"
-        >
-          <span className="text-xs font-black uppercase tracking-[0.18em]">
-            Scroll
-          </span>
-          <ArrowDown className="h-7 w-7 animate-bounce" />
-        </a>
+        <ScrollCue targetId="offer" />
       </div>
     </section>
   );

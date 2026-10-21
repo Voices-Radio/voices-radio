@@ -6,10 +6,7 @@ const icons = [Building2, Music2, Megaphone, Radio];
 
 export function Proposition() {
   return (
-    <section
-      id="offer"
-      className="bg-slate-50 px-4 py-12 sm:px-6 md:py-24 lg:px-8"
-    >
+    <section id="offer" className="bg-slate-50 px-4 py-12 sm:px-6 md:py-24 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="The proposition"
