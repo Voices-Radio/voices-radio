@@ -65,6 +65,7 @@ export function MobileMenu({
 }: MobileMenuProps) {
   const router = useRouter();
   const contactEmail = readEmailFromMailto(contactLink);
+  const footerContactEmail = readEmailFromMailto(footerLinks.contactLink);
   // Archive is built in rather than CMS-supplied, so it shows even when Sanity
   // provides its own menu list. It sits straight after Home.
   const homeIndex = desktopMenuLinks.findIndex((link) => link.href === "/");
@@ -352,6 +353,13 @@ export function MobileMenu({
                 >
                   Contact
                 </a>
+              )}
+              {footerContactEmail && (
+                <ContactEmailCopy
+                  email={footerContactEmail}
+                  className="flex flex-wrap items-center gap-x-2 normal-case"
+                  addressClassName="select-all break-all font-medium text-voicesNext-cream"
+                />
               )}
               {footerLinks.instagramLink && (
                 <a

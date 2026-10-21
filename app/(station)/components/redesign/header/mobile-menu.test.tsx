@@ -43,10 +43,24 @@ describe("MobileMenu contact", () => {
   it("shows the address so a visitor without a mail app can still use it", async () => {
     await openMenu("mailto:info@voicesradio.co.uk?subject=Hi");
 
-    expect(screen.getByText("info@voicesradio.co.uk")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /copy email address/i }),
-    ).toBeInTheDocument();
+      screen.getAllByText("info@voicesradio.co.uk").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByRole("button", { name: /copy email address/i }).length,
+    ).toBeGreaterThan(0);
+  });
+
+  // The tablet+ menu shows Contact bottom left as a bare mailto link. With no
+  // mail app registered, a click there did nothing (reported 21 Oct 2026).
+  it("shows the address beside Contact in both the phone and the tablet menu", async () => {
+    await openMenu("mailto:info@voicesradio.co.uk");
+
+    expect(screen.getAllByRole("link", { name: "Contact" })).toHaveLength(2);
+    expect(screen.getAllByText("info@voicesradio.co.uk")).toHaveLength(2);
+    expect(
+      screen.getAllByRole("button", { name: /copy email address/i }),
+    ).toHaveLength(2);
   });
 
   it("hides the address helper when the contact link is a page", async () => {
