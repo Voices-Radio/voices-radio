@@ -80,6 +80,13 @@ export default function LiveStationCard({
   );
   const actionsSwapped = hoveredAction !== null;
   const displayTitle = liveMetadata.title || title;
+  // The on-air artist's photo when the live feed has one, else the station image.
+  const displayArtwork = liveMetadata.artwork
+    ? { src: liveMetadata.artwork, alt: `${displayTitle} artist photo` }
+    : {
+        src: artwork ?? "/VOICESLOGO_LIGHTBOX.png",
+        alt: artworkAlt ?? `${station} live show artwork`,
+      };
   const videoAvailable = isSafeRestreamUrl(videoUrl);
   // Only the artwork greys, and only while the stream plays.
   const artworkGrey =
@@ -146,8 +153,8 @@ export default function LiveStationCard({
           )}
         >
           <Image
-            src={artwork ?? "/VOICESLOGO_LIGHTBOX.png"}
-            alt={artworkAlt ?? `${station} live show artwork`}
+            src={displayArtwork.src}
+            alt={displayArtwork.alt}
             fill
             sizes="(min-width: 768px) 316px, 50vw"
             className="object-cover"

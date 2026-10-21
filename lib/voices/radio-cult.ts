@@ -135,7 +135,9 @@ export function normalizeRadioCultLiveMetadata(
     status: payload?.status ?? "unknown",
     title,
     subtitle,
-    artwork: pickArtwork(metadata?.artwork) ?? pickArtwork(artist?.logo),
+    // The artist's own photo only. Track artwork from music recognition is an
+    // album cover, not the person on air, so the tile uses its fallback instead.
+    artwork: pickArtwork(artist?.logo),
     starts: content?.startDateUtc ?? content?.startDate,
     ends: content?.endDateUtc ?? content?.endDate,
   };

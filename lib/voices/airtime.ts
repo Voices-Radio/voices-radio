@@ -1,6 +1,7 @@
 import { unescapeString } from "@/lib/unescape";
 import { getVoicesLiveStation, voicesMediaConfig } from "./config";
 import type { VoicesLiveStationId } from "./config";
+import { fetchLiveShowArtistImage } from "./live-show-artist";
 import type { RadioCultScheduleEvent, VoicesLiveMetadata } from "./radio-cult";
 
 /**
@@ -93,7 +94,11 @@ export async function fetchAirtimeLiveMetadata(stationId: VoicesLiveStationId) {
     throw new Error("Airtime live response had an unexpected shape");
   }
 
-  return normalizeAirtimeLiveMetadata(stationId, payload);
+  const metadata = normalizeAirtimeLiveMetadata(stationId, payload);
+  if (metadata.status !== "schedule") return metadata;
+
+  const artwork = await fetchLiveShowArtistImage(metadata.title);
+  return artwork ? { ...metadata, artwork } : metadata;
 }
 
 /**

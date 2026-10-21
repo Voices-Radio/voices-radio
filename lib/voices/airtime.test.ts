@@ -5,6 +5,9 @@ import {
   normalizeAirtimeLiveMetadata,
   parseAirtimeTime,
 } from "./airtime";
+import { fetchLiveShowArtistImage } from "./live-show-artist";
+
+vi.mock("./live-show-artist", () => ({ fetchLiveShowArtistImage: vi.fn() }));
 
 const SHOW = {
   name: "Roots &amp; Reggae w/ Rikette",
@@ -111,6 +114,57 @@ describe("fetchAirtimeLiveMetadata", () => {
     const init = fetchMock.mock.calls[0][1];
     expect(init).toMatchObject({ cache: "no-store" });
     expect(init).not.toHaveProperty("next");
+  });
+
+  it("uses the matched artist's photo as the artwork", async () => {
+    vi.mocked(fetchLiveShowArtistImage).mockResolvedValueOnce(
+      "https://img/rikette.jpg",
+    );
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ shows: { current: SHOW }, tracks: {} }),
+      }),
+    );
+
+    const result = await fetchAirtimeLiveMetadata("kx");
+
+    expect(fetchLiveShowArtistImage).toHaveBeenCalledWith(
+      "Roots & Reggae w/ Rikette",
+    );
+    expect(result.artwork).toBe("https://img/rikette.jpg");
+  });
+
+  it("has no artwork when no artist matches", async () => {
+    vi.mocked(fetchLiveShowArtistImage).mockResolvedValueOnce(undefined);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ shows: { current: SHOW }, tracks: {} }),
+      }),
+    );
+
+    expect((await fetchAirtimeLiveMetadata("kx")).artwork).toBeUndefined();
+  });
+
+  it("does not look up an artist for a playlist track", async () => {
+    vi.mocked(fetchLiveShowArtistImage).mockClear();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          shows: { current: null },
+          tracks: { current: { name: "Some Track" } },
+        }),
+      }),
+    );
+
+    await fetchAirtimeLiveMetadata("kx");
+
+    expect(fetchLiveShowArtistImage).not.toHaveBeenCalled();
   });
 
   it("throws when Airtime errors", async () => {

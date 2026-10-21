@@ -1,11 +1,18 @@
 import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import LiveStationCard from "./live-station-card";
 
+const live = vi.hoisted(() => ({
+  metadata: { title: "Live from Voices KX" } as {
+    title: string;
+    artwork?: string;
+  },
+}));
+
 vi.mock("@/hooks/use-radio-cult-live-metadata", () => ({
-  default: () => ({ title: "Live from Voices KX" }),
+  default: () => live.metadata,
 }));
 
 describe("LiveStationCard", () => {
@@ -199,5 +206,36 @@ describe("LiveStationCard", () => {
     const { container } = renderKx();
 
     expect(container.querySelector(".lucide-video")).toBeNull();
+  });
+
+  describe("artwork", () => {
+    afterEach(() => {
+      live.metadata = { title: "Live from Voices KX" };
+    });
+
+    it("shows the live show's artist photo when one is matched", () => {
+      live.metadata = {
+        title: "Swimdem Sounds w/ Marley",
+        artwork: "https://img.test/marley.jpg",
+      };
+      renderKx({ artwork: "/station.png", artworkAlt: "KX live artwork" });
+
+      const image = screen.getByRole("img", {
+        name: "Swimdem Sounds w/ Marley artist photo",
+      });
+      expect(decodeURIComponent(image.getAttribute("src") ?? "")).toContain(
+        "https://img.test/marley.jpg",
+      );
+    });
+
+    it("shows the station image when no artist is matched", () => {
+      live.metadata = { title: "Afoma V" };
+      renderKx({ artwork: "/station.png", artworkAlt: "KX live artwork" });
+
+      const image = screen.getByRole("img", { name: "KX live artwork" });
+      expect(decodeURIComponent(image.getAttribute("src") ?? "")).toContain(
+        "/station.png",
+      );
+    });
   });
 });

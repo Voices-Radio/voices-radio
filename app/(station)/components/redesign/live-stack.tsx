@@ -7,25 +7,18 @@ import {
   type VoicesLiveStationId,
 } from "@/lib/voices/config";
 import type { HomeLiveStreamConfig } from "@/lib/voices/home";
-import type { VoicesShow } from "@/lib/voices/types";
 import { stopLiveAudio } from "@/hooks/use-station-audio";
 import { EastComingSoonCard } from "./east-coming-soon";
 import { useLiveAudio } from "./live-audio-context";
 import LiveStationCard from "./live-station-card";
 import RestreamVideoModal from "./restream-video-modal";
 
+// The station image, used until the live feed names the artist on air (see
+// LiveStationCard). Never the latest upload: that show is no longer on air.
 function getLiveArtwork(
-  show: VoicesShow | undefined,
   fallback: HomeLiveStreamConfig | undefined,
   station: "KX" | "East",
 ) {
-  if (show?.artist?.imageUrl) {
-    return {
-      src: show.artist.imageUrl,
-      alt: `${show.artist.name} profile image`,
-    };
-  }
-
   if (fallback?.fallbackImageUrl) {
     return {
       src: fallback.fallbackImageUrl,
@@ -40,20 +33,16 @@ function getLiveArtwork(
 }
 
 export default function LiveStack({
-  kxShow,
-  eastShow,
   kxFallback,
   eastFallback,
   mixcloudLiveUrl,
 }: {
-  kxShow?: VoicesShow;
-  eastShow?: VoicesShow;
   kxFallback?: HomeLiveStreamConfig;
   eastFallback?: HomeLiveStreamConfig;
   mixcloudLiveUrl?: string;
 }) {
-  const kxArtwork = getLiveArtwork(kxShow, kxFallback, "KX");
-  const eastArtwork = getLiveArtwork(eastShow, eastFallback, "East");
+  const kxArtwork = getLiveArtwork(kxFallback, "KX");
+  const eastArtwork = getLiveArtwork(eastFallback, "East");
   const kxStation = getVoicesLiveStation("kx");
   const eastStation = getVoicesLiveStation("east");
   const [selectedStation, setSelectedStation] =
@@ -102,7 +91,7 @@ export default function LiveStack({
           cardRef={kxCardRef}
           stationId="kx"
           station="KX"
-          title={kxShow?.title ?? "The Breakfast Show w/ Maria Hanlon"}
+          title={kxStation?.title ?? "Live from Voices KX"}
           artwork={kxArtwork.src}
           artworkAlt={kxArtwork.alt}
           videoUrl={kxStation?.videoUrl}
@@ -122,7 +111,7 @@ export default function LiveStack({
             cardRef={eastCardRef}
             stationId="east"
             station="EAST"
-            title={eastShow?.title ?? "Live from Voices East"}
+            title={eastStation?.title ?? "Live from Voices East"}
             artwork={eastArtwork.src}
             artworkAlt={eastArtwork.alt}
             videoUrl={eastStation?.videoUrl}
