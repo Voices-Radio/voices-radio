@@ -153,7 +153,8 @@ export async function fetchRadioCultLiveMetadata(
 
   const response = await fetch(
     getRadioCultApiUrl(`/api/station/${radioCultStationId}/schedule/live`),
-    { headers, next: { revalidate: 30 } },
+    // No Data Cache, as for Airtime: the route's s-maxage is the only cache.
+    { headers, cache: "no-store" },
   );
 
   if (!response.ok) {

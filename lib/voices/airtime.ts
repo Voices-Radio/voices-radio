@@ -76,8 +76,10 @@ export function normalizeAirtimeLiveMetadata(
 }
 
 export async function fetchAirtimeLiveMetadata(stationId: VoicesLiveStationId) {
+  // No Data Cache: a stale entry once kept yesterday's show on air for hours.
+  // /api/live's s-maxage already limits upstream calls at the CDN.
   const response = await fetch(getApiUrl("/api/live-info-v2?timezone=UTC"), {
-    next: { revalidate: 30 },
+    cache: "no-store",
   });
 
   if (!response.ok) {

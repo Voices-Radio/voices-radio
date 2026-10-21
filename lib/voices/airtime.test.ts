@@ -99,6 +99,20 @@ describe("fetchAirtimeLiveMetadata", () => {
     expect(result.title).toBe("Roots & Reggae w/ Rikette");
   });
 
+  it("skips the Data Cache so a stale show can't stick", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ shows: { current: SHOW }, tracks: {} }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await fetchAirtimeLiveMetadata("kx");
+
+    const init = fetchMock.mock.calls[0][1];
+    expect(init).toMatchObject({ cache: "no-store" });
+    expect(init).not.toHaveProperty("next");
+  });
+
   it("throws when Airtime errors", async () => {
     vi.stubGlobal(
       "fetch",
