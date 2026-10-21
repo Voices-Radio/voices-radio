@@ -18,6 +18,7 @@ import membershipBenefitType from "./schemas/membershipBenefit";
 import membershipTransactionalEmailType from "./schemas/membershipTransactionalEmail";
 import listingPagesType from "./schemas/listingPages";
 import collaboratePageType from "./schemas/collaboratePage";
+import locationPageType from "./schemas/locationPage";
 
 const schemaTypes = [
   settingsType,
@@ -36,6 +37,7 @@ const schemaTypes = [
   membershipTransactionalEmailType,
   listingPagesType,
   collaboratePageType,
+  locationPageType,
 ];
 
 export default defineConfig({

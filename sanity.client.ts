@@ -13,6 +13,7 @@ import {
   MembershipBenefit,
   ListingPagesCopy,
   CollaboratePageCopy,
+  LocationPage,
   aboutQuery,
   servicesQuery,
   homeQuery,
@@ -28,6 +29,8 @@ import {
   membershipBenefitQuery,
   listingPagesQuery,
   collaboratePageQuery,
+  locationPageSlugsQuery,
+  locationPageBySlugQuery,
 } from "./sanity.queries";
 
 export { SANITY_CACHE_TAG } from "./lib/sanity-cache";
@@ -93,6 +96,15 @@ export const getBlogPost = (slug: string) =>
 
 export const getFeaturedBlogPosts = () =>
   safeFetch<BlogPost[]>(featuredBlogPostsQuery);
+
+// Location pages (SEO): /podcast-studio/[slug]
+export const getLocationPageSlugs = async () =>
+  (await safeFetch<{ slug: string; _updatedAt: string }[]>(
+    locationPageSlugsQuery,
+  )) ?? [];
+
+export const getLocationPageBySlug = (slug: string) =>
+  safeFetch<LocationPage>(locationPageBySlugQuery, { slug });
 
 // Page copy
 export const getListingPages = () =>

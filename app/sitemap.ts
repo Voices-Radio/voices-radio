@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { client } from "@/sanity.client";
+import { client, getLocationPageSlugs } from "@/sanity.client";
 import { getBaseUrl } from "@/lib/site-url";
 import {
   mainBlogSitemapQuery,
@@ -17,9 +17,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const base = getBaseUrl();
 
-  const [mainBlogRows, podcastBlogRows] = await Promise.all([
+  const [mainBlogRows, podcastBlogRows, locationRows] = await Promise.all([
     client.fetch<SitemapDoc[]>(mainBlogSitemapQuery),
     client.fetch<SitemapDoc[]>(podcastBlogSitemapQuery),
+    getLocationPageSlugs(),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -60,5 +61,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  return [...staticRoutes, ...mainBlogEntries, ...podcastBlogEntries];
+  const locationEntries: MetadataRoute.Sitemap = locationRows.map((row) => ({
+    url: `${base}/podcast-studio/${row.slug}`,
+    lastModified: new Date(row._updatedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  return [
+    ...staticRoutes,
+    ...mainBlogEntries,
+    ...podcastBlogEntries,
+    ...locationEntries,
+  ];
 }
