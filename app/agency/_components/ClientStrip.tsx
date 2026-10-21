@@ -59,7 +59,7 @@ export function ClientStrip() {
       </div>
 
       <div className="flex overflow-hidden sm:hidden">
-        <div className="animate-marquee flex w-max motion-reduce:animate-none">
+        <div className="flex w-max animate-marquee motion-reduce:animate-none">
           <ClientList />
           <ClientList ariaHidden />
         </div>

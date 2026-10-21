@@ -3,10 +3,7 @@ import { BRIEF_EMAIL, briefHref } from "../content";
 
 export function CallToAction() {
   return (
-    <section
-      id="brief"
-      className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8"
-    >
+    <section id="brief" className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8">
       <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-slate-50 p-5 text-center shadow-lg md:p-12">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-voices-purple/10 text-voices-purple">
           <ClipboardList className="h-8 w-8" />
@@ -15,13 +12,13 @@ export function CallToAction() {
           Tell us what you&rsquo;re programming.
         </h2>
         <p className="mx-auto mt-5 max-w-3xl text-base font-semibold leading-relaxed text-slate-600 md:text-lg">
-          Tell us what you&rsquo;re working with and we&rsquo;ll come back with
-          an approach.
+          Tell us what you&rsquo;re working with and we&rsquo;ll come back
+          with an approach.
         </p>
         <p className="mx-auto mt-4 max-w-3xl text-sm font-semibold leading-relaxed text-slate-500">
-          Useful to include: the space and its capacity, the audience, the dates
-          or frequency, the atmosphere you&rsquo;re after, your budget range,
-          and anything you need on production or content.
+          Useful to include: the space and its capacity, the audience, the
+          dates or frequency, the atmosphere you&rsquo;re after, your budget
+          range, and anything you need on production or content.
         </p>
         <p className="mx-auto mt-4 max-w-3xl text-sm font-black text-slate-900">
           We reply to every brief within two working days.

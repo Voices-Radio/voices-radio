@@ -4,6 +4,7 @@ import { CallToAction } from "./_components/CallToAction";
 import { ClientStrip } from "./_components/ClientStrip";
 import { ContactBlock } from "./_components/ContactBlock";
 import { EngagementFormats } from "./_components/EngagementFormats";
+import { EventMoment } from "./_components/EventMoment";
 import { Footer } from "./_components/Footer";
 import { Hero } from "./_components/Hero";
 import { HowItWorks } from "./_components/HowItWorks";
@@ -12,6 +13,7 @@ import { Nav } from "./_components/Nav";
 import { Proposition } from "./_components/Proposition";
 import { Questions } from "./_components/Questions";
 import { SelectedWork } from "./_components/SelectedWork";
+import { StationIntro } from "./_components/StationIntro";
 import { Testimonials } from "./_components/Testimonials";
 import { WhoWeWorkWith } from "./_components/WhoWeWorkWith";
 import { WhyVoices } from "./_components/WhyVoices";
@@ -51,10 +53,12 @@ export default function AgencyPage() {
     <main className="min-h-screen bg-white text-slate-900">
       <Nav />
       <Hero />
+      <StationIntro />
       <ClientStrip />
       <Proposition />
       <EngagementFormats />
       <WhoWeWorkWith />
+      <EventMoment />
       <SelectedWork />
       <WhyVoices />
       <HowItWorks />

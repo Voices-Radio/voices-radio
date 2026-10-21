@@ -3,15 +3,9 @@ import { SectionHeader } from "./SectionHeader";
 
 export function HowItWorks() {
   return (
-    <section
-      id="process"
-      className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8"
-    >
+    <section id="process" className="bg-white px-4 py-12 sm:px-6 md:py-24 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <SectionHeader
-          eyebrow="How it works"
-          title="From first brief to delivery."
-        >
+        <SectionHeader eyebrow="How it works" title="From first brief to delivery.">
           <p>
             Clients get one accountable point of contact from curation through
             delivery, with clear programming decisions and consolidated

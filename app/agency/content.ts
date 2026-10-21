@@ -38,7 +38,7 @@ export type ClientLogo = {
 export const clientLogos: ClientLogo[] = [
   {
     name: "Hackney Bridge",
-    logo: "/agency/logos/hackney-bridge.png",
+    logo: "/agency/logos/hackney-bridge.webp",
     width: 1740,
     height: 484,
   },
@@ -90,21 +90,21 @@ export const clientLogos: ClientLogo[] = [
   },
   {
     name: "Flat Iron Square",
-    logo: "/agency/logos/flat-iron-square.png",
+    logo: "/agency/logos/flat-iron-square.webp",
     width: 70,
     height: 85,
   },
-  { name: "HOKA", logo: "/agency/logos/hoka.png", width: 32, height: 32 },
+  { name: "HOKA", logo: "/agency/logos/hoka.webp", width: 32, height: 32 },
   {
     name: "MOTH Drinks",
-    logo: "/agency/logos/moth-drinks.png",
+    logo: "/agency/logos/moth-drinks.webp",
     width: 32,
     height: 32,
     chip: true,
   },
   {
     name: "Moju Drinks",
-    logo: "/agency/logos/moju-drinks.png",
+    logo: "/agency/logos/moju-drinks.webp",
     width: 512,
     height: 512,
   },
@@ -129,7 +129,7 @@ export const services = [
   {
     title: "Production and content",
     description:
-      "Optional event, broadcast, podcast and content support through the wider Voices platform.",
+      "Optional support for events, broadcast, podcasts and content through the wider Voices platform.",
   },
 ];
 
@@ -174,7 +174,7 @@ export const whoWeWorkWith = [
   {
     title: "Cultural institutions",
     description:
-      "Museums, galleries and public programmes looking for a proper link to London's music communities.",
+      "Museums, galleries and public programmes looking for a legitimate link to London's music communities.",
   },
   {
     title: "Developments and meanwhile spaces",
@@ -193,6 +193,13 @@ export type CaseStudy = {
   delivered: string;
   scale: string;
   proof?: string;
+  /** Card header photo. Omitted case studies keep the gradient-only header. */
+  image?: {
+    src: string;
+    alt: string;
+    /** CSS object-position, for portrait source photos cropped into a wide header - defaults to center. */
+    position?: string;
+  };
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -205,11 +212,15 @@ export const caseStudies: CaseStudy[] = [
     brief:
       "Build and manage a sustainable music and events programme across Hackney Bridge's venue spaces: a canal-side cocktail bar, a 400-capacity warehouse room and a large outdoor garden. One retained programming partner, a consistent cultural offer, and a calendar that holds up across the whole year.",
     delivered:
-      "Voices programmes all three spaces: Nico's, Block C and the Garden. That covers programme development, promoter sourcing and outreach, booking coordination, calendar management across the three rooms, and marketing liaison. At Nico's, Voices creates the DJ line-ups for live music dates, weekly DJ sets and day parties. In Block C and the Garden, Voices sources and manages the promoters behind larger takeovers, split-site events and headline weekends, with spaces regularly running two separate programmes on the same night.",
+      "Voices programmes all three spaces: Nico's, Block C and the Garden. That covers programme development, promoter sourcing and outreach, booking coordination, calendar management across the three rooms, and marketing liaison. At Nico's, Voices creates the line-ups for live music dates, weekly DJ sets and day parties. In Block C and the Garden, Voices sources and manages the promoters behind larger takeovers, split-site events and headline weekends, with spaces regularly running two separate programmes on the same night.",
     scale:
       "A formal retained promoter arrangement started in January 2025 and continues into its second year. Between February and July 2026, Voices programmed 33 promoted events across the three spaces.",
     proof:
       "Hackney Bridge publicly credits Voices with creating Nico's DJ line-ups, and the weekly programme continued to be advertised as curated by Voices in 2026. Maria Hanlon presents: Soul Satisfaction was recently selected as a Resident Advisor Pick - an editorial selection showcasing the best events in London.",
+    image: {
+      src: "/agency/hackney-bridge-garden-crowd.webp",
+      alt: "A packed crowd under a marquee and market umbrellas in Hackney Bridge's outdoor Garden space",
+    },
   },
   {
     index: "02",
@@ -226,6 +237,11 @@ export const caseStudies: CaseStudy[] = [
       "Monthly since July 2022, ongoing. More than 40 residency dates delivered.",
     proof:
       "Now in its fourth year, making it the longest continuous music residency Voices holds.",
+    image: {
+      src: "/agency/the-standard-library-lounge.webp",
+      alt: "Guests gathered around the bar in The Standard's book-lined Library Lounge",
+      position: "center 65%",
+    },
   },
   {
     index: "03",
@@ -237,9 +253,13 @@ export const caseStudies: CaseStudy[] = [
     brief:
       "Develop Campfire as a music destination as well as a brewery and taproom, increasing drink and event sales, combining regular trading-night programming with larger headline events and cultural moments.",
     delivered:
-      "As Campfire's retained promoter, Voices curates and promotes the ongoing music programme: regular DJ programming across Thursday, Friday and Saturday trading, artist and collective sourcing, headline-led day parties, guest takeovers, record fairs, showcases and the annual Voices birthday events. Voices also runs a DJ workshop programme for aspiring underrepresented artists that ends with participants playing their first live club set at Campfire.",
+      "As Campfire's retained promoter, Voices curates and promotes the ongoing music programme. That covers regular DJ programming across Thursday, Friday and Saturday trading, plus artist and collective sourcing. It also covers headline-led day parties, guest takeovers, record fairs, showcases and the annual Voices birthday events. Voices also runs a DJ workshop programme for aspiring underrepresented artists that ends with participants playing their first live club set at Campfire.",
     scale:
       "The documented partnership runs from at least June 2022 to the present. Campfire's public venue information describes Voices DJs performing regularly on Thursday, Friday and Saturday evenings.",
+    image: {
+      src: "/agency/two-tribes-birthday-live.webp",
+      alt: "A live performer singing at a keyboard on stage at Two Tribes Campfire, the Two Tribes logo lit up behind her",
+    },
   },
   {
     index: "04",
@@ -248,11 +268,17 @@ export const caseStudies: CaseStudy[] = [
     location: "Tate Corner",
     headline: "A monthly live improvisation series inside a national museum",
     brief:
-      "Programme a recurring, free-to-attend evening series for Tate Modern's Corner Bar that brings real London jazz credibility into a national institution and gives the space its own identity after hours, featured in Time Out London.",
+      "Programme a recurring, free-to-attend evening series for Tate Modern's Corner Bar that brings real London jazz credibility into a national institution and gives the space its own identity after hours.",
     delivered:
-      "Voices curates the artist roster and programmes the series in partnership with Tate, bringing together players from the London jazz scene for unrehearsed live improvisation, with vinyl DJ sets between performances.",
+      "Voices curates the artist roster and programmes the series in partnership with Tate, bringing together players from the London jazz scene for unrehearsed live improvisation, with vinyl DJ sets between performances. The roster has featured Mackwood, Benji Appiah, Maddy Coombs, Maria Chiara Argirò and Poppy Daniels, among other names on the rise in London jazz.",
     scale:
       "Natural Jazz x Voices Radio runs monthly on first Fridays at Tate Modern's Corner Bar, free to attend.",
+    proof: "Natural Jazz x Voices Radio has been featured in Time Out London.",
+    image: {
+      src: "/agency/tate-modern-natural-jazz.webp",
+      alt: "A live trio performing for a seated crowd at Natural Jazz x Voices Radio inside Tate Modern",
+      position: "center 60%",
+    },
   },
   {
     index: "05",
@@ -265,6 +291,11 @@ export const caseStudies: CaseStudy[] = [
     delivered:
       "Voices supplies DJs for in-store events, sourcing and booking talent that suits the brand's heritage and the store's audience, as well as supplying full AV and production, and managing delivery on the day.",
     scale: "Ongoing, across the in-store events programme.",
+    image: {
+      src: "/agency/dr-martens-in-store-decks.webp",
+      alt: "A DJ's hands cueing a record on a turntable during an in-store set",
+      position: "center 55%",
+    },
   },
   {
     index: "06",
@@ -280,6 +311,11 @@ export const caseStudies: CaseStudy[] = [
       "Aperidisco ran at Hackney Bridge from 13 to 29 June 2025, combining DJ programming, supper clubs with chef Robin Gill, masterclasses and BBQ days.",
     proof:
       "Voices Radio is credited by Aperol in the campaign's public event programme.",
+    image: {
+      src: "/agency/aperol-aperidisco-dj-booth.webp",
+      alt: "A DJ playing vinyl behind the Aperol Spritz branded booth at the Aperidisco residency",
+      position: "center 58%",
+    },
   },
 ];
 

@@ -7,8 +7,8 @@ export function Footer() {
         <div>
           <p className="text-xl font-black">Voices Agency</p>
           <p className="mt-2 max-w-xl text-sm font-semibold text-slate-300">
-            Music programming and talent curation for venues, brands and events.
-            Operated through the Voices commercial platform.
+            Music programming and talent curation for venues, brands and
+            events. Operated through the Voices commercial platform.
           </p>
         </div>
         <div className="flex flex-wrap gap-3 text-sm font-bold text-slate-300 md:gap-4">

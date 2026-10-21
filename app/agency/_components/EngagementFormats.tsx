@@ -14,8 +14,8 @@ export function EngagementFormats() {
         >
           <p>
             Whether it&rsquo;s a single date, a recurring residency, a full
-            calendar or a site-wide activation, it runs through one point of
-            contact.
+            calendar or a site-wide activation, you&rsquo;ll only ever run
+            through one point of contact.
           </p>
         </SectionHeader>
 
