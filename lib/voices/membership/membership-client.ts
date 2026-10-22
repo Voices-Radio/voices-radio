@@ -3,6 +3,7 @@ import type { z } from "zod";
 import { VOICES_MEMBERSHIP_API_BASE_URL } from "@/lib/voices/config";
 import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
 import { getAccessToken } from "./session";
+import { backendClientHeaders } from "./backend-headers";
 import { describeMembershipError } from "./errors";
 import {
   membershipPlansResponseSchema,
@@ -40,11 +41,13 @@ export async function describeErrorResponse(response: Response): Promise<{
  * from getTiers() — membership is a single sliding-scale contribution, not
  * a ladder of named tiers (see docs/plans/sliding-scale-membership.md).
  */
-export async function getPlans(): Promise<MembershipResult<MembershipPlansApi>> {
+export async function getPlans(): Promise<
+  MembershipResult<MembershipPlansApi>
+> {
   try {
     const response = await fetch(
       `${VOICES_MEMBERSHIP_API_BASE_URL}/api/membership/plans`,
-      { cache: "no-store" },
+      { headers: await backendClientHeaders(), cache: "no-store" },
     );
 
     if (!response.ok) {
@@ -152,7 +155,10 @@ async function authedGet<T>(
 
   try {
     const response = await fetch(`${VOICES_MEMBERSHIP_API_BASE_URL}${path}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        ...(await backendClientHeaders()),
+        Authorization: `Bearer ${token}`,
+      },
       cache: "no-store",
     });
 
