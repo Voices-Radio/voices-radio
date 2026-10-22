@@ -3,6 +3,7 @@ import type { z } from "zod";
 import { VOICES_MEMBERSHIP_API_BASE_URL } from "@/lib/voices/config";
 import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
 import { getAccessToken, authedFetch } from "@/lib/voices/membership/session";
+import { backendClientHeaders } from "@/lib/voices/membership/backend-headers";
 import { normalizeShow } from "@/lib/voices/normalizers";
 import type { VoicesShow, VoicesShowRaw } from "@/lib/voices/types";
 import {
@@ -66,7 +67,10 @@ async function authedGet<T>(
 
   try {
     const response = await fetch(`${VOICES_MEMBERSHIP_API_BASE_URL}${path}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        ...(await backendClientHeaders()),
+        Authorization: `Bearer ${token}`,
+      },
       cache: "no-store",
     });
 

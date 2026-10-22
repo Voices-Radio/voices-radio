@@ -125,7 +125,9 @@ describe("validateArtistInvitation", () => {
     await validateArtistInvitation("t1");
     await validateArtistInvitation("t2", "access-token");
 
-    expect(fetchMock.mock.calls[0][1]).not.toHaveProperty("headers");
+    expect(
+      new Headers(fetchMock.mock.calls[0][1].headers).has("Authorization"),
+    ).toBe(false);
     expect(fetchMock.mock.calls[1][1]).toMatchObject({
       headers: { Authorization: "Bearer access-token" },
     });
@@ -240,17 +242,15 @@ describe("claimArtistInvitation — artist name", () => {
   it("maps artist_name_required to a fixable field error", async () => {
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          response(
-            {
-              reason: "artist_name_required",
-              message: "Enter your artist name.",
-            },
-            400,
-          ),
+      vi.fn().mockResolvedValue(
+        response(
+          {
+            reason: "artist_name_required",
+            message: "Enter your artist name.",
+          },
+          400,
         ),
+      ),
     );
 
     const result = await claimArtistInvitation("tok", {});

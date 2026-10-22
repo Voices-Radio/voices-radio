@@ -238,12 +238,14 @@ export async function authedFetch(
   init: RequestInit = {},
 ): Promise<Response> {
   const token = await getAccessToken();
+  const clientHeaders = await backendClientHeaders();
 
   const doFetch = (accessToken: string | undefined) =>
     fetch(`${VOICES_MEMBERSHIP_API_BASE_URL}${path}`, {
       ...init,
       headers: {
         ...init.headers,
+        ...clientHeaders,
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
       cache: "no-store",

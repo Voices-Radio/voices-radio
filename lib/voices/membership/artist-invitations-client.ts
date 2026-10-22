@@ -2,6 +2,7 @@ import "server-only";
 import { z } from "zod";
 import { VOICES_MEMBERSHIP_API_BASE_URL } from "@/lib/voices/config";
 import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
+import { backendClientHeaders } from "./backend-headers";
 
 const invitationArtistSchema = z
   .object({
@@ -201,9 +202,10 @@ export async function validateArtistInvitation(
       )}`,
       {
         cache: "no-store",
-        ...(bearerToken
-          ? { headers: { Authorization: `Bearer ${bearerToken}` } }
-          : {}),
+        headers: {
+          ...(await backendClientHeaders()),
+          ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
+        },
       },
     );
     const payload = await response.json().catch(() => null);
@@ -247,6 +249,7 @@ export async function claimArtistInvitation(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(await backendClientHeaders()),
           ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
         },
         body: JSON.stringify(body),
@@ -296,7 +299,11 @@ export async function renewArtistInvitation(
       `${VOICES_MEMBERSHIP_API_BASE_URL}/api/artist-invitations/renew/${encodeURIComponent(
         token,
       )}`,
-      { method: "POST", cache: "no-store" },
+      {
+        method: "POST",
+        headers: await backendClientHeaders(),
+        cache: "no-store",
+      },
     );
     const payload = await response.json().catch(() => null);
 

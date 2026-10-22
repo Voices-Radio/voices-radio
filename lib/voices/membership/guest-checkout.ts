@@ -2,6 +2,7 @@ import "server-only";
 import { VOICES_MEMBERSHIP_API_BASE_URL } from "@/lib/voices/config";
 import { isNextControlFlowError } from "@/lib/voices/next-control-flow";
 import { describeErrorResponse } from "./membership-client";
+import { backendClientHeaders } from "./backend-headers";
 import { describeMembershipError } from "./errors";
 import {
   checkoutResponseSchema,
@@ -36,7 +37,10 @@ export async function guestCheckout(input: {
       `${VOICES_MEMBERSHIP_API_BASE_URL}/api/membership/guest-checkout`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(await backendClientHeaders()),
+        },
         body: JSON.stringify(input),
         cache: "no-store",
       },
@@ -76,7 +80,7 @@ export async function getGuestCheckoutStatus(
   try {
     const response = await fetch(
       `${VOICES_MEMBERSHIP_API_BASE_URL}/api/membership/guest-checkout/${encodeURIComponent(sessionId)}`,
-      { cache: "no-store" },
+      { headers: await backendClientHeaders(), cache: "no-store" },
     );
 
     if (!response.ok) {

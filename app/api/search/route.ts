@@ -1,8 +1,6 @@
 import { VOICES_API_BASE_URL } from "@/lib/voices/config";
-import {
-  enforceRateLimit,
-  PUBLIC_RATE_LIMITS,
-} from "@/lib/voices/rate-limit";
+import { backendClientHeaders } from "@/lib/voices/membership/backend-headers";
+import { enforceRateLimit, PUBLIC_RATE_LIMITS } from "@/lib/voices/rate-limit";
 import { client } from "@/sanity.client";
 import { groq } from "next-sanity";
 import { NextResponse } from "next/server";
@@ -129,8 +127,11 @@ async function fetchWebsiteSearch(query: string, limit: number) {
   upstreamUrl.searchParams.set("limit", String(limit));
   upstreamUrl.searchParams.set("types", "shows,artists");
 
+  // Typed queries are mostly unique, so most miss the cache. Without the
+  // visitor IP they would all count against the backend's limit for this
+  // server's IP, shared by every visitor.
   const response = await fetch(upstreamUrl, {
-    headers: { Accept: "application/json" },
+    headers: { Accept: "application/json", ...(await backendClientHeaders()) },
     next: { revalidate: 60 },
   });
   const payload = (await response

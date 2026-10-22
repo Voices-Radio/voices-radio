@@ -66,7 +66,9 @@ describe("getPlans", () => {
 
     expect(result).toEqual({ ok: true, data: validPlans });
     const [, init] = fetchMock.mock.calls[0];
-    expect((init as RequestInit)?.headers).toBeUndefined();
+    expect(
+      new Headers((init as RequestInit)?.headers).has("Authorization"),
+    ).toBe(false);
     expect(getAccessToken).not.toHaveBeenCalled();
   });
 
@@ -305,9 +307,7 @@ describe("authenticated reads (getMembership/getBenefits/getRedemptions/getProfi
       marketingConsent: false,
       address: null,
     };
-    mockFetchOnce(
-      new Response(JSON.stringify(legacyProfile), { status: 200 }),
-    );
+    mockFetchOnce(new Response(JSON.stringify(legacyProfile), { status: 200 }));
 
     expect(await getProfile()).toEqual({
       ok: true,
