@@ -110,8 +110,10 @@ export async function fetchAirtimeLiveMetadata(stationId: VoicesLiveStationId) {
 export async function fetchAirtimeSchedule(): Promise<
   RadioCultScheduleEvent[]
 > {
+  // No Data Cache: a stale entry served an old week (missing today's shows)
+  // as "Off air". /api/week-info's s-maxage already limits upstream calls.
   const response = await fetch(getApiUrl("/api/week-info?timezone=UTC"), {
-    next: { revalidate: 60 },
+    cache: "no-store",
   });
 
   if (!response.ok) {

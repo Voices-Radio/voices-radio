@@ -70,6 +70,22 @@ describe("GET /api/week-info with KX on Airtime", () => {
     );
   });
 
+  it("skips the Data Cache so a stale week can't stick", async () => {
+    await request();
+
+    const init = fetchMock.mock.calls[0][1];
+    expect(init).toMatchObject({ cache: "no-store" });
+    expect(init).not.toHaveProperty("next");
+  });
+
+  it("lets the CDN cache the response for a minute", async () => {
+    const response = await request();
+
+    expect(response.headers.get("cache-control")).toBe(
+      "public, s-maxage=60, stale-while-revalidate=60",
+    );
+  });
+
   it("buckets by the viewer's day, ignoring Airtime's day keys", async () => {
     const body = await (await request()).json();
 

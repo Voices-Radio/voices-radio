@@ -9,6 +9,7 @@ import {
 } from "@/lib/voices/config";
 import { getScheduleContext } from "@/lib/voices/schedule-context";
 import useRadioCultLiveMetadata from "@/hooks/use-radio-cult-live-metadata";
+import useNow from "@/hooks/use-now";
 import useWeekInfo from "@/hooks/use-week-info";
 import ScheduleDialog from "@/app/components/schedule/dialog";
 import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
@@ -142,7 +143,8 @@ function MobileLiveControls() {
 
 function ScheduleContextItems() {
   const { data } = useWeekInfo();
-  const context = getScheduleContext(data, "kx");
+  const now = useNow();
+  const context = getScheduleContext(data, "kx", now);
   const items = [
     { label: "Now", value: context.current },
     { label: "Next", value: context.next },

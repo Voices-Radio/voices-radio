@@ -131,6 +131,8 @@ describe("GET /api/week-info", () => {
       "2026-09-20T23:00:00.000Z",
     );
     expect(init.headers["x-api-key"]).toBe("test-key");
+    expect(init.cache).toBe("no-store");
+    expect(init).not.toHaveProperty("next");
   });
 
   it("returns 502 when RadioCult fails", async () => {
