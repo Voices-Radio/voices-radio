@@ -76,6 +76,15 @@ export const checkoutResponseSchema = z.object({
 });
 export type CheckoutResponse = z.infer<typeof checkoutResponseSchema>;
 
+// POST /api/membership/resume-checkout — the reminder email's "Finish joining"
+// for a guest joiner. A fresh Stripe session for the amount already chosen.
+export const resumeCheckoutResponseSchema = z.object({
+  checkoutUrl: z.string().url(),
+});
+export type ResumeCheckoutResponse = z.infer<
+  typeof resumeCheckoutResponseSchema
+>;
+
 // GET /api/membership/guest-checkout/:sessionId, polled by the success page of
 // the payment-first join. `paid` is the backend's own confirmation;
 // `sessionStatus` is Stripe's view, which tells "payment made, still
@@ -286,17 +295,22 @@ export const artistProfileSchema = z.object({
   soundcloudUsername: nullish(z.string()),
   programmingEmail: nullish(z.string()),
   socialLinks: artistSocialLinksSchema,
-  profileReview: z.object({
-    id: z.string(),
-    submittedAt: z.string().or(z.date()),
-    pending: z.boolean(),
-    fields: z.array(z.object({
-      field: z.string(),
-      proposed: z.unknown(),
-      status: z.enum(["pending", "approved", "rejected"]),
-      rejectionReason: nullish(z.string()),
-    })),
-  }).nullable().optional(),
+  profileReview: z
+    .object({
+      id: z.string(),
+      submittedAt: z.string().or(z.date()),
+      pending: z.boolean(),
+      fields: z.array(
+        z.object({
+          field: z.string(),
+          proposed: z.unknown(),
+          status: z.enum(["pending", "approved", "rejected"]),
+          rejectionReason: nullish(z.string()),
+        }),
+      ),
+    })
+    .nullable()
+    .optional(),
 });
 export type ArtistProfile = z.infer<typeof artistProfileSchema>;
 
