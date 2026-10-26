@@ -121,6 +121,41 @@ function buildEventItem(): HomeFeatureItem {
   };
 }
 
+describe("HomeFeaturePanel variable feature list length", () => {
+  it("counts off however many items the CMS supplies, not a fixed 8", () => {
+    const twelve = Array.from({ length: 12 }, (_, index) =>
+      buildItem(index + 1),
+    );
+
+    render(<HomeFeaturePanel items={twelve} />);
+
+    expect(screen.getAllByText("1/12").length).toBeGreaterThan(0);
+  });
+
+  it("keeps the mobile dots while the list still fits the transport row", () => {
+    const eight = Array.from({ length: 8 }, (_, index) => buildItem(index + 1));
+
+    render(<HomeFeaturePanel items={eight} />);
+
+    expect(
+      screen.getAllByRole("button", { name: /Show featured item/ }),
+    ).toHaveLength(8);
+  });
+
+  it("drops the mobile dots once the list is too long for them, keeping the counter", () => {
+    const twelve = Array.from({ length: 12 }, (_, index) =>
+      buildItem(index + 1),
+    );
+
+    render(<HomeFeaturePanel items={twelve} />);
+
+    expect(
+      screen.queryAllByRole("button", { name: /Show featured item/ }),
+    ).toHaveLength(0);
+    expect(screen.getAllByText("1/12").length).toBeGreaterThan(0);
+  });
+});
+
 describe("HomeFeaturePanel desktop CTA glyph", () => {
   it("shows a play glyph for a show, which has archive audio to play", () => {
     const { container } = render(<HomeFeaturePanel items={[buildItem(1)]} />);

@@ -410,7 +410,7 @@ async function getHomeFeatureItems(
 
   if (items.length) return items;
 
-  return fallbackShows.slice(0, 8).map((show) => ({
+  return fallbackShows.slice(0, FEATURE_PANEL_FALLBACK_LIMIT).map((show) => ({
     id: `show-${show.id}`,
     type: "show" as const,
     label: "Show",

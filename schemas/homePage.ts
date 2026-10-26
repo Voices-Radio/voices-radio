@@ -206,7 +206,7 @@ export default defineType({
       name: "featuredContent",
       title: "Featured Content",
       description:
-        "Exactly 8 ordered pieces of content shown in the Home feature panel.",
+        "Ordered pieces of content shown in the Home feature panel. Add as many as you need; the panel counter follows the list length.",
       type: "array",
       group: "featured",
       of: [
@@ -306,7 +306,7 @@ export default defineType({
           },
         }),
       ],
-      validation: (rule) => rule.required().length(8),
+      validation: (rule) => rule.required().min(1),
     }),
     defineField({
       name: "latestKxLane",

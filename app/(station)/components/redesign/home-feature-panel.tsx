@@ -18,6 +18,11 @@ const AUTO_SLIDE_DELAY_MS = 7000;
 // intentional swipe rather than an incidental nudge — framer-motion's own
 // carousel recipe.
 const SWIPE_CONFIDENCE_THRESHOLD = 8000;
+// The mobile transport row sits inside the image frame's overflow-hidden box,
+// so a long dot strip gets clipped instead of wrapping. The feature list has no
+// fixed length any more, so past this many slides the dots stand down and the
+// counter carries the position on its own.
+const MAX_MOBILE_DOTS = 8;
 
 function swipePower(offset: number, velocity: number) {
   return Math.abs(offset) * velocity;
@@ -165,6 +170,8 @@ export default function HomeFeaturePanel({
       ? item.show.genres.slice(0, 3)
       : [item.label];
   const hasMultipleItems = featureItems.length > 1;
+  const showMobileDots =
+    hasMultipleItems && featureItems.length <= MAX_MOBILE_DOTS;
   // Reduced-motion users get a static slide (no forced motion); everyone
   // else can still pause explicitly, or implicitly by hovering/focusing
   // inside the carousel — matches "autoplay >5s needs pause/stop" guidance.
@@ -354,35 +361,37 @@ export default function HomeFeaturePanel({
             themselves take pointer events. */}
         {hasMultipleItems && (
           <div className="pointer-events-none absolute inset-x-0 bottom-1 flex items-center justify-center gap-2 [text-shadow:0_1px_4px_rgba(0,0,0,0.8)] md:hidden">
-            <div className="pointer-events-auto flex items-center gap-1">
-              {featureItems.map((featureItem, index) => (
-                <button
-                  key={featureItem.id}
-                  type="button"
-                  className="flex h-6 w-4 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
-                  onClick={() => {
-                    setDirection(index > activeIndex ? 1 : -1);
-                    setAutoSlideResetKey((resetKey) => resetKey + 1);
-                    setActiveIndex(index);
-                  }}
-                  aria-label={`Show featured item ${index + 1}`}
-                  aria-current={index === activeIndex}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      // h-/w- rather than `size-`: this project is on Tailwind
-                      // 3.3, which predates the `size-*` utility, so `size-1.5`
-                      // silently generated nothing and the dots rendered 0x0.
-                      "h-1.5 w-1.5 rounded-full bg-voicesNext-cream shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-[transform,opacity] duration-200",
-                      index === activeIndex
-                        ? "scale-125 opacity-100"
-                        : "opacity-55 scale-75",
-                    )}
-                  />
-                </button>
-              ))}
-            </div>
+            {showMobileDots && (
+              <div className="pointer-events-auto flex items-center gap-1">
+                {featureItems.map((featureItem, index) => (
+                  <button
+                    key={featureItem.id}
+                    type="button"
+                    className="flex h-6 w-4 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-cream"
+                    onClick={() => {
+                      setDirection(index > activeIndex ? 1 : -1);
+                      setAutoSlideResetKey((resetKey) => resetKey + 1);
+                      setActiveIndex(index);
+                    }}
+                    aria-label={`Show featured item ${index + 1}`}
+                    aria-current={index === activeIndex}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        // h-/w- rather than `size-`: this project is on Tailwind
+                        // 3.3, which predates the `size-*` utility, so `size-1.5`
+                        // silently generated nothing and the dots rendered 0x0.
+                        "h-1.5 w-1.5 rounded-full bg-voicesNext-cream shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-[transform,opacity] duration-200",
+                        index === activeIndex
+                          ? "scale-125 opacity-100"
+                          : "opacity-55 scale-75",
+                      )}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
             <span
               className="font-asap text-[11px] font-bold tabular-nums leading-none text-voicesNext-cream"
               aria-live="polite"
