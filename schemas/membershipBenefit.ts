@@ -9,6 +9,13 @@ export default defineType({
   icon: PackageIcon,
   fields: [
     defineField({
+      name: "key",
+      title: "Backend key",
+      description: "Immutable key shared with the membership backend and benefit URL.",
+      type: "string",
+      validation: (rule) => rule.required().regex(/^[a-z0-9_]+$/),
+    }),
+    defineField({
       name: "slug",
       title: "Slug",
       description:
@@ -71,6 +78,57 @@ export default defineType({
       description: "Leave blank to publish immediately.",
       type: "datetime",
     }),
+    defineField({
+      name: "benefitType",
+      title: "Benefit type",
+      type: "string",
+      options: {
+        list: [
+          "merch_discount",
+          "podcast_discount",
+          "event_presale",
+          "partner_perk",
+          "studio_ballot",
+          "workshop_priority",
+          "submission_eligibility",
+          "annual_pack",
+          "patron_experience",
+          "other",
+        ],
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "redemptionModel",
+      title: "Redemption model",
+      type: "string",
+      options: { list: ["single_use", "repeatable", "quota", "capacity"] },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "eligibleCadences",
+      title: "Eligible cadences",
+      type: "array",
+      of: [{ type: "string" }],
+      initialValue: ["monthly", "annual"],
+      validation: (rule) => rule.required().min(1),
+    }),
+    defineField({ name: "quota", title: "Quota", type: "number" }),
+    defineField({
+      name: "quotaPeriod",
+      title: "Quota period",
+      type: "string",
+      options: { list: ["membership_period", "calendar_month", "calendar_year", "lifetime"] },
+    }),
+    defineField({ name: "capacityTotal", title: "Capacity", type: "number" }),
+    defineField({
+      name: "requiresPhysicalAddress",
+      title: "Requires physical address",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({ name: "campaignKey", title: "Campaign key", type: "string" }),
+    defineField({ name: "active", title: "Active", type: "boolean", initialValue: true }),
   ],
   preview: {
     select: { title: "name", subtitle: "summary" },

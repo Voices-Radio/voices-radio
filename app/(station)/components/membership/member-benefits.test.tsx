@@ -11,6 +11,7 @@ describe("MemberBenefits", () => {
       "Organise your favourites into playlists",
       "Merch discount",
       "Event discounts",
+      "25% off podcast bookings",
       "Early release tickets",
       "Exclusive DJ sets from events",
       "Behind the scenes content",
@@ -48,12 +49,12 @@ describe("MemberBenefits", () => {
     ).toBeInTheDocument();
   });
 
-  it("numbers live benefits 01-07 and continues 08-09 for coming soon", () => {
+  it("numbers live benefits 01-08 and continues 09-10 for coming soon", () => {
     render(<MemberBenefits />);
     const numbers = screen
       .getAllByTestId("benefit-number")
       .map((node) => node.textContent);
-    expect(numbers).toEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09"]);
+    expect(numbers).toEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"]);
   });
 
   it("shows each benefit once, so nothing appears as both live and coming soon", () => {

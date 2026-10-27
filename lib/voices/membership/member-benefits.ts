@@ -25,6 +25,10 @@ export const MEMBER_BENEFITS: readonly MemberBenefitCopy[] = [
     description: "A discount code for Voices events, sent to you as a member.",
   },
   {
+    title: "25% off podcast bookings",
+    description: "A quarter off studio time when you book a podcast session with Voices.",
+  },
+  {
     title: "Early release tickets",
     description: "Get access to event tickets before they go on general sale.",
   },
