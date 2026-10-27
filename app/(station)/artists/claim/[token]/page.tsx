@@ -180,11 +180,7 @@ export default async function ClaimArtistPage({
         eyebrow="Artist invitation"
         title="Claim your profile"
         className="mx-auto text-center"
-      >
-        <p className="mt-3 break-words font-asap text-sm leading-relaxed text-voicesNext-cream/75 md:text-base">
-          This invitation is for {invitation.email}.
-        </p>
-      </AccountPageIntro>
+      />
 
       {sessionEmail && !sessionMatchesInvitation && (
         <p

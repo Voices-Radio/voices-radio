@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { ArtistInvitation } from "@/lib/voices/membership/artist-invitations-client";
@@ -66,19 +66,27 @@ function renderForm(inv: ArtistInvitation, sessionMatchesInvitation = false) {
 }
 
 describe("claim form — what each field is for", () => {
-  it("separates private account details from the public artist profile", () => {
+  it("does not label sections as private or public", () => {
     renderForm(invitation());
 
-    // The badge is part of each group's name, so the split is announced.
-    expect(
-      screen.getByRole("group", { name: /about you.*private/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("group", { name: /your artist profile.*public/i }),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole("group")).not.toBeInTheDocument();
+    expect(screen.queryByText(/^private$/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^public$/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/about you/i)).not.toBeInTheDocument();
   });
 
-  it("says first and last name are the DJ's own, private, and not their artist name", () => {
+  it("shows the invitation email read-only as the username", () => {
+    renderForm(invitation({ account: { exists: true, passwordSet: true } }));
+
+    const email = screen.getByLabelText("Email");
+    expect(email).toHaveValue("hayley@example.com");
+    expect(email).toHaveAttribute("readonly");
+    expect(email).toHaveAttribute("autocomplete", "username");
+    // The server reads the address from the hidden field, not this one.
+    expect(email).not.toHaveAttribute("name");
+  });
+
+  it("says first and last name are the DJ's legal names, not their artist name", () => {
     renderForm(invitation());
 
     const first = screen.getByLabelText("First name");
@@ -90,9 +98,6 @@ describe("claim form — what each field is for", () => {
       last.getAttribute("aria-describedby") ?? "",
     );
 
-    // The privacy rule is stated once, on the section the names sit in.
-    const group = screen.getByRole("group", { name: /about you.*private/i });
-    expect(group).toHaveTextContent(/never shown on the website/i);
     expect(firstHint).toHaveTextContent(/legal first name/i);
     expect(firstHint).toHaveTextContent(/not your artist name/i);
     expect(lastHint).toHaveTextContent(/legal last name/i);
@@ -114,9 +119,11 @@ describe("claim form — what each field is for", () => {
   it("asks for the artist name whichever way the DJ signs in, not just when creating an account", () => {
     renderForm(invitation({ account: { exists: true, passwordSet: true } }));
 
+    expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(
-      screen.getByLabelText("Existing account password"),
+      screen.getByText(/you already have a voices account/i),
     ).toBeInTheDocument();
+    expect(screen.getByText(/reset it first/i)).toBeInTheDocument();
     expect(screen.getByLabelText("Artist name")).toBeRequired();
     expect(screen.queryByLabelText("First name")).not.toBeInTheDocument();
   });
@@ -127,7 +134,7 @@ describe("claim form — what each field is for", () => {
     expect(screen.getByLabelText("Artist name")).toBeRequired();
   });
 
-  it("shows an artist name that is already set read-only, with how to change it", () => {
+  it("does not ask for an artist name that is already set", () => {
     renderForm(
       invitation({
         artist: { name: "Aeron Darka", artistNameRequired: false },
@@ -135,21 +142,10 @@ describe("claim form — what each field is for", () => {
     );
 
     expect(screen.queryByLabelText("Artist name")).not.toBeInTheDocument();
-    const group = screen.getByRole("group", {
-      name: /your artist profile.*public/i,
-    });
-    // The name itself is shown once, in the card above the form.
-    expect(within(group).queryByText("Aeron Darka")).not.toBeInTheDocument();
-    expect(group).toHaveTextContent(/name is the one shown above/i);
-    // The address itself is the link text, so it still reads as a way to get
-    // help in a browser with no mail handler.
-    const contactLink = within(group).getByRole("link", {
-      name: "info@voicesradio.co.uk",
-    });
-    expect(contactLink).toHaveAttribute(
-      "href",
-      "mailto:info@voicesradio.co.uk",
-    );
+    expect(screen.queryByText(/name is the one shown above/i)).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "info@voicesradio.co.uk" }),
+    ).toBeNull();
   });
 
   it("keeps the taken-name guidance for a net-new artist whose invited name was taken", () => {
