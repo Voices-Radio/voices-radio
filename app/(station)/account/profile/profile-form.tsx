@@ -135,7 +135,8 @@ export default function ProfileForm({
             defaultChecked={profile.memberUpdates}
             className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background motion-reduce:transition-none"
           />
-          Send me member-only updates.
+          Send me member-only updates, such as event discounts and early-release
+          tickets.
         </label>
       )}
 

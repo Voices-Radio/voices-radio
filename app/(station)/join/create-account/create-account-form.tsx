@@ -104,8 +104,7 @@ export default function CreateAccountForm({
   if (state?.status === "account_exists") {
     // A visitor who came here from a heart/bookmark wants to get back to it;
     // otherwise resume the payment they were in the middle of.
-    const resume =
-      next ?? `/join/checkout?amount=${amount}&cadence=${cadence}`;
+    const resume = next ?? `/join/checkout?amount=${amount}&cadence=${cadence}`;
     return (
       <div
         className="mx-auto max-w-[480px] px-4 py-16 text-center md:px-0"
@@ -315,7 +314,8 @@ export default function CreateAccountForm({
                 defaultChecked={values ? values.memberUpdates : true}
                 className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background motion-reduce:transition-none"
               />
-              Send me member-only updates. You can change this any time in your
+              Send me member-only updates, such as event discounts and
+              early-release tickets. You can change this any time in your
               account.
             </label>
 
@@ -326,7 +326,9 @@ export default function CreateAccountForm({
         <p className="mt-6 font-gabarito text-sm text-voicesNext-cream/70">
           Already have an account?{" "}
           <Link
-            href={next ? `/sign-in?next=${encodeURIComponent(next)}` : "/sign-in"}
+            href={
+              next ? `/sign-in?next=${encodeURIComponent(next)}` : "/sign-in"
+            }
             className="font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
           >
             Sign in
