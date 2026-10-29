@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { config, middleware } from "./middleware";
 
@@ -73,5 +73,49 @@ describe("requested path forwarding", () => {
     expect(response.headers.get("x-middleware-request-x-voices-path")).toBe(
       "/account",
     );
+  });
+});
+
+// Staging is public (no password since 29 Oct 2026). robots.txt only stops
+// crawling, not indexing of a linked URL, so every non-production response
+// also says noindex. Without it a second copy of the site can sit in Google
+// next to www.
+describe("noindex outside production", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("marks every staging page noindex", () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_ENV", "staging");
+
+    const response = middleware(new NextRequest("https://site.test/shows"));
+
+    expect(response.headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
+
+  it("marks a site with no environment set noindex too", () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_ENV", "");
+
+    const response = middleware(new NextRequest("https://site.test/"));
+
+    expect(response.headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
+
+  it("never sends noindex in production", () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_ENV", "production");
+
+    const response = middleware(new NextRequest("https://site.test/"));
+
+    expect(response.headers.get("x-robots-tag")).toBeNull();
+  });
+
+  it("serves staging without a password when the gate is off", () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_ENV", "staging");
+    vi.stubEnv("ENABLE_STAGING_AUTH", "");
+    vi.stubEnv("STAGING_PASSWORD", "still-set");
+
+    const response = middleware(new NextRequest("https://site.test/join"));
+
+    expect(response.status).toBe(200);
   });
 });

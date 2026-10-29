@@ -59,7 +59,16 @@ function proceed(request: NextRequest) {
     `${request.nextUrl.pathname}${request.nextUrl.search}`,
   );
 
-  return NextResponse.next({ request: { headers: forwarded } });
+  const response = NextResponse.next({ request: { headers: forwarded } });
+
+  // Staging is reachable without a password, and robots.txt only stops
+  // crawling, not indexing of a URL someone links to. Every page outside
+  // production says noindex, so no copy of the site competes with www.
+  if (process.env.NEXT_PUBLIC_SITE_ENV !== "production") {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+
+  return response;
 }
 
 export function middleware(request: NextRequest) {

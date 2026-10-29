@@ -9,7 +9,8 @@ import { defineConfig, devices } from "@playwright/test";
  * runs are not repeatable, and a failure here can mean "the backend changed"
  * rather than "the frontend regressed".
  *
- * Credentials come from the environment, never from source:
+ * Staging has no password since 29 Oct 2026. If the gate is switched back
+ * on, pass the credentials from the environment, never from source:
  *   STAGING_AUTH_USER=voices STAGING_PASSWORD=... \
  *     npx playwright test --config playwright.staging.config.ts
  */
@@ -18,11 +19,6 @@ const BASE_URL = process.env.STAGING_BASE_URL ?? "https://staging.voicesradio.co
 const username = process.env.STAGING_AUTH_USER;
 const password = process.env.STAGING_PASSWORD;
 
-if (!username || !password) {
-  throw new Error(
-    "STAGING_AUTH_USER and STAGING_PASSWORD must be set — staging sits behind basic auth.",
-  );
-}
 
 export default defineConfig({
   testDir: "./tests/staging",
@@ -35,7 +31,7 @@ export default defineConfig({
   expect: { timeout: 15_000 },
   use: {
     baseURL: BASE_URL,
-    httpCredentials: { username, password },
+    ...(username && password ? { httpCredentials: { username, password } } : {}),
     trace: "on",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
