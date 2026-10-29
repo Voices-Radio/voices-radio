@@ -9,6 +9,7 @@
 /coverage
 /test-results
 /playwright-report
+/playwright-report-staging
 /blob-report
 /playwright/.cache
 

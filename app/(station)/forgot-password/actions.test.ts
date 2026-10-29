@@ -4,6 +4,11 @@ vi.mock("@/lib/voices/membership/auth-client", () => ({
   backendCheckEmail: vi.fn(),
   backendForgotPassword: vi.fn(),
 }));
+vi.mock("@/lib/voices/membership/verification-return", () => ({
+  resetPasswordReturnUrl: vi.fn(async (next?: string) =>
+    `https://staging.voicesradio.co.uk/reset-password${next ? `?next=${encodeURIComponent(next)}` : ""}`,
+  ),
+}));
 
 const { backendCheckEmail, backendForgotPassword } = await import(
   "@/lib/voices/membership/auth-client"
@@ -76,8 +81,12 @@ describe("forgotPasswordAction", () => {
       }),
     );
 
+    // The reset link returns to this site's /reset-password page (found by
+    // the staging E2E run: it used to open the auth site).
     expect(backendForgotPassword).toHaveBeenCalledWith({
       email: "artist@example.com",
+      resetReturnUrl:
+        "https://staging.voicesradio.co.uk/reset-password?next=%2Fartists%2Fclaim%2Finvite-token",
     });
     expect(result).toEqual({
       status: "success",

@@ -8,6 +8,7 @@ import {
   backendCheckEmail,
   backendForgotPassword,
 } from "@/lib/voices/membership/auth-client";
+import { resetPasswordReturnUrl } from "@/lib/voices/membership/verification-return";
 
 const schema = z.object({
   email: z
@@ -66,7 +67,11 @@ export async function forgotPasswordAction(
     };
   }
 
-  const result = await backendForgotPassword({ email: parsed.data.email });
+  const next = safeInternalPathOrUndefined(parsed.data.next);
+  const result = await backendForgotPassword({
+    email: parsed.data.email,
+    resetReturnUrl: await resetPasswordReturnUrl(next),
+  });
 
   if (!result.ok) {
     return {
@@ -76,8 +81,6 @@ export async function forgotPasswordAction(
         "We couldn't send a password reset email. Please try again.",
     };
   }
-
-  const next = safeInternalPathOrUndefined(parsed.data.next);
 
   return {
     status: "success",

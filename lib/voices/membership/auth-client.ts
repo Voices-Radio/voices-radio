@@ -144,6 +144,8 @@ export async function backendCheckEmail(input: {
 
 export async function backendForgotPassword(input: {
   email: string;
+  /** This site's /reset-password page; the backend allowlists it. */
+  resetReturnUrl?: string;
 }): Promise<BackendAuthResult> {
   return authRequest("/api/auth/forgot-password", input);
 }
