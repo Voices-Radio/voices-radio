@@ -151,3 +151,29 @@ describe("SaveArtistButton", () => {
     );
   });
 });
+
+// Same race as the show bookmark (found by the staging E2E run, 29 Oct
+// 2026): a heart tapped before the session answered sent a signed-in member
+// to /sign-in. The tap now waits for the session.
+describe("SaveArtistButton — tapped before the session has loaded", () => {
+  it("hearts once the session says signed in, and never sends a member to sign-in", async () => {
+    let release!: () => void;
+    const sessionAnswered = new Promise<void>((resolve) => (release = resolve));
+    const base = mockFetch({ user: SIGNED_IN_USER });
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input).includes("/api/auth/session")) await sessionAnswered;
+      return base(input, init);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+    renderButton();
+
+    await user.click(screen.getByRole("button", { name: /save aeron darka/i }));
+    expect(push).not.toHaveBeenCalled();
+
+    release();
+
+    await waitFor(() => expect(calls(fetchMock as never, "PUT")).toHaveLength(1));
+    expect(push).not.toHaveBeenCalled();
+  });
+});

@@ -9,6 +9,7 @@ import {
   signInHrefForSaveIntent,
 } from "@/lib/voices/favourites/save-intent";
 import { useFavourites } from "./favourites-context";
+import { useSessionUser } from "./session-context";
 
 /**
  * The heart on an ArtistCard: a plain on/off follow. Sits as a sibling of
@@ -32,11 +33,24 @@ export default function SaveArtistButton({
   const pathname = usePathname();
   const { isSignedIn, getArtistStatus, registerArtistIds, applyArtistStatus } =
     useFavourites();
+  const { status: sessionStatus } = useSessionUser();
   const [pending, setPending] = useState(false);
+  // A tap made before /api/auth/session has answered, replayed once it has
+  // (otherwise a signed-in member is sent to /sign-in). Same as the show
+  // bookmark in save-show-button.tsx.
+  const [tapWhileLoading, setTapWhileLoading] = useState(false);
 
   useEffect(() => {
     registerArtistIds([artistId]);
   }, [artistId, registerArtistIds]);
+
+  useEffect(() => {
+    if (!tapWhileLoading || sessionStatus === "loading") return;
+    setTapWhileLoading(false);
+    act();
+    // act() reads this render's session and favourites state on purpose.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tapWhileLoading, sessionStatus]);
 
   const { saved } = getArtistStatus(artistId);
 
@@ -60,6 +74,14 @@ export default function SaveArtistButton({
     event.preventDefault();
     event.stopPropagation();
 
+    if (sessionStatus === "loading") {
+      setTapWhileLoading(true);
+      return;
+    }
+    act();
+  }
+
+  function act() {
     if (!isSignedIn) {
       const search =
         typeof window !== "undefined" ? window.location.search : "";

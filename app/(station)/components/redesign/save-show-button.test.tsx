@@ -317,3 +317,74 @@ describe("SaveShowButton — signed in, already saved", () => {
     ).toBe(false);
   });
 });
+
+// Found by the staging E2E run (29 Oct 2026): a tap before /api/auth/session
+// had answered was treated as signed out and sent a signed-in member to
+// /sign-in. A tap while the session is still loading must wait for it.
+describe("SaveShowButton — tapped before the session has loaded", () => {
+  function deferredSessionFetch(user: unknown) {
+    let release!: () => void;
+    const sessionAnswered = new Promise<void>((resolve) => (release = resolve));
+    const base = mockFetch({ user });
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input).includes("/api/auth/session")) await sessionAnswered;
+      return base(input, init);
+    });
+    return { fetchMock, release };
+  }
+
+  it("saves once the session says signed in, and never sends a member to sign-in", async () => {
+    const { fetchMock, release } = deferredSessionFetch(SIGNED_IN_USER);
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+
+    render(
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+        </FavouritesProvider>
+      </SessionProvider>,
+    );
+
+    await user.click(screen.getByRole("button", { name: /save late night sessions/i }));
+    expect(push).not.toHaveBeenCalled();
+
+    release();
+
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.some(
+          ([input, init]) =>
+            String(input) === `/api/favourites/${SHOW_ID}` &&
+            (init as RequestInit | undefined)?.method === "PUT",
+        ),
+      ).toBe(true),
+    );
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("still routes a signed-out visitor to sign-in once the session has answered", async () => {
+    const { fetchMock, release } = deferredSessionFetch(null);
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+
+    render(
+      <SessionProvider>
+        <FavouritesProvider>
+          <SaveShowButton showId={SHOW_ID} title="Late Night Sessions" />
+        </FavouritesProvider>
+      </SessionProvider>,
+    );
+
+    await user.click(screen.getByRole("button", { name: /save late night sessions/i }));
+    expect(push).not.toHaveBeenCalled();
+
+    release();
+
+    await waitFor(() =>
+      expect(push).toHaveBeenCalledWith(
+        `/sign-in?next=${encodeURIComponent(`/shows?save=${SHOW_ID}`)}`,
+      ),
+    );
+  });
+});

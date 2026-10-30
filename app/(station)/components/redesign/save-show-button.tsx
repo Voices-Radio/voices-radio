@@ -48,17 +48,29 @@ export default function SaveShowButton({
   const pathname = usePathname();
   const { isSignedIn, getStatus, registerShowIds, applyStatus } =
     useFavourites();
-  const { user } = useSessionUser();
+  const { user, status: sessionStatus } = useSessionUser();
   const canOrganise = canOrganisePlaylists(user?.member);
   const [pending, setPending] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   // Stays true after the first open so the sheet keeps its exit animation.
   const [sheetRequested, setSheetRequested] = useState(false);
+  // A tap made before /api/auth/session has answered. Acting on it then would
+  // treat a signed-in member as signed out and send them to /sign-in; it is
+  // held and replayed once the session is known.
+  const [tapWhileLoading, setTapWhileLoading] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     registerShowIds([showId]);
   }, [showId, registerShowIds]);
+
+  useEffect(() => {
+    if (!tapWhileLoading || sessionStatus === "loading") return;
+    setTapWhileLoading(false);
+    act();
+    // act() reads this render's session and favourites state on purpose.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tapWhileLoading, sessionStatus]);
 
   const status = getStatus(showId);
 
@@ -97,6 +109,14 @@ export default function SaveShowButton({
     event.preventDefault();
     event.stopPropagation();
 
+    if (sessionStatus === "loading") {
+      setTapWhileLoading(true);
+      return;
+    }
+    act();
+  }
+
+  function act() {
     if (!isSignedIn) {
       const search =
         typeof window !== "undefined" ? window.location.search : "";
