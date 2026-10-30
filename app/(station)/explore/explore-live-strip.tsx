@@ -151,20 +151,26 @@ function ScheduleContextItems() {
   ];
 
   return (
+    // Below lg the fixed station block and actions leave this only a few
+    // pixels, so it is hidden. Between lg and xl only Now fits; from xl Now
+    // gets the wider column, because Next is usually a short title ("Archive").
     <div
-      className="grid h-full min-w-0 flex-1 grid-cols-2 divide-x divide-black text-voicesNext-background"
+      className="hidden h-full min-w-0 flex-1 grid-cols-1 divide-x divide-black text-voicesNext-background lg:grid xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"
       aria-label="KX schedule context"
     >
       {items.map((item) => (
         <div
           key={item.label}
-          className="flex min-w-0 flex-col justify-center px-3 lg:px-4 xl:px-5"
+          className={cn(
+            "min-w-0 flex-col justify-center px-4 xl:px-5",
+            item.label === "Next" ? "hidden xl:flex" : "flex",
+          )}
         >
           <p className="font-asap text-[9px] font-bold uppercase leading-none tracking-[1px] text-[#443f3f]/70 md:text-[10px]">
             {item.label}
           </p>
           <p
-            className="mt-1 truncate font-outfit text-[12px] font-black uppercase leading-none tracking-[1px] text-[#443f3f] lg:text-[13px]"
+            className="mt-1 line-clamp-2 font-outfit text-[12px] font-black uppercase leading-[1.15] tracking-[1px] text-[#443f3f] [overflow-wrap:anywhere] lg:text-[13px]"
             title={item.value}
           >
             {item.value}
@@ -178,7 +184,7 @@ function ScheduleContextItems() {
 function PlayerActions() {
   return (
     <div
-      className="flex h-full shrink-0 divide-x divide-black border-l border-black"
+      className="ml-auto flex h-full shrink-0 divide-x divide-black border-l border-black"
       aria-label="Player actions"
     >
       <ScheduleDialog classNames="inline-flex h-full w-[118px] items-center justify-center gap-2 rounded-none bg-voicesNext-cream px-4 font-gabarito text-[13px] font-bold uppercase leading-none text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange" />
