@@ -278,9 +278,11 @@ export default function HomeFeaturePanel({
 
             <FeatureLink
               href={item.href}
-              className="absolute bottom-[32px] left-0 block w-[320px] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream md:hidden"
+              className="absolute bottom-[32px] left-0 block w-[320px] max-w-[calc(100%-16px)] rounded-r-[10px] bg-voicesNext-orange/90 pb-4 pl-4 pr-3 pt-[10px] text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-cream md:hidden"
             >
-              <h2 className="truncate font-gabarito text-[24px] font-bold leading-none">
+              {/* Wrap rather than truncate: a one-line ellipsis left long
+                  titles ("The Sellout: How Big Mo…") unreadable on phones. */}
+              <h2 className="break-words font-gabarito text-[24px] font-bold leading-[1.1]">
                 {item.title}
               </h2>
               <div className="mt-3 flex flex-wrap items-center gap-[7px] font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-orange">
