@@ -70,7 +70,7 @@ export default function ShowCard({
             fill
             sizes="(min-width: 768px) 350px, 88vw"
             priority={priority}
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            className="object-cover object-[50%_25%] transition-transform duration-300 group-hover:scale-[1.03]"
           />
           <div className="from-black/85 via-black/15 absolute inset-0 bg-gradient-to-t to-transparent" />
           <h3 className="absolute bottom-6 left-2 right-4 line-clamp-2 font-gabarito text-[24px] font-bold leading-[1.02] text-voicesNext-cream">

@@ -102,7 +102,7 @@ export default function LiveStationCard({
   return (
     <article
       className={cn(
-        "group relative h-[126px] overflow-hidden border border-voicesNext-cream bg-voicesNext-background md:h-[316px] md:border-0",
+        "group relative h-[126px] overflow-hidden border border-voicesNext-cream bg-voicesNext-background md:h-[310px] md:border-0",
         !cardInteractive && "cursor-not-allowed",
         className,
       )}
@@ -148,7 +148,7 @@ export default function LiveStationCard({
 
         <div
           className={cn(
-            "relative h-[126px] transition-[filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-[269px]",
+            "relative h-[126px] transition-[filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-[263px]",
             artworkGrey && "grayscale",
           )}
         >

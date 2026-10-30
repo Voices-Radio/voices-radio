@@ -6,7 +6,7 @@ describe("EastComingSoonStrip", () => {
   it("lets the teaser text shrink so the orange icon cell stays inside the strip", () => {
     const { container } = render(<EastComingSoonStrip />);
 
-    const strip = screen.getByLabelText("Voices East coming late summer");
+    const strip = screen.getByLabelText("Voices East coming soon");
     const contentGrid = container.querySelector(".grid");
 
     expect(strip).toHaveClass("overflow-hidden");

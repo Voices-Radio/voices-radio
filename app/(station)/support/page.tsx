@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import type { Metadata } from "next";
 import { getMembershipPage } from "@/sanity.client";
+import FreeStreamNotice from "../components/membership/free-stream-notice";
 import { withMembershipCopyFallback } from "@/lib/voices/membership/constants";
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default async function SupportPage() {
         <p className="w-full max-w-2xl font-gabarito text-lg leading-relaxed text-voicesNext-cream/90">
           {copy.support_subheading}
         </p>
+        <FreeStreamNotice />
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           <Link
             href="/join"
@@ -73,14 +75,14 @@ export default async function SupportPage() {
           Ready to join?
         </h2>
         <p className="mt-3 max-w-2xl font-gabarito text-base text-voicesNext-cream/90">
-          Compare all four tiers, monthly or annual, and pick the level
-          that&rsquo;s right for you.
+          Choose what you give each month, or save by paying annually.
+          Every amount keeps the station running.
         </p>
         <Link
           href="/join"
           className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-voicesNext-orangeButton px-6 font-gabarito text-base font-bold text-white transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
         >
-          Compare membership tiers
+          Join as a member
         </Link>
       </section>
     </div>

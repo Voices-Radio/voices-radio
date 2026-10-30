@@ -47,7 +47,7 @@ function SignedOutLinks() {
           focusRingClasses,
         )}
       >
-        Support Us
+        Join Voices
       </Link>
     </div>
   );

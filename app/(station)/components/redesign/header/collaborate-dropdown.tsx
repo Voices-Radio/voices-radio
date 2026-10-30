@@ -60,7 +60,7 @@ export function CollaborateDropdown({
         aria-controls="collaborate-menu"
         onClick={() => setOpen((value) => !value)}
       >
-        Collaborate
+        Work with Us
         <ChevronDown
           aria-hidden="true"
           className={cn("size-4 transition-transform", open && "rotate-180")}

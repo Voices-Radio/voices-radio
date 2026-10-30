@@ -474,7 +474,7 @@ function buildLatestKxLane(
 ): HomeShowLane {
   return {
     key: "latest_kx",
-    title: config?.title || "Latest on KX",
+    title: config?.title || "Show Highlights",
     description: config?.description || defaultLaneDescription,
     shows,
   };

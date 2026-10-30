@@ -4,7 +4,6 @@ import { getBaseUrl } from "@/lib/site-url";
 import {
   collectCategories,
   filterPostsByCategories,
-  formatPostDate,
 } from "@/lib/voices/blog";
 import {
   getParamArray,
@@ -133,14 +132,6 @@ export default async function BlogPage({
                 </dt>
                 <dd className="mt-2 font-outfit text-3xl font-black tabular-nums leading-none text-voicesNext-cream">
                   {allPosts.length}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
-                  Last updated
-                </dt>
-                <dd className="mt-2 font-outfit text-3xl font-black uppercase leading-none text-voicesNext-cream">
-                  {formatPostDate(allPosts[0]?.publishedAt)}
                 </dd>
               </div>
             </dl>

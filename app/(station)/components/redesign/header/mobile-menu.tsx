@@ -21,6 +21,12 @@ import type { SiteSearch } from "./use-site-search";
 // submission form, so it must not be the fallback for "Join Voices".
 const SUPPORTER_LINK = "/join";
 
+const EXPLORE_LINK: NavLink = {
+  href: "/explore",
+  label: "Explore",
+  opensInNewTab: false,
+};
+
 const ARCHIVE_LINK: NavLink = {
   href: "/shows",
   label: "Archive",
@@ -68,11 +74,15 @@ export function MobileMenu({
   const footerContactEmail = readEmailFromMailto(footerLinks.contactLink);
   // Archive is built in rather than CMS-supplied, so it shows even when Sanity
   // provides its own menu list. It sits straight after Home.
-  const homeIndex = desktopMenuLinks.findIndex((link) => link.href === "/");
+  // The tablet and desktop menu opens with the same items as the top bar
+  // (Home, Explore, Shop) so the two menus read as one list.
+  const topBarHrefs = new Set(["/", "/explore", "/shows", shopLink]);
   const tabletMenuLinks: NavLink[] = [
-    ...desktopMenuLinks.slice(0, homeIndex + 1),
+    { href: "/", label: "Home", opensInNewTab: false },
+    EXPLORE_LINK,
     ARCHIVE_LINK,
-    ...desktopMenuLinks.slice(homeIndex + 1),
+    { href: shopLink, label: "Shop", opensInNewTab: true },
+    ...desktopMenuLinks.filter((link) => !topBarHrefs.has(link.href)),
   ];
 
   function handleMobileSearchSubmit(event: FormEvent<HTMLFormElement>) {
@@ -229,7 +239,7 @@ export function MobileMenu({
               </a>
               <div className="flex flex-col gap-3">
                 <p className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
-                  Collaborate
+                  Work with Us
                 </p>
                 {collaborateLinks.map((link) => (
                   <Link
@@ -261,7 +271,7 @@ export function MobileMenu({
                     : "text-voicesNext-cream",
                 )}
               >
-                About Us
+                About
               </Link>
               <Link
                 href="/support"
@@ -272,7 +282,7 @@ export function MobileMenu({
                     : "text-voicesNext-cream",
                 )}
               >
-                Why support us
+                Membership
               </Link>
               <a
                 href={contactLink}

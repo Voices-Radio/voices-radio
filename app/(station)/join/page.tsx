@@ -15,6 +15,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { accountSecondaryButtonClassName } from "../account/components/account-surface";
 import JoinStatusBanner from "./join-status-banner";
+import FreeStreamNotice from "../components/membership/free-stream-notice";
 import ContributionSummary from "../components/membership/contribution-summary";
 import MemberBenefits from "../components/membership/member-benefits";
 
@@ -124,6 +125,7 @@ export default async function JoinPage({
                 {copy.join_subheading}
               </p>
             )}
+            <FreeStreamNotice />
             {!session && (
               <Link
                 href={signInHref}

@@ -37,7 +37,7 @@ export default function ArtistCard({
             fill
             priority={priority}
             sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 90vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            className="object-cover object-[50%_25%] transition-transform duration-300 group-hover:scale-[1.03]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
           <h2 className="absolute bottom-3 left-3 right-3 line-clamp-2 font-gabarito text-[24px] font-bold leading-[1.05] text-voicesNext-cream">

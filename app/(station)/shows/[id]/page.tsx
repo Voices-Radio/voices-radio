@@ -120,7 +120,7 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
             fill
             sizes="100vw"
             priority
-            className="object-cover"
+            className="object-cover object-[50%_25%]"
           />
           {/* Cream station/location chips: the system's "paper label on
               hardware" motif, and the only thing that sits on the artwork. */}
@@ -197,7 +197,7 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
             alt={show.artwork.alt}
             fill
             sizes="(min-width: 768px) 420px, 90vw"
-            className="object-cover"
+            className="object-cover object-[50%_25%]"
           />
         </div>
 

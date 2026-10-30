@@ -1,4 +1,4 @@
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import {
   genrePrimaryOptions,
@@ -53,7 +53,7 @@ export default function GenreBrowser({
                 aria-hidden="true"
                 className="mr-[3px] inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center rounded-full border-2 border-current"
               >
-                <ChevronDown className="size-[15px] stroke-[4px] transition-transform group-open:rotate-180" />
+                <ChevronRight className="size-[15px] stroke-[4px] transition-transform group-open:rotate-90" />
               </span>
             </summary>
             <div className="mt-3 flex flex-wrap gap-2 pl-4">

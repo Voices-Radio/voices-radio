@@ -184,7 +184,7 @@ export default defineType({
   icon: HomeIcon,
   groups: [
     { name: "featured", title: "1. Feature panel" },
-    { name: "fixed", title: "2. Latest on KX & Featured" },
+    { name: "fixed", title: "2. Show Highlights & Featured" },
     { name: "apply", title: "3. Apply banner" },
     { name: "rails", title: "4. Swimlanes" },
     { name: "live", title: "Live Streams" },
@@ -310,7 +310,7 @@ export default defineType({
     }),
     defineField({
       name: "latestKxLane",
-      title: "Latest on KX",
+      title: "Show Highlights",
       description:
         "Always sits first, above Featured. Fills itself with the newest shows; only the heading and blurb are editable here.",
       type: "object",
@@ -321,7 +321,7 @@ export default defineType({
           name: "title",
           title: "Title",
           type: "string",
-          initialValue: "Latest on KX",
+          initialValue: "Show Highlights",
         }),
         defineField({
           name: "description",

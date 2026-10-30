@@ -86,7 +86,7 @@ export default function LiveStack({
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-0 md:w-[316px] md:grid-cols-1">
+      <div className="grid grid-cols-2 gap-0 md:w-[316px] md:grid-cols-1 md:gap-3">
         <LiveStationCard
           cardRef={kxCardRef}
           stationId="kx"

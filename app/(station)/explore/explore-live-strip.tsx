@@ -145,26 +145,19 @@ function ScheduleContextItems() {
   const { data } = useWeekInfo();
   const now = useNow();
   const context = getScheduleContext(data, "kx", now);
-  const items = [
-    { label: "Now", value: context.current },
-    { label: "Next", value: context.next },
-  ];
+  // The station block already names the show on air, so only "Next" is added
+  // here. Showing "Now" again repeated the same title three times on the page.
+  const items = [{ label: "Next", value: context.next }];
 
   return (
-    // Below lg the fixed station block and actions leave this only a few
-    // pixels, so it is hidden. Between lg and xl only Now fits; from xl Now
-    // gets the wider column, because Next is usually a short title ("Archive").
     <div
-      className="hidden h-full min-w-0 flex-1 grid-cols-1 divide-x divide-black text-voicesNext-background lg:grid xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"
+      className="hidden h-full min-w-0 flex-1 grid-cols-1 text-voicesNext-background lg:grid"
       aria-label="KX schedule context"
     >
       {items.map((item) => (
         <div
           key={item.label}
-          className={cn(
-            "min-w-0 flex-col justify-center px-4 xl:px-5",
-            item.label === "Next" ? "hidden xl:flex" : "flex",
-          )}
+          className="flex min-w-0 flex-col justify-center border-l border-black px-4 xl:px-5"
         >
           <p className="font-asap text-[9px] font-bold uppercase leading-none tracking-[1px] text-[#443f3f]/70 md:text-[10px]">
             {item.label}

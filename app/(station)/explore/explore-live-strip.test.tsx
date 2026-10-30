@@ -105,26 +105,17 @@ describe("ExploreLiveStrip mobile controls", () => {
 });
 
 describe("ExploreLiveStrip desktop controls", () => {
-  it("shows only Now and Next in the schedule context, not Previous", () => {
+  it("shows only Next in the schedule context, because the station block already names the show on air", () => {
     renderStrip();
 
     const context = screen.getByLabelText("KX schedule context");
 
-    expect(within(context).getByText("Now")).toBeInTheDocument();
     expect(within(context).getByText("Next")).toBeInTheDocument();
+    expect(within(context).queryByText("Now")).toBeNull();
     expect(within(context).queryByText("Previous")).toBeNull();
   });
 
-  it("gives Now more width than Next, because Next titles are usually short", () => {
-    renderStrip();
-
-    const context = screen.getByLabelText("KX schedule context");
-
-    expect(context).toHaveClass("xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]");
-    expect(context).not.toHaveClass("grid-cols-2");
-  });
-
-  it("hides Now/Next below lg, where the block shrank to a few pixels", () => {
+  it("hides the schedule context below lg, where the block shrank to a few pixels", () => {
     renderStrip();
 
     const context = screen.getByLabelText("KX schedule context");
@@ -133,29 +124,12 @@ describe("ExploreLiveStrip desktop controls", () => {
     expect(context).toHaveClass("lg:grid");
   });
 
-  it("shows only Now between lg and xl, so Next words are not split", () => {
-    renderStrip();
-
-    const context = screen.getByLabelText("KX schedule context");
-    const nowCell = within(context).getByText("Now").parentElement;
-    const nextCell = within(context).getByText("Next").parentElement;
-
-    expect(context).toHaveClass("grid-cols-1");
-    expect(nowCell).toHaveClass("flex");
-    expect(nowCell).not.toHaveClass("hidden");
-    expect(nextCell).toHaveClass("hidden");
-    expect(nextCell).toHaveClass("xl:flex");
-  });
-
   it("wraps long show titles to two lines instead of cutting them to one", () => {
     renderStrip();
 
     const context = screen.getByLabelText("KX schedule context");
-    // No week data is mocked, so the schedule falls back to "Off air" / "TBA".
-    const titles = [
-      within(context).getByText("Off air"),
-      within(context).getByText("TBA"),
-    ];
+    // No week data is mocked, so the schedule falls back to "TBA".
+    const titles = [within(context).getByText("TBA")];
 
     for (const title of titles) {
       expect(title).toHaveClass("line-clamp-2");

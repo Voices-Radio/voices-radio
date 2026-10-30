@@ -78,7 +78,7 @@ describe("getHomePageContent", () => {
 
     const content = await getHomePageContent();
 
-    expect(content.latestKx.title).toBe("Latest on KX");
+    expect(content.latestKx.title).toBe("Show Highlights");
     expect(content.latestKx.shows.map(({ id }) => id)).toEqual([
       "latest-1",
       "latest-2",
@@ -221,7 +221,7 @@ describe("getHomePageContent", () => {
     const content = await getHomePageContent();
 
     expect(content.swimlanes).toHaveLength(4);
-    expect(content.latestKx.title).toBe("Latest on KX");
+    expect(content.latestKx.title).toBe("Show Highlights");
     expect(content.featured.title).toBe("Featured");
   });
 

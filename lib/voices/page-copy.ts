@@ -28,8 +28,8 @@ export const DEFAULT_DESKTOP_MENU_LINKS: NavLink[] = [
   { href: "/podcast", label: "Podcast Studio", opensInNewTab: true },
   { href: "/agency", label: "Agency", opensInNewTab: true },
   { href: "/collaborate", label: "Partner with Us", opensInNewTab: false },
-  { href: "/about", label: "About Us", opensInNewTab: false },
-  { href: "/support", label: "Why support us", opensInNewTab: false },
+  { href: "/about", label: "About", opensInNewTab: false },
+  { href: "/support", label: "Membership", opensInNewTab: false },
 ];
 
 export const DEFAULT_COLLABORATE_LINKS: NavLink[] = [
@@ -40,8 +40,8 @@ export const DEFAULT_COLLABORATE_LINKS: NavLink[] = [
 
 export const DEFAULT_FOOTER_LINKS: NavLink[] = [
   { href: "/about", label: "About", opensInNewTab: false },
-  { href: "/services", label: "Work with us", opensInNewTab: false },
-  { href: "/support", label: "Support Us", opensInNewTab: false },
+  { href: "/collaborate", label: "Partner with Us", opensInNewTab: false },
+  { href: "/support", label: "Membership", opensInNewTab: false },
 ];
 
 export const DEFAULT_FOOTER_LOCATIONS: FooterLocation[] = [

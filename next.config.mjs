@@ -12,14 +12,14 @@
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.usefathom.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.usefathom.com https://st.chatango.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
   "media-src 'self' blob: https:",
   "connect-src 'self' https: wss:",
   "worker-src 'self' blob:",
-  "frame-src 'self' https://www.mixcloud.com https://player.mixcloud.com https://w.soundcloud.com https://player.restream.io https://www.youtube.com https://www.google.com",
+  "frame-src 'self' https://www.mixcloud.com https://player.mixcloud.com https://w.soundcloud.com https://player.restream.io https://www.youtube.com https://www.google.com https://st.chatango.com https://*.chatango.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

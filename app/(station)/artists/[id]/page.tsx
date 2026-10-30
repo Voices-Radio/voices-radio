@@ -124,7 +124,7 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
             alt={artist.imageUrl ? artist.name : "Voices Radio"}
             fill
             sizes="calc(100vw - 16px)"
-            className="object-cover"
+            className="object-cover object-[50%_25%]"
           />
           <span className="absolute left-[121px] top-[27px] bg-voicesNext-cream px-2 py-[2px] font-outfit text-[11px] font-black uppercase leading-none text-voicesNext-background">
             Host
@@ -194,7 +194,7 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
             alt={artist.imageUrl ? artist.name : "Voices Radio"}
             fill
             sizes="(min-width: 768px) 360px, 90vw"
-            className="object-cover"
+            className="object-cover object-[50%_25%]"
           />
         </div>
         <div className="space-y-8">

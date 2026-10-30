@@ -59,7 +59,7 @@ describe("SiteHeader", () => {
     const navText = primaryNav.textContent ?? "";
     expect(navText.indexOf("Shop")).toBeGreaterThan(navText.indexOf("Explore"));
     expect(navText.indexOf("Shop")).toBeLessThan(
-      navText.indexOf("Collaborate"),
+      navText.indexOf("Work with Us"),
     );
     expect(container).toHaveTextContent("Shop");
   });
@@ -72,7 +72,7 @@ describe("SiteHeader", () => {
       </SessionProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: /collaborate/i }));
+    await user.click(screen.getByRole("button", { name: /work with us/i }));
 
     for (const label of ["Podcast Studio", "Agency"]) {
       const link = screen.getByRole("menuitem", {

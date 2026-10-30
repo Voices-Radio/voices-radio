@@ -108,7 +108,7 @@ function FeatureImage({
           priority={priority}
           className="scale-110 object-cover opacity-50 blur-2xl"
           style={{
-            objectPosition: item.imagePosition ?? "50% 50%",
+            objectPosition: item.imagePosition ?? "50% 25%",
           }}
         />
         <div className="bg-voicesNext-background/35 absolute inset-0" />
@@ -121,7 +121,7 @@ function FeatureImage({
           priority={priority}
           className="object-contain"
           style={{
-            objectPosition: item.imagePosition ?? "50% 50%",
+            objectPosition: item.imagePosition ?? "50% 25%",
           }}
         />
       </>
@@ -136,7 +136,7 @@ function FeatureImage({
       sizes="(min-width: 1920px) 1920px, calc(100vw - 40px)"
       quality={100}
       priority={priority}
-      className="object-cover"
+      className="object-cover object-[50%_25%]"
     />
   );
 }
@@ -267,14 +267,16 @@ export default function HomeFeaturePanel({
           >
             <FeatureImage item={item} priority={activeIndex === 0} />
 
-            <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background md:text-[18px]">
-              <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[124px] md:px-4 md:py-[9px] md:text-center">
-                {locationLabel}
-              </span>
-              <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[124px] md:px-4 md:py-[9px] md:text-center">
-                {stationLabel}
-              </span>
-            </div>
+            {item.type === "show" && (
+              <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background md:text-[18px]">
+                <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[124px] md:px-4 md:py-[9px] md:text-center">
+                  {locationLabel}
+                </span>
+                <span className="bg-voicesNext-cream px-1 py-[2px] md:min-w-[124px] md:px-4 md:py-[9px] md:text-center">
+                  {stationLabel}
+                </span>
+              </div>
+            )}
 
             <FeatureLink
               href={item.href}
