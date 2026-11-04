@@ -47,6 +47,27 @@ export default async function BlogPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link
+              href="/podcast"
+              className="flex items-center text-slate-600 hover:text-accent transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Studio
+            </Link>
+            <Link
+              href="/podcast"
+              className="text-slate-600 hover:text-accent transition-colors"
+            >
+              Voices Studio
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-slate-900 to-slate-800 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,9 +113,10 @@ export default async function BlogPage() {
                       .filter(post => post.featured)
                       .slice(0, 2)
                       .map((post) => (
-                        <article 
+                        <Link
                           key={post._id}
-                          className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                          href={`/podcast/blog/${post.slug.current}`}
+                          className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 block cursor-pointer group"
                         >
                           <div className="relative h-64">
                             <Image
@@ -121,7 +143,7 @@ export default async function BlogPage() {
                                 </span>
                               ))}
                             </div>
-                            <h3 className="text-xl font-bold text-slate-800 mb-3 line-clamp-2">
+                            <h3 className="text-xl font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-accent transition-colors">
                               {post.title}
                             </h3>
                             <p className="text-slate-600 mb-4 line-clamp-3">
@@ -138,16 +160,13 @@ export default async function BlogPage() {
                                   {formatDate(post.publishedAt)}
                                 </div>
                               </div>
-                              <Link
-                                href={`/podcast/blog/${post.slug.current}`}
-                                className="text-accent hover:text-orange-700 font-semibold flex items-center"
-                              >
+                              <div className="text-accent group-hover:text-orange-700 font-semibold flex items-center transition-colors">
                                 Read More
                                 <ArrowRight className="h-4 w-4 ml-1" />
-                              </Link>
+                              </div>
                             </div>
                           </div>
-                        </article>
+                        </Link>
                       ))}
                   </div>
                 </div>
@@ -160,9 +179,10 @@ export default async function BlogPage() {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {blogPosts.map((post) => (
-                    <article 
+                    <Link
                       key={post._id}
-                      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                      href={`/podcast/blog/${post.slug.current}`}
+                      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 block cursor-pointer group"
                     >
                       <div className="relative h-48">
                         <Image
@@ -184,7 +204,7 @@ export default async function BlogPage() {
                             </span>
                           ))}
                         </div>
-                        <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2">
+                        <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 group-hover:text-accent transition-colors">
                           {post.title}
                         </h3>
                         <p className="text-slate-600 mb-4 line-clamp-3 text-sm">
@@ -201,16 +221,13 @@ export default async function BlogPage() {
                               {formatDate(post.publishedAt)}
                             </div>
                           </div>
-                          <Link
-                            href={`/podcast/blog/${post.slug.current}`}
-                            className="text-accent hover:text-orange-700 font-semibold text-sm flex items-center"
-                          >
+                          <div className="text-accent group-hover:text-orange-700 font-semibold text-sm flex items-center transition-colors">
                             Read More
                             <ArrowRight className="h-3 w-3 ml-1" />
-                          </Link>
+                          </div>
                         </div>
                       </div>
-                    </article>
+                    </Link>
                   ))}
                 </div>
               </div>
