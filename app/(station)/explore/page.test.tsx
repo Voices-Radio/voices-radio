@@ -100,6 +100,19 @@ describe("ExplorePage", () => {
     );
   });
 
+  it.each([
+    ["the category tiles", {}],
+    ["the genres tab", { tab: "genres" }],
+    ["the music grid", { category: "music" }],
+  ])("has exactly one h1 on %s", async (_view, searchParams) => {
+    const { default: ExplorePage } = await import("./page");
+    renderPage(
+      await ExplorePage({ searchParams: Promise.resolve(searchParams) }),
+    );
+
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+  });
+
   it("explains when nothing matches every selected genre", async () => {
     getShows.mockResolvedValue([
       buildShow({ id: "1", title: "Techno Only", genres: ["Techno"] }),

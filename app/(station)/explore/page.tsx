@@ -258,9 +258,12 @@ export default async function ExplorePage({
         matchesAllGenreKeys(show.genres, selectedGenres),
     ),
   ).slice(0, 16);
+  // MusicGrid renders its own visible h1; every other view needs one for SEO.
+  const hasMusicGrid = activeTab === "explore" && showMusicGrid;
 
   return (
     <main id="main-content" className="scroll-mt-24">
+      {!hasMusicGrid && <h1 className="sr-only">Explore</h1>}
       <ExploreTabs activeTab={activeTab} />
       {activeTab === "genres" ? (
         <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">

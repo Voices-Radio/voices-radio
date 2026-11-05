@@ -55,9 +55,9 @@ export default async function ServicesPage() {
         >
           <div className="mx-auto max-w-5xl space-y-8 text-center md:space-y-5">
             {/* Header */}
-            <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+            <h1 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
               {services.services_heading}
-            </h2>
+            </h1>
 
             {/* Buttons */}
             <div className="flex flex-wrap justify-center gap-6 py-4">
