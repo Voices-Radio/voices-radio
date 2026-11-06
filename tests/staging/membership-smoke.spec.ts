@@ -4,46 +4,59 @@ import { expect, test } from "@playwright/test";
  * Non-destructive checks against the live backend. Nothing here creates an
  * account or moves money, so it is safe to re-run at will.
  *
- * Prices are asserted against the real catalogue the backend confirmed as live:
- * Supporter £3/£30, Member £5/£50, Insider £15/£150, Patron £25/£250.
+ * /join is a sliding scale, not a tier table: one slider from the cheapest to
+ * the dearest live monthly price, plus a Monthly/Annual toggle. The range below
+ * is the live catalogue (18 prices, 399p to 1999p). A change to it is a pricing
+ * decision, so this test should fail until someone updates it on purpose.
  */
 
-test.describe("live tier catalogue", () => {
-  test("renders every tier from the backend, not a fallback", async ({ page }) => {
+const MIN_PENCE = 399;
+const MAX_PENCE = 1999;
+
+test.describe("live membership scale", () => {
+  test("renders the live price range from the backend, not a fallback", async ({
+    page,
+  }) => {
     await page.goto("/join");
 
-    const table = page.getByRole("table");
-    await expect(table).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: /choose what you give/i }),
+    ).toBeVisible();
 
-    for (const tier of ["supporter", "member", "insider", "patron"]) {
-      await expect(
-        table.getByRole("columnheader", { name: new RegExp(tier, "i") }),
-      ).toBeVisible();
-    }
-
-    // The honest-failure state must NOT be showing.
-    await expect(page.getByText(/pricing (is )?(temporarily )?unavailable/i)).toHaveCount(0);
+    const slider = page.getByRole("slider");
+    await expect(slider).toHaveAttribute("min", String(MIN_PENCE));
+    await expect(slider).toHaveAttribute("max", String(MAX_PENCE));
+    await expect(
+      page.getByText(/pricing (is )?(temporarily )?unavailable/i),
+    ).toHaveCount(0);
   });
 
-  test("shows live monthly prices", async ({ page }) => {
+  test("the slider drives the monthly amount on the Continue link", async ({
+    page,
+  }) => {
     await page.goto("/join");
-    const table = page.getByRole("table");
+    const slider = page.getByRole("slider");
+    const cta = page.getByRole("link", { name: /^continue/i });
 
-    for (const price of ["£3", "£5", "£15", "£25"]) {
-      await expect(table).toContainText(price);
-    }
+    await slider.focus();
+    await page.keyboard.press("End");
+    await expect(cta).toContainText("£19.99/month");
+
+    await page.keyboard.press("Home");
+    await expect(cta).toContainText("£3.99/month");
   });
 
-  test("cadence toggle switches to live annual prices", async ({ page }) => {
+  test("the annual toggle switches the Continue link to a yearly price", async ({
+    page,
+  }) => {
     await page.goto("/join");
+    const cta = page.getByRole("link", { name: /^continue/i });
 
     await page.getByRole("button", { name: /annual/i }).click();
-    await expect(page).toHaveURL(/cadence=annual/);
+    await expect(cta).toContainText(/£\d+\.\d{2}\/year/);
 
-    const table = page.getByRole("table");
-    for (const price of ["£30", "£50", "£150", "£250"]) {
-      await expect(table).toContainText(price);
-    }
+    await page.getByRole("button", { name: /^monthly$/i }).click();
+    await expect(cta).toContainText(/£\d+\.\d{2}\/month/);
   });
 });
 
