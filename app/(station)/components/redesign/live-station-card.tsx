@@ -16,9 +16,23 @@ import { isSafeRestreamUrl } from "./restream-video-modal";
 const KX_ACTION_CLASS =
   "inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-3 font-gabarito text-xs font-bold transition-[background-color,color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 motion-reduce:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background md:h-10 md:gap-2 md:px-5 md:text-sm";
 
+// A mouse click also focuses the button it lands on. That focus must not count
+// as "the user is here": it outlives the pointer and pins the actions open.
+// Only keyboard focus does (:focus-visible). Browsers without the selector
+// throw, so they keep the old behaviour of treating any focus as keyboard.
+function isKeyboardFocus(target: EventTarget) {
+  try {
+    return (target as Element).matches(":focus-visible");
+  } catch {
+    return true;
+  }
+}
+
 // Handlers live on a wrapper rather than the control: a disabled <button> (while
 // connecting) doesn't reliably fire pointer-leave, which would leave the swap
-// stuck on.
+// stuck on. The wrappers also carry the spacing between the two actions (py-1
+// each, not a flex gap) so there is no dead strip where the pointer reverts to
+// an arrow and the colours flip back.
 function hoverHandlers(
   action: "watch" | "listen",
   set: (value: "watch" | "listen" | null) => void,
@@ -26,7 +40,9 @@ function hoverHandlers(
   return {
     onPointerEnter: () => set(action),
     onPointerLeave: () => set(null),
-    onFocusCapture: () => set(action),
+    onFocusCapture: (event: React.FocusEvent) => {
+      if (isKeyboardFocus(event.target)) set(action);
+    },
     onBlurCapture: () => set(null),
   };
 }
@@ -110,7 +126,9 @@ export default function LiveStationCard({
         if (event.pointerType === "mouse") setMouseHovering(true);
       }}
       onPointerLeave={() => setMouseHovering(false)}
-      onFocusCapture={() => setFocusWithin(true)}
+      onFocusCapture={(event) => {
+        if (isKeyboardFocus(event.target)) setFocusWithin(true);
+      }}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
           setFocusWithin(false);
@@ -197,12 +215,15 @@ export default function LiveStationCard({
       {station === "KX" && (
         <div
           className={cn(
-            "pointer-events-none absolute left-1/2 top-1/2 z-30 flex w-[150px] -translate-x-1/2 translate-y-2 flex-col gap-2 opacity-0 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:w-[210px]",
+            "pointer-events-none absolute left-1/2 top-1/2 z-30 flex w-[150px] -translate-x-1/2 translate-y-2 flex-col opacity-0 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:w-[210px]",
             showKxLiveActions &&
               "pointer-events-auto -translate-y-1/2 opacity-100",
           )}
         >
-          <div {...hoverHandlers("watch", setHoveredAction)} className="flex">
+          <div
+            {...hoverHandlers("watch", setHoveredAction)}
+            className="flex cursor-pointer py-1"
+          >
             <a
               href={watchLiveUrl}
               target="_blank"
@@ -222,7 +243,10 @@ export default function LiveStationCard({
               Watch live
             </a>
           </div>
-          <div {...hoverHandlers("listen", setHoveredAction)} className="flex">
+          <div
+            {...hoverHandlers("listen", setHoveredAction)}
+            className="flex cursor-pointer py-1"
+          >
             <button
               type="button"
               disabled={!canListenLive || listenLoading}

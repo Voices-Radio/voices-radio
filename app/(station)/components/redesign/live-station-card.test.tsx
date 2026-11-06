@@ -173,6 +173,49 @@ describe("LiveStationCard", () => {
     expect(listenLive).toHaveClass("bg-voicesNext-orange");
   });
 
+  it("hides the actions again after a mouse click once the pointer leaves", async () => {
+    const user = userEvent.setup();
+    const { container } = renderKx({ selected: false });
+    const article = container.querySelector("article")!;
+    const listenLive = screen.getByRole("button", {
+      name: /listen to voices kx live/i,
+    });
+
+    await user.hover(article);
+    await user.click(listenLive);
+    // The click leaves the button focused. Mouse focus must not pin the actions.
+    await user.unhover(article);
+
+    expect(listenLive.parentElement?.parentElement).not.toHaveClass(
+      "opacity-100",
+    );
+    expect(listenLive).toHaveClass("bg-voicesNext-orange");
+  });
+
+  it("still shows the actions for keyboard focus", async () => {
+    const user = userEvent.setup();
+    renderKx({ selected: false });
+
+    await user.tab();
+    await user.tab();
+
+    const listenLive = screen.getByRole("button", {
+      name: /listen to voices kx live/i,
+    });
+    expect(listenLive.parentElement?.parentElement).toHaveClass("opacity-100");
+  });
+
+  it("leaves no gap between the two actions where the pointer turns to an arrow", () => {
+    renderKx();
+
+    const stack = screen.getByRole("link", { name: /watch voices live/i })
+      .parentElement?.parentElement;
+    expect(stack).not.toHaveClass("gap-2");
+    for (const wrapper of Array.from(stack?.children ?? [])) {
+      expect(wrapper).toHaveClass("cursor-pointer");
+    }
+  });
+
   it("greys only the artwork, and only while the stream plays", () => {
     const { container, rerender } = renderKx({ selected: true });
 

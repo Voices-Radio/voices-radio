@@ -73,10 +73,13 @@ export default function LiveStack({
     const station = getVoicesLiveStation(stationId);
     if (!station?.streamUrl || station.comingSoon) return;
 
-    setSelectedStation(stationId);
+    const audio = stationId === "kx" ? kxAudio : eastAudio;
+    // Stop also drops the selection. Left set, the tile keeps showing its
+    // actions with no pointer on it, until the page is refreshed.
+    setSelectedStation(audio.playing || audio.loading ? null : stationId);
     setVideoOpen(false);
     // Same instance the header strip uses, so this and its play/pause stay in step.
-    void (stationId === "kx" ? kxAudio : eastAudio).toggle();
+    void audio.toggle();
   }
 
   function handleVideoOpenChange(open: boolean) {
