@@ -24,6 +24,12 @@ import StationPlayButton from "../components/redesign/station-play-button";
 const mobileActionClassName =
   "inline-flex h-full shrink-0 items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange";
 
+// Phones apply :hover on tap and keep it until the next tap elsewhere, so a
+// plain hover: colour left the play button black after Stop. Only devices
+// with a real hover get the dark hover state.
+const HOVER_DARK =
+  "[@media(hover:hover)]:hover:bg-voicesNext-background [@media(hover:hover)]:hover:text-voicesNext-cream";
+
 function MobileStationControl({
   station,
 }: {
@@ -78,7 +84,8 @@ function MobileStationControl({
           initialStation={station.id}
           classNames={cn(
             mobileActionClassName,
-            "w-[38px] rounded-none bg-voicesNext-cream text-[#443f3f] hover:bg-voicesNext-background hover:text-voicesNext-cream",
+            "w-[38px] rounded-none bg-voicesNext-cream text-[#443f3f]",
+            HOVER_DARK,
           )}
         >
           <CalendarDays
@@ -93,7 +100,8 @@ function MobileStationControl({
           aria-label="Open chat"
           className={cn(
             mobileActionClassName,
-            "w-[38px] bg-voicesNext-cream text-[#443f3f] hover:bg-voicesNext-background hover:text-voicesNext-cream",
+            "w-[38px] bg-voicesNext-cream text-[#443f3f]",
+            HOVER_DARK,
           )}
         >
           <MessageCircle
@@ -116,7 +124,8 @@ function MobileStationControl({
             // Disabled keeps a faint tint rather than falling back to plain
             // cream — East stays disabled until launch, and a fully cream cell
             // reads as an empty gap rather than an inactive control.
-            "w-[44px] bg-voicesNext-orangeButton text-voicesNext-cream hover:bg-voicesNext-background disabled:cursor-not-allowed disabled:bg-[#443f3f]/[0.12] disabled:text-[#443f3f]/40",
+            "w-[44px] bg-voicesNext-orangeButton text-voicesNext-cream disabled:cursor-not-allowed disabled:bg-[#443f3f]/[0.12] disabled:text-[#443f3f]/40",
+            HOVER_DARK,
             playing && "bg-voicesNext-background text-voicesNext-cream",
           )}
         />

@@ -94,6 +94,24 @@ describe("ExploreLiveStrip mobile controls", () => {
     ).toBeDisabled();
   });
 
+  it("applies hover colours only on devices with a real hover, so a tap does not leave a control black", () => {
+    renderStrip();
+
+    const controls = mobileControls();
+    const actions = [
+      ...within(controls).getAllByRole("button"),
+      ...within(controls).getAllByRole("link"),
+    ];
+
+    expect(actions.length).toBeGreaterThan(0);
+    for (const action of actions) {
+      const bareHover = action.className
+        .split(/\s+/)
+        .filter((token) => token.startsWith("hover:"));
+      expect(bareHover).toEqual([]);
+    }
+  });
+
   it("no longer renders the previous/now/next row on mobile", () => {
     renderStrip();
 
