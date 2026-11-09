@@ -17,10 +17,10 @@ export default async function ServicesPage() {
 
   if (!services) {
     return (
-      <main className="bg-voices-beige">
-        <section className="relative aspect-[4/3] md:aspect-[4/2] bg-slate-800 flex items-center justify-center">
-          <div className="text-white text-center">
-            <h1 className="text-2xl font-bold mb-4">Services</h1>
+      <main id="main-content" className="scroll-mt-24 bg-voices-beige">
+        <section className="relative flex aspect-[4/3] items-center justify-center bg-slate-800 md:aspect-[4/2]">
+          <div className="text-center text-white">
+            <h1 className="mb-4 text-2xl font-bold">Services</h1>
             <p>Content loading...</p>
           </div>
         </section>
@@ -29,13 +29,13 @@ export default async function ServicesPage() {
   }
 
   return (
-    <main className="bg-voices-beige">
+    <main id="main-content" className="scroll-mt-24 bg-voices-beige">
       {/* Section 0 */}
       <section className="relative">
         {/* Hero Image */}
         <div className="relative aspect-[4/3] md:aspect-[4/2] ">
           <Image
-            alt="Voices Radio services — podcast studio and audio production in Kings Cross, London"
+            alt=""
             blurDataURL={services.hero_image.lqip}
             className="object-cover object-bottom"
             draggable={false}
@@ -55,9 +55,9 @@ export default async function ServicesPage() {
         >
           <div className="mx-auto max-w-5xl space-y-8 text-center md:space-y-5">
             {/* Header */}
-            <h2 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+            <h1 className="font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
               {services.services_heading}
-            </h2>
+            </h1>
 
             {/* Buttons */}
             <div className="flex flex-wrap justify-center gap-6 py-4">
@@ -93,13 +93,14 @@ export default async function ServicesPage() {
         {/* Image */}
         <div className="relative h-[40vh] w-full md:h-[60vh] md:w-1/2">
           <Image
-            alt={services.services_heading1}
+            alt="Service 1 Image"
             blurDataURL={services.services_main1_image?.lqip}
             style={{ objectPosition: "50% 20%" }}
             className="rounded-lg object-cover object-center shadow-md"
             draggable={false}
             fill
             placeholder="blur"
+            priority
             quality={85}
             src={urlForImage(services.services_main1_image).url()}
           />
@@ -123,13 +124,14 @@ export default async function ServicesPage() {
         {/* Image */}
         <div className="relative h-[40vh] w-full md:h-[60vh] md:w-1/2">
           <Image
-            alt={services.services_heading2}
+            alt="Service 2 Image"
             blurDataURL={services.services_main2_image?.lqip}
             style={{ objectPosition: "50% 20%" }}
             className="rounded-lg object-cover object-center shadow-md"
             draggable={false}
             fill
             placeholder="blur"
+            priority
             quality={85}
             src={urlForImage(services.services_main2_image).url()}
           />
@@ -153,13 +155,14 @@ export default async function ServicesPage() {
         {/* Image */}
         <div className="relative h-[40vh] w-full md:h-[60vh] md:w-1/2">
           <Image
-            alt={services.services_heading3}
+            alt="Service 3 Image"
             blurDataURL={services.services_main3_image?.lqip}
             style={{ objectPosition: "50% 20%" }}
             className="rounded-lg object-cover object-center shadow-md"
             draggable={false}
             fill
             placeholder="blur"
+            priority
             quality={85}
             src={urlForImage(services.services_main3_image).url()}
           />
@@ -183,12 +186,13 @@ export default async function ServicesPage() {
         {/* Image */}
         <div className="relative h-[40vh] w-full md:h-[60vh] md:w-1/2">
           <Image
-            alt={services.services_heading4}
+            alt="Service 4 Image"
             blurDataURL={services.services_main4_image?.lqip}
             className="rounded-lg object-cover object-center shadow-md"
             draggable={false}
             fill
             placeholder="blur"
+            priority
             quality={85}
             src={urlForImage(services.services_main4_image).url()}
           />
@@ -209,12 +213,13 @@ export default async function ServicesPage() {
       <section id="section5" className="relative min-h-[70vh] w-full py-32">
         <div className="absolute inset-0">
           <Image
-            alt="Voices Radio studio, Kings Cross London"
+            alt="Final Image"
             blurDataURL={services.services_final_image.lqip}
             className="object-cover"
             draggable={false}
             fill
             placeholder="blur"
+            priority
             quality={85}
             src={urlForImage(services.services_final_image).url()}
           />

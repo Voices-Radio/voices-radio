@@ -1,83 +1,220 @@
-import { Day, ProcessedDay, WeekInfo } from "@/hooks/use-week-info";
-import { unescapeString } from "@/lib/unescape";
-import is from "@sindresorhus/is";
+import { ProcessedDay, type ProcessedWeekInfo } from "@/hooks/use-week-info";
 import {
-  addWeeks,
-  eachDayOfInterval,
-  isAfter,
-  isBefore,
-  isSameDay,
-  startOfDay,
-} from "date-fns";
+  getVoicesLiveStation,
+  type VoicesLiveStationId,
+} from "@/lib/voices/config";
+import {
+  getRadioCultApiUrl,
+  getRadioCultHeaders,
+  getRadioCultStationId,
+  type RadioCultScheduleEvent,
+} from "@/lib/voices/radio-cult";
+import { unescapeString } from "@/lib/unescape";
+import { fetchAirtimeSchedule } from "@/lib/voices/airtime";
+import { addDays, format, isAfter, isBefore, parseISO } from "date-fns";
 import { formatInTimeZone, zonedTimeToUtc } from "date-fns-tz";
 import { NextResponse } from "next/server";
 
 export const runtime = "edge";
 
-export const revalidate = 60;
+const stations: VoicesLiveStationId[] = ["kx"];
+
+// Today plus the following seven days.
+const DAYS_SHOWN = 8;
+
+const DAY_FORMAT = "yyyy-MM-dd";
+
+type ScheduleDay = {
+  // Calendar date in the viewer's timezone, used to bucket shows.
+  date: string;
+  // Midnight of that date in the viewer's timezone, as a UTC instant. The
+  // client renders it with `new Date()`, so it lands on the right day.
+  key: string;
+};
+
+type DatedEvent = {
+  event: RadioCultScheduleEvent;
+  starts: Date;
+  ends: Date | null;
+};
+
+function getEventDate(value?: string) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function isValidTimeZone(tz: string) {
+  try {
+    new Intl.DateTimeFormat("en-GB", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function midnightInTimeZone(date: string, tz: string) {
+  return zonedTimeToUtc(`${date}T00:00:00`, tz);
+}
+
+/**
+ * The days shown and the UTC range that covers them. Days are the viewer's
+ * calendar days: the route runs in UTC, so bucketing by UTC day would file a
+ * 00:30 BST show under the previous day.
+ */
+function getScheduleWindow(tz: string, now: Date) {
+  const today = parseISO(formatInTimeZone(now, tz, DAY_FORMAT));
+  const dateAt = (offset: number) => format(addDays(today, offset), DAY_FORMAT);
+
+  const days: ScheduleDay[] = Array.from(
+    { length: DAYS_SHOWN },
+    (_, offset) => {
+      const date = dateAt(offset);
+      return { date, key: midnightInTimeZone(date, tz).toISOString() };
+    },
+  );
+
+  return {
+    days,
+    start: midnightInTimeZone(dateAt(0), tz),
+    end: midnightInTimeZone(dateAt(DAYS_SHOWN), tz),
+  };
+}
+
+async function fetchRadioCultSchedule(
+  station: VoicesLiveStationId,
+  startDate: Date,
+  endDate: Date,
+) {
+  const radioCultStationId = getRadioCultStationId(station);
+  const headers = getRadioCultHeaders();
+
+  if (!radioCultStationId || !headers) return [];
+
+  const params = new URLSearchParams({
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString(),
+    expand: "artist,tags",
+  });
+  const response = await fetch(
+    getRadioCultApiUrl(
+      `/api/station/${radioCultStationId}/schedule?${params.toString()}`,
+    ),
+    { headers, cache: "no-store" },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Radio Cult schedule request failed: ${response.status}`);
+  }
+
+  const payload = await response.json();
+
+  // RadioCult wraps collections as { success, schedules: [...] }. Anything
+  // else is an error, not an empty week.
+  if (payload?.success === false || !Array.isArray(payload?.schedules)) {
+    throw new Error("Radio Cult schedule response had an unexpected shape");
+  }
+
+  return payload.schedules as RadioCultScheduleEvent[];
+}
+
+function emptyWeekDays(days: ScheduleDay[]) {
+  return Object.fromEntries(days.map(({ key }) => [key, [] as ProcessedDay[]]));
+}
+
+function toDatedEvents(events: RadioCultScheduleEvent[]) {
+  return events
+    .map((event) => ({
+      event,
+      starts: getEventDate(event.startDateUtc ?? event.startDate),
+      ends: getEventDate(event.endDateUtc ?? event.endDate),
+    }))
+    .filter((item): item is DatedEvent => item.starts !== null)
+    .sort((a, b) => a.starts.getTime() - b.starts.getTime());
+}
+
+function processSchedule(
+  station: VoicesLiveStationId,
+  events: RadioCultScheduleEvent[],
+  days: ScheduleDay[],
+  tz: string,
+  now: Date,
+) {
+  const stationLabel = getVoicesLiveStation(station)?.label ?? station;
+  const datedEvents = toDatedEvents(events);
+
+  return Object.fromEntries(
+    days.map(({ date, key }) => [
+      key,
+      datedEvents
+        .filter(
+          ({ starts }) => formatInTimeZone(starts, tz, DAY_FORMAT) === date,
+        )
+        .map(({ event, starts, ends }, index): ProcessedDay => ({
+          id: Number(event.id) || index,
+          station,
+          name: unescapeString(event.title ?? `${stationLabel} Show`),
+          start_timestamp: starts.toISOString(),
+          end_timestamp: ends?.toISOString() ?? "",
+          show_start_hour: formatInTimeZone(starts, tz, "HH:mm"),
+          show_end_hour: ends ? formatInTimeZone(ends, tz, "HH:mm") : "",
+          is_past: ends ? isBefore(ends, now) : false,
+          is_live: ends ? isBefore(starts, now) && isAfter(ends, now) : false,
+        })),
+    ]),
+  );
+}
+
+/** Schedule from whichever source the station is switched to. */
+function fetchSchedule(
+  station: VoicesLiveStationId,
+  startDate: Date,
+  endDate: Date,
+) {
+  return getVoicesLiveStation(station)?.liveSource === "airtime"
+    ? fetchAirtimeSchedule()
+    : fetchRadioCultSchedule(station, startDate, endDate);
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
   const tz = searchParams.get("tz");
 
-  if (!tz) {
+  if (!tz || !isValidTimeZone(tz)) {
     return NextResponse.json(
       { message: "Param 'tz' is missing or invalid" },
-      { status: 500 },
+      { status: 400 },
     );
   }
 
-  const res = await fetch(
-    `https://voicesradio.airtime.pro/api/week-info?timezone=${tz}`,
-    {
-      headers: { "Content-Type": "application/json" },
-    },
-  );
+  try {
+    const now = new Date();
+    const { days, start, end } = getScheduleWindow(tz, now);
+    const schedules = await Promise.all(
+      stations.map(
+        async (station) =>
+          [station, await fetchSchedule(station, start, end)] as const,
+      ),
+    );
+    const weekInfo = schedules.reduce<ProcessedWeekInfo>(
+      (prev, [station, events]) => ({
+        ...prev,
+        [station]: processSchedule(station, events, days, tz, now),
+      }),
+      { kx: emptyWeekDays(days), east: emptyWeekDays(days) },
+    );
 
-  if (!res.ok) {
+    return NextResponse.json(weekInfo, {
+      headers: {
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=60",
+      },
+    });
+  } catch (error) {
+    console.error("Schedule unavailable", error);
     return NextResponse.json(
-      { message: `${res.status} ${res.statusText}` },
-      { status: 500 },
+      { message: "Schedule unavailable" },
+      { status: 502 },
     );
   }
-
-  const weekInfo: WeekInfo = await res.json();
-  const weekInfoValues: string | Day[] = Object.values(weekInfo).flat();
-
-  const shows = weekInfoValues.filter(is.object);
-
-  const weekDays = eachDayOfInterval({
-    start: startOfDay(new Date()),
-    end: addWeeks(startOfDay(new Date()), 1),
-  }).reduce<{ [key: string]: ProcessedDay[] }>(
-    (prev, current) => ({
-      ...prev,
-      [current.toISOString()]: shows
-        .filter((show) => isSameDay(current, zonedTimeToUtc(show.starts, tz)))
-        .map((day) => ({
-          id: day.id,
-          name: unescapeString(day.name),
-          start_timestamp: day.start_timestamp,
-          end_timestamp: day.end_timestamp,
-          show_start_hour: formatInTimeZone(
-            zonedTimeToUtc(day.starts, tz),
-            tz,
-            "HH:mm",
-          ),
-          show_end_hour: formatInTimeZone(
-            zonedTimeToUtc(day.ends, tz),
-            tz,
-            "HH:mm",
-          ),
-          is_past: isBefore(zonedTimeToUtc(day.ends, tz), new Date()),
-          is_live:
-            isBefore(zonedTimeToUtc(day.starts, tz), new Date()) &&
-            isAfter(zonedTimeToUtc(day.ends, tz), new Date()),
-        })),
-    }),
-    {},
-  );
-
-  return NextResponse.json(weekDays);
 }

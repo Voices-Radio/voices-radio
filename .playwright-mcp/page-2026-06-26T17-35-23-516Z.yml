@@ -1,0 +1,363 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Voices Radio home" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Voices
+        - navigation "Primary" [ref=e8]:
+          - link "Home" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - button "Schedule" [ref=e10] [cursor=pointer]
+          - link "Explore" [ref=e11] [cursor=pointer]:
+            - /url: /explore
+          - link "Collaborate" [ref=e12] [cursor=pointer]:
+            - /url: /collaborate
+          - link "Shop" [ref=e13] [cursor=pointer]:
+            - /url: https://shop.voicesradio.co.uk
+        - generic [ref=e14]:
+          - search [ref=e15]:
+            - generic [ref=e16]: Search all content
+            - searchbox
+            - button "Open search" [ref=e17] [cursor=pointer]:
+              - img [ref=e18]
+          - button "Open menu" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+    - main [ref=e24]:
+      - region "Live player" [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - paragraph [ref=e29]: Live
+            - generic [ref=e30]:
+              - generic [ref=e31]:
+                - generic [ref=e32]:
+                  - generic [ref=e33]: KX
+                  - generic [ref=e34]: Breakfast Show
+                  - generic [ref=e35]: ON AIR
+                - button "Play KX" [disabled] [ref=e36]:
+                  - img [ref=e37]
+              - generic [ref=e39]:
+                - generic [ref=e40]:
+                  - generic [ref=e41]: EAST
+                  - generic [ref=e42]: DJ Mongoose
+                  - generic [ref=e43]: REPLAY
+                - button "Play EAST" [disabled] [ref=e44]:
+                  - img [ref=e45]
+          - navigation "Explore sections" [ref=e47]:
+            - generic [ref=e48]:
+              - link "Shows" [ref=e49] [cursor=pointer]:
+                - /url: /explore
+                - text: Shows
+              - link "Artists" [ref=e51] [cursor=pointer]:
+                - /url: /artists
+              - generic [ref=e52]: Series
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - paragraph [ref=e56]: "FILTERS:"
+          - button "GENRES" [expanded] [active] [ref=e57] [cursor=pointer]:
+            - text: GENRES
+            - img [ref=e58]
+          - button "KX" [ref=e60] [cursor=pointer]
+          - button "EAST" [ref=e61] [cursor=pointer]
+          - button "LONDON" [ref=e62] [cursor=pointer]
+          - button "WORLD" [ref=e63] [cursor=pointer]
+          - button "Apply" [ref=e64] [cursor=pointer]
+        - generic [ref=e352]:
+          - button "Ambient / New Age" [ref=e353] [cursor=pointer]:
+            - generic [ref=e354]: Ambient / New Age
+            - img [ref=e356]
+          - button "Electronica / Downtempo" [ref=e358] [cursor=pointer]:
+            - generic [ref=e359]: Electronica / Downtempo
+            - img [ref=e361]
+          - button "Hip Hop / R'n'B" [ref=e363] [cursor=pointer]:
+            - generic [ref=e364]: Hip Hop / R'n'B
+            - img [ref=e366]
+          - button "New Club" [ref=e368] [cursor=pointer]:
+            - generic [ref=e369]: New Club
+            - img [ref=e371]
+          - button "UK Dance / Grime" [ref=e373] [cursor=pointer]:
+            - generic [ref=e374]: UK Dance / Grime
+            - img [ref=e376]
+          - button "House / Techno" [ref=e378] [cursor=pointer]:
+            - generic [ref=e379]: House / Techno
+            - img [ref=e381]
+          - button "Post Punk / New Wave" [ref=e383] [cursor=pointer]:
+            - generic [ref=e384]: Post Punk / New Wave
+            - img [ref=e386]
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e68]:
+            - heading "Voices KX" [level=1] [ref=e69]
+            - paragraph [ref=e70]: Browse shows from our Kings Cross studio.
+          - generic [ref=e72]:
+            - link "Open Workwear Dance - 26/06/26 - [Voices radio]" [ref=e73] [cursor=pointer]:
+              - /url: /shows/6a3eb72b863831dda4307960
+              - article [ref=e74]:
+                - generic [ref=e75]:
+                  - generic [ref=e76]: RADIO
+                  - generic [ref=e77]: London
+                - generic [ref=e78]:
+                  - img "Workwear Dance - 26/06/26 - [Voices radio] artwork" [ref=e79]
+                  - heading "Workwear Dance - 26/06/26 - [Voices radio]" [level=3] [ref=e81]
+                - generic [ref=e82]:
+                  - generic [ref=e84]: Disco
+                  - generic [ref=e85]:
+                    - generic [ref=e86]: Tracklist
+                    - generic [ref=e87]: 26.06.26
+                    - generic [ref=e88]: London
+                    - img [ref=e89]
+            - link "Open DJelley - 25.06.26" [ref=e91] [cursor=pointer]:
+              - /url: /shows/6a3d6cacfd6ff7e78ff02c48
+              - article [ref=e92]:
+                - generic [ref=e93]:
+                  - generic [ref=e94]: RADIO
+                  - generic [ref=e95]: London
+                - generic [ref=e96]:
+                  - img "DJelley - 25.06.26 artwork" [ref=e97]
+                  - heading "DJelley - 25.06.26" [level=3] [ref=e99]
+                - generic [ref=e100]:
+                  - generic [ref=e101]:
+                    - generic [ref=e102]: TechHouse
+                    - generic [ref=e103]: House
+                    - generic [ref=e104]: Minimal Tech House
+                  - generic [ref=e105]:
+                    - generic [ref=e106]: Tracklist
+                    - generic [ref=e107]: 25.06.26
+                    - generic [ref=e108]: London
+                    - img [ref=e109]
+            - link "Open Flow w/ Kiskadee 25/06/25 - [Voices Radio]" [ref=e111] [cursor=pointer]:
+              - /url: /shows/6a3d1f5a67b16fd5deee335a
+              - article [ref=e112]:
+                - generic [ref=e113]:
+                  - generic [ref=e114]: RADIO
+                  - generic [ref=e115]: London
+                - generic [ref=e116]:
+                  - img "Flow w/ Kiskadee 25/06/25 - [Voices Radio] artwork" [ref=e117]
+                  - heading "Flow w/ Kiskadee 25/06/25 - [Voices Radio]" [level=3] [ref=e119]
+                - generic [ref=e120]:
+                  - generic [ref=e121]:
+                    - generic [ref=e122]: electronica
+                    - generic [ref=e123]: "\"soulful"
+                    - generic [ref=e124]: house"
+                  - generic [ref=e125]:
+                    - generic [ref=e126]: Tracklist
+                    - generic [ref=e127]: 25.06.26
+                    - generic [ref=e128]: London
+                    - img [ref=e129]
+            - link "Open Natural Element w/ Leopold 23/06/26 - [Voices Radio]" [ref=e131] [cursor=pointer]:
+              - /url: /shows/6a3a9bfe71e0be19e7396070
+              - article [ref=e132]:
+                - generic [ref=e133]:
+                  - generic [ref=e134]: RADIO
+                  - generic [ref=e135]: London
+                - generic [ref=e136]:
+                  - img "Natural Element w/ Leopold 23/06/26 - [Voices Radio] artwork" [ref=e137]
+                  - heading "Natural Element w/ Leopold 23/06/26 - [Voices Radio]" [level=3] [ref=e139]
+                - generic [ref=e140]:
+                  - generic [ref=e141]:
+                    - generic [ref=e142]: jazz-funk
+                    - generic [ref=e143]: "\"broken"
+                    - generic [ref=e144]: beat"
+                  - generic [ref=e145]:
+                    - generic [ref=e146]: Tracklist
+                    - generic [ref=e147]: 23.06.26
+                    - generic [ref=e148]: London
+                    - img [ref=e149]
+            - link "Open Parallel Play w/ Employee of the Month & Love Is Blind - 20/06/26 - [Voices Radio]" [ref=e151] [cursor=pointer]:
+              - /url: /shows/6a36a3fa06b7f2661957cb92
+              - article [ref=e152]:
+                - generic [ref=e153]:
+                  - generic [ref=e154]: RADIO
+                  - generic [ref=e155]: London
+                - generic [ref=e156]:
+                  - img "Parallel Play w/ Employee of the Month & Love Is Blind - 20/06/26 - [Voices Radio] artwork" [ref=e157]
+                  - heading "Parallel Play w/ Employee of the Month & Love Is Blind - 20/06/26 - [Voices Radio]" [level=3] [ref=e159]
+                - generic [ref=e160]:
+                  - generic [ref=e161]:
+                    - generic [ref=e162]: house
+                    - generic [ref=e163]: "\"jazz"
+                    - generic [ref=e164]: house"
+                  - generic [ref=e165]:
+                    - generic [ref=e166]: Tracklist
+                    - generic [ref=e167]: 20.06.26
+                    - generic [ref=e168]: London
+                    - img [ref=e169]
+            - link "Open Music + Marley & Me - 19/06/26 [Voices Radio]" [ref=e171] [cursor=pointer]:
+              - /url: /shows/6a358ab917e7e47a2a15cce3
+              - article [ref=e172]:
+                - generic [ref=e173]:
+                  - generic [ref=e174]: RADIO
+                  - generic [ref=e175]: London
+                - generic [ref=e176]:
+                  - img "Music + Marley & Me - 19/06/26 [Voices Radio] artwork" [ref=e177]
+                  - heading "Music + Marley & Me - 19/06/26 [Voices Radio]" [level=3] [ref=e179]
+                - generic [ref=e180]:
+                  - generic [ref=e181]:
+                    - generic [ref=e182]: funk
+                    - generic [ref=e183]: upbeat
+                    - generic [ref=e184]: house
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: Tracklist
+                    - generic [ref=e187]: 19.06.26
+                    - generic [ref=e188]: London
+                    - img [ref=e189]
+        - generic [ref=e191]:
+          - generic [ref=e193]:
+            - heading "Voices EAST" [level=1] [ref=e194]
+            - paragraph [ref=e195]: Browse shows from our Hackney Wick studio.
+          - generic [ref=e197]:
+            - link "Open The Voices Breakfast w/ Maria Hanlon - 26/06/26 - [Voices Radio]" [ref=e198] [cursor=pointer]:
+              - /url: /shows/6a3e54babc2e18220a0eac44
+              - article [ref=e199]:
+                - generic [ref=e200]:
+                  - generic [ref=e201]: RADIO
+                  - generic [ref=e202]: London
+                - generic [ref=e203]:
+                  - img "The Voices Breakfast w/ Maria Hanlon - 26/06/26 - [Voices Radio] artwork" [ref=e204]
+                  - heading "The Voices Breakfast w/ Maria Hanlon - 26/06/26 - [Voices Radio]" [level=3] [ref=e206]
+                - generic [ref=e207]:
+                  - generic [ref=e208]:
+                    - generic [ref=e209]: soul
+                    - generic [ref=e210]: "\"soulful"
+                    - generic [ref=e211]: house"
+                  - generic [ref=e212]:
+                    - generic [ref=e213]: Tracklist
+                    - generic [ref=e214]: 26.06.26
+                    - generic [ref=e215]: London
+                    - img [ref=e216]
+            - link "Open DJelley 25:06:26" [ref=e218] [cursor=pointer]:
+              - /url: /shows/6a3d692effc1d2f418ce2299
+              - article [ref=e219]:
+                - generic [ref=e220]:
+                  - generic [ref=e221]: RADIO
+                  - generic [ref=e222]: London
+                - generic [ref=e223]:
+                  - img "DJelley 25:06:26 artwork" [ref=e224]
+                  - heading "DJelley 25:06:26" [level=3] [ref=e226]
+                - generic [ref=e227]:
+                  - generic [ref=e228]:
+                    - generic [ref=e229]: "\"tech"
+                    - generic [ref=e230]: house"
+                    - generic [ref=e231]: rollers
+                  - generic [ref=e232]:
+                    - generic [ref=e233]: Tracklist
+                    - generic [ref=e234]: 25.06.26
+                    - generic [ref=e235]: London
+                    - img [ref=e236]
+            - link "Open Earth Groove w/ Edible & Eshie - 23/06/26 - Voices Radio" [ref=e238] [cursor=pointer]:
+              - /url: /shows/6a3ae5d278ea281bf4ea19fa
+              - article [ref=e239]:
+                - generic [ref=e240]:
+                  - generic [ref=e241]: RADIO
+                  - generic [ref=e242]: London
+                - generic [ref=e243]:
+                  - img "Earth Groove w/ Edible & Eshie - 23/06/26 - Voices Radio artwork" [ref=e244]
+                  - heading "Earth Groove w/ Edible & Eshie - 23/06/26 - Voices Radio" [level=3] [ref=e246]
+                - generic [ref=e247]:
+                  - generic [ref=e248]:
+                    - generic [ref=e249]: "\"dub"
+                    - generic [ref=e250]: techno"
+                    - generic [ref=e251]: dupstep
+                  - generic [ref=e252]:
+                    - generic [ref=e253]: Tracklist
+                    - generic [ref=e254]: 23.06.26
+                    - generic [ref=e255]: London
+                    - img [ref=e256]
+            - link "Open The Damn England Breakfast Show - 21/06/26 - [Voices Radio]" [ref=e258] [cursor=pointer]:
+              - /url: /shows/6a37b9b65c21d6a033570427
+              - article [ref=e259]:
+                - generic [ref=e260]:
+                  - generic [ref=e261]: RADIO
+                  - generic [ref=e262]: London
+                - generic [ref=e263]:
+                  - img "The Damn England Breakfast Show - 21/06/26 - [Voices Radio] artwork" [ref=e264]
+                  - heading "The Damn England Breakfast Show - 21/06/26 - [Voices Radio]" [level=3] [ref=e266]
+                - generic [ref=e267]:
+                  - generic [ref=e268]:
+                    - generic [ref=e269]: Comedy
+                    - generic [ref=e270]: "\"fathers"
+                    - generic [ref=e271]: day"
+                  - generic [ref=e272]:
+                    - generic [ref=e273]: Tracklist
+                    - generic [ref=e274]: 21.06.26
+                    - generic [ref=e275]: London
+                    - img [ref=e276]
+            - link "Open The Sounds of GEM w/ Ruggz - 19/06/26 [Voices Radio]" [ref=e278] [cursor=pointer]:
+              - /url: /shows/6a35b4ea8b2735a7091a652f
+              - article [ref=e279]:
+                - generic [ref=e280]:
+                  - generic [ref=e281]: RADIO
+                  - generic [ref=e282]: London
+                - generic [ref=e283]:
+                  - img "The Sounds of GEM w/ Ruggz - 19/06/26 [Voices Radio] artwork" [ref=e284]
+                  - heading "The Sounds of GEM w/ Ruggz - 19/06/26 [Voices Radio]" [level=3] [ref=e286]
+                - generic [ref=e287]:
+                  - generic [ref=e288]:
+                    - generic [ref=e289]: bass
+                    - generic [ref=e290]: breaks
+                    - generic [ref=e291]: "\"uk"
+                  - generic [ref=e292]:
+                    - generic [ref=e293]: Tracklist
+                    - generic [ref=e294]: 19.06.26
+                    - generic [ref=e295]: London
+                    - img [ref=e296]
+            - link "Open Morning Reverie w/ Dee Dee 19/06/26 [Voices Radio]" [ref=e298] [cursor=pointer]:
+              - /url: /shows/6a34fa97ac5093235ee9da8b
+              - article [ref=e299]:
+                - generic [ref=e300]:
+                  - generic [ref=e301]: RADIO
+                  - generic [ref=e302]: London
+                - generic [ref=e303]:
+                  - img "Morning Reverie w/ Dee Dee 19/06/26 [Voices Radio] artwork" [ref=e304]
+                  - heading "Morning Reverie w/ Dee Dee 19/06/26 [Voices Radio]" [level=3] [ref=e306]
+                - generic [ref=e307]:
+                  - generic [ref=e308]:
+                    - generic [ref=e309]: Deep
+                    - generic [ref=e310]: Downtempo
+                  - generic [ref=e311]:
+                    - generic [ref=e312]: Tracklist
+                    - generic [ref=e313]: 19.06.26
+                    - generic [ref=e314]: London
+                    - img [ref=e315]
+      - generic [ref=e318]:
+        - heading "Discover Shows By Genre" [level=2] [ref=e319]
+        - generic [ref=e320]:
+          - link "Ambient / New Age" [ref=e321] [cursor=pointer]:
+            - /url: /explore?genre=Ambient%20%2F%20New%20Age
+          - link "Electronica / Downtempo" [ref=e322] [cursor=pointer]:
+            - /url: /explore?genre=Electronica%20%2F%20Downtempo
+          - link "New Club" [ref=e323] [cursor=pointer]:
+            - /url: /explore?genre=New%20Club
+          - link "UK Dance / Grime" [ref=e324] [cursor=pointer]:
+            - /url: /explore?genre=UK%20Dance%20%2F%20Grime
+          - link "House / Techno" [ref=e325] [cursor=pointer]:
+            - /url: /explore?genre=House%20%2F%20Techno
+          - link "Post Punk / New Wave" [ref=e326] [cursor=pointer]:
+            - /url: /explore?genre=Post%20Punk%20%2F%20New%20Wave
+        - link "Browse All Genres" [ref=e327] [cursor=pointer]:
+          - /url: /explore
+      - generic [ref=e329]:
+        - paragraph [ref=e331]: Voices Radio
+        - generic [ref=e332]: Become a Supporter
+        - paragraph [ref=e333]: Voices Radio is a completely independent radio supporting local and international creatives. With a small monthly contribution, you can help keep Voices sustainable and receive supporter perks.
+    - contentinfo [ref=e334]:
+      - generic [ref=e335]:
+        - generic [ref=e336]:
+          - link "Voices Radio home" [ref=e337] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e339]: Voices
+          - navigation [ref=e340]:
+            - link "About" [ref=e341] [cursor=pointer]:
+              - /url: /about
+            - link "Work with us" [ref=e342] [cursor=pointer]:
+              - /url: /services
+            - link "Contact" [ref=e343] [cursor=pointer]:
+              - /url: /chat
+            - generic [ref=e344]: Become a Supporter
+        - generic [ref=e345]:
+          - paragraph [ref=e346]: Listen on the Voices app
+          - generic [ref=e347]:
+            - generic [ref=e348]: App Store
+            - generic [ref=e349]: Google Play
+        - paragraph [ref=e350]: © 2026 Voices Radio • Voices Radio is a non-profit community supported station
+  - alert [ref=e351]

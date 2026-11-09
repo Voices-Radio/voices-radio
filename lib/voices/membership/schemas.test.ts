@@ -1,0 +1,285 @@
+import { describe, expect, it } from "vitest";
+import {
+  benefitsResponseSchema,
+  membershipPlansResponseSchema,
+  membershipProfileSchema,
+  membershipStateSchema,
+  supportersResponseSchema,
+} from "./schemas";
+
+/**
+ * Nothing from the backend is trusted unparsed (contract-wide principle).
+ * These tests exist so a malformed payload is caught here, at the
+ * boundary, rather than three components deep — matching the intent
+ * documented in membership-client.ts.
+ */
+describe("membershipPlansResponseSchema", () => {
+  const wellFormed = {
+    scale: {
+      minMinor: 399,
+      maxMinor: 1599,
+      defaultMinor: 599,
+      currency: "gbp",
+      points: [{ amountMinor: 799, priceVersionId: "pv1" }],
+    },
+    annual: {
+      amountMinor: 4099,
+      currency: "gbp",
+      priceVersionId: "pv_annual",
+      discountPercent: 14,
+    },
+  };
+
+  it("accepts a well-formed plans response", () => {
+    expect(membershipPlansResponseSchema.safeParse(wellFormed).success).toBe(
+      true,
+    );
+  });
+
+  it("accepts a null annual block — no active annual price", () => {
+    const result = membershipPlansResponseSchema.safeParse({
+      ...wellFormed,
+      annual: null,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a non-positive scale point amount", () => {
+    const result = membershipPlansResponseSchema.safeParse({
+      ...wellFormed,
+      scale: {
+        ...wellFormed.scale,
+        points: [{ amountMinor: 0, priceVersionId: "pv1" }],
+      },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a response with no scale at all", () => {
+    expect(membershipPlansResponseSchema.safeParse({}).success).toBe(false);
+    expect(membershipPlansResponseSchema.safeParse(null).success).toBe(false);
+  });
+});
+
+describe("supportersResponseSchema", () => {
+  it("accepts a well-formed supporters response", () => {
+    const result = supportersResponseSchema.safeParse({
+      supporters: [{ name: "Ada" }, { name: "Grace" }],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts an empty supporters list", () => {
+    expect(supportersResponseSchema.safeParse({ supporters: [] }).success).toBe(
+      true,
+    );
+  });
+
+  it("rejects a supporter entry with no name", () => {
+    const result = supportersResponseSchema.safeParse({
+      supporters: [{}],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a response with no supporters array at all", () => {
+    expect(supportersResponseSchema.safeParse({}).success).toBe(false);
+    expect(supportersResponseSchema.safeParse(null).success).toBe(false);
+  });
+});
+
+describe("membershipStateSchema", () => {
+  const base = {
+    contributionAmountMinor: 799,
+    cadence: "monthly" as const,
+    priceMinor: 800,
+    currency: "gbp",
+    renewsAt: "2027-01-01T00:00:00Z",
+    paidThroughAt: "2027-01-01T00:00:00Z",
+    scheduledChange: null,
+    isFoundingMember: false,
+    paymentIssue: null,
+  };
+
+  it("accepts status: null — the 'never subscribed' state distinct from expired", () => {
+    expect(
+      membershipStateSchema.safeParse({ ...base, status: null }).success,
+    ).toBe(true);
+  });
+
+  it("accepts every documented status string", () => {
+    for (const status of [
+      "active",
+      "cancelling",
+      "grace",
+      "complimentary",
+      "expired",
+      "pending_reconciliation",
+    ]) {
+      expect(membershipStateSchema.safeParse({ ...base, status }).success).toBe(
+        true,
+      );
+    }
+  });
+
+  it("rejects an unrecognised status string", () => {
+    expect(
+      membershipStateSchema.safeParse({ ...base, status: "some_new_status" })
+        .success,
+    ).toBe(false);
+  });
+
+  // Verbatim from GET /api/membership/me on 2026-08-12, immediately after
+  // checkout. The backend omits renewsAt entirely in this state even though
+  // the contract documents it; requiring it made /account render a generic
+  // error at the exact moment a member had just paid.
+  it("accepts the live pending_reconciliation payload, which omits renewsAt", () => {
+    const result = membershipStateSchema.safeParse({
+      status: "pending_reconciliation",
+      contributionAmountMinor: 399,
+      cadence: "monthly",
+      priceMinor: 399,
+      currency: "gbp",
+      paidThroughAt: null,
+      scheduledChange: null,
+      isFoundingMember: false,
+      paymentIssue: null,
+    });
+
+    expect(result.success).toBe(true);
+    // An omitted nullable field must normalise to null, not undefined, so
+    // downstream `=== null` checks behave the same either way.
+    expect(result.success && result.data.renewsAt).toBeNull();
+  });
+
+  it("treats every omitted nullable field as null", () => {
+    const result = membershipStateSchema.safeParse({
+      status: null,
+      isFoundingMember: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.contributionAmountMinor).toBeNull();
+    expect(result.data.cadence).toBeNull();
+    expect(result.data.priceMinor).toBeNull();
+    expect(result.data.currency).toBeNull();
+    expect(result.data.paidThroughAt).toBeNull();
+    expect(result.data.scheduledChange).toBeNull();
+    expect(result.data.paymentIssue).toBeNull();
+  });
+
+  it("still rejects a wrong type in a nullable field", () => {
+    expect(
+      membershipStateSchema.safeParse({ ...base, priceMinor: "300" }).success,
+    ).toBe(false);
+  });
+
+  it("accepts a populated scheduledChange", () => {
+    const result = membershipStateSchema.safeParse({
+      ...base,
+      status: "active",
+      scheduledChange: {
+        type: "downgrade",
+        toAmountMinor: 399,
+        effectiveAt: "2027-02-01T00:00:00Z",
+      },
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("membershipProfileSchema", () => {
+  // Verbatim from GET /api/membership/profile on 2026-08-12. address is a
+  // structured object (the backend persists line1/line2/city/postcode/country),
+  // and is a bare {} for a member who has never supplied one. Modelling it as
+  // a string made /account/profile fail to render at all.
+  it("accepts the live payload with an empty address object", () => {
+    const result = membershipProfileSchema.safeParse({
+      displayName: null,
+      supporterWallOptIn: false,
+      marketingConsent: false,
+      address: {},
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts a fully populated structured address", () => {
+    const result = membershipProfileSchema.safeParse({
+      displayName: "Jack",
+      supporterWallOptIn: true,
+      marketingConsent: false,
+      address: {
+        line1: "1 Example Street",
+        line2: null,
+        city: "London",
+        postcode: "SW1A 1AA",
+        country: "United Kingdom",
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.success && result.data.address?.city).toBe("London");
+  });
+
+  it("rejects an address sent as a plain string", () => {
+    expect(
+      membershipProfileSchema.safeParse({
+        displayName: null,
+        supporterWallOptIn: false,
+        marketingConsent: false,
+        address: "1 Example Street, London",
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe("benefitsResponseSchema", () => {
+  it("accepts all nine benefit states", () => {
+    const states = [
+      "available",
+      "claimed",
+      "used",
+      "expired",
+      "not_yet_available",
+      "capacity_full",
+      "ineligible",
+      "requires_action",
+      "ballot_entered",
+    ];
+
+    const result = benefitsResponseSchema.safeParse({
+      benefits: states.map((state, index) => ({
+        id: `b${index}`,
+        slug: `benefit-${index}`,
+        name: "A benefit",
+        state,
+        capacityRemaining: null,
+        action: null,
+        availableFrom: null,
+        expiresAt: null,
+      })),
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects an unrecognised action verb", () => {
+    const result = benefitsResponseSchema.safeParse({
+      benefits: [
+        {
+          id: "b1",
+          slug: "benefit-1",
+          name: "A benefit",
+          state: "available",
+          capacityRemaining: null,
+          action: "do_a_backflip",
+          availableFrom: null,
+          expiresAt: null,
+        },
+      ],
+    });
+    expect(result.success).toBe(false);
+  });
+});

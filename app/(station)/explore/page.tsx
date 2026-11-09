@@ -1,0 +1,296 @@
+import { resolveListingPages } from "@/lib/voices/page-copy";
+import { getListingPages } from "@/sanity.client";
+import { ChevronDown } from "lucide-react";
+import Link from "next/link";
+import GenreBrowser from "../components/redesign/genre-browser";
+import GenreFilterChips from "../components/redesign/genre-filter-chips";
+import ShowCard from "../components/redesign/show-card";
+import SupporterBlock from "../components/redesign/supporter-block";
+import { getShows } from "@/lib/voices/api";
+import { buildGenreHref, toggleGenre } from "@/lib/voices/genre-filter";
+import { isGenreKey, matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
+import {
+  getParamArray,
+  getSingleParam,
+  type VoicesSearchParams,
+} from "@/lib/voices/search-params";
+import type { VoicesShow } from "@/lib/voices/types";
+import type { Metadata } from "next";
+/**
+ * Filtered variants (?category=, ?genre=) all consolidate here rather than
+ * competing as near-duplicates in the index.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: "/explore" },
+};
+
+const categoryTiles = [
+  {
+    label: "Shows",
+    href: "/explore?category=music",
+    description: "Recent KX shows and mixes",
+    index: "01",
+    tag: "Listen back",
+  },
+  {
+    label: "Artists",
+    href: "/artists",
+    description: "Hosts and selectors",
+    index: "02",
+    tag: "Residents",
+  },
+  {
+    label: "Blogs",
+    href: "/blog",
+    description: "Stories from the station",
+    index: "03",
+    tag: "Editorial",
+  },
+  {
+    label: "Podcast",
+    href: "/podcast",
+    description: "Studio bookings and production",
+    index: "04",
+    tag: "Studio",
+    opensInNewTab: true,
+  },
+  {
+    label: "Agency",
+    href: "/agency",
+    description: "Programming and talent curation",
+    index: "05",
+    tag: "Curation",
+    opensInNewTab: true,
+  },
+];
+
+function isKxExploreShow(show: VoicesShow) {
+  return show.station !== "east" && !show.locationTags.includes("east");
+}
+
+function sortShows(shows: VoicesShow[]) {
+  return [...shows].sort((a, b) => {
+    const aTime = a.date ? new Date(a.date).getTime() : 0;
+    const bTime = b.date ? new Date(b.date).getTime() : 0;
+
+    return bTime - aTime;
+  });
+}
+
+function ExploreTabs({ activeTab }: { activeTab: "explore" | "genres" }) {
+  return (
+    <nav
+      className="mx-auto flex max-w-[1280px] items-center gap-7 px-4 py-[19px] font-gabarito text-[18px] font-bold md:px-[70px] md:py-[30px] md:text-[20px]"
+      aria-label="Explore mode"
+    >
+      <Link
+        href="/explore"
+        className={
+          activeTab === "explore"
+            ? "text-voicesNext-orangeText"
+            : "text-voicesNext-secondary"
+        }
+        aria-current={activeTab === "explore" ? "page" : undefined}
+      >
+        Explore
+      </Link>
+      <Link
+        href="/explore?tab=genres"
+        className={
+          activeTab === "genres"
+            ? "text-voicesNext-orangeText"
+            : "text-voicesNext-secondary"
+        }
+        aria-current={activeTab === "genres" ? "page" : undefined}
+      >
+        Genres
+      </Link>
+    </nav>
+  );
+}
+
+function CategoryTiles() {
+  return (
+    <section className="mx-auto max-w-[1280px] px-4 pb-12 md:px-[70px] md:pb-20">
+      <div className="grid gap-px bg-voicesNext-border sm:grid-cols-2 lg:grid-cols-5">
+        {categoryTiles.map((tile) => (
+          <Link
+            key={tile.label}
+            href={tile.href}
+            target={tile.opensInNewTab ? "_blank" : undefined}
+            rel={tile.opensInNewTab ? "noopener noreferrer" : undefined}
+            className="group grid min-h-[162px] grid-rows-[auto_1fr_auto] bg-voicesNext-background p-4 transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange md:min-h-[196px] md:p-5"
+          >
+            <span className="flex items-center justify-between gap-3 font-asap text-[10px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary transition-colors group-hover:text-voicesNext-background/60">
+              <span>{tile.index}</span>
+              <span>{tile.tag}</span>
+            </span>
+            <span className="flex items-center py-5">
+              <span className="font-outfit text-[26px] font-black uppercase leading-none tracking-[1px] text-voicesNext-cream transition-colors group-hover:text-voicesNext-background md:text-[30px]">
+                {tile.label}
+              </span>
+            </span>
+            <span className="border-t border-voicesNext-border pt-3 font-asap text-[12px] leading-snug text-voicesNext-secondary transition-colors group-hover:border-voicesNext-background/25 group-hover:text-voicesNext-background/70 md:text-[13px]">
+              {tile.description}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const MUSIC_BASE_PATH = "/explore";
+const MUSIC_EXTRA_PARAMS = { category: "music" } as const;
+
+function musicSummary(selectedGenres: string[], showCount: number) {
+  const shows = `${showCount} ${showCount === 1 ? "show" : "shows"}`;
+
+  if (!selectedGenres.length) return "The latest Voices KX shows.";
+
+  const genres = `${selectedGenres.length} ${
+    selectedGenres.length === 1 ? "genre" : "genres"
+  }`;
+
+  return `${genres} · ${shows}`;
+}
+
+function MusicGrid({
+  title,
+  shows,
+  selectedGenres,
+}: {
+  title: string;
+  shows: VoicesShow[];
+  selectedGenres: string[];
+}) {
+  const buildToggleHref = (genreKey: string) =>
+    buildGenreHref(
+      MUSIC_BASE_PATH,
+      toggleGenre(selectedGenres, genreKey),
+      MUSIC_EXTRA_PARAMS,
+    );
+
+  return (
+    <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
+      <div className="mb-5 md:mb-[30px]">
+        <h1 className="font-gabarito text-[24px] font-bold leading-none text-voicesNext-cream md:text-[34px]">
+          {title}
+        </h1>
+        <p
+          className="mt-2 font-asap text-[13px] leading-tight text-voicesNext-secondary md:text-[14px]"
+          aria-live="polite"
+        >
+          {musicSummary(selectedGenres, shows.length)}
+        </p>
+      </div>
+
+      <GenreFilterChips
+        genres={selectedGenres}
+        basePath={MUSIC_BASE_PATH}
+        extraParams={MUSIC_EXTRA_PARAMS}
+      />
+
+      <details
+        className="group mb-6 md:mb-8"
+        open={selectedGenres.length === 0}
+      >
+        <summary className="inline-flex min-h-[35px] w-auto cursor-pointer list-none items-center gap-2 rounded-full border border-voicesNext-cream py-[6px] pl-4 pr-3 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-cream transition-colors hover:bg-voicesNext-cream hover:text-voicesNext-background focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background [&::-webkit-details-marker]:hidden">
+          {selectedGenres.length ? "Add another genre" : "Filter by genre"}
+          <ChevronDown
+            aria-hidden="true"
+            className="size-[14px] stroke-[3px] transition-transform group-open:rotate-180"
+          />
+        </summary>
+        <div className="mt-4">
+          <GenreBrowser
+            selectedGenres={selectedGenres}
+            buildToggleHref={buildToggleHref}
+          />
+        </div>
+      </details>
+
+      {shows.length > 0 ? (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {shows.map((show, index) => (
+            <ShowCard key={show.id} show={show} priority={index < 4} />
+          ))}
+        </div>
+      ) : (
+        <div className="border border-voicesNext-border p-6 font-gabarito text-voicesNext-secondary">
+          {selectedGenres.length > 1
+            ? "No KX shows match all of these genres. Remove a filter to broaden your search."
+            : "No KX shows match this genre yet."}
+        </div>
+      )}
+    </section>
+  );
+}
+
+export default async function ExplorePage({
+  searchParams,
+}: {
+  searchParams?: Promise<VoicesSearchParams>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const activeTab =
+    getSingleParam(resolvedSearchParams, "tab") === "genres"
+      ? "genres"
+      : "explore";
+  const selectedGenres = getParamArray(resolvedSearchParams, "genre").filter(
+    isGenreKey,
+  );
+  const category = getSingleParam(resolvedSearchParams, "category");
+  const showMusicGrid = category === "music" || selectedGenres.length > 0;
+
+  // Independent upstreams — fetched together so the slower one sets latency.
+  const [listingPages, shows] = await Promise.all([
+    getListingPages(),
+    showMusicGrid
+      ? getShows({ genres: selectedGenres, limit: 100 })
+      : Promise.resolve([]),
+  ]);
+  const musicTitle = resolveListingPages(listingPages).music.title;
+  const visibleShows = sortShows(
+    shows.filter(
+      (show) =>
+        isKxExploreShow(show) &&
+        matchesAllGenreKeys(show.genres, selectedGenres),
+    ),
+  ).slice(0, 16);
+  // MusicGrid renders its own visible h1; every other view needs one for SEO.
+  const hasMusicGrid = activeTab === "explore" && showMusicGrid;
+
+  return (
+    <main id="main-content" className="scroll-mt-24">
+      {!hasMusicGrid && <h1 className="sr-only">Explore</h1>}
+      <ExploreTabs activeTab={activeTab} />
+      {activeTab === "genres" ? (
+        <section className="mx-auto max-w-[1280px] px-4 pb-16 md:px-[70px] md:pb-[96px]">
+          <GenreBrowser
+            selectedGenres={selectedGenres}
+            buildToggleHref={(genreKey) =>
+              buildGenreHref(
+                MUSIC_BASE_PATH,
+                toggleGenre(selectedGenres, genreKey),
+                MUSIC_EXTRA_PARAMS,
+              )
+            }
+          />
+        </section>
+      ) : (
+        <>
+          {!showMusicGrid && <CategoryTiles />}
+          {showMusicGrid && (
+            <MusicGrid
+              title={musicTitle}
+              shows={visibleShows}
+              selectedGenres={selectedGenres}
+            />
+          )}
+        </>
+      )}
+      <SupporterBlock />
+    </main>
+  );
+}

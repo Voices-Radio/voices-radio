@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
-import localFont from "next/font/local";
-import Fathom from "./components/fathom";
 import { getBaseUrl } from "@/lib/site-url";
+import { Asap_Condensed, Gabarito, Inter, Outfit } from "next/font/google";
+import localFont from "next/font/local";
+import { SAFE_AREA_COLOR } from "@/lib/design-tokens";
+import Fathom from "./components/fathom";
 import "./globals.css";
 
 const kinfolk = localFont({
@@ -18,23 +19,49 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-export const viewport: Viewport = {
-  themeColor: "#000000",
-};
+const gabarito = Gabarito({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-gabarito",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-outfit",
+});
+
+const asapCondensed = Asap_Condensed({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-asap-condensed",
+});
 
 /**
- * Resolves every relative `alternates.canonical` and `openGraph.url` in the
- * tree against the real production origin. Without it, routes outside the
- * (station) group emitted relative canonicals like `<link rel="canonical"
- * href="/podcast">`.
+ * Resolves every relative `alternates.canonical` in the tree against the real
+ * production origin. Without it, routes outside the (station) group emit
+ * relative canonicals like `<link rel="canonical" href="/podcast">`.
  *
- * Deliberately NOT setting `alternates` here: canonical URLs belong to pages,
- * never to layouts. A canonical on a layout is inherited by every page beneath
- * it that does not set its own, which is how every blog post ended up
- * declaring the homepage as its canonical.
+ * Deliberately no `alternates` here: canonicals belong to pages, never to
+ * layouts. See the note in app/(station)/layout.tsx.
  */
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
+};
+
+export const viewport: Viewport = {
+  // Declared per colour scheme rather than as a single flat value — with
+  // `colorScheme: "dark"` also set below, Safari has been unreliable about
+  // honouring an unqualified themeColor in dark appearance, which is part of
+  // why the Dynamic Island area was reading as plain black instead of this
+  // grey.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: SAFE_AREA_COLOR },
+    { media: "(prefers-color-scheme: dark)", color: SAFE_AREA_COLOR },
+  ],
+  colorScheme: "dark",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -45,7 +72,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-black antialiased ${kinfolk.variable} ${inter.variable}`}
+      className={`antialiased ${kinfolk.variable} ${inter.variable} ${gabarito.variable} ${outfit.variable} ${asapCondensed.variable}`}
     >
       <body>
         {children}

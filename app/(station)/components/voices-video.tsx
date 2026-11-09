@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import poster from "@/public/VIDEO.webp";
+import poster from "@/public/VIDEO.jpg";
 import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import Stop from "@/icons/stop";

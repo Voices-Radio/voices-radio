@@ -1,7 +1,5 @@
 import { DocumentIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
-import type { Rule } from '@sanity/types';
-
 
 export default defineType({
   name: "about",

@@ -1,4 +1,5 @@
 import { fetcher } from "@/lib/fetcher";
+import type { VoicesLiveStationId } from "@/lib/voices/config";
 import useSWR from "swr";
 
 export interface WeekInfo {
@@ -38,6 +39,7 @@ export interface Day {
 
 export interface ProcessedDay {
   id: number;
+  station: VoicesLiveStationId;
   name: string;
   start_timestamp: string;
   end_timestamp: string;
@@ -47,10 +49,15 @@ export interface ProcessedDay {
   is_live: boolean;
 }
 
+export type ProcessedWeekInfo = Record<
+  VoicesLiveStationId,
+  { [key: string]: ProcessedDay[] }
+>;
+
 export default function useWeekInfo() {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  return useSWR<{ [key: string]: ProcessedDay[] }>(
+  return useSWR<ProcessedWeekInfo>(
     `/api/week-info?tz=${tz}`,
     fetcher,
     {

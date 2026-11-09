@@ -1,0 +1,1010 @@
+- generic:
+  - generic:
+    - banner:
+      - generic:
+        - link:
+          - /url: /
+          - generic: Voices
+        - navigation:
+          - link:
+            - /url: /
+            - text: Home
+          - button [expanded]: Schedule
+          - link:
+            - /url: /explore
+            - text: Explore
+          - link:
+            - /url: /collaborate
+            - text: Collaborate
+          - link:
+            - /url: https://shop.voicesradio.co.uk
+            - text: Shop
+        - generic:
+          - search:
+            - generic: Search all content
+            - searchbox
+            - button:
+              - img
+          - button:
+            - img
+    - main:
+      - generic:
+        - generic:
+          - generic:
+            - article:
+              - generic:
+                - button [disabled]: KX
+                - link [disabled]:
+                  - /url: "#video-placeholder"
+                  - img
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+              - generic:
+                - img
+                - heading [level=2]: Esoteric DanceFloor w/ Paul East - 04/06/26 - Voices Radio
+            - article:
+              - generic:
+                - button [disabled]: EAST
+                - link [disabled]:
+                  - /url: "#video-placeholder"
+                  - img
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+                  - generic:
+                    - generic: On air
+              - generic:
+                - img
+                - heading [level=2]: Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio]
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic:
+                  - generic: Radio
+                  - generic: London
+                - generic:
+                  - generic:
+                    - link:
+                      - /url: /shows/6a20dfd1922ba8a0eafd1504
+                      - generic: Listen
+                      - generic:
+                        - img
+                    - generic:
+                      - heading [level=1]: Esoteric DanceFloor w/ Paul East - 04/06/26 - Voices Radio
+                      - generic:
+                        - generic: House
+                        - generic: Techno
+                        - generic: Disco
+                        - generic: 04 Jun 2026
+            - generic:
+              - button:
+                - generic: ‹
+              - generic: 1/8
+              - button:
+                - generic: ›
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=2]: Latest on KX
+            - paragraph: The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.
+          - generic:
+            - link:
+              - /url: /shows/6a20dfd1922ba8a0eafd1504
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Esoteric DanceFloor w/ Paul East - 04/06/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: House
+                    - generic: Techno
+                    - generic: Disco
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 04.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a206bcb935269ceee53a99d
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: What's Good w/ Ah-Kin - 03/06/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: rnb
+                    - generic: breakbeat
+                    - generic: dance
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 03.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a204fadf057dab688f5f10f
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: Neo soul
+                    - generic: Reggae
+                    - generic: Funk
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 03.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a204c28f057dab688f5f0f8
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: jamie.stew b2b Raplh Richards 03/06/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"soul"
+                    - generic: "\""
+                    - generic: funk
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 03.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1d62d98a9b670640ac3c65
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Voices Breakfast Show w/ Kit Lockey ft Norsciaa - 01.06.2026 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: Jazz
+                    - generic: Funk
+                    - generic: Soul
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 01.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1b10b4fd2be7f2a9a09c34
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: electro
+                    - generic: acid
+                    - generic: breakbeat
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1ad4f07da4d3c2e7a879df
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: UKG
+                    - generic: "\"2"
+                    - generic: step"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1aca64c6a07a8576406e3d
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: grime
+                    - generic: batida
+                    - generic: "\"Baile"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a198dff84ae1da5788786f7
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio
+                - generic:
+                  - generic:
+                    - generic: Hip Hop
+                    - generic: R&B
+                    - generic: House
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 29.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a198dfb84ae1da5788786ec
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"house"
+                    - generic: "\""
+                    - generic: "\"disco"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 29.05.26
+                    - generic: London
+                    - img
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=2]: Latest on EAST
+            - paragraph: The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.
+          - generic:
+            - link:
+              - /url: /shows/6a1b10b4fd2be7f2a9a09c34
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: electro
+                    - generic: acid
+                    - generic: breakbeat
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1ad4f07da4d3c2e7a879df
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: UKG
+                    - generic: "\"2"
+                    - generic: step"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1aca64c6a07a8576406e3d
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: grime
+                    - generic: batida
+                    - generic: "\"Baile"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a198dff84ae1da5788786f7
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio
+                - generic:
+                  - generic:
+                    - generic: Hip Hop
+                    - generic: R&B
+                    - generic: House
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 29.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a198dfb84ae1da5788786ec
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"house"
+                    - generic: "\""
+                    - generic: "\"disco"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 29.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a197fed84ae1da5788786bb
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: Neo soul
+                    - generic: Funk
+                    - generic: World
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 29.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a184e0ff18115e21253518a
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Folkways w/ Gem Stark 28/05/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: "\"folk"
+                    - generic: "\""
+                    - generic: Folk & Singer-Songwriter
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 28.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a171c34638309e65a8ba69b
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Out of Office ??? w/ Jameson Jameson 27/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: R&B
+                    - generic: hiphop
+                    - generic: "\"rap"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 27.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a17071ca228f8d0959d57ac
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Seyless invites Sadiq Bello + KSLICE 27/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"jersey"
+                    - generic: "\""
+                    - generic: "\"garage"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 27.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a15c0273bb4e357d79bf4f6
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Natural Element w/ Leopold - 26/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"soulful"
+                    - generic: house"
+                    - generic: jazz
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 26.05.26
+                    - generic: London
+                    - img
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=2]: Voices picks
+            - link:
+              - /url: https://docs.google.com/forms/d/e/1FAIpQLSdlV09iFlcP2_n6ldRsSUoeZclzJpb0AMY4F2rrXUpC7jueZQ/viewform
+              - text: Apply for a show
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=2]: Featured
+            - paragraph: The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.
+          - generic:
+            - link:
+              - /url: /shows/6a20dfd1922ba8a0eafd1504
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Esoteric DanceFloor w/ Paul East - 04/06/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: House
+                    - generic: Techno
+                    - generic: Disco
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 04.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a206bcb935269ceee53a99d
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: What's Good w/ Ah-Kin - 03/06/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: rnb
+                    - generic: breakbeat
+                    - generic: dance
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 03.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a204fadf057dab688f5f10f
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Jamie.stew b2b Ralph Richards 03/06/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: Neo soul
+                    - generic: Reggae
+                    - generic: Funk
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 03.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a204c28f057dab688f5f0f8
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: jamie.stew b2b Raplh Richards 03/06/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"soul"
+                    - generic: "\""
+                    - generic: funk
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 03.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1d62d98a9b670640ac3c65
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Voices Breakfast Show w/ Kit Lockey ft Norsciaa - 01.06.2026 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: Jazz
+                    - generic: Funk
+                    - generic: Soul
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 01.06.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1b10b4fd2be7f2a9a09c34
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Voices At Night Takeover w/ Venetia - 30/05/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: electro
+                    - generic: acid
+                    - generic: breakbeat
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1ad4f07da4d3c2e7a879df
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Voices At Night Takeover w/ Alex Iza - 30/05/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: UKG
+                    - generic: "\"2"
+                    - generic: step"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a1aca64c6a07a8576406e3d
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Rent is Due Takeover KSLICE + Friends 29/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: grime
+                    - generic: batida
+                    - generic: "\"Baile"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 30.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a198dff84ae1da5788786f7
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Voices Breakfast Show w/ Maria Hanlon - 29/05/26 Voices Radio
+                - generic:
+                  - generic:
+                    - generic: Hip Hop
+                    - generic: R&B
+                    - generic: House
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 29.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a198dfb84ae1da5788786ec
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Voices Breakfast Show w/ Maria Hanlon & Rob Wu 29/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"house"
+                    - generic: "\""
+                    - generic: "\"disco"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 29.05.26
+                    - generic: London
+                    - img
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=2]: Producer Picks
+            - paragraph: A list of highlights from the recent weeks picked by our team of producers.
+          - generic:
+            - link:
+              - /url: /shows/6a197fed84ae1da5788786bb
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: The Rent is Due Takeover - JAMESON JAMESON 29/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: Neo soul
+                    - generic: Funk
+                    - generic: World
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 29.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a184e0ff18115e21253518a
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Folkways w/ Gem Stark 28/05/26 - [Voices Radio]
+                - generic:
+                  - generic:
+                    - generic: "\"folk"
+                    - generic: "\""
+                    - generic: Folk & Singer-Songwriter
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 28.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a171c34638309e65a8ba69b
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Out of Office ??? w/ Jameson Jameson 27/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: R&B
+                    - generic: hiphop
+                    - generic: "\"rap"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 27.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a17071ca228f8d0959d57ac
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Seyless invites Sadiq Bello + KSLICE 27/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"jersey"
+                    - generic: "\""
+                    - generic: "\"garage"
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 27.05.26
+                    - generic: London
+                    - img
+            - link:
+              - /url: /shows/6a15c0273bb4e357d79bf4f6
+              - article:
+                - generic:
+                  - generic: RADIO
+                  - generic: London
+                - generic:
+                  - img
+                  - heading [level=3]: Natural Element w/ Leopold - 26/05/26 - Voices Radio
+                - generic:
+                  - generic:
+                    - generic: "\"soulful"
+                    - generic: house"
+                    - generic: jazz
+                  - generic:
+                    - generic: Tracklist
+                    - generic: 26.05.26
+                    - generic: London
+                    - img
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=2]: May Highlights
+            - paragraph: The Voices team has picked notable shows from the recent weeks ranging from exciting guests to curious mixes. List updated regularly.
+          - generic: No matched shows are available for this section yet.
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=2]: Independent Label Market
+            - paragraph: Shows that aired as part of the annual event at the Coal Drops Yard
+          - generic: No matched shows are available for this section yet.
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=2]: Voices Global Community
+            - paragraph: Shows from our hosts around the world.
+          - generic: No matched shows are available for this section yet.
+      - generic:
+        - generic:
+          - generic:
+            - img
+          - generic: Become a Supporter
+          - paragraph: Voices Radio is a completely independent radio supporting local and international creatives. With a small monthly contribution, you can help keep Voices sustainable and receive supporter perks.
+    - contentinfo:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - generic: Voices
+          - navigation:
+            - link:
+              - /url: /about
+              - text: About
+            - link:
+              - /url: /services
+              - text: Work with us
+            - link:
+              - /url: /chat
+              - text: Contact
+            - generic: Become a Supporter
+        - generic:
+          - paragraph: Listen on the Voices app
+          - generic:
+            - generic: App Store
+            - generic: Google Play
+        - paragraph: © 2026 Voices Radio • Voices Radio is a non-profit community supported station
+  - alert
+  - dialog [ref=e991]:
+    - generic [ref=e992]:
+      - generic [ref=e993]:
+        - button "Left" [disabled] [ref=e994]:
+          - img "Left" [ref=e995]: <-
+        - paragraph [ref=e996]: Thursday 04/06
+        - button "Right" [ref=e997] [cursor=pointer]:
+          - img "Right" [ref=e998]: "->"
+      - list [ref=e999]:
+        - listitem [ref=e1000]:
+          - generic [ref=e1001]:
+            - paragraph [ref=e1002]: 00:00 – 01:00
+            - paragraph [ref=e1003]: Lira's Lagoon
+        - listitem [ref=e1006]:
+          - generic [ref=e1007]:
+            - paragraph [ref=e1008]: 01:00 – 02:00
+            - paragraph [ref=e1009]: Hidden Rooms w/ Leolectro
+        - listitem [ref=e1012]:
+          - generic [ref=e1013]:
+            - paragraph [ref=e1014]: 02:00 – 03:00
+            - paragraph [ref=e1015]: Esoteric DanceFloor w/ Paul East
+        - listitem [ref=e1018]:
+          - generic [ref=e1019]:
+            - paragraph [ref=e1020]: 03:00 – 04:00
+            - paragraph [ref=e1021]: Dream Matte Mousse w/ Courts
+        - listitem [ref=e1024]:
+          - generic [ref=e1025]:
+            - paragraph [ref=e1026]: 04:00 – 05:00
+            - paragraph [ref=e1027]: Hard Hearts w/ 2bodies & gg heavens
+        - listitem [ref=e1030]:
+          - generic [ref=e1031]:
+            - paragraph [ref=e1032]: 07:00 – 09:00
+            - paragraph [ref=e1033]: The Heavy Grooves Show w/ Leo Zero
+        - listitem [ref=e1036]:
+          - generic [ref=e1037]:
+            - paragraph [ref=e1038]: 09:00 – 11:00
+            - paragraph [ref=e1039]: The Voices Breakfast Show w/ Aroop Roy
+        - listitem [ref=e1042]:
+          - generic [ref=e1043]:
+            - paragraph [ref=e1044]: 11:00 – 12:00
+            - paragraph [ref=e1045]: OUTSKIRTS FM w/ EARTH TO DILAN
+        - listitem [ref=e1048]:
+          - generic [ref=e1049]:
+            - paragraph [ref=e1050]: 12:00 – 13:00
+            - paragraph [ref=e1051]: Call to Saya
+        - listitem [ref=e1054]:
+          - generic [ref=e1055]:
+            - paragraph [ref=e1056]: 13:00 – 14:00
+            - paragraph [ref=e1057]: Close to Home w/ Hannah Lev
+        - listitem [ref=e1060]:
+          - generic [ref=e1061]:
+            - paragraph [ref=e1062]: 14:00 – 15:00
+            - paragraph [ref=e1063]: Serum Selections w/ Theo Kemp
+        - listitem [ref=e1066]:
+          - generic [ref=e1067]:
+            - paragraph [ref=e1068]: 15:00 – 16:00
+            - paragraph [ref=e1069]: Ralph Moore w/ Zainab
+        - listitem [ref=e1072]:
+          - generic [ref=e1073]:
+            - paragraph [ref=e1074]: 16:00 – 17:00
+            - paragraph [ref=e1075]: MARINA w/ Ama Josephine
+        - listitem [ref=e1078]:
+          - generic [ref=e1079]:
+            - paragraph [ref=e1080]: 17:00 – 18:00
+            - paragraph [ref=e1081]: Intersecting Orbits
+        - listitem [ref=e1084]:
+          - generic [ref=e1085]:
+            - paragraph [ref=e1086]: 18:00 – 19:00
+            - paragraph [ref=e1087]: ARCHIVE
+        - listitem [ref=e1090]:
+          - generic [ref=e1091]:
+            - paragraph [ref=e1092]: 19:00 – 20:00
+            - paragraph [ref=e1093]: Type One Community
+        - listitem [ref=e1096]:
+          - generic [ref=e1097]:
+            - paragraph [ref=e1098]: 20:00 – 22:00
+            - paragraph [ref=e1099]: Ganzou
+        - listitem [ref=e1102]:
+          - generic [ref=e1103]:
+            - paragraph [ref=e1104]: 22:00 – 23:00
+            - paragraph [ref=e1105]: Sweaty Tunes w/ warmluke
+            - paragraph [ref=e1107]: Live
+        - listitem [ref=e1111]:
+          - generic [ref=e1112]:
+            - paragraph [ref=e1113]: 23:00 – 00:00
+            - paragraph [ref=e1114]: Noisy Neighbour ARCHIVE
+    - button "Close" [active] [ref=e1118] [cursor=pointer]

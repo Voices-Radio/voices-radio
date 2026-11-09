@@ -1,6 +1,5 @@
 import { DocumentIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { blogImageHotspotForSchema } from "./blogImageHotspot";
 
 export default defineType({
   name: "mainBlog",
@@ -46,7 +45,7 @@ export default defineType({
       type: "image",
       group: "content",
       options: {
-        hotspot: blogImageHotspotForSchema,
+        hotspot: true,
       },
       fields: [
         {
@@ -108,7 +107,7 @@ export default defineType({
         }),
         defineArrayMember({
           type: "image",
-          options: { hotspot: blogImageHotspotForSchema },
+          options: { hotspot: true },
           fields: [
             {
               name: "alt",
@@ -142,7 +141,8 @@ export default defineType({
       options: {
         layout: "tags",
       },
-      description: "Add your own categories or topics. Type and press Enter to add.",
+      description:
+        "Add your own categories or topics. Type and press Enter to add.",
     }),
     defineField({
       name: "tags",
@@ -168,6 +168,14 @@ export default defineType({
       type: "boolean",
       group: "settings",
       description: "Show this post in featured sections",
+    }),
+    defineField({
+      name: "relatedShowId",
+      title: "Related Show ID",
+      type: "string",
+      group: "content",
+      description:
+        "Optional. The Voices show id this post is about — find it in the /shows/... URL for that show. When set, readers get a 'Listen while you read' control that plays the show's archive in the mini player without leaving the article. Leave blank if the post isn't about a specific show.",
     }),
     defineField({
       name: "status",
@@ -218,7 +226,7 @@ export default defineType({
       group: "seo",
       description: "Image for social media sharing (1200x630px recommended)",
       options: {
-        hotspot: blogImageHotspotForSchema,
+        hotspot: true,
       },
     }),
   ],

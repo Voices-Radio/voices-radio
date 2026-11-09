@@ -3,7 +3,8 @@ import { getBaseUrl } from "@/lib/site-url";
 
 const DISALLOWED = ["/studio/", "/api/"];
 
-// Named explicitly so the intent to be cited by AI search is on record.
+// Named explicitly so the intent to be cited by AI search is on record
+// (carried over from the pre-redesign site).
 const AI_CRAWLERS = [
   "GPTBot",
   "OAI-SearchBot",
@@ -16,6 +17,15 @@ const AI_CRAWLERS = [
 
 export default function robots(): MetadataRoute.Robots {
   const base = getBaseUrl();
+
+  if (process.env.NEXT_PUBLIC_SITE_ENV !== "production") {
+    return {
+      rules: {
+        userAgent: "*",
+        disallow: "/",
+      },
+    };
+  }
 
   return {
     rules: [

@@ -23,7 +23,7 @@ export function Nav() {
             <a
               key={item.href}
               href={item.href}
-              className="text-sm font-bold text-white/80 transition-colors hover:text-voices-purple focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-slate-950"
+              className="text-sm font-bold text-white/80 transition-colors hover:text-voices-purple focus:outline-none focus-visible:ring-2 focus-visible:ring-voices-purple focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             >
               {item.label}
             </a>
@@ -33,7 +33,7 @@ export function Nav() {
         <a
           href={briefHref}
           aria-label="Start a brief"
-          className="inline-flex h-11 items-center gap-2 rounded-full bg-voices-purple px-4 py-2 text-sm font-black text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-voices-purple focus:ring-offset-2 focus:ring-offset-slate-950"
+          className="inline-flex h-11 items-center gap-2 rounded-full bg-voices-purple px-4 py-2 text-sm font-black text-white transition hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-voices-purple focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
         >
           <span className="lg:hidden">Brief</span>
           <span className="hidden lg:inline">Start a brief</span>

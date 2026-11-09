@@ -2,8 +2,12 @@
 // Kept separate from the section components so copy edits don't require
 // touching JSX, and so page.tsx / _components stay small and focused.
 
-export const briefHref =
-  "mailto:bookings@voicesradio.co.uk?subject=Voices%20Agency%20Brief";
+// Shown as readable text next to the brief buttons as well. A `mailto:` link
+// does nothing in a browser with no mail handler, so the address must be
+// visible somewhere on the page.
+export const BRIEF_EMAIL = "bookings@voicesradio.co.uk";
+
+export const briefHref = `mailto:${BRIEF_EMAIL}?subject=Voices%20Agency%20Brief`;
 
 // Feature flags for sections whose content isn't launch-ready yet.
 // Flip to true once the underlying content is signed off - see the

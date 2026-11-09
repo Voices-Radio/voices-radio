@@ -1,0 +1,173 @@
+{
+  "cookies": [
+    {
+      "name": "vercel-experiment-uuid",
+      "value": "ubey3Ym8RLLGLE02R-_aY",
+      "domain": "vercel.live",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://voicesradio.co.uk",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "voices_at",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTdjNGQ0NDE3NmI5M2I3NGJlYmRlYTIiLCJpYXQiOjE3ODY1NDIxNzEsImV4cCI6MTc4NjU0NTc3MX0.EUZGUvFH-DMJOiwYu3O3WGr1t0TOw0gX-OU-xpY8W-w",
+      "domain": "staging.voicesradio.co.uk",
+      "path": "/",
+      "expires": 1786545772.076814,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "voices_rt",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTdjNGQ0NDE3NmI5M2I3NGJlYmRlYTIiLCJpYXQiOjE3ODY1NDIxNzEsImV4cCI6MTc4OTEzNDE3MX0.TlCyCqy-A_WY2BKKxy3xhcgglzxvVJHw3n3yOjMO3H0",
+      "domain": "staging.voicesradio.co.uk",
+      "path": "/",
+      "expires": 1789134172.076841,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "8lwgudqtr6KrA2ftDCYaiR.KT8UCJeLz6TkXrdu08x8-1786542177.3298354-1.0.1.1-3YnhJpYemKW1DzxyGCNqNElJy8iV3B.SVl7ef.0f526jyv8n3IanqknZ6rzk5sH_5C9qvEpQX3JGv5Na7z9Bc246H5u3wacJiNdIWOQ_ced7e8XKsD5hgoB7ms3vT0mZ",
+      "domain": ".hcaptcha.com",
+      "path": "/",
+      "expires": 1786543977.292431,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "PMHmsgVTRcYsDjXrI_euT0feBQ_vmLzc7i.8hxO_ZHY-1786542177.5840979-1.0.1.1-k3Bu3wWNs.9hnEjVJmbQMQul5iWVZGmHPFycDYsQLZDzvBKp8j17ICjKDLSwITSVM5PgNiwMP0Tz8NijjC0qO_NDG6UKtsM6FaY0WlGyaf8r3I3hKLTrQbZU.ssJAAAD",
+      "domain": ".w.hcaptcha.com",
+      "path": "/",
+      "expires": 1786543977.54081,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "m",
+      "value": "3430a82d-bde1-4c0c-9600-04d2ec4acc361a1238",
+      "domain": "m.stripe.com",
+      "path": "/",
+      "expires": 1821102179.072497,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__stripe_mid",
+      "value": "5df861df-d928-4396-a531-a94e20724f0630b68f",
+      "domain": ".checkout.stripe.com",
+      "path": "/",
+      "expires": 1818078179,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "__stripe_sid",
+      "value": "9382c061-dc15-4cd9-9cb2-b694eb9a85e01cf473",
+      "domain": ".checkout.stripe.com",
+      "path": "/",
+      "expires": 1786543979,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "session-token",
+      "value": "\"AKPOsCDLkChLq18XFSktbcmqPdtf2EqO+VYgH5Cx5uGA84AiU5Tm16wm8ckcWxLy9dAoFiYghqMdNWKKTS7l4BFO0nu74zBukEHcUBSKrmz3CivUGb0SY0rXjz9BHp5PvkoGqASB6GMyCLmNyW/CnypeOWOCgyGwV5iDE6ecH/gSTkI2xVeoVKXCbHAviVLD/xImFgNMqFS7Bc6Q94YOzA==\"",
+      "domain": ".amazon.com",
+      "path": "/",
+      "expires": 1818078178.700072,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "session-id",
+      "value": "131-3558406-8102421",
+      "domain": ".amazon.com",
+      "path": "/",
+      "expires": 1818078178.70008,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "session-id-time",
+      "value": "2082758400",
+      "domain": ".amazon.com",
+      "path": "/",
+      "expires": 1818078178.700085,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "session-id-apay",
+      "value": "131-3558406-8102421",
+      "domain": ".amazon.com",
+      "path": "/",
+      "expires": 1818078178.700093,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "hmt_id",
+      "value": "762e7aa1-1e2a-4c9d-b380-ea08dfd68bbb",
+      "domain": "api.hcaptcha.com",
+      "path": "/",
+      "expires": 1789134178.771081,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://stripe.com",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "__cflb",
+      "value": "0H28vk2VKwPbLoawFiy4sSqK1JbQoGkPSqZg7dLL4m3",
+      "domain": "api.hcaptcha.com",
+      "path": "/",
+      "expires": 1786543978.771105,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "apay-session-set",
+      "value": "jlTHY5SnNxdJJOEqcE76k4QJ7AB0EF1C8CFSkkfVjn90S6zvO637PEjKjCa4Hqw%3D",
+      "domain": "b.stripecdn.com",
+      "path": "/",
+      "expires": 1818078178,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://vercel.live",
+      "localStorage": [
+        {
+          "name": "vercel-toolbar-experiment-uuid-https://staging.voicesradio.co.uk",
+          "value": "\"ubey3Ym8RLLGLE02R-_aY\""
+        },
+        {
+          "name": "vid-https://staging.voicesradio.co.uk",
+          "value": "\"17865421710560.013381462855250992\""
+        }
+      ]
+    }
+  ]
+}

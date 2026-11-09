@@ -7,10 +7,11 @@
 
 # testing
 /coverage
-/test-results/
-/playwright-report/
-/playwright-transform-cache-*/
-/artifacts/
+/test-results
+/playwright-report
+/playwright-report-staging
+/blob-report
+/playwright/.cache
 
 # next.js
 /.next/
@@ -41,13 +42,40 @@ next-env.d.ts
 # bolt folder (separate Vite project)
 /bolt/
 
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.git/
+*.log
+*.lock
+*.csv
+*.pdf
+*.png
+!public/mobile-app-badges.png
+*.jpg
+.env
+.env*
+
+# Playwright transform cache (content-hashed, regenerated per run)
+playwright-transform-cache-501/
+
+# Claude Code: downloaded skill artifacts (reproducible from skills-lock.json,
+# which stays tracked; .claude/skills/* are symlinks into .agents/skills/)
+# and machine-local settings
+.agents/
+.claude/skills/
+.claude/settings.local.json
+
+# Session scratch: planning/audit notes, not shipped deliverables
+/tasks/
+
+# local tooling caches
 /node-compile-cache/
 /.playwright-mcp/
 core-js-banners
 .claude/settings.local.json
 
-.agents/
-.claude/
-tasks/
 AGENTS.md
 CLAUDE.md

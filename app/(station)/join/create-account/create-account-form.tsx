@@ -1,0 +1,343 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import {
+  AccountPageIntro,
+  AccountSurface,
+  accountFieldClassName,
+  accountPrimaryButtonClassName,
+  accountSecondaryButtonClassName,
+  accountSurfaceStaticClassName,
+} from "../../account/components/account-surface";
+import ResendVerification from "../../verify-email/resend-verification";
+import JoinSteps from "../join-steps";
+import { createAccountAction, type CreateAccountState } from "./actions";
+import { formatMinorUnitsWithCadence } from "@/lib/voices/membership/format";
+import { isMembershipCadence } from "@/lib/voices/membership/types";
+
+const initialState: CreateAccountState = undefined;
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      aria-busy={pending}
+      className={cn(
+        accountPrimaryButtonClassName,
+        "h-12 w-full px-6 text-base",
+      )}
+    >
+      {pending ? "Taking you to payment…" : "Continue to payment"}
+    </button>
+  );
+}
+
+/** `£3.99/month`, or a fallback while the amount is unknown. */
+function displayContribution(amount: string, cadence: string): string | null {
+  const parsed = Number.parseInt(amount, 10);
+  if (!Number.isInteger(parsed) || parsed <= 0) return null;
+  return formatMinorUnitsWithCadence(
+    parsed,
+    "gbp",
+    isMembershipCadence(cadence) ? cadence : "monthly",
+  );
+}
+
+function AccountPass({ amount, cadence }: { amount: string; cadence: string }) {
+  const contribution = displayContribution(amount, cadence);
+  const passRows = [
+    ["Contribution", contribution ?? "Voices membership"],
+    ["Billing", cadence || "Selected at checkout"],
+    ["Next", "Secure payment"],
+  ];
+
+  return (
+    <aside className={cn(accountSurfaceStaticClassName, "self-start md:mt-14")}>
+      <p className="font-gabarito text-xs font-bold uppercase tracking-[1.6px] text-voicesNext-orangeText">
+        Member pass
+      </p>
+      <div className="mt-5 space-y-4">
+        {passRows.map(([label, value]) => (
+          <div
+            key={label}
+            className="border-b border-voicesNext-border/70 pb-3 last:border-b-0 last:pb-0"
+          >
+            <p className="font-gabarito text-[11px] font-bold uppercase tracking-[1.2px] text-voicesNext-cream/50">
+              {label}
+            </p>
+            <p className="mt-1 font-gabarito text-sm font-bold capitalize text-voicesNext-cream">
+              {value}
+            </p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+export default function CreateAccountForm({
+  amount,
+  cadence,
+  next,
+}: {
+  amount: string;
+  cadence: string;
+  /** Same-site path the visitor was headed to before /join, if any. */
+  next?: string;
+}) {
+  const contribution = displayContribution(amount, cadence);
+  const [state, formAction] = useFormState(createAccountAction, initialState);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (state?.status === "error" && state.formError) {
+      errorRef.current?.focus();
+    }
+  }, [state]);
+
+  if (state?.status === "account_exists") {
+    // A visitor who came here from a heart/bookmark wants to get back to it;
+    // otherwise resume the payment they were in the middle of.
+    const resume = next ?? `/join/checkout?amount=${amount}&cadence=${cadence}`;
+    return (
+      <div
+        className="mx-auto max-w-[480px] px-4 py-16 text-center md:px-0"
+        role="status"
+      >
+        <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
+          You already have an account
+        </h1>
+        <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
+          There&rsquo;s already a Voices account for{" "}
+          <strong>{state.email}</strong>. Sign in and we&rsquo;ll take you
+          {next
+            ? " straight back."
+            : ` straight to payment${contribution ? ` for your ${contribution} membership` : ""}.`}
+        </p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link
+            href={`/sign-in?next=${encodeURIComponent(resume)}`}
+            className={cn(accountPrimaryButtonClassName, "h-12 px-6 text-base")}
+          >
+            Sign in
+          </Link>
+          <Link
+            href={`/forgot-password?next=${encodeURIComponent(resume)}`}
+            className={cn(
+              accountSecondaryButtonClassName,
+              "h-12 px-6 text-base",
+            )}
+          >
+            Forgot password?
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (state?.status === "setup_pending") {
+    return (
+      <div
+        className="mx-auto max-w-[480px] px-4 py-16 text-center md:px-0"
+        role="status"
+      >
+        <h1 className="font-outfit text-3xl font-black uppercase text-voicesNext-cream">
+          You&rsquo;ve already joined
+        </h1>
+        <p className="mt-4 font-gabarito text-base leading-relaxed text-voicesNext-cream/90">
+          Your payment for <strong>{state.email}</strong> went through, but your
+          account isn&rsquo;t set up yet. We&rsquo;ve just emailed a new link to
+          confirm your email and create your password.
+        </p>
+        <div className="mt-8 border-t border-voicesNext-border pt-6">
+          <p className="mb-3 font-gabarito text-sm text-voicesNext-cream/70">
+            Nothing arrived? Check your spam folder, or:
+          </p>
+          <ResendVerification email={state.email} next="/account" />
+        </div>
+      </div>
+    );
+  }
+
+  const fieldErrors = state?.status === "error" ? state.fieldErrors : undefined;
+  // Echoed back on every error return. Without these the inputs re-render
+  // empty and a single mistyped character costs the visitor the whole form.
+  const values = state?.status === "error" ? state.values : undefined;
+
+  return (
+    <div className="mx-auto grid max-w-[980px] gap-6 px-4 py-12 md:grid-cols-[minmax(0,1fr)_320px] md:px-8 md:py-16">
+      <div className="order-2 md:order-1">
+        <JoinSteps current={2} />
+        <AccountPageIntro
+          eyebrow="Join Voices"
+          title="Your details"
+          description={
+            contribution
+              ? `Joining at ${contribution}. Pay next, then choose your password from the email we send you.`
+              : "Tell us who you are, then pay. You'll choose your password afterwards."
+          }
+        />
+
+        <AccountSurface className="mt-6">
+          <form action={formAction} noValidate className="flex flex-col gap-5">
+            <input type="hidden" name="amount" value={amount} />
+            <input type="hidden" name="cadence" value={cadence} />
+
+            {state?.status === "error" && state.formError && (
+              <div
+                ref={errorRef}
+                role="alert"
+                aria-live="assertive"
+                tabIndex={-1}
+                data-testid="form-error"
+                className="rounded-voices-sm border border-voicesNext-orange bg-voicesNext-background px-4 py-3 font-gabarito text-sm text-voicesNext-cream focus:outline-none"
+              >
+                {state.formError}
+              </div>
+            )}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="firstName"
+                  className="font-gabarito text-sm font-bold text-voicesNext-cream"
+                >
+                  First name
+                </label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  defaultValue={values?.firstName}
+                  required
+                  aria-invalid={Boolean(fieldErrors?.firstName)}
+                  aria-describedby={
+                    fieldErrors?.firstName ? "firstName-error" : undefined
+                  }
+                  className={accountFieldClassName}
+                />
+                {fieldErrors?.firstName && (
+                  <p
+                    id="firstName-error"
+                    className="font-asap text-sm text-voicesNext-orange"
+                  >
+                    {fieldErrors.firstName}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="lastName"
+                  className="font-gabarito text-sm font-bold text-voicesNext-cream"
+                >
+                  Last name
+                </label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  defaultValue={values?.lastName}
+                  required
+                  aria-invalid={Boolean(fieldErrors?.lastName)}
+                  aria-describedby={
+                    fieldErrors?.lastName ? "lastName-error" : undefined
+                  }
+                  className={accountFieldClassName}
+                />
+                {fieldErrors?.lastName && (
+                  <p
+                    id="lastName-error"
+                    className="font-asap text-sm text-voicesNext-orange"
+                  >
+                    {fieldErrors.lastName}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="email"
+                className="font-gabarito text-sm font-bold text-voicesNext-cream"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                defaultValue={values?.email}
+                required
+                aria-invalid={Boolean(fieldErrors?.email)}
+                aria-describedby={
+                  fieldErrors?.email ? "email-error" : undefined
+                }
+                className={accountFieldClassName}
+              />
+              {fieldErrors?.email && (
+                <p
+                  id="email-error"
+                  className="font-asap text-sm text-voicesNext-orange"
+                >
+                  {fieldErrors.email}
+                </p>
+              )}
+            </div>
+
+            <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
+              <input
+                type="checkbox"
+                name="newsletters"
+                defaultChecked={values?.newsletters}
+                className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background motion-reduce:transition-none"
+              />
+              Send me the Voices newsletter. You can change this any time in
+              your account.
+            </label>
+
+            <label className="flex items-start gap-2 font-asap text-sm text-voicesNext-cream/90">
+              <input
+                type="checkbox"
+                name="memberUpdates"
+                // On for a fresh form; after a failed submit, keep whatever
+                // the visitor chose so unticking it isn't undone.
+                defaultChecked={values ? values.memberUpdates : true}
+                className="mt-0.5 h-5 w-5 shrink-0 rounded border-voicesNext-border bg-voicesNext-background text-voicesNext-orange transition-transform duration-200 checked:scale-105 focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background motion-reduce:transition-none"
+              />
+              Send me member-only updates, such as event discounts and
+              early-release tickets. You can change this any time in your
+              account.
+            </label>
+
+            <SubmitButton />
+          </form>
+        </AccountSurface>
+
+        <p className="mt-6 font-gabarito text-sm text-voicesNext-cream/70">
+          Already have an account?{" "}
+          <Link
+            href={
+              next ? `/sign-in?next=${encodeURIComponent(next)}` : "/sign-in"
+            }
+            className="font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
+          >
+            Sign in
+          </Link>
+        </p>
+      </div>
+      <div className="order-1 md:order-2">
+        <AccountPass amount={amount} cadence={cadence} />
+      </div>
+    </div>
+  );
+}

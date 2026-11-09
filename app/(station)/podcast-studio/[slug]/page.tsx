@@ -1,22 +1,22 @@
+import { PortableText } from "@portabletext/react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getBaseUrl } from "@/lib/site-url";
+import {
+  buildLocationJsonLd,
+  buildLocationMetadata,
+} from "@/lib/location-page";
 import {
   getLocationPageBySlug,
   getLocationPageSlugs,
   getPodcast,
 } from "@/sanity.client";
-import { getBaseUrl } from "@/lib/site-url";
 import { urlForImage } from "@/sanity.image";
-import { PortableText } from "@portabletext/react";
-import { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 import { JsonLd } from "../../../components/json-ld";
-import {
-  DEFAULT_PRICE_RANGE,
-  STUDIO_ADDRESS,
-  STUDIO_EMAIL,
-} from "@/lib/podcast-studio-facts";
+import { blogPortableTextComponents } from "../../blog/components/portable-text-components";
 
-export const revalidate = 3600;
+type Params = Promise<{ slug: string }>;
 
 export async function generateStaticParams() {
   const slugs = await getLocationPageSlugs();
@@ -26,184 +26,104 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Params;
 }): Promise<Metadata> {
-  const page = await getLocationPageBySlug(params.slug);
+  const { slug } = await params;
+  const page = await getLocationPageBySlug(slug);
   if (!page) return {};
-
-  const title = page.seoTitle ?? page.h1;
-  const description =
-    page.seoDescription ??
-    `Book Voices Radio's professional podcast studio in ${page.localityName}. State-of-the-art recording and audio production available to hire.`;
 
   const ogImageUrl = page.ogImage
     ? urlForImage(page.ogImage).width(1200).height(627).url()
     : undefined;
 
-  return {
-    title,
-    description,
-    ...(page.keywords && { keywords: page.keywords.join(", ") }),
-    alternates: { canonical: `/podcast-studio/${params.slug}` },
-    openGraph: {
-      title,
-      description,
-      ...(ogImageUrl && {
-        images: [{ url: ogImageUrl, width: 1200, height: 627 }],
-      }),
-    },
-    twitter: {
-      title,
-      description,
-      card: "summary_large_image",
-      ...(ogImageUrl && { images: [ogImageUrl] }),
-    },
-  };
+  return buildLocationMetadata(page, slug, ogImageUrl);
 }
 
-export default async function LocationPage({
+const ctaClassName =
+  "inline-flex h-14 items-center justify-center border border-voicesNext-orange bg-voicesNext-orange px-8 font-gabarito text-lg font-bold text-voicesNext-background transition-colors hover:bg-voicesNext-cream focus:outline-none focus:ring-2 focus:ring-voicesNext-orange focus:ring-offset-2 focus:ring-offset-voicesNext-background";
+
+const inlineLinkClassName =
+  "text-voicesNext-orangeText underline underline-offset-2 hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange";
+
+export default async function LocationPageRoute({
   params,
 }: {
-  params: { slug: string };
+  params: Params;
 }) {
+  const { slug } = await params;
   const [page, podcast] = await Promise.all([
-    getLocationPageBySlug(params.slug),
+    getLocationPageBySlug(slug),
     getPodcast(),
   ]);
 
   if (!page) notFound();
 
-  const baseUrl = getBaseUrl();
-
-  // ── JSON-LD: LocalBusiness ─────────────────────────────────────────────
-  const localBusiness: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "RecordingStudio",
-    name: "Voices Radio Podcast Studio",
-    description:
-      page.seoDescription ??
-      `Professional podcast studio for hire in ${page.localityName}.`,
-    url: `${baseUrl}/podcast-studio/${params.slug}`,
-    email: STUDIO_EMAIL,
-    ...(podcast?.phone && { telephone: podcast.phone }),
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: podcast?.streetAddress ?? STUDIO_ADDRESS.streetAddress,
-      addressLocality: podcast?.locality ?? STUDIO_ADDRESS.locality,
-      postalCode: podcast?.postalCode ?? STUDIO_ADDRESS.postalCode,
-      addressCountry: "GB",
-    },
-    ...(podcast?.geoLat &&
-      podcast?.geoLng && {
-        geo: {
-          "@type": "GeoCoordinates",
-          latitude: podcast.geoLat,
-          longitude: podcast.geoLng,
-        },
-      }),
-    ...(podcast?.openingHours?.length && {
-      openingHours: podcast.openingHours,
-    }),
-    priceRange: podcast?.priceRange ?? DEFAULT_PRICE_RANGE,
-    areaServed: page.localityName,
-  };
-
-  // ── JSON-LD: FAQPage ───────────────────────────────────────────────────
-  const faqJsonLd = page.faq?.length
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: page.faq.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: { "@type": "Answer", text: item.answer },
-        })),
-      }
-    : null;
-
-  // ── JSON-LD: BreadcrumbList ────────────────────────────────────────────
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: baseUrl,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Podcast Studio",
-        item: `${baseUrl}/podcast`,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: page.h1,
-        item: `${baseUrl}/podcast-studio/${params.slug}`,
-      },
-    ],
-  };
+  const { localBusiness, faq, breadcrumb } = buildLocationJsonLd({
+    page,
+    podcast,
+    baseUrl: getBaseUrl(),
+    slug,
+  });
 
   return (
     <>
       <JsonLd data={localBusiness} />
-      <JsonLd data={breadcrumbJsonLd} />
-      {faqJsonLd && <JsonLd data={faqJsonLd} />}
+      <JsonLd data={breadcrumb} />
+      {faq && <JsonLd data={faq} />}
 
-      <main>
-        {/* Hero / H1 */}
-        <section className="relative overflow-hidden bg-voices-beige px-6 py-16 md:px-8 md:py-24">
-          <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">
-            <h1 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
+      <main id="main-content" className="scroll-mt-24">
+        <section className="border-b border-voicesNext-border">
+          <div className="mx-auto max-w-[1120px] px-4 py-12 md:px-8 md:py-20">
+            <p className="mb-4 font-asap text-sm font-bold uppercase text-voicesNext-orangeText">
+              Podcast Studio
+            </p>
+            <h1 className="text-balance max-w-4xl font-outfit text-5xl font-black uppercase leading-[0.95] text-voicesNext-cream md:text-7xl">
               {page.h1}
             </h1>
 
             {page.intro && (
-              <div className="space-y-4 text-mobile-inter-text md:text-inter-text">
-                <PortableText value={page.intro} />
+              <div className="mt-6 max-w-2xl">
+                <PortableText
+                  value={page.intro}
+                  components={blogPortableTextComponents}
+                />
               </div>
             )}
 
             {page.ctaText && page.ctaUrl && (
-              <div className="flex flex-1 flex-col items-center gap-8 md:gap-10">
-                <Link
-                  className="rounded-full bg-transparent px-20 py-[1.125rem] text-mobile-inter-text text-black ring-4 ring-inset ring-black md:text-inter-text"
-                  href={page.ctaUrl}
-                >
-                  {page.ctaText}
-                </Link>
-              </div>
+              <Link href={page.ctaUrl} className={`${ctaClassName} mt-8`}>
+                {page.ctaText}
+              </Link>
             )}
           </div>
         </section>
 
-        {/* Body */}
         {page.body && (
-          <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
-            <div className="mx-auto max-w-5xl space-y-4 text-mobile-inter-text md:text-inter-text">
-              <PortableText value={page.body} />
+          <section className="border-b border-voicesNext-border">
+            <div className="mx-auto max-w-[1120px] px-4 py-12 md:px-8 md:py-16">
+              <div className="max-w-3xl">
+                <PortableText
+                  value={page.body}
+                  components={blogPortableTextComponents}
+                />
+              </div>
             </div>
           </section>
         )}
 
-        {/* FAQ */}
         {page.faq && page.faq.length > 0 && (
-          <section className="relative overflow-hidden bg-voices-beige px-6 py-12 md:px-8 md:py-20">
-            <div className="mx-auto max-w-5xl space-y-8 md:space-y-10">
-              <h2 className="text-center font-kinfolk text-mobile-kinfolk-headline uppercase md:text-kinfolk-headline">
-                Frequently Asked Questions
+          <section className="border-b border-voicesNext-border">
+            <div className="mx-auto max-w-[1120px] px-4 py-12 md:px-8 md:py-16">
+              <h2 className="font-gabarito text-2xl font-bold text-voicesNext-cream md:text-3xl">
+                Frequently asked questions
               </h2>
-
-              <dl className="space-y-6">
-                {page.faq.map((item, i) => (
-                  <div key={i} className="space-y-2">
-                    <dt className="text-mobile-inter-text font-semibold md:text-inter-text">
+              <dl className="mt-8 grid max-w-3xl gap-6">
+                {page.faq.map((item) => (
+                  <div key={item.question}>
+                    <dt className="font-gabarito text-lg font-bold text-voicesNext-cream">
                       {item.question}
                     </dt>
-                    <dd className="text-mobile-inter-text md:text-inter-text">
+                    <dd className="mt-2 font-gabarito text-base leading-relaxed text-voicesNext-secondary">
                       {item.answer}
                     </dd>
                   </div>
@@ -213,15 +133,14 @@ export default async function LocationPage({
           </section>
         )}
 
-        {/* Internal nav */}
-        <section className="bg-voices-beige px-6 pb-12 md:px-8 md:pb-20">
-          <div className="mx-auto max-w-5xl space-y-4 text-mobile-inter-text md:text-inter-text">
-            <p>
-              <Link className="underline underline-offset-2" href="/podcast">
+        <section>
+          <div className="mx-auto max-w-[1120px] px-4 py-10 md:px-8">
+            <p className="font-gabarito text-base text-voicesNext-secondary">
+              <Link href="/podcast" className={inlineLinkClassName}>
                 Learn more about the Voices Radio podcast studio
               </Link>{" "}
               or{" "}
-              <Link className="underline underline-offset-2" href="/services">
+              <Link href="/services" className={inlineLinkClassName}>
                 view all our services
               </Link>
               .

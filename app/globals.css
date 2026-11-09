@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --voices-color-background: #242424;
+  --voices-color-surface: #313131;
+  --voices-color-text-primary: #f8efe0;
+  --voices-color-text-inverse: #161616;
+  --voices-color-text-secondary: #999999;
+  --voices-color-accent-primary: #d34e24;
+  --voices-color-status-live: #db1a1a;
+  --voices-color-white: #ffffff;
+  /* Keep in sync with SAFE_AREA_COLOR in lib/design-tokens.js — CSS can't
+     import that module, so this one has to be updated by hand. */
+  --voices-mobile-safe-area-background: #4b4b4b;
+  /* Lightened from #6f6a63 (2.90:1 on background) to clear the 3:1
+     non-text minimum — keep in sync with tailwind.config.js voicesNext.border. */
+  --voices-color-border-subtle: #7e796f;
+
+  --voices-space-2: 2px;
+  --voices-space-4: 4px;
+  --voices-space-8: 8px;
+  --voices-space-10: 10px;
+  --voices-space-12: 12px;
+  --voices-space-16: 16px;
+  --voices-space-20: 20px;
+  --voices-space-24: 24px;
+  --voices-space-40: 40px;
+
+  --voices-radius-none: 0;
+  --voices-radius-xs: 4px;
+  --voices-radius-sm: 8px;
+  --voices-radius-md: 20px;
+  --voices-radius-lg: 40px;
+  --voices-radius-full: 100px;
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--voices-mobile-safe-area-background);
+  }
+
+  /* Removes the ~300ms double-tap-zoom delay on touch, and the default
+     gray/blue tap-flash — every interactive element already has its own
+     deliberate focus-visible ring, so the browser's tap highlight is
+     redundant rather than an a11y aid. */
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  /* Backport of Tailwind 3.4's text-balance utility — this project is
+     pinned to tailwindcss 3.3.3, which predates it. */
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
 .grid-template-navigation {
   @apply gap-2;
 
@@ -22,6 +82,228 @@
 
 .overflow-y-scroll {
   -webkit-overflow-scrolling: touch;
+}
+
+.voices-nav-link {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  color: var(--voices-color-text-primary);
+  transition: color 180ms ease;
+}
+
+.voices-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 3px);
+  width: calc(100% + 16px);
+  height: 16px;
+  pointer-events: none;
+  background-image: url("/nav-underline.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  opacity: 0;
+  transform: translateX(-50%) scaleX(0.82);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.voices-nav-link:hover::after,
+.voices-nav-link:focus-visible::after,
+.voices-nav-link[data-active="true"]::after,
+.voices-nav-link[data-state="open"]::after {
+  opacity: 1;
+  transform: translateX(-50%) scaleX(1);
+}
+
+.voices-on-air-marquee {
+  animation: voices-on-air-marquee 18s linear infinite;
+}
+
+.voices-coming-soon-marquee {
+  animation: voices-on-air-marquee 22s linear infinite;
+}
+
+@keyframes voices-on-air-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.voices-east-orbit {
+  animation: voices-east-orbit 3.2s ease-out infinite;
+}
+
+.voices-east-orbit-delayed {
+  animation-delay: 1.15s;
+}
+
+.voices-east-signal {
+  animation: voices-east-signal 2.4s ease-in-out infinite;
+}
+
+.voices-east-tease {
+  animation: voices-east-tease 2.8s ease-in-out infinite;
+}
+
+.voices-east-tuning-dot {
+  animation: voices-east-tuning-dot 1.3s ease-in-out infinite;
+}
+
+.voices-schedule-pulse {
+  animation: voices-schedule-pulse 3.6s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.voices-chat-bubble {
+  animation: voices-chat-bubble 3.2s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@keyframes voices-east-orbit {
+  0% {
+    opacity: 0;
+    transform: scale(0.48);
+  }
+
+  35% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes voices-east-signal {
+  0%,
+  100% {
+    transform: scale(0.94) rotate(-3deg);
+  }
+
+  50% {
+    transform: scale(1.04) rotate(3deg);
+  }
+}
+
+@keyframes voices-east-tease {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes voices-east-tuning-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(211 78 36 / 55%);
+    transform: scale(0.8);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgb(211 78 36 / 0%);
+    transform: scale(1);
+  }
+}
+
+/* Calendar icon on the mobile live strips: a slow, low-contrast pulse that
+   reads as "there's something here" without competing with the live dot. */
+@keyframes voices-schedule-pulse {
+  0%,
+  100% {
+    opacity: 0.68;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+/* Chat icon on the mobile live strips: a gentle bob, as if the bubble is
+   surfacing. Paired with the calendar pulse but deliberately off-tempo. */
+@keyframes voices-chat-bubble {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: translateY(1px) scale(0.94);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(-1.5px) scale(1.06);
+  }
+
+  70% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Supporter strip "signal meter": a small equaliser that reads as the
+   station's output level — supporters are what keep the needle up. Each bar
+   runs the same bounce at its own tempo/phase; under reduced motion the bars
+   freeze at their CSS heights, still legible as a level meter. */
+.voices-signal-bar {
+  animation: voices-signal-bar 1s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.voices-signal-bar-2 {
+  animation-delay: 0.18s;
+  animation-duration: 1.3s;
+}
+
+.voices-signal-bar-3 {
+  animation-delay: 0.42s;
+  animation-duration: 0.9s;
+}
+
+.voices-signal-bar-4 {
+  animation-delay: 0.12s;
+  animation-duration: 1.15s;
+}
+
+.voices-signal-bar-5 {
+  animation-delay: 0.33s;
+  animation-duration: 1.05s;
+}
+
+@keyframes voices-signal-bar {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voices-on-air-marquee,
+  .voices-coming-soon-marquee,
+  .voices-east-orbit,
+  .voices-east-signal,
+  .voices-east-tease,
+  .voices-east-tuning-dot,
+  .voices-schedule-pulse,
+  .voices-chat-bubble,
+  .voices-signal-bar {
+    animation: none;
+  }
 }
 
 /* Capsize Augments */
