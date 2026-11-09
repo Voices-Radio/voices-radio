@@ -28,6 +28,7 @@ export default function RedeemButton({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState<string | null>(null);
 
   async function handleClick() {
     setLoading(true);
@@ -36,13 +37,20 @@ export default function RedeemButton({
     try {
       result = await redeemAction(benefitId, idempotencyKeyRef.current!);
     } catch {
-      result = { ok: false, message: "Something went wrong. Please try again." };
+      result = {
+        ok: false,
+        message: "Something went wrong. Please try again.",
+      };
     } finally {
       setLoading(false);
     }
 
     if (result.ok) {
-      trackMembershipEvent({ name: "membership_benefit_redeemed", benefitSlug });
+      setCode(result.code);
+      trackMembershipEvent({
+        name: "membership_benefit_redeemed",
+        benefitSlug,
+      });
       router.refresh();
     } else {
       setError(result.message);
@@ -60,8 +68,17 @@ export default function RedeemButton({
       >
         {loading ? "Working…" : label}
       </button>
+      {code && (
+        <p className="mt-2 font-gabarito text-sm text-voicesNext-cream">
+          Your code:{" "}
+          <strong className="select-all tracking-wide">{code}</strong>
+        </p>
+      )}
       {error && (
-        <p role="alert" className="mt-2 font-gabarito text-sm text-voicesNext-orange">
+        <p
+          role="alert"
+          className="mt-2 font-gabarito text-sm text-voicesNext-orange"
+        >
           {error}
         </p>
       )}

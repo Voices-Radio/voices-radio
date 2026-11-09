@@ -210,14 +210,8 @@ describe("redeemBenefit", () => {
   it("sends the idempotency key in the BODY, not a header — a different mechanism from every other mutation here", async () => {
     vi.mocked(authedFetch).mockResolvedValue(
       response({
-        id: "b1",
-        slug: "shop-discount",
-        name: "10% off",
-        state: "claimed",
-        capacityRemaining: null,
-        action: null,
-        availableFrom: null,
-        expiresAt: null,
+        benefit: { id: "b1", state: "available", code: "VOICES10" },
+        alreadyExisted: false,
       }),
     );
 
@@ -231,17 +225,33 @@ describe("redeemBenefit", () => {
     expect(headersOf(call)["Idempotency-Key"]).toBeUndefined();
   });
 
+  it("reads the backend's redeem answer and returns the code", async () => {
+    vi.mocked(authedFetch).mockResolvedValue(
+      response(
+        {
+          benefit: { id: "merch_discount_10", state: "available", code: "VOICES10" },
+          alreadyExisted: false,
+        },
+        201,
+      ),
+    );
+
+    const result = await redeemBenefit("merch_discount_10", "key");
+
+    expect(result).toEqual({
+      ok: true,
+      data: {
+        benefit: { id: "merch_discount_10", state: "available", code: "VOICES10" },
+        alreadyExisted: false,
+      },
+    });
+  });
+
   it("URL-encodes the benefit id", async () => {
     vi.mocked(authedFetch).mockResolvedValue(
       response({
-        id: "b/1",
-        slug: "shop-discount",
-        name: "10% off",
-        state: "claimed",
-        capacityRemaining: null,
-        action: null,
-        availableFrom: null,
-        expiresAt: null,
+        benefit: { id: "b/1", state: "available", code: "VOICES10" },
+        alreadyExisted: false,
       }),
     );
 
