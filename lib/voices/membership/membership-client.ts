@@ -10,13 +10,11 @@ import {
   supportersResponseSchema,
   membershipStateSchema,
   benefitsResponseSchema,
-  redemptionsResponseSchema,
   membershipProfileSchema,
   backendErrorEnvelopeSchema,
   type MembershipPlansApi,
   type MembershipState,
   type Benefit,
-  type Redemption,
   type MembershipProfile,
 } from "./schemas";
 
@@ -203,16 +201,6 @@ export async function getBenefits(): Promise<MembershipResult<Benefit[]>> {
     benefitsResponseSchema,
   );
   return result.ok ? { ok: true, data: result.data.benefits } : result;
-}
-
-export async function getRedemptions(): Promise<
-  MembershipResult<Redemption[]>
-> {
-  const result = await authedGet(
-    "/api/membership/redemptions",
-    redemptionsResponseSchema,
-  );
-  return result.ok ? { ok: true, data: result.data.redemptions } : result;
 }
 
 export function getProfile(): Promise<MembershipResult<MembershipProfile>> {

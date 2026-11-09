@@ -33,7 +33,7 @@ describe("redeemAction", () => {
     expect(redeemBenefit).toHaveBeenCalledWith("b1", "client-generated-key-123");
   });
 
-  it("revalidates the benefits, dashboard and redemptions pages on success", async () => {
+  it("revalidates the benefits and dashboard pages on success", async () => {
     vi.mocked(redeemBenefit).mockResolvedValue({
       ok: true,
       data: {
@@ -47,7 +47,7 @@ describe("redeemAction", () => {
     expect(result).toEqual({ ok: true, code: "VOICES10" });
     expect(revalidatePath).toHaveBeenCalledWith("/account/benefits");
     expect(revalidatePath).toHaveBeenCalledWith("/account");
-    expect(revalidatePath).toHaveBeenCalledWith("/account/redemptions");
+    expect(revalidatePath).not.toHaveBeenCalledWith("/account/redemptions");
   });
 
   it("surfaces a distinct message for a lost capacity race without revalidating", async () => {

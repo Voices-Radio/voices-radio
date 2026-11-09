@@ -236,22 +236,6 @@ export const portalSessionResponseSchema = z.object({
   url: z.string().url(),
 });
 
-export const redemptionSchema = z.object({
-  benefitName: z.string(),
-  status: z.string(),
-  claimedAt: z.string().nullable(),
-  usedAt: z.string().nullable(),
-  expiresAt: z.string().nullable(),
-  instructions: z.string().nullable(),
-  code: z.string(),
-  terms: z.string().nullable(),
-});
-export type Redemption = z.infer<typeof redemptionSchema>;
-
-export const redemptionsResponseSchema = z.object({
-  redemptions: z.array(redemptionSchema),
-});
-
 /**
  * A structured postal address, matching what the backend actually stores
  * (routes/membership/profile.js persists line1/line2/city/postcode/country).

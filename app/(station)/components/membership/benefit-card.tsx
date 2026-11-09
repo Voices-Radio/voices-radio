@@ -41,15 +41,6 @@ export default function BenefitCard({ benefit }: { benefit: Benefit }) {
         </p>
       )}
 
-      {(benefit.state === "claimed" || benefit.state === "used") && (
-        <Link
-          href="/account/redemptions"
-          className="w-fit font-gabarito text-sm font-bold text-voicesNext-cream underline underline-offset-2 hover:text-voicesNext-orange"
-        >
-          View your code
-        </Link>
-      )}
-
       {meta.actionable && (
         <div className="mt-1">
           <RedeemButton

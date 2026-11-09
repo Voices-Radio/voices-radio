@@ -80,7 +80,7 @@ describe("AccountMenu", () => {
     );
   });
 
-  it("renders the avatar with initials and the five account links for a signed-in member", async () => {
+  it("renders the avatar with initials and the account links for a signed-in member", async () => {
     mockSessionFetch(SIGNED_IN_USER);
     const user = userEvent.setup();
     render(
@@ -99,15 +99,13 @@ describe("AccountMenu", () => {
     const menu = screen.getByRole("menu", { name: /account/i });
     expect(menu).toHaveTextContent("Hi Jack");
     expect(menu).toHaveTextContent("jack@example.com");
-    for (const label of [
-      "Dashboard",
-      "Membership",
-      "Benefits",
-      "Redemptions",
-      "Profile",
-    ]) {
+    for (const label of ["Dashboard", "Membership", "Benefits", "Profile"]) {
       expect(screen.getByRole("menuitem", { name: label })).toBeInTheDocument();
     }
+    // Redemptions only listed code reveals, not real use in the shop.
+    expect(
+      screen.queryByRole("menuitem", { name: "Redemptions" }),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByRole("menuitem", { name: /sign out/i }),
     ).toBeInTheDocument();
