@@ -12,7 +12,7 @@ import {
   cancelResponseSchema,
   resumeResponseSchema,
   portalSessionResponseSchema,
-  benefitSchema,
+  redeemResponseSchema,
   membershipProfileSchema,
   type CheckoutResponse,
   type PreviewChangeResponse,
@@ -191,7 +191,7 @@ export function createPortalSession(returnUrl: string | undefined) {
 export function redeemBenefit(benefitId: string, idempotencyKey: string) {
   return authedMutate(
     `/api/membership/benefits/${encodeURIComponent(benefitId)}/redeem`,
-    benefitSchema,
+    redeemResponseSchema,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

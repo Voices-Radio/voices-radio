@@ -2,11 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redeemBenefit } from "@/lib/voices/membership/membership-mutations";
-import type { Benefit } from "@/lib/voices/membership/schemas";
 
 export type RedeemResult =
-  | { ok: true; data: Benefit }
-  | { ok: false; message: string };
+  { ok: true; code: string | null } | { ok: false; message: string };
 
 /**
  * The idempotency key is generated once, client-side, per redeem-button
@@ -28,5 +26,5 @@ export async function redeemAction(
   revalidatePath("/account/benefits");
   revalidatePath("/account");
   revalidatePath("/account/redemptions");
-  return { ok: true, data: result.data };
+  return { ok: true, code: result.data.benefit.code ?? null };
 }

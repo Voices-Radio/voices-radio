@@ -23,14 +23,8 @@ describe("redeemAction", () => {
     vi.mocked(redeemBenefit).mockResolvedValue({
       ok: true,
       data: {
-        id: "b1",
-        slug: "studio-session",
-        name: "Studio session",
-        state: "claimed",
-        capacityRemaining: null,
-        action: null,
-        availableFrom: null,
-        expiresAt: null,
+        benefit: { id: "b1", state: "available", code: "VOICES10" },
+        alreadyExisted: false,
       },
     });
 
@@ -43,20 +37,14 @@ describe("redeemAction", () => {
     vi.mocked(redeemBenefit).mockResolvedValue({
       ok: true,
       data: {
-        id: "b1",
-        slug: "studio-session",
-        name: "Studio session",
-        state: "claimed",
-        capacityRemaining: null,
-        action: null,
-        availableFrom: null,
-        expiresAt: null,
+        benefit: { id: "b1", state: "available", code: "VOICES10" },
+        alreadyExisted: false,
       },
     });
 
     const result = await redeemAction("b1", "key-1");
 
-    expect(result.ok).toBe(true);
+    expect(result).toEqual({ ok: true, code: "VOICES10" });
     expect(revalidatePath).toHaveBeenCalledWith("/account/benefits");
     expect(revalidatePath).toHaveBeenCalledWith("/account");
     expect(revalidatePath).toHaveBeenCalledWith("/account/redemptions");

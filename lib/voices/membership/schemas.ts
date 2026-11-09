@@ -188,6 +188,18 @@ export const benefitsResponseSchema = z.object({
   benefits: z.array(benefitSchema),
 });
 
+// POST /benefits/:id/redeem answers with the benefit's new state and its code,
+// not a catalogue entry (backend routes/membership/benefits.js). Ballot and
+// capacity benefits have no code.
+export const redeemResponseSchema = z.object({
+  benefit: z.object({
+    id: z.string(),
+    state: z.string(),
+    code: z.string().nullish(),
+  }),
+  alreadyExisted: z.boolean(),
+});
+
 export const previewChangeResponseSchema = z.object({
   effectiveAt: z.string(),
   priceMinor: z.number().int().nonnegative(),
