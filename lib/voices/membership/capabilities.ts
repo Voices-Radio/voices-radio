@@ -148,7 +148,6 @@ export function accountLinksForCapabilities(
       ? [
           { href: "/account/membership", label: "Membership" },
           { href: "/account/benefits", label: "Benefits" },
-          { href: "/account/redemptions", label: "Redemptions" },
           { href: "/account/profile", label: "Profile" },
         ]
       : []),

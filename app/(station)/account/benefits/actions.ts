@@ -25,6 +25,5 @@ export async function redeemAction(
 
   revalidatePath("/account/benefits");
   revalidatePath("/account");
-  revalidatePath("/account/redemptions");
   return { ok: true, code: result.data.benefit.code ?? null };
 }

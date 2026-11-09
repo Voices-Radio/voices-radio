@@ -37,7 +37,6 @@ describe("accountLinksForCapabilities", () => {
       "Favourites",
       "Membership",
       "Benefits",
-      "Redemptions",
       "Profile",
     ]);
   });
@@ -60,7 +59,6 @@ describe("accountLinksForCapabilities", () => {
       "Favourites",
       "Membership",
       "Benefits",
-      "Redemptions",
       "Profile",
     ]);
   });

@@ -9,7 +9,6 @@ const {
   getBenefits,
   getMembership,
   getProfile,
-  getRedemptions,
   getSupporters,
   getPlans,
 } = await import("./membership-client");
@@ -203,7 +202,7 @@ describe("getSupporters", () => {
   });
 });
 
-describe("authenticated reads (getMembership/getBenefits/getRedemptions/getProfile)", () => {
+describe("authenticated reads (getMembership/getBenefits/getProfile)", () => {
   it("returns NO_SESSION without calling fetch when there's no access token", async () => {
     vi.mocked(getAccessToken).mockResolvedValue(undefined);
     const fetchMock = vi.fn();
@@ -262,27 +261,6 @@ describe("authenticated reads (getMembership/getBenefits/getRedemptions/getProfi
 
     const result = await getBenefits();
     expect(result.ok).toBe(false);
-  });
-
-  it("getRedemptions unwraps the {redemptions: [...]} envelope", async () => {
-    vi.mocked(getAccessToken).mockResolvedValue("token-123");
-    const redemption = {
-      benefitName: "Studio session",
-      status: "used",
-      claimedAt: "2027-01-01T00:00:00Z",
-      usedAt: "2027-01-02T00:00:00Z",
-      expiresAt: null,
-      instructions: null,
-      code: "VOICES-AB12CD",
-      terms: null,
-    };
-    mockFetchOnce(
-      new Response(JSON.stringify({ redemptions: [redemption] }), {
-        status: 200,
-      }),
-    );
-
-    expect(await getRedemptions()).toEqual({ ok: true, data: [redemption] });
   });
 
   it("getProfile returns the profile object directly (no envelope to unwrap)", async () => {
