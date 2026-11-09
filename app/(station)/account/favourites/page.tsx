@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { getFavouriteLists, getFavourites } from "@/lib/voices/favourites/client";
+import {
+  getFavouriteLists,
+  getFavourites,
+} from "@/lib/voices/favourites/client";
 import { canOrganisePlaylists } from "@/lib/voices/membership/capabilities";
 import { lookupCapabilities } from "@/lib/voices/membership/session";
 import { AccountPageIntro } from "../components/account-surface";
@@ -82,9 +85,15 @@ export default async function AccountFavouritesPage({
           </p>
         ) : (
           <FavouritesLoadMore
+            // Its shows live in state seeded once on mount. Switching between
+            // two non-empty playlists reuses the instance, so without a key
+            // per list the previous playlist's shows stayed on screen.
+            key={list ?? "all"}
             initialShows={favouritesResult.data.favourites
               .map((row) => row.show)
-              .filter((show): show is NonNullable<typeof show> => Boolean(show))}
+              .filter((show): show is NonNullable<typeof show> =>
+                Boolean(show),
+              )}
             initialCursor={favouritesResult.data.nextCursor}
             listId={list}
           />
