@@ -364,7 +364,7 @@ export default defineType({
       name: "applyBanner",
       title: "Apply for a show banner",
       description:
-        "Sits between Featured and the swimlanes. The button link comes from Settings → Apply link.",
+        "Right-hand half of the Get Involved block at the bottom of the home page (beside Become a Supporter). The button link comes from Settings → Apply link.",
       type: "object",
       group: "apply",
       fields: [

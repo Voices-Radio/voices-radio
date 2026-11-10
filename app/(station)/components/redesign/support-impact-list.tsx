@@ -2,7 +2,7 @@
 // — keeps the panel carrying real meaning instead of collapsing to a gap.
 const IMPACT = [
   "Studio time for new shows",
-  "Fair pay for the DJs on air",
+  "Continued reinvestment back into our community",
   "A free, open archive for everyone",
 ];
 
