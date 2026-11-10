@@ -79,7 +79,7 @@ export interface HomeApplyBanner {
 
 /**
  * The homepage below the feature panel is a fixed sequence:
- * latestKx → featured → Apply banner → swimlanes (0..N, CMS order).
+ * latestKx → featured → swimlanes (0..N, CMS order); Apply banner renders in the Get Involved block.
  */
 export interface HomePageContent {
   featuredItems: HomeFeatureItem[];
