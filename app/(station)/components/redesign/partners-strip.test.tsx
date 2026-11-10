@@ -9,8 +9,8 @@ describe("PartnersStrip", () => {
     expect(getByRole("heading", { name: "Our Partners" })).toBeInTheDocument();
   });
 
-  it("lists TwoTribes and AlphaTheta", () => {
-    expect(partners.map((p) => p.name)).toEqual(["TwoTribes", "AlphaTheta"]);
+  it("lists TwoTribes", () => {
+    expect(partners.map((p) => p.name)).toEqual(["TwoTribes"]);
   });
 
   it("renders one external link per partner with a logo", () => {
