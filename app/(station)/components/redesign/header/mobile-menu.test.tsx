@@ -17,11 +17,14 @@ beforeEach(() => {
   );
 });
 
-async function openMenu(contactLink: string) {
+async function openMenu(
+  contactLink: string,
+  socials: { instagramLink?: string; mixcloudLink?: string } = {},
+) {
   const user = userEvent.setup();
   render(
     <SessionProvider>
-      <SiteHeader settings={{ contactLink }} />
+      <SiteHeader settings={{ contactLink, ...socials }} />
     </SessionProvider>,
   );
   // Both the phone and the tablet layout render a trigger; either opens it.
@@ -96,5 +99,39 @@ describe("MobileMenu layout", () => {
     const footer = join.parentElement?.parentElement;
     expect(footer).toHaveClass("sticky", "bottom-0");
     expect(footer).toHaveClass("bg-voicesNext-background");
+  });
+});
+
+describe("MobileMenu socials and current page", () => {
+  it("shows the station Instagram and Mixcloud in the phone and tablet menus", async () => {
+    await openMenu("/chat", {
+      instagramLink: "https://www.instagram.com/voicesradio/",
+      mixcloudLink: "https://www.mixcloud.com/voicesradio/",
+    });
+
+    const instagram = screen.getAllByRole("link", { name: "Instagram" });
+    const mixcloud = screen.getAllByRole("link", { name: "Mixcloud" });
+    expect(instagram).toHaveLength(2);
+    expect(mixcloud).toHaveLength(2);
+    for (const link of [...instagram, ...mixcloud]) {
+      expect(link).toHaveAttribute("target", "_blank");
+    }
+  });
+
+  it("hides the socials row when no social links are configured", async () => {
+    await openMenu("/chat");
+
+    expect(screen.queryByRole("link", { name: "Instagram" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Mixcloud" })).toBeNull();
+  });
+
+  it("marks the current page in the phone and tablet menus", async () => {
+    await openMenu("/chat");
+
+    const home = screen.getAllByRole("link", { name: "Home" });
+    expect(home).toHaveLength(2);
+    for (const link of home) {
+      expect(link).toHaveAttribute("aria-current", "page");
+    }
   });
 });

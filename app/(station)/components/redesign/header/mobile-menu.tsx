@@ -2,14 +2,19 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { Search, X } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
-import { cn } from "@/lib/utils";
 import type { NavLink } from "@/lib/voices/page-copy";
 import { readEmailFromMailto } from "@/lib/voices/mailto";
 import BrandMark from "../brand-mark";
 import ContactEmailCopy from "../contact-email-copy";
+import {
+  type MenuItem,
+  MenuSectionLabel,
+  MenuSocialLinks,
+  PrimaryMenuLink,
+  SecondaryMenuLink,
+} from "./menu-links";
 import { MobileAccountLinks } from "./mobile-account-links";
 import { MobileHeaderArtwork } from "./mobile-header-parts";
 import { isActive } from "./nav";
@@ -85,6 +90,40 @@ export function MobileMenu({
     ...desktopMenuLinks.filter((link) => !topBarHrefs.has(link.href)),
   ];
 
+  const closeMenu = () => onOpenChange(false);
+  const toMenuItem = (link: NavLink): MenuItem => ({
+    href: link.href,
+    label: link.label,
+    external: link.opensInNewTab,
+    active: isActive(pathname, link.href),
+  });
+
+  const phonePrimaryItems: MenuItem[] = [
+    { href: "/", label: "Home", active: isActive(pathname, "/") },
+    {
+      href: "/explore",
+      label: "Explore",
+      active: isActive(pathname, "/explore") || isActive(pathname, "/artists"),
+    },
+    { href: "/shows", label: "Archive", active: isActive(pathname, "/shows") },
+    { href: shopLink, label: "Shop", external: true },
+  ];
+  const collaborateItems = collaborateLinks.map(toMenuItem);
+  const stationItems: MenuItem[] = [
+    { href: "/about", label: "About", active: isActive(pathname, "/about") },
+    {
+      href: "/support",
+      label: "Membership",
+      active: isActive(pathname, "/support"),
+    },
+    {
+      href: contactLink,
+      label: "Contact",
+      active: contactLink.startsWith("/") && isActive(pathname, contactLink),
+    },
+  ];
+  const tabletItems = tabletMenuLinks.map(toMenuItem);
+
   function handleMobileSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -104,6 +143,7 @@ export function MobileMenu({
           aria-label="Navigation menu"
           aria-describedby={undefined}
         >
+          <Dialog.Title className="sr-only">Navigation menu</Dialog.Title>
           <div className="min-h-dvh flex flex-col md:hidden">
             <div className="grid min-h-[calc(48px+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center px-[14px] pb-[4px] pt-[calc(4px+env(safe-area-inset-top))]">
               <MobileHeaderArtwork />
@@ -186,114 +226,44 @@ export function MobileMenu({
               )}
             </div>
 
-            <nav
-              className="mt-9 flex flex-col gap-[25px] px-6"
-              aria-label="Menu"
-            >
-              <Link
-                href="/"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
-                  isActive(pathname, "/")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-                aria-current={isActive(pathname, "/") ? "page" : undefined}
-              >
-                Home
-              </Link>
-              <Link
-                href="/explore"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
-                  isActive(pathname, "/explore") ||
-                    isActive(pathname, "/artists")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-                aria-current={
-                  isActive(pathname, "/explore") ? "page" : undefined
-                }
-              >
-                Explore
-              </Link>
-              <Link
-                href="/shows"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
-                  isActive(pathname, "/shows")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-                aria-current={isActive(pathname, "/shows") ? "page" : undefined}
-              >
-                Archive
-              </Link>
-              <a
-                href={shopLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-              >
-                Shop
-              </a>
-              <div className="flex flex-col gap-3">
-                <p className="font-asap text-[11px] font-bold uppercase leading-none tracking-[1px] text-voicesNext-secondary">
-                  Work with Us
-                </p>
-                {collaborateLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    target={link.opensInNewTab ? "_blank" : undefined}
-                    rel={link.opensInNewTab ? "noopener noreferrer" : undefined}
-                    onClick={() => onOpenChange(false)}
-                    className={cn(
-                      "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
-                      isActive(pathname, link.href)
-                        ? "text-voicesNext-orange"
-                        : "text-voicesNext-cream",
-                    )}
-                    aria-current={
-                      isActive(pathname, link.href) ? "page" : undefined
-                    }
-                  >
-                    {link.label}
-                  </Link>
+            <nav className="mt-6 flex flex-col px-6" aria-label="Menu">
+              <div className="border-t border-voicesNext-border">
+                {phonePrimaryItems.map((item) => (
+                  <PrimaryMenuLink
+                    key={item.label}
+                    item={item}
+                    size="phone"
+                    onNavigate={closeMenu}
+                  />
                 ))}
               </div>
-              <Link
-                href="/about"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
-                  isActive(pathname, "/about")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-              >
-                About
-              </Link>
-              <Link
-                href="/support"
-                className={cn(
-                  "font-gabarito text-[20px] font-bold leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
-                  isActive(pathname, "/support")
-                    ? "text-voicesNext-orange"
-                    : "text-voicesNext-cream",
-                )}
-              >
-                Membership
-              </Link>
-              <a
-                href={contactLink}
-                className="font-gabarito text-[20px] font-bold leading-none text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-              >
-                Contact
-              </a>
+
+              <div className="mt-9 grid grid-cols-2 gap-x-6 gap-y-9">
+                <div className="flex flex-col gap-4">
+                  <MenuSectionLabel>Work with Us</MenuSectionLabel>
+                  {collaborateItems.map((item) => (
+                    <SecondaryMenuLink
+                      key={item.href}
+                      item={item}
+                      onNavigate={closeMenu}
+                    />
+                  ))}
+                </div>
+                <div className="flex flex-col gap-4">
+                  <MenuSectionLabel>Voices</MenuSectionLabel>
+                  {stationItems.map((item) => (
+                    <SecondaryMenuLink
+                      key={item.label}
+                      item={item}
+                      onNavigate={closeMenu}
+                    />
+                  ))}
+                </div>
+              </div>
               {contactEmail && (
                 <ContactEmailCopy
                   email={contactEmail}
-                  className="-mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 font-gabarito text-xs font-medium text-voicesNext-secondary"
+                  className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-gabarito text-xs font-medium text-voicesNext-secondary"
                   addressClassName="select-all break-all text-voicesNext-cream"
                 />
               )}
@@ -303,6 +273,13 @@ export function MobileMenu({
               pathname={pathname}
               onNavigate={() => onOpenChange(false)}
             />
+
+            <div className="mt-9 px-6">
+              <MenuSocialLinks
+                instagramLink={footerLinks.instagramLink}
+                mixcloudLink={footerLinks.mixcloudLink}
+              />
+            </div>
 
             {/*
                 Solid background + sticky: the pill used to sit flush against
@@ -335,62 +312,42 @@ export function MobileMenu({
               </button>
             </div>
 
-            <nav className="mt-12 flex flex-col gap-7" aria-label="Menu">
-              {tabletMenuLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  target={link.opensInNewTab ? "_blank" : undefined}
-                  rel={link.opensInNewTab ? "noopener noreferrer" : undefined}
-                  className={cn(
-                    "font-gabarito text-3xl font-bold text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background",
-                    isActive(pathname, link.href) && "text-voicesNext-orange",
-                  )}
-                  aria-current={
-                    isActive(pathname, link.href) ? "page" : undefined
-                  }
-                >
-                  {link.label}
-                </Link>
+            <nav className="mt-12 grid grid-cols-2 gap-x-10 border-t border-voicesNext-border" aria-label="Menu">
+              {tabletItems.map((item) => (
+                <PrimaryMenuLink
+                  key={item.href}
+                  item={item}
+                  size="tablet"
+                  onNavigate={closeMenu}
+                />
               ))}
             </nav>
 
-            <div className="mt-16 flex flex-wrap gap-4 font-gabarito text-sm font-bold uppercase text-voicesNext-secondary">
-              {footerLinks.contactLink && (
-                <a
-                  href={footerLinks.contactLink}
-                  className="transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-                >
-                  Contact
-                </a>
-              )}
-              {footerContactEmail && (
-                <ContactEmailCopy
-                  email={footerContactEmail}
-                  className="flex flex-wrap items-center gap-x-2 normal-case"
-                  addressClassName="select-all break-all font-medium text-voicesNext-cream"
-                />
-              )}
-              {footerLinks.instagramLink && (
-                <a
-                  href={footerLinks.instagramLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-                >
-                  Instagram
-                </a>
-              )}
-              {footerLinks.mixcloudLink && (
-                <a
-                  href={footerLinks.mixcloudLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
-                >
-                  Mixcloud
-                </a>
-              )}
+            <div className="mt-12 flex flex-wrap items-end justify-between gap-8 pb-10">
+              <div className="flex flex-col gap-3 font-gabarito text-sm font-bold uppercase text-voicesNext-secondary">
+                {footerLinks.contactLink && (
+                  <>
+                    <MenuSectionLabel>Get in touch</MenuSectionLabel>
+                    <a
+                      href={footerLinks.contactLink}
+                      className="text-voicesNext-cream transition-colors hover:text-voicesNext-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
+                    >
+                      Contact
+                    </a>
+                  </>
+                )}
+                {footerContactEmail && (
+                  <ContactEmailCopy
+                    email={footerContactEmail}
+                    className="flex flex-wrap items-center gap-x-2 normal-case"
+                    addressClassName="select-all break-all font-medium text-voicesNext-cream"
+                  />
+                )}
+              </div>
+              <MenuSocialLinks
+                instagramLink={footerLinks.instagramLink}
+                mixcloudLink={footerLinks.mixcloudLink}
+              />
             </div>
           </div>
         </Dialog.Content>
