@@ -9,6 +9,7 @@ import {
   backendForgotPassword,
 } from "@/lib/voices/membership/auth-client";
 import { resetPasswordReturnUrl } from "@/lib/voices/membership/verification-return";
+import { turnstileTokenFrom } from "@/lib/voices/turnstile";
 
 const schema = z.object({
   email: z
@@ -71,6 +72,7 @@ export async function forgotPasswordAction(
   const result = await backendForgotPassword({
     email: parsed.data.email,
     resetReturnUrl: await resetPasswordReturnUrl(next),
+    turnstileToken: turnstileTokenFrom(formData),
   });
 
   if (!result.ok) {

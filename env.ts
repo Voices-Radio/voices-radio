@@ -56,6 +56,10 @@ export const env = createEnv({
     NEXT_PUBLIC_FATHOM_SITE_ID: z.string().min(1),
     NEXT_PUBLIC_SITE_ENV: z.string().optional(),
     NEXT_PUBLIC_SITE_URL: z.string().optional(),
+    // Cloudflare Turnstile widget on the join, create-account and forgot-password
+    // forms. Unset = no widget (local dev); the backend's TURNSTILE_MODE decides
+    // what a missing token means.
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().optional(),
   },
   runtimeEnv: {
     SANITY_REVALIDATE_SECRET: process.env.SANITY_REVALIDATE_SECRET,
@@ -77,5 +81,6 @@ export const env = createEnv({
     NEXT_PUBLIC_FATHOM_SITE_ID: process.env.NEXT_PUBLIC_FATHOM_SITE_ID,
     NEXT_PUBLIC_SITE_ENV: process.env.NEXT_PUBLIC_SITE_ENV,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   },
 });

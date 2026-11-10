@@ -6,6 +6,7 @@ import { AUTH_RATE_LIMITS } from "@/lib/voices/rate-limit";
 import { backendRegister } from "@/lib/voices/membership/auth-client";
 import { safeInternalPathOrUndefined } from "@/lib/voices/membership/paths";
 import { verificationReturnUrl } from "@/lib/voices/membership/verification-return";
+import { turnstileTokenFrom } from "@/lib/voices/turnstile";
 
 // Same rule as choosing a password after paying (create-password/actions.ts).
 const PASSWORD_HELP =
@@ -121,6 +122,7 @@ export async function registerFreeAccountAction(
     lastName,
     newsletters: values.newsletters,
     verificationReturnUrl: await verificationReturnUrl(next),
+    turnstileToken: turnstileTokenFrom(formData),
   });
 
   if (result.ok) return { status: "check_email", email, next };

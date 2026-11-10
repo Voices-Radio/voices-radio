@@ -14,6 +14,7 @@ import {
 import PasswordPairFields from "../components/forms/password-pair-fields";
 import ResendVerification from "../verify-email/resend-verification";
 import { registerFreeAccountAction, type FreeAccountState } from "./actions";
+import TurnstileWidget from "../components/forms/turnstile-widget";
 
 const initialState: FreeAccountState = undefined;
 
@@ -225,6 +226,8 @@ export default function FreeAccountForm({ next }: { next: string }) {
             Send me the Voices newsletter. You can change this any time in your
             account.
           </label>
+
+          <TurnstileWidget action="register" resetSignal={state} />
 
           <SubmitButton />
         </form>
