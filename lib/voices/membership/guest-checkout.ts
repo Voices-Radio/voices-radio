@@ -33,6 +33,8 @@ export async function guestCheckout(input: {
   successUrl: string;
   cancelUrl: string;
   source?: "reminder";
+  /** Cloudflare Turnstile token from the form; the backend verifies it. */
+  turnstileToken?: string;
 }): Promise<GuestResult<CheckoutResponse>> {
   try {
     const response = await fetch(

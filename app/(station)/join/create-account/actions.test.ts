@@ -144,3 +144,15 @@ describe("createAccountAction (payment-first: details, then Stripe)", () => {
     });
   });
 });
+
+describe("createAccountAction: bot check", () => {
+  it("forwards the Turnstile token from the form to the backend", async () => {
+    await expect(
+      createAccountAction(undefined, formData({ ...valid, "cf-turnstile-response": "tok-join" })),
+    ).rejects.toThrow(RedirectSignal);
+
+    expect(guestCheckout).toHaveBeenCalledWith(
+      expect.objectContaining({ turnstileToken: "tok-join" }),
+    );
+  });
+});

@@ -32,7 +32,7 @@ interface ChapterProps {
 
 function StoryCopy({ value }: { value: PortableTextBlock[] }) {
   return (
-    <div className="space-y-5 font-gabarito text-lg leading-[1.42] text-voicesNext-cream md:text-2xl md:leading-[1.36] [&_a]:text-voicesNext-orangeText [&_a]:underline [&_a]:decoration-voicesNext-orange [&_a]:underline-offset-4 [&_p]:max-w-[42rem] [&_strong]:font-bold">
+    <div className="space-y-5 font-gabarito text-[17px] leading-[1.42] text-voicesNext-cream md:text-[22px] md:leading-[1.36] [&_a]:text-voicesNext-orangeText [&_a]:underline [&_a]:decoration-voicesNext-orange [&_a]:underline-offset-4 [&_p]:max-w-[42rem] [&_strong]:font-bold">
       <PortableText value={value} />
     </div>
   );

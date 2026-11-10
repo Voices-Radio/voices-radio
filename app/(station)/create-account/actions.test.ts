@@ -161,3 +161,31 @@ describe("registerFreeAccountAction", () => {
     expect(backendRegister).not.toHaveBeenCalled();
   });
 });
+
+describe("registerFreeAccountAction: bot check", () => {
+  it("forwards the Turnstile token from the form to the backend", async () => {
+    await registerFreeAccountAction(
+      undefined,
+      formData({ ...valid, "cf-turnstile-response": "tok-register" }),
+    );
+
+    expect(backendRegister).toHaveBeenCalledWith(
+      expect.objectContaining({ turnstileToken: "tok-register" }),
+    );
+  });
+
+  it("shows the backend's message when the bot check fails", async () => {
+    vi.mocked(backendRegister).mockResolvedValue({
+      ok: false,
+      status: 400,
+      payload: { code: "HUMAN_CHECK_FAILED", message: "We could not confirm you are not a robot. Please try again." },
+    });
+
+    const state = await registerFreeAccountAction(undefined, formData(valid));
+
+    expect(state).toMatchObject({
+      status: "error",
+      formError: "We could not confirm you are not a robot. Please try again.",
+    });
+  });
+});

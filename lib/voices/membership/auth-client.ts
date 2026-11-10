@@ -90,6 +90,8 @@ export async function backendRegister(input: {
    * origin is on its allowlist.
    */
   verificationReturnUrl?: string;
+  /** Cloudflare Turnstile token from the form; the backend verifies it. */
+  turnstileToken?: string;
 }): Promise<BackendAuthResult> {
   return authRequest("/api/auth/register", input);
 }
@@ -146,6 +148,8 @@ export async function backendForgotPassword(input: {
   email: string;
   /** This site's /reset-password page; the backend allowlists it. */
   resetReturnUrl?: string;
+  /** Cloudflare Turnstile token from the form; the backend verifies it. */
+  turnstileToken?: string;
 }): Promise<BackendAuthResult> {
   return authRequest("/api/auth/forgot-password", input);
 }

@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import PageHero from "../../components/redesign/page-hero";
+import SaveArtistButton from "../../components/redesign/save-artist-button";
 import ShowGrid from "../../components/redesign/show-grid";
 import ShowRail from "../../components/redesign/show-rail";
 import SupporterBlock from "../../components/redesign/supporter-block";
 import { getArtist, getShowsForArtist } from "@/lib/voices/api";
+import { getArtistLinks } from "@/lib/voices/artist-links";
 
 type ArtistPageProps = {
   params: Promise<{ id: string }>;
@@ -58,37 +60,6 @@ export async function generateMetadata({
   };
 }
 
-function getArtistLinks(
-  artist: NonNullable<Awaited<ReturnType<typeof getArtist>>>,
-) {
-  return [
-    artist.mixcloudUsername && {
-      label: "Mixcloud",
-      href: `https://www.mixcloud.com/${artist.mixcloudUsername.replace(
-        /^@/,
-        "",
-      )}/`,
-    },
-    artist.soundcloudUsername && {
-      label: "SoundCloud",
-      href: artist.soundcloudUsername.startsWith("http")
-        ? artist.soundcloudUsername
-        : `https://soundcloud.com/${artist.soundcloudUsername.replace(
-            /^@/,
-            "",
-          )}`,
-    },
-    artist.socialLinks.instagram && {
-      label: "Instagram",
-      href: artist.socialLinks.instagram,
-    },
-    artist.socialLinks.website && {
-      label: "Website",
-      href: artist.socialLinks.website,
-    },
-  ].filter((link): link is { label: string; href: string } => Boolean(link));
-}
-
 export default async function ArtistDetailPage({ params }: ArtistPageProps) {
   const { id } = await params;
   const artist = await getArtist(id);
@@ -113,7 +84,7 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
           eyebrow="Artist"
           title={artist.name}
           subtitle={artist.showName}
-          description={artist.bio || "Voices Radio artist profile."}
+          meta={<SaveArtistButton artistId={artist.id} name={artist.name} />}
         />
       </div>
 
@@ -150,12 +121,11 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
             <h1 className="font-outfit text-[32px] font-black uppercase leading-none text-voicesNext-cream">
               {artist.name}
             </h1>
-            <span
-              className="text-[28px] leading-none text-voicesNext-orange"
-              aria-hidden="true"
-            >
-              ♡
-            </span>
+            <SaveArtistButton
+              artistId={artist.id}
+              name={artist.name}
+              className="-mr-2 shrink-0"
+            />
           </div>
           {artist.bio && (
             <>
@@ -187,18 +157,22 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
         </div>
       </section>
 
-      <section className="mx-auto hidden max-w-[1280px] gap-8 px-4 py-10 md:grid md:grid-cols-[minmax(0,360px)_1fr] md:px-8">
-        <div className="relative aspect-square overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface">
-          <Image
-            src={artist.imageUrl ?? "/VOICESLOGO_LIGHTBOX.png"}
-            alt={artist.imageUrl ? artist.name : "Voices Radio"}
-            fill
-            sizes="(min-width: 768px) 360px, 90vw"
-            className="object-cover object-[50%_25%]"
-          />
-        </div>
-        <div className="space-y-8">
-          <div className="space-y-4">
+      <section className="mx-auto hidden max-w-[1280px] px-4 py-10 md:block md:px-8">
+        <div className="grid grid-cols-[minmax(0,360px)_1fr] gap-8 lg:gap-12">
+          <div className="relative aspect-square overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface">
+            <Image
+              src={artist.imageUrl ?? "/VOICESLOGO_LIGHTBOX.png"}
+              alt={artist.imageUrl ? artist.name : "Voices Radio"}
+              fill
+              sizes="(min-width: 768px) 360px, 90vw"
+              className="object-cover object-[50%_25%]"
+            />
+          </div>
+          <div className="min-w-0 space-y-6">
+            <p className="max-w-3xl whitespace-pre-line font-gabarito text-lg leading-relaxed text-voicesNext-cream">
+              {artist.bio || "Voices Radio artist profile."}
+            </p>
+
             {artist.genres.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {artist.genres.map((genre) => (
@@ -228,10 +202,10 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
               </div>
             )}
           </div>
-
-          <h2 className="font-gabarito text-3xl font-bold">Shows</h2>
-          <ShowGrid shows={shows} />
         </div>
+
+        <h2 className="mb-6 mt-12 font-gabarito text-3xl font-bold">Shows</h2>
+        <ShowGrid shows={shows} columns={4} />
       </section>
 
       <div className="md:hidden">
