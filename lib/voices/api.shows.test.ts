@@ -59,6 +59,67 @@ describe("getShowsForArtist", () => {
 
     expect(shows.map((show) => show.id)).toEqual(["own-1", "own-2"]);
   });
+
+  // An admin assignment stores matching_status "manual" (voices_backend
+  // services/showLinking/linkPolicy.js). Those shows must appear too.
+  it("includes manually assigned shows and hides pending ones", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        Promise.resolve(
+          jsonResponse([
+            { ...rawShow("auto", ARTIST_ID), matching_status: "matched" },
+            { ...rawShow("by-hand", ARTIST_ID), matching_status: "manual" },
+            { ...rawShow("unsure", ARTIST_ID), matching_status: "pending" },
+          ]),
+        ),
+      ),
+    );
+
+    const shows = await getShowsForArtist(ARTIST_ID);
+
+    expect(shows.map((show) => show.id)).toEqual(["auto", "by-hand"]);
+  });
+
+  // Mirrors GET /api/shows paging: `limit` rows starting at `skip`.
+  function pagedBackendMock(total: number) {
+    const all = Array.from({ length: total }, (_, i) =>
+      rawShow(`s${i}`, ARTIST_ID),
+    );
+    return vi.fn((url: URL) => {
+      const skip = Number(url.searchParams.get("skip") ?? 0);
+      const limit = Number(url.searchParams.get("limit"));
+      return Promise.resolve(jsonResponse(all.slice(skip, skip + limit)));
+    });
+  }
+
+  it("returns every show when no limit is given", async () => {
+    const fetchMock = pagedBackendMock(250);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const shows = await getShowsForArtist(ARTIST_ID);
+
+    expect(shows).toHaveLength(250);
+    expect(new Set(shows.map((show) => show.id)).size).toBe(250);
+    expect(fetchMock.mock.calls.length).toBeGreaterThan(1);
+  });
+
+  it("stops at the limit when one is given", async () => {
+    const fetchMock = pagedBackendMock(250);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const shows = await getShowsForArtist(ARTIST_ID, { limit: 6 });
+
+    expect(shows.map((show) => show.id)).toEqual([
+      "s0",
+      "s1",
+      "s2",
+      "s3",
+      "s4",
+      "s5",
+    ]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("artist embedding and bulk curation fetch", () => {

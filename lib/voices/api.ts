@@ -296,9 +296,37 @@ export async function getShowsForCuration(ids: string[]) {
   return found;
 }
 
+// GET /api/shows allows up to 200 rows per request. 100 keeps each response
+// well under the 2 MB Next.js data-cache limit. 20 pages bounds the loop.
+const ARTIST_SHOWS_PAGE_SIZE = 100;
+const ARTIST_SHOWS_MAX_PAGES = 20;
+
+/**
+ * An artist's public shows, newest first. With no `limit`, it returns all of
+ * them: it reads the backend page by page until a short page comes back.
+ */
 export async function getShowsForArtist(
   artistId: string,
-  { limit = VOICES_DEFAULT_FEATURED_LIMIT }: { limit?: number } = {},
+  { limit = Infinity }: { limit?: number } = {},
 ) {
-  return getShows({ artistId, limit, includeArtistFallbacks: false });
+  const pageSize = Number.isFinite(limit)
+    ? Math.min(Math.max(limit * 3, limit), ARTIST_SHOWS_PAGE_SIZE)
+    : ARTIST_SHOWS_PAGE_SIZE;
+  let publicShows: VoicesShowRaw[] = [];
+
+  for (
+    let page = 0;
+    page < ARTIST_SHOWS_MAX_PAGES && publicShows.length < limit;
+    page += 1
+  ) {
+    const batch = await voicesFetch<VoicesShowRaw[]>("/api/shows", {
+      artistId,
+      limit: pageSize,
+      skip: page * pageSize,
+    });
+    publicShows = [...publicShows, ...batch.filter(isPublicMatchedShow)];
+    if (batch.length < pageSize) break;
+  }
+
+  return publicShows.slice(0, limit).map((show) => normalizeShow(show));
 }

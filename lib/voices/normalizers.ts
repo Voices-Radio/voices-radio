@@ -99,8 +99,12 @@ export function getPopulatedArtistFromShow(
   return undefined;
 }
 
+// "matched" = linked automatically; "manual" = linked by an admin in
+// voices-admin. Both are confirmed links. "pending" shows have no artist yet.
+const PUBLIC_MATCHING_STATUSES = new Set(["matched", "manual"]);
+
 export function isPublicMatchedShow(raw: VoicesShowRaw) {
-  return raw.matching_status === "matched";
+  return PUBLIC_MATCHING_STATUSES.has(raw.matching_status ?? "");
 }
 
 export function normalizeShow(
@@ -120,9 +124,12 @@ export function normalizeShow(
   const locationTags = normalizeLocationTags(
     raw.locationTags?.length ? raw.locationTags : artist?.locationTags,
   );
-  const archiveUrl = raw.url ?? raw.mixcloudUrl ?? raw.soundcloudUrl ?? undefined;
+  const archiveUrl =
+    raw.url ?? raw.mixcloudUrl ?? raw.soundcloudUrl ?? undefined;
   const mixcloudUrl =
-    raw.mixcloudUrl ?? (isMixcloudUrl(raw.url) ? raw.url : undefined) ?? undefined;
+    raw.mixcloudUrl ??
+    (isMixcloudUrl(raw.url) ? raw.url : undefined) ??
+    undefined;
   const artwork = resolveShowArtwork({
     showTitle: raw.title,
     showImageUrl,
