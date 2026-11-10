@@ -27,20 +27,42 @@ function tokenIsValid(result: BackendAuthResult) {
   );
 }
 
-function InvalidResetLink({ message }: { message: string }) {
+// The backend marks a spent link with this code. It also marks older links as
+// used when it sends a newer one, so the copy covers both cases.
+function tokenWasUsed(result: BackendAuthResult) {
+  return result.payload?.code === "TOKEN_USED";
+}
+
+const linkClassName =
+  "font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange";
+
+function InvalidResetLink({
+  title = "Reset link unavailable",
+  message,
+  offerSignIn = false,
+}: {
+  title?: string;
+  message: string;
+  offerSignIn?: boolean;
+}) {
   return (
     <div className="mx-auto max-w-[620px] px-4 py-12 md:px-8 md:py-16">
       <AccountPageIntro
         eyebrow="Voices account"
-        title="Reset link unavailable"
+        title={title}
         description={message}
       />
+      {offerSignIn && (
+        <p className="mt-6 font-gabarito text-sm text-voicesNext-cream/70">
+          Set a new password already?{" "}
+          <Link href="/sign-in" className={linkClassName}>
+            Sign in
+          </Link>
+        </p>
+      )}
       <p className="mt-6 font-gabarito text-sm text-voicesNext-cream/70">
         Need another link?{" "}
-        <Link
-          href="/forgot-password"
-          className="font-bold text-voicesNext-cream underline underline-offset-2 transition-colors hover:text-voicesNext-orange"
-        >
+        <Link href="/forgot-password" className={linkClassName}>
           Request a new password reset
         </Link>
       </p>
@@ -56,10 +78,22 @@ export default async function ResetPasswordPage({
   const { token, next } = await searchParams;
 
   if (!token) {
-    return <InvalidResetLink message="This password reset link is missing a token." />;
+    return (
+      <InvalidResetLink message="This password reset link is missing a token." />
+    );
   }
 
   const validation = await backendValidatePasswordResetToken(token);
+
+  if (tokenWasUsed(validation)) {
+    return (
+      <InvalidResetLink
+        title="Reset link already used"
+        message="This link was already used, or a newer link replaced it. If you set a new password, sign in with it."
+        offerSignIn
+      />
+    );
+  }
 
   if (!tokenIsValid(validation)) {
     return (
