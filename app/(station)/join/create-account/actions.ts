@@ -7,6 +7,7 @@ import { AUTH_RATE_LIMITS } from "@/lib/voices/rate-limit";
 import { getBaseUrl } from "@/lib/site-url";
 import { guestCheckout } from "@/lib/voices/membership/guest-checkout";
 import { isMembershipCadence, parseAmountMinor } from "@/lib/voices/membership/types";
+import { turnstileTokenFrom } from "@/lib/voices/turnstile";
 
 const schema = z.object({
   firstName: z.string().trim().min(1, "Enter your first name."),
@@ -123,6 +124,7 @@ export async function createAccountAction(
     // `checkout=cancelled` lets /join say "no payment taken" to someone who
     // backed out of Stripe.
     cancelUrl: `${origin}/join?cadence=${cadence}&checkout=cancelled`,
+    turnstileToken: turnstileTokenFrom(formData),
   });
 
   if (!result.ok) {

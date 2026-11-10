@@ -9,6 +9,7 @@ import {
   accountPrimaryButtonClassName,
 } from "../account/components/account-surface";
 import { forgotPasswordAction, type ForgotPasswordState } from "./actions";
+import TurnstileWidget from "../components/forms/turnstile-widget";
 
 const initialState: ForgotPasswordState = undefined;
 const CREATE_ACCOUNT_HREF = "/join/create-account";
@@ -212,6 +213,8 @@ export default function ForgotPasswordForm({
           </p>
         )}
       </div>
+
+      <TurnstileWidget action="forgot_password" resetSignal={state} />
 
       <SubmitButton />
     </form>

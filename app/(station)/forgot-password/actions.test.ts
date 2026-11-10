@@ -130,3 +130,16 @@ describe("forgotPasswordAction", () => {
     });
   });
 });
+
+describe("forgotPasswordAction: bot check", () => {
+  it("forwards the Turnstile token from the form to the backend", async () => {
+    await forgotPasswordAction(
+      undefined,
+      formData({ email: "artist@example.com", "cf-turnstile-response": "tok-forgot" }),
+    );
+
+    expect(backendForgotPassword).toHaveBeenCalledWith(
+      expect.objectContaining({ turnstileToken: "tok-forgot" }),
+    );
+  });
+});

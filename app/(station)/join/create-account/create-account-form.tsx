@@ -15,6 +15,7 @@ import {
 import ResendVerification from "../../verify-email/resend-verification";
 import JoinSteps from "../join-steps";
 import { createAccountAction, type CreateAccountState } from "./actions";
+import TurnstileWidget from "../../components/forms/turnstile-widget";
 import { formatMinorUnitsWithCadence } from "@/lib/voices/membership/format";
 import { isMembershipCadence } from "@/lib/voices/membership/types";
 
@@ -318,6 +319,8 @@ export default function CreateAccountForm({
               early-release tickets. You can change this any time in your
               account.
             </label>
+
+            <TurnstileWidget action="guest_checkout" resetSignal={state} />
 
             <SubmitButton />
           </form>
