@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import ExpandableBio from "../../components/redesign/expandable-bio";
 import PageHero from "../../components/redesign/page-hero";
 import SaveArtistButton from "../../components/redesign/save-artist-button";
 import ShowGrid from "../../components/redesign/show-grid";
@@ -127,16 +128,7 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
               className="-mr-2 shrink-0"
             />
           </div>
-          {artist.bio && (
-            <>
-              <p className="mt-5 line-clamp-5 max-w-[313px] whitespace-pre-line font-asap text-[16px] leading-normal text-voicesNext-cream">
-                {artist.bio}
-              </p>
-              <p className="mt-[10px] font-asap text-[16px] font-bold leading-none text-voicesNext-orange">
-                (Read more)
-              </p>
-            </>
-          )}
+          {artist.bio && <ExpandableBio bio={artist.bio} />}
           {mobileGenres.length > 0 && (
             <div className="mt-10">
               <p className="font-asap text-[16px] text-voicesNext-cream">
