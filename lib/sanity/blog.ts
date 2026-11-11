@@ -39,7 +39,21 @@ export const blogPostQuery = groq`*[_type == "blog" && slug.current == $slug][0]
       }
     }
   },
-  content,
+  content[]{
+    ...,
+    _type == "image" => {
+      asset->{
+        url,
+        metadata {
+          lqip,
+          dimensions {
+            width,
+            height
+          }
+        }
+      }
+    }
+  },
   author,
   categories,
   tags,
@@ -164,7 +178,21 @@ export const mainBlogPostQuery = groq`*[_type == "mainBlog" && slug.current == $
       }
     }
   },
-  content,
+  content[]{
+    ...,
+    _type == "image" => {
+      asset->{
+        url,
+        metadata {
+          lqip,
+          dimensions {
+            width,
+            height
+          }
+        }
+      }
+    }
+  },
   author,
   categories,
   tags,
