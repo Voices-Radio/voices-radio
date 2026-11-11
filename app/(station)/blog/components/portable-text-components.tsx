@@ -15,17 +15,24 @@ import Link from "next/link";
 export const blogPortableTextComponents: PortableTextComponents = {
   types: {
     image: ({ value }) => {
+      // `asset.url` exists only when the GROQ query dereferences the asset
+      // (`content[]{ _type == "image" => { asset->{ url } } }`). A raw
+      // `content` projection gives only `asset._ref`, and every body image
+      // then renders as nothing.
       const url = value?.asset?.url;
       if (!url) return null;
+
+      // Real dimensions keep portrait photos portrait while they load.
+      const dimensions = value.asset.metadata?.dimensions;
 
       return (
         <figure className="my-10">
           <div className="relative overflow-hidden border border-voicesNext-border">
             <Image
               src={url}
-              alt={value.alt || ""}
-              width={1200}
-              height={800}
+              alt={value.alt || value.caption || ""}
+              width={dimensions?.width ?? 1200}
+              height={dimensions?.height ?? 800}
               sizes="(min-width: 768px) 720px, 100vw"
               className="h-auto w-full object-cover"
               {...(value?.asset?.metadata?.lqip
