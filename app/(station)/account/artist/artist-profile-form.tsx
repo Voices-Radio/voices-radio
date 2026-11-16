@@ -14,6 +14,7 @@ import { updateArtistProfileAction, type ArtistProfileState } from "./actions";
 import ImageField from "./image-field";
 import GenreTagInput from "./genre-tag-input";
 import UsernameField from "./username-field";
+import WithdrawRequest from "./withdraw-request";
 import ReviewedField, { reviewReasonId } from "./reviewed-field";
 import {
   reviewByField,
@@ -97,6 +98,9 @@ export default function ArtistProfileForm({
   const rejectedCount = Object.values(reviews).filter(
     (field) => field.status === "rejected",
   ).length;
+  const withdrawnCount = Object.values(reviews).filter(
+    (field) => field.status === "withdrawn",
+  ).length;
 
   useEffect(() => {
     if (state?.status) statusRef.current?.focus();
@@ -141,9 +145,18 @@ export default function ArtistProfileForm({
             Profile update awaiting review
           </p>
           <p className="mt-2">
-            Further changes unlock after every field has been reviewed.
+            Further changes unlock after every field has been reviewed. To
+            change something now, withdraw this request.
           </p>
+          <WithdrawRequest />
         </div>
+      )}
+
+      {!review?.pending && withdrawnCount > 0 && (
+        <p className="font-asap text-sm text-voicesNext-cream/80">
+          You withdrew your last request. Your changes are still filled in
+          below. Edit them and submit again when you are ready.
+        </p>
       )}
 
       {!review?.pending && rejectedCount > 0 && (
@@ -154,121 +167,152 @@ export default function ArtistProfileForm({
         </p>
       )}
 
-      <fieldset disabled={review?.pending} className="flex flex-col gap-5 border-0 p-0 disabled:opacity-60">
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <TextField id="name" name="name" label="Name (private)" defaultValue={profile.name} review={reviews.name} />
-        <TextField id="artistName" name="artistName" label="Artist name" defaultValue={profile.artistName} review={reviews.artistName} />
-        <TextField id="showName" name="showName" label="Show name" defaultValue={profile.showName} review={reviews.showName} />
-      </div>
-
-      {profile.programmingEmail && (
-        <p className="font-asap text-sm text-voicesNext-cream/70">
-          Programming email:{" "}
-          <span className="font-bold text-voicesNext-cream">
-            {profile.programmingEmail}
-          </span>
-        </p>
-      )}
-
-      <ReviewedField fieldId="bio" review={reviews.bio}>
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="bio"
-            className="font-gabarito text-sm font-bold text-voicesNext-cream"
-          >
-            Bio
-          </label>
-          <textarea
-            id="bio"
-            name="bio"
-            defaultValue={shownText(reviews.bio, profile.bio) ?? ""}
-            aria-describedby={describedBy("bio", reviews.bio)}
-            rows={6}
-            className={accountTextAreaClassName}
+      <fieldset
+        disabled={review?.pending}
+        className="flex flex-col gap-5 border-0 p-0 disabled:opacity-60"
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            id="name"
+            name="name"
+            label="Name (private)"
+            defaultValue={profile.name}
+            review={reviews.name}
+          />
+          <TextField
+            id="artistName"
+            name="artistName"
+            label="Artist name"
+            defaultValue={profile.artistName}
+            review={reviews.artistName}
+          />
+          <TextField
+            id="showName"
+            name="showName"
+            label="Show name"
+            defaultValue={profile.showName}
+            review={reviews.showName}
           />
         </div>
-      </ReviewedField>
 
-      <ReviewedField fieldId="imageUrl" review={reviews.imageUrl}>
-        <ImageField
-          kind="profile"
-          fieldName="imageUrl"
-          label="Profile image"
-          initialUrl={shownText(reviews.imageUrl, profile.imageUrl)}
-        />
-      </ReviewedField>
-      <ReviewedField fieldId="bannerUrl" review={reviews.bannerUrl}>
-        <ImageField
-          kind="banner"
-          fieldName="bannerUrl"
-          label="Banner image"
-          initialUrl={shownText(reviews.bannerUrl, profile.bannerUrl)}
-        />
-      </ReviewedField>
-      <ReviewedField fieldId="genres" review={reviews.genres}>
-        <GenreTagInput
-          name="genres"
-          initialGenres={shownList(reviews.genres, profile.genres)}
-        />
-      </ReviewedField>
-      <ReviewedField fieldId="mixcloudUsername" review={reviews.mixcloudUsername}>
-        <UsernameField
-          id="mixcloudUsername"
-          name="mixcloudUsername"
-          label="Mixcloud username"
-          platform="mixcloud"
-          defaultValue={shownText(reviews.mixcloudUsername, profile.mixcloudUsername)}
-        />
-      </ReviewedField>
-      <ReviewedField fieldId="soundcloudUsername" review={reviews.soundcloudUsername}>
-        <UsernameField
-          id="soundcloudUsername"
-          name="soundcloudUsername"
-          label="SoundCloud username"
-          platform="soundcloud"
-          defaultValue={shownText(reviews.soundcloudUsername, profile.soundcloudUsername)}
-        />
-      </ReviewedField>
+        {profile.programmingEmail && (
+          <p className="font-asap text-sm text-voicesNext-cream/70">
+            Programming email:{" "}
+            <span className="font-bold text-voicesNext-cream">
+              {profile.programmingEmail}
+            </span>
+          </p>
+        )}
 
-      <fieldset className="grid gap-4 border-0 p-0 sm:grid-cols-2">
-        <legend className="font-gabarito text-sm font-bold text-voicesNext-cream">
-          Social links
-        </legend>
-        <TextField
-          id="instagram"
-          name="instagram"
-          label="Instagram URL"
-          type="url"
-          defaultValue={profile.socialLinks.instagram}
-          review={reviews.instagram}
-        />
-        <TextField
-          id="website"
-          name="website"
-          label="Website URL"
-          type="url"
-          defaultValue={profile.socialLinks.website}
-          review={reviews.website}
-        />
-        <TextField
-          id="twitter"
-          name="twitter"
-          label="Twitter URL"
-          type="url"
-          defaultValue={profile.socialLinks.twitter}
-          review={reviews.twitter}
-        />
-        <TextField
-          id="facebook"
-          name="facebook"
-          label="Facebook URL"
-          type="url"
-          defaultValue={profile.socialLinks.facebook}
-          review={reviews.facebook}
-        />
-      </fieldset>
+        <ReviewedField fieldId="bio" review={reviews.bio}>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="bio"
+              className="font-gabarito text-sm font-bold text-voicesNext-cream"
+            >
+              Bio
+            </label>
+            <textarea
+              id="bio"
+              name="bio"
+              defaultValue={shownText(reviews.bio, profile.bio) ?? ""}
+              aria-describedby={describedBy("bio", reviews.bio)}
+              rows={6}
+              className={accountTextAreaClassName}
+            />
+          </div>
+        </ReviewedField>
 
+        <ReviewedField fieldId="imageUrl" review={reviews.imageUrl}>
+          <ImageField
+            kind="profile"
+            fieldName="imageUrl"
+            label="Profile image"
+            initialUrl={shownText(reviews.imageUrl, profile.imageUrl)}
+          />
+        </ReviewedField>
+        <ReviewedField fieldId="bannerUrl" review={reviews.bannerUrl}>
+          <ImageField
+            kind="banner"
+            fieldName="bannerUrl"
+            label="Banner image"
+            initialUrl={shownText(reviews.bannerUrl, profile.bannerUrl)}
+          />
+        </ReviewedField>
+        <ReviewedField fieldId="genres" review={reviews.genres}>
+          <GenreTagInput
+            name="genres"
+            initialGenres={shownList(reviews.genres, profile.genres)}
+          />
+        </ReviewedField>
+        <ReviewedField
+          fieldId="mixcloudUsername"
+          review={reviews.mixcloudUsername}
+        >
+          <UsernameField
+            id="mixcloudUsername"
+            name="mixcloudUsername"
+            label="Mixcloud username"
+            platform="mixcloud"
+            defaultValue={shownText(
+              reviews.mixcloudUsername,
+              profile.mixcloudUsername,
+            )}
+          />
+        </ReviewedField>
+        <ReviewedField
+          fieldId="soundcloudUsername"
+          review={reviews.soundcloudUsername}
+        >
+          <UsernameField
+            id="soundcloudUsername"
+            name="soundcloudUsername"
+            label="SoundCloud username"
+            platform="soundcloud"
+            defaultValue={shownText(
+              reviews.soundcloudUsername,
+              profile.soundcloudUsername,
+            )}
+          />
+        </ReviewedField>
+
+        <fieldset className="grid gap-4 border-0 p-0 sm:grid-cols-2">
+          <legend className="font-gabarito text-sm font-bold text-voicesNext-cream">
+            Social links
+          </legend>
+          <TextField
+            id="instagram"
+            name="instagram"
+            label="Instagram URL"
+            type="url"
+            defaultValue={profile.socialLinks.instagram}
+            review={reviews.instagram}
+          />
+          <TextField
+            id="website"
+            name="website"
+            label="Website URL"
+            type="url"
+            defaultValue={profile.socialLinks.website}
+            review={reviews.website}
+          />
+          <TextField
+            id="twitter"
+            name="twitter"
+            label="Twitter URL"
+            type="url"
+            defaultValue={profile.socialLinks.twitter}
+            review={reviews.twitter}
+          />
+          <TextField
+            id="facebook"
+            name="facebook"
+            label="Facebook URL"
+            type="url"
+            defaultValue={profile.socialLinks.facebook}
+            review={reviews.facebook}
+          />
+        </fieldset>
       </fieldset>
 
       {!review?.pending && (
@@ -282,8 +326,8 @@ export default function ArtistProfileForm({
           <span>
             My profile is as complete as I can make it.
             <span className="mt-1 block text-voicesNext-cream/60">
-              Your profile locks after you submit it, until Voices has
-              reviewed every field.
+              Your profile locks after you submit it, until Voices has reviewed
+              every field.
             </span>
           </span>
         </label>

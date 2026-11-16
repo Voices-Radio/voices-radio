@@ -1,12 +1,21 @@
 import type { ReactNode } from "react";
-import { Check, Clock, X } from "lucide-react";
+import { Check, Clock, Undo2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FieldReview } from "./field-review";
 
 const MARKS = {
   approved: { Icon: Check, text: "Approved", className: "text-green-400" },
   rejected: { Icon: X, text: "Not approved", className: "text-red-400" },
-  pending: { Icon: Clock, text: "In review", className: "text-voicesNext-cream/60" },
+  pending: {
+    Icon: Clock,
+    text: "In review",
+    className: "text-voicesNext-cream/60",
+  },
+  withdrawn: {
+    Icon: Undo2,
+    text: "Withdrawn",
+    className: "text-voicesNext-cream/60",
+  },
 } as const;
 
 export function reviewReasonId(fieldId: string): string {

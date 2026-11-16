@@ -8,6 +8,7 @@ vi.mock("@/lib/voices/membership/artist-profile-client", () => ({
   updateArtistProfile: vi.fn(),
   uploadArtistProfileImage: vi.fn(),
   lookupArtistUsername: vi.fn(),
+  withdrawArtistProfileReview: vi.fn(),
 }));
 
 const { revalidatePath } = await import("next/cache");
@@ -15,11 +16,13 @@ const {
   updateArtistProfile,
   uploadArtistProfileImage,
   lookupArtistUsername,
+  withdrawArtistProfileReview,
 } = await import("@/lib/voices/membership/artist-profile-client");
 const {
   updateArtistProfileAction,
   uploadArtistImageAction,
   lookupUsernameAction,
+  withdrawProfileReviewAction,
 } = await import("./actions");
 
 function formData(fields: Record<string, string>) {
@@ -275,5 +278,33 @@ describe("lookupUsernameAction", () => {
       status: "unavailable",
     });
     expect(lookupArtistUsername).not.toHaveBeenCalled();
+  });
+});
+
+describe("withdrawProfileReviewAction", () => {
+  it("withdraws the pending request and refreshes the page", async () => {
+    vi.mocked(withdrawArtistProfileReview).mockResolvedValue({
+      ok: true,
+      data: DEFAULT_PROFILE,
+    });
+
+    const result = await withdrawProfileReviewAction();
+
+    expect(withdrawArtistProfileReview).toHaveBeenCalledTimes(1);
+    expect(revalidatePath).toHaveBeenCalledWith("/account/artist");
+    expect(result).toEqual({ status: "success" });
+  });
+
+  it("returns the backend message and does not refresh on failure", async () => {
+    vi.mocked(withdrawArtistProfileReview).mockResolvedValue({
+      ok: false,
+      code: "NETWORK_ERROR",
+      message: "We could not reach Voices.",
+    });
+
+    const result = await withdrawProfileReviewAction();
+
+    expect(revalidatePath).not.toHaveBeenCalled();
+    expect(result).toEqual({ status: "error", message: "We could not reach Voices." });
   });
 });
