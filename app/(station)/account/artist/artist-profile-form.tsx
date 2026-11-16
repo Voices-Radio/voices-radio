@@ -8,12 +8,12 @@ import {
   accountFieldClassName,
   accountPrimaryButtonClassName,
   accountSurfaceClassName,
-  accountTextAreaClassName,
 } from "../components/account-surface";
 import { updateArtistProfileAction, type ArtistProfileState } from "./actions";
 import ImageField from "./image-field";
 import GenreTagInput from "./genre-tag-input";
 import UsernameField from "./username-field";
+import BioField from "./bio-field";
 import WithdrawRequest from "./withdraw-request";
 import ReviewedField, { reviewReasonId } from "./reviewed-field";
 import {
@@ -205,22 +205,10 @@ export default function ArtistProfileForm({
         )}
 
         <ReviewedField fieldId="bio" review={reviews.bio}>
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="bio"
-              className="font-gabarito text-sm font-bold text-voicesNext-cream"
-            >
-              Bio
-            </label>
-            <textarea
-              id="bio"
-              name="bio"
-              defaultValue={shownText(reviews.bio, profile.bio) ?? ""}
-              aria-describedby={describedBy("bio", reviews.bio)}
-              rows={6}
-              className={accountTextAreaClassName}
-            />
-          </div>
+          <BioField
+            defaultValue={shownText(reviews.bio, profile.bio) ?? ""}
+            reasonId={describedBy("bio", reviews.bio)}
+          />
         </ReviewedField>
 
         <ReviewedField fieldId="imageUrl" review={reviews.imageUrl}>
