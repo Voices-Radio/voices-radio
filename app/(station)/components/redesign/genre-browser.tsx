@@ -103,6 +103,7 @@ function GenrePill({
   return (
     <Link
       href={href}
+      rel="nofollow"
       aria-label={`${label}, ${selected ? "selected" : "not selected"}`}
       className={`${base} ${selected ? active : idle}`}
     >

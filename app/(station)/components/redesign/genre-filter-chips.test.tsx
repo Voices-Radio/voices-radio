@@ -42,6 +42,13 @@ describe("GenreFilterChips", () => {
     );
   });
 
+  it("marks every filter link nofollow so crawlers do not walk combinations", () => {
+    render(<GenreFilterChips genres={["a", "b"]} basePath="/explore" />);
+    for (const link of screen.getAllByRole("link")) {
+      expect(link).toHaveAttribute("rel", "nofollow");
+    }
+  });
+
   it("exposes the filter row as a labelled region", () => {
     render(<GenreFilterChips genres={["a"]} basePath="/artists" />);
     expect(

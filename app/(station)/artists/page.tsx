@@ -6,8 +6,12 @@ import GenreBrowser from "../components/redesign/genre-browser";
 import GenreFilterChips from "../components/redesign/genre-filter-chips";
 import { getArtists } from "@/lib/voices/api";
 import { filterArtistsByQuery } from "@/lib/voices/artist-search";
-import { buildGenreHref, toggleGenre } from "@/lib/voices/genre-filter";
-import { isGenreKey, matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
+import {
+  buildGenreHref,
+  parseSelectedGenres,
+  toggleGenre,
+} from "@/lib/voices/genre-filter";
+import { matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
 import { matchesStationOrLocation } from "@/lib/voices/normalizers";
 import { resolveListingPages } from "@/lib/voices/page-copy";
 import { getListingPages } from "@/sanity.client";
@@ -160,8 +164,8 @@ export default async function ArtistsPage({
     getSingleParam(resolvedSearchParams, "tab") === "genres"
       ? "genres"
       : "artists";
-  const selectedGenres = getParamArray(resolvedSearchParams, "genre").filter(
-    isGenreKey,
+  const selectedGenres = parseSelectedGenres(
+    getParamArray(resolvedSearchParams, "genre"),
   );
   const expand = getSingleParam(resolvedSearchParams, "expand");
   const query = (getSingleParam(resolvedSearchParams, "q") ?? "").trim();

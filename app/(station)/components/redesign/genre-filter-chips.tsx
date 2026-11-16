@@ -36,6 +36,7 @@ export default function GenreFilterChips({
                   removeGenre(genres, genre),
                   extraParams,
                 )}
+                rel="nofollow"
                 aria-label={`Remove ${genre} filter`}
                 className="inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center rounded-full border-2 border-current text-voicesNext-background transition-colors hover:bg-voicesNext-orange hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-cream"
               >
@@ -47,6 +48,7 @@ export default function GenreFilterChips({
       </ul>
       <Link
         href={buildGenreHref(basePath, [], extraParams)}
+        rel="nofollow"
         className="ml-1 font-asap text-[12px] font-bold uppercase leading-none text-voicesNext-secondary underline-offset-4 transition-colors hover:text-voicesNext-cream hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-voicesNext-orange focus-visible:ring-offset-2 focus-visible:ring-offset-voicesNext-background"
       >
         Clear all
