@@ -7,8 +7,12 @@ import GenreFilterChips from "../components/redesign/genre-filter-chips";
 import ShowCard from "../components/redesign/show-card";
 import SupporterBlock from "../components/redesign/supporter-block";
 import { getShows } from "@/lib/voices/api";
-import { buildGenreHref, toggleGenre } from "@/lib/voices/genre-filter";
-import { isGenreKey, matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
+import {
+  buildGenreHref,
+  parseSelectedGenres,
+  toggleGenre,
+} from "@/lib/voices/genre-filter";
+import { matchesAllGenreKeys } from "@/lib/voices/genre-taxonomy";
 import {
   getParamArray,
   getSingleParam,
@@ -237,8 +241,8 @@ export default async function ExplorePage({
     getSingleParam(resolvedSearchParams, "tab") === "genres"
       ? "genres"
       : "explore";
-  const selectedGenres = getParamArray(resolvedSearchParams, "genre").filter(
-    isGenreKey,
+  const selectedGenres = parseSelectedGenres(
+    getParamArray(resolvedSearchParams, "genre"),
   );
   const category = getSingleParam(resolvedSearchParams, "category");
   const showMusicGrid = category === "music" || selectedGenres.length > 0;
@@ -247,7 +251,8 @@ export default async function ExplorePage({
   const [listingPages, shows] = await Promise.all([
     getListingPages(),
     showMusicGrid
-      ? getShows({ genres: selectedGenres, limit: 100 })
+      ? // Sorted so every order of the same genres shares one cached fetch.
+        getShows({ genres: [...selectedGenres].sort(), limit: 100 })
       : Promise.resolve([]),
   ]);
   const musicTitle = resolveListingPages(listingPages).music.title;

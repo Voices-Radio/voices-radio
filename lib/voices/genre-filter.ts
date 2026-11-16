@@ -8,15 +8,34 @@
  * blog index reuses for `category`.
  */
 
+import { isGenreKey } from "./genre-taxonomy";
 import {
   buildFilterHref,
   removeValue,
   toggleValue,
 } from "./param-filter";
 
-/** Add `key` if absent, remove it if already selected. Order is preserved. */
+/**
+ * Most genres one URL can select. Filters combine with AND, so more than this
+ * rarely matches a show, and an unbounded list let crawlers request every
+ * combination — each an uncached render plus a backend query (14–16 Nov 2026).
+ */
+export const MAX_SELECTED_GENRES = 3;
+
+/**
+ * Add `key` if absent, remove it if already selected. Order is preserved.
+ * Adding past MAX_SELECTED_GENRES drops the oldest selection.
+ */
 export function toggleGenre(current: string[], key: string): string[] {
-  return toggleValue(current, key);
+  return toggleValue(current, key).slice(-MAX_SELECTED_GENRES);
+}
+
+/**
+ * The genre selection a URL may ask for: known genres only, no repeats, at
+ * most MAX_SELECTED_GENRES, in the order given.
+ */
+export function parseSelectedGenres(values: string[]): string[] {
+  return [...new Set(values.filter(isGenreKey))].slice(0, MAX_SELECTED_GENRES);
 }
 
 /** Remove `key` from the selection if present. */
