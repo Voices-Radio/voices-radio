@@ -13,8 +13,7 @@ import {
 } from "./schemas";
 
 export type ArtistProfileResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; code: string; message: string };
+  { ok: true; data: T } | { ok: false; code: string; message: string };
 
 const MY_PROFILE_PATH = "/api/artists/presenter/my-profile";
 
@@ -83,6 +82,19 @@ export function updateArtistProfile(input: {
       body: JSON.stringify(input),
     },
     artistProfileSchema,
+  );
+}
+
+/**
+ * Cancels every still-pending field of the DJ's profile request, so the form
+ * unlocks. The backend leaves the live profile and decided fields unchanged,
+ * and answers 200 with the profile even when nothing was pending.
+ */
+export function withdrawArtistProfileReview() {
+  return artistProfileRequest<ArtistProfile>(
+    { method: "POST" },
+    artistProfileSchema,
+    `${MY_PROFILE_PATH}/review/withdraw`,
   );
 }
 

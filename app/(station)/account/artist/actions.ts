@@ -6,6 +6,7 @@ import {
   lookupArtistUsername,
   updateArtistProfile,
   uploadArtistProfileImage,
+  withdrawArtistProfileReview,
   type ArtistImageKind,
   type ProfileLookupPlatform,
 } from "@/lib/voices/membership/artist-profile-client";
@@ -30,9 +31,7 @@ const schema = z.object({
 });
 
 export type ArtistProfileState =
-  | { status: "success" }
-  | { status: "error"; message: string }
-  | undefined;
+  { status: "success" } | { status: "error"; message: string } | undefined;
 
 /**
  * Reads a field only if this submission actually included it, distinguishing
@@ -132,8 +131,14 @@ export async function updateArtistProfileAction(
     imageUrl: parsed.data.imageUrl,
     bannerUrl: parsed.data.bannerUrl,
     genres: parseGenres(parsed.data.genres),
-    mixcloudUsername: normalizeUsername("mixcloud", parsed.data.mixcloudUsername),
-    soundcloudUsername: normalizeUsername("soundcloud", parsed.data.soundcloudUsername),
+    mixcloudUsername: normalizeUsername(
+      "mixcloud",
+      parsed.data.mixcloudUsername,
+    ),
+    soundcloudUsername: normalizeUsername(
+      "soundcloud",
+      parsed.data.soundcloudUsername,
+    ),
     socialLinks: Object.keys(socialLinks).length ? socialLinks : undefined,
   });
 
@@ -145,8 +150,23 @@ export async function updateArtistProfileAction(
   return { status: "success" };
 }
 
+/** Cancels the DJ's pending profile request so they can submit a new one. */
+export async function withdrawProfileReviewAction(): Promise<ArtistProfileState> {
+  const result = await withdrawArtistProfileReview();
+  if (!result.ok) {
+    return { status: "error", message: result.message };
+  }
+
+  revalidatePath("/account/artist");
+  return { status: "success" };
+}
+
 export type ImageUploadState =
-  | { status: "success"; stagedImageUrl: string; field: "imageUrl" | "bannerUrl" }
+  | {
+      status: "success";
+      stagedImageUrl: string;
+      field: "imageUrl" | "bannerUrl";
+    }
   | { status: "error"; message: string };
 
 /**
