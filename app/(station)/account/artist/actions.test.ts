@@ -308,3 +308,40 @@ describe("withdrawProfileReviewAction", () => {
     expect(result).toEqual({ status: "error", message: "We could not reach Voices." });
   });
 });
+
+describe("updateArtistProfileAction bio length", () => {
+  it("says the bio is too long, with its length and the limit", async () => {
+    const result = await updateArtistProfileAction(
+      undefined,
+      formData({ name: "DJ Test", bio: "a".repeat(2_345) }),
+    );
+
+    expect(result).toEqual({
+      status: "error",
+      message:
+        "Your bio is 2,345 characters. The limit is 2,000. Shorten it and submit again.",
+    });
+    expect(updateArtistProfile).not.toHaveBeenCalled();
+  });
+
+  it("accepts a bio of exactly the limit", async () => {
+    const result = await updateArtistProfileAction(
+      undefined,
+      formData({ name: "DJ Test", bio: "a".repeat(2_000) }),
+    );
+
+    expect(result).toEqual({ status: "success" });
+  });
+
+  it("keeps the general message for other invalid fields", async () => {
+    const result = await updateArtistProfileAction(
+      undefined,
+      formData({ name: "DJ Test", instagram: "not a url" }),
+    );
+
+    expect(result).toEqual({
+      status: "error",
+      message: "Please check your artist profile details and try again.",
+    });
+  });
+});

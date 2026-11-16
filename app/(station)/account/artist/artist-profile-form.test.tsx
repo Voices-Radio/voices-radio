@@ -276,3 +276,24 @@ describe("ArtistProfileForm withdraw request", () => {
     expect(screen.getByRole("checkbox", { name: /as complete as I can make it/ })).toBeInTheDocument();
   });
 });
+
+describe("ArtistProfileForm bio length", () => {
+  it("counts the bio characters against the limit", () => {
+    render(<ArtistProfileForm profile={profile({ bio: "Hello" })} />);
+
+    expect(screen.getByText("5 / 2,000 characters")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Bio"), { target: { value: "Hello there" } });
+    expect(screen.getByText("11 / 2,000 characters")).toBeInTheDocument();
+  });
+
+  it("warns when the bio is over the limit", () => {
+    render(<ArtistProfileForm profile={profile()} />);
+
+    fireEvent.change(screen.getByLabelText("Bio"), { target: { value: "a".repeat(2_010) } });
+
+    expect(
+      screen.getByText("2,010 / 2,000 characters. Remove 10 characters to submit."),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Bio")).toHaveAttribute("aria-invalid", "true");
+  });
+});

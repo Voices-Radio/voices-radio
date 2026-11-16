@@ -10,8 +10,9 @@ import {
   type ArtistImageKind,
   type ProfileLookupPlatform,
 } from "@/lib/voices/membership/artist-profile-client";
+import { BIO_MAX_LENGTH, formatCount } from "./profile-limits";
 
-const optionalText = z.string().max(2_000).optional();
+const optionalText = z.string().max(BIO_MAX_LENGTH).optional();
 const optionalUrl = z.string().url().or(z.literal("")).optional();
 
 const schema = z.object({
@@ -89,6 +90,18 @@ function normalizeUsername(
   return username.replace(/\/+$/, "");
 }
 
+/**
+ * A too-long bio is the failure a DJ is most likely to hit, and the general
+ * message did not say which field was wrong. Name it, with the numbers.
+ */
+function invalidProfileMessage(formData: FormData): string {
+  const bioLength = presentValue(formData, "bio")?.length ?? 0;
+  if (bioLength > BIO_MAX_LENGTH) {
+    return `Your bio is ${formatCount(bioLength)} characters. The limit is ${formatCount(BIO_MAX_LENGTH)}. Shorten it and submit again.`;
+  }
+  return "Please check your artist profile details and try again.";
+}
+
 export async function updateArtistProfileAction(
   _prevState: ArtistProfileState,
   formData: FormData,
@@ -110,10 +123,7 @@ export async function updateArtistProfileAction(
   });
 
   if (!parsed.success) {
-    return {
-      status: "error",
-      message: "Please check your artist profile details and try again.",
-    };
+    return { status: "error", message: invalidProfileMessage(formData) };
   }
 
   const socialKeys = ["instagram", "website", "twitter", "facebook"] as const;
