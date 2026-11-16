@@ -300,7 +300,9 @@ export const artistProfileSchema = z.object({
         z.object({
           field: z.string(),
           proposed: z.unknown(),
-          status: z.enum(["pending", "approved", "rejected"]),
+          // "withdrawn": the DJ cancelled the field before it was decided
+          // (POST /api/artists/presenter/my-profile/review/withdraw).
+          status: z.enum(["pending", "approved", "rejected", "withdrawn"]),
           rejectionReason: nullish(z.string()),
         }),
       ),

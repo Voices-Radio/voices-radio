@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  artistProfileSchema,
   benefitsResponseSchema,
   membershipPlansResponseSchema,
   membershipProfileSchema,
@@ -281,5 +282,24 @@ describe("benefitsResponseSchema", () => {
       ],
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("artistProfileSchema", () => {
+  it("accepts a review field the artist withdrew", () => {
+    const parsed = artistProfileSchema.safeParse({
+      id: "artist-1",
+      name: "DJ Test",
+      genres: [],
+      socialLinks: {},
+      profileReview: {
+        id: "r1",
+        submittedAt: "2026-11-16T10:00:00Z",
+        pending: false,
+        fields: [{ field: "bio", proposed: "Long bio", status: "withdrawn" }],
+      },
+    });
+
+    expect(parsed.success).toBe(true);
   });
 });

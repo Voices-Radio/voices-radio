@@ -8,6 +8,9 @@ const actions = vi.hoisted(() => ({
   updateArtistProfileAction: vi.fn(),
   uploadArtistImageAction: vi.fn(),
   lookupUsernameAction: vi.fn(async () => ({ status: "unavailable" })),
+  withdrawProfileReviewAction: vi.fn(
+    async (): Promise<{ status: string; message?: string }> => ({ status: "success" }),
+  ),
 }));
 vi.mock("./actions", () => actions);
 // Next bundles a React with the form-action hooks; plain react-dom does not.
@@ -195,5 +198,81 @@ describe("ArtistProfileForm review marks", () => {
     expect(screen.getByText("Profile update awaiting review")).toBeInTheDocument();
     expect(screen.getByLabelText("Bio").closest("[data-review]")).toHaveTextContent("In review");
     expect(screen.queryByRole("checkbox")).toBeNull();
+  });
+});
+
+describe("ArtistProfileForm withdraw request", () => {
+  const pendingReview = {
+    id: "r1",
+    submittedAt: "2026-11-16T10:00:00Z",
+    pending: true,
+    fields: [{ field: "bio", proposed: "A very long bio", status: "pending" }],
+  } as NonNullable<ArtistProfile["profileReview"]>;
+
+  it("withdraws the pending request after the DJ confirms", async () => {
+    actions.withdrawProfileReviewAction.mockClear();
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<ArtistProfileForm profile={profile({ profileReview: pendingReview })} />);
+
+    await userEvent.click(screen.getByRole("button", { name: "Withdraw request" }));
+
+    expect(confirm).toHaveBeenCalledWith(expect.stringMatching(/withdraw this request/i));
+    expect(actions.withdrawProfileReviewAction).toHaveBeenCalledTimes(1);
+    confirm.mockRestore();
+  });
+
+  it("does nothing when the DJ cancels the confirmation", async () => {
+    actions.withdrawProfileReviewAction.mockClear();
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(<ArtistProfileForm profile={profile({ profileReview: pendingReview })} />);
+
+    await userEvent.click(screen.getByRole("button", { name: "Withdraw request" }));
+
+    expect(actions.withdrawProfileReviewAction).not.toHaveBeenCalled();
+    confirm.mockRestore();
+  });
+
+  it("shows the error when the withdrawal fails", async () => {
+    actions.withdrawProfileReviewAction.mockResolvedValueOnce({
+      status: "error",
+      message: "We could not reach Voices.",
+    });
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<ArtistProfileForm profile={profile({ profileReview: pendingReview })} />);
+
+    await userEvent.click(screen.getByRole("button", { name: "Withdraw request" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("We could not reach Voices.");
+    confirm.mockRestore();
+  });
+
+  it("has no withdraw button when nothing is pending", () => {
+    render(<ArtistProfileForm profile={profile()} />);
+    expect(screen.queryByRole("button", { name: "Withdraw request" })).toBeNull();
+  });
+
+  it("unlocks the form after a withdrawal and keeps the withdrawn text to edit", () => {
+    render(
+      <ArtistProfileForm
+        profile={profile({
+          bio: "Live bio",
+          profileReview: {
+            ...pendingReview,
+            pending: false,
+            fields: [
+              { field: "bio", proposed: "A very long bio", status: "withdrawn", rejectionReason: null },
+            ],
+          },
+        })}
+      />,
+    );
+
+    const bio = screen.getByLabelText("Bio");
+    expect(bio).toHaveValue("A very long bio");
+    expect(bio).toBeEnabled();
+    expect(bio.closest("[data-review]")).toHaveTextContent("Withdrawn");
+    expect(screen.getByText(/you withdrew your last request/i)).toBeInTheDocument();
+    expect(screen.queryByText("Profile update awaiting review")).toBeNull();
+    expect(screen.getByRole("checkbox", { name: /as complete as I can make it/ })).toBeInTheDocument();
   });
 });
