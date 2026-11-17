@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import VoicesImage from "@/app/components/voices-image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageHero from "../../components/redesign/page-hero";
@@ -114,11 +114,14 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
           down the page. */}
       <section className="md:hidden">
         <div className="relative -mx-2 aspect-square">
-          <Image
+          <VoicesImage
             src={show.artwork.src}
             alt={show.artwork.alt}
             fill
-            sizes="100vw"
+            // This mobile copy is display:none on desktop, but `priority`
+            // still downloads it. The tiny md+ size keeps that download to a
+            // 32px thumbnail instead of a full-width image nobody sees.
+            sizes="(min-width: 768px) 16px, 100vw"
             priority
             className="object-cover object-[50%_25%]"
           />
@@ -192,11 +195,14 @@ export default async function ShowDetailPage({ params }: ShowPageProps) {
 
       <section className="mx-auto hidden max-w-[1280px] gap-8 px-4 py-10 md:grid md:grid-cols-[minmax(0,420px)_1fr] md:px-8">
         <div className="relative aspect-square overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface">
-          <Image
+          <VoicesImage
             src={show.artwork.src}
             alt={show.artwork.alt}
             fill
-            sizes="(min-width: 768px) 420px, 90vw"
+            // The desktop hero is the page's main image, so it loads first.
+            // On mobile this copy is hidden, so it asks for a thumbnail only.
+            sizes="(min-width: 768px) 420px, 16px"
+            priority
             className="object-cover object-[50%_25%]"
           />
         </div>

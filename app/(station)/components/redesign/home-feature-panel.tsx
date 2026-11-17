@@ -7,9 +7,11 @@ import {
   type PanInfo,
 } from "framer-motion";
 import { ArrowRight, Pause, Play } from "lucide-react";
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import Link from "next/link";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import VoicesImage from "@/app/components/voices-image";
+import { getImageLoader } from "@/lib/images/sanity-image";
 import { cn } from "@/lib/utils";
 import type { HomeFeatureItem } from "@/lib/voices/home";
 
@@ -89,22 +91,73 @@ function FeatureLink({
   );
 }
 
+// The frame's real width: on desktop the page's 12px gutters and the 316px
+// live column sit beside it; on mobile the shell's 8px gutters plus the
+// frame's own 4px inset. Overstating this made retina screens fetch the
+// largest file in the srcset.
+const HERO_SIZES = "(min-width: 768px) calc(100vw - 340px), calc(100vw - 24px)";
+// 85 is visually indistinguishable from the old 100 at a quarter of the bytes
+// (compared side by side on the live hero at 2× zoom; 80 began to soften
+// dark grain).
+const HERO_QUALITY = 85;
+// The backdrop behind contain-fit artwork is blurred by 40px, so a thumbnail
+// carries every detail that survives the blur.
+const BACKDROP_SIZES = "64px";
+const BACKDROP_QUALITY = 50;
+
+type FeatureImageSource = { src: string; sizes: string; quality: number };
+
+function getFeatureImageSources(item: HomeFeatureItem): FeatureImageSource[] {
+  const main = { src: item.imageUrl, sizes: HERO_SIZES, quality: HERO_QUALITY };
+  if (item.imageFit !== "contain") return [main];
+
+  return [
+    { src: item.imageUrl, sizes: BACKDROP_SIZES, quality: BACKDROP_QUALITY },
+    main,
+  ];
+}
+
+/**
+ * Starts downloading a slide's images in the background, using the exact
+ * srcset/sizes FeatureImage will render, so the browser picks the same file
+ * and the slide shows at once when it arrives.
+ */
+function preloadFeatureImages(item: HomeFeatureItem) {
+  for (const { src, sizes, quality } of getFeatureImageSources(item)) {
+    const { props } = getImageProps({
+      src,
+      alt: "",
+      fill: true,
+      sizes,
+      quality,
+      loader: getImageLoader(src),
+    });
+    const image = new window.Image();
+    // sizes before srcset: the browser picks a candidate once srcset is set.
+    if (props.sizes) image.sizes = props.sizes;
+    if (props.srcSet) image.srcset = props.srcSet;
+    image.src = props.src;
+  }
+}
+
 function FeatureImage({
   item,
   priority,
+  onLoad,
 }: {
   item: HomeFeatureItem;
   priority: boolean;
+  onLoad: () => void;
 }) {
   if (item.imageFit === "contain") {
     return (
       <>
-        <Image
+        <VoicesImage
           src={item.imageUrl}
           alt=""
           fill
-          sizes="(min-width: 1920px) 1920px, calc(100vw - 40px)"
-          quality={85}
+          sizes={BACKDROP_SIZES}
+          quality={BACKDROP_QUALITY}
           priority={priority}
           className="scale-110 object-cover opacity-50 blur-2xl"
           style={{
@@ -112,13 +165,17 @@ function FeatureImage({
           }}
         />
         <div className="bg-voicesNext-background/35 absolute inset-0" />
-        <Image
+        <VoicesImage
           src={item.imageUrl}
           alt={item.imageAlt}
           fill
-          sizes="(min-width: 1920px) 1200px, calc(100vw - 40px)"
-          quality={100}
+          sizes={HERO_SIZES}
+          quality={HERO_QUALITY}
           priority={priority}
+          // The backdrop underneath already shows the shimmer, then the
+          // blurred colours, while this full-size copy downloads.
+          loadingPlaceholder={false}
+          onLoad={onLoad}
           className="object-contain"
           style={{
             objectPosition: item.imagePosition ?? "50% 25%",
@@ -129,13 +186,15 @@ function FeatureImage({
   }
 
   return (
-    <Image
+    <VoicesImage
       src={item.imageUrl}
       alt={item.imageAlt}
       fill
-      sizes="(min-width: 1920px) 1920px, calc(100vw - 40px)"
-      quality={100}
+      sizes={HERO_SIZES}
+      quality={HERO_QUALITY}
       priority={priority}
+      blurDataURL={item.imageBlurDataUrl}
+      onLoad={onLoad}
       className="object-cover object-[50%_25%]"
     />
   );
@@ -157,6 +216,8 @@ export default function HomeFeaturePanel({
   const [isHovering, setIsHovering] = useState(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [loadedItemId, setLoadedItemId] = useState<string | null>(null);
+  const preloadedItemIds = useRef(new Set<string>());
   const shouldReduceMotion = useReducedMotion();
   const item = featureItems[activeIndex] ?? featureItems[0];
   const stationLabel =
@@ -220,6 +281,26 @@ export default function HomeFeaturePanel({
     return () => window.clearInterval(interval);
   }, [autoSlideResetKey, featureItems.length, isAutoPlaying]);
 
+  // Once the visible slide has its pixels, fetch the slides either side of it,
+  // so an auto-advance or a swipe in either direction never lands on an empty
+  // frame. Waiting for the visible image first keeps these downloads from
+  // competing with it.
+  useEffect(() => {
+    if (!hasMultipleItems || loadedItemId !== item.id) return;
+
+    const count = featureItems.length;
+    const neighbours = [
+      featureItems[(activeIndex + 1) % count],
+      featureItems[(activeIndex - 1 + count) % count],
+    ];
+
+    for (const neighbour of neighbours) {
+      if (preloadedItemIds.current.has(neighbour.id)) continue;
+      preloadedItemIds.current.add(neighbour.id);
+      preloadFeatureImages(neighbour);
+    }
+  }, [activeIndex, featureItems, hasMultipleItems, item.id, loadedItemId]);
+
   return (
     <section
       className="relative h-[388px] overflow-hidden bg-voicesNext-background md:h-[632px]"
@@ -265,7 +346,11 @@ export default function HomeFeaturePanel({
               }
             }}
           >
-            <FeatureImage item={item} priority={activeIndex === 0} />
+            <FeatureImage
+              item={item}
+              priority={activeIndex === 0}
+              onLoad={() => setLoadedItemId(item.id)}
+            />
 
             {item.type === "show" && (
               <div className="absolute right-2 top-2 flex flex-col items-end gap-2 font-outfit text-[14px] font-black uppercase leading-none tracking-[1px] text-voicesNext-background md:text-[18px]">

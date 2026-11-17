@@ -1,4 +1,4 @@
-import Image from "next/image";
+import VoicesImage from "@/app/components/voices-image";
 import Link from "next/link";
 import type { VoicesArtist } from "@/lib/voices/types";
 import SaveArtistButton from "./save-artist-button";
@@ -31,7 +31,7 @@ export default function ArtistCard({
 
       <div className="pointer-events-none flex h-full flex-col">
         <div className="relative min-h-0 flex-1">
-          <Image
+          <VoicesImage
             src={artist.imageUrl ?? "/VOICESLOGO_LIGHTBOX.png"}
             alt={artist.imageUrl ? artist.name : "Voices Radio"}
             fill

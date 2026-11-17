@@ -12,6 +12,7 @@ import type {
   HomeShowSelection,
 } from "@/sanity.queries";
 import { urlForImage } from "@/sanity.image";
+import { capSizeToSource } from "@/lib/images/sanity-image";
 import type { Image } from "sanity";
 import { getShowForCuration, getShows, getShowsForCuration } from "./api";
 import { enhanceArtworkUrl } from "./artwork";
@@ -42,6 +43,8 @@ type HomeFeatureItemBase = {
   imageAlt: string;
   imageFit: HomeFeatureImageFit;
   imagePosition?: string;
+  /** Tiny base64 preview from Sanity, painted while the real image loads. */
+  imageBlurDataUrl?: string;
   href: string;
   cta: string;
   meta: string;
@@ -126,16 +129,20 @@ function getImageUrl(
         asset: { _ref: image.assetRef },
       } as Image).quality(quality);
 
-      if (width) {
-        builder = builder.width(width);
-      }
-
-      if (height) {
-        builder = builder.height(height);
-      }
-
       if (width && height) {
-        builder = builder.fit("crop");
+        // Never request a crop bigger than the source: Sanity would upscale
+        // it (a 1242px upload was being served as a 2400px, 471KB image).
+        const capped = capSizeToSource({
+          assetRef: image.assetRef,
+          crop: image.crop,
+          width,
+          height,
+        });
+        builder = builder.width(capped.width).height(capped.height).fit("crop");
+      } else if (width) {
+        builder = builder.width(width);
+      } else if (height) {
+        builder = builder.height(height);
       }
 
       return appendImageVersion(builder.url(), image);
@@ -172,6 +179,10 @@ function appendImageVersion(url: string, image: HomePageImage) {
     const separator = url.includes("?") ? "&" : "?";
     return `${url}${separator}fpv=${encodeURIComponent(version)}`;
   }
+}
+
+function getImageLqip(image: HomePageImage | undefined) {
+  return image?.asset?.metadata?.lqip;
 }
 
 function getImageAlt(image: HomePageImage | undefined, fallback: string) {
@@ -302,6 +313,7 @@ function buildShowFeatureItem(
     imageAlt: getImageAlt(item.image, show.artwork.alt || show.title),
     imageFit: placementImageUrl ? "cover" : "contain",
     imagePosition: placementImageUrl ? undefined : "50% 50%",
+    imageBlurDataUrl: placementImageUrl ? getImageLqip(item.image) : undefined,
     href:
       show.matchingStatus === "matched" || !show.archiveUrl
         ? `/shows/${show.id}`
@@ -335,6 +347,7 @@ function buildBlogFeatureItem(item: HomeFeaturedBlog): HomeFeatureItem | null {
     imageAlt: getImageAlt(sourceImage, item.blog.title),
     imageFit: sourceImageUrl ? "cover" : "contain",
     imagePosition: sourceImageUrl ? undefined : "50% 50%",
+    imageBlurDataUrl: sourceImageUrl ? getImageLqip(sourceImage) : undefined,
     href: `/blog/${item.blog.slug.current}`,
     cta: item.ctaText ?? "Read",
     meta: formatDate(item.blog.publishedAt),
@@ -366,6 +379,7 @@ function buildEventFeatureItem(
     imageAlt: getImageAlt(sourceImage, item.event.title),
     imageFit: sourceImageUrl ? "cover" : "contain",
     imagePosition: sourceImageUrl ? undefined : "50% 50%",
+    imageBlurDataUrl: sourceImageUrl ? getImageLqip(sourceImage) : undefined,
     href: item.event.ctaUrl || `/events/${item.event.slug.current}`,
     cta: item.ctaText ?? item.event.ctaText ?? "View",
     meta: [formatDate(item.event.eventDate), item.event.venue]

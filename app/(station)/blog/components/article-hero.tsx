@@ -1,4 +1,4 @@
-import Image from "next/image";
+import VoicesImage from "@/app/components/voices-image";
 import type { MainBlogPost } from "@/sanity.queries";
 import PostImage from "./post-image";
 
@@ -37,7 +37,7 @@ export default function ArticleHero({ post }: { post: MainBlogPost }) {
 
   return (
     <div className="relative aspect-[16/9] overflow-hidden border border-voicesNext-border bg-voicesNext-background">
-      <Image
+      <VoicesImage
         src={asset.url}
         alt=""
         aria-hidden="true"
@@ -46,7 +46,7 @@ export default function ArticleHero({ post }: { post: MainBlogPost }) {
         className="scale-110 object-cover opacity-50 blur-2xl"
       />
       <div className="bg-voicesNext-background/35 absolute inset-0" />
-      <Image
+      <VoicesImage
         src={asset.url}
         alt={post.title}
         fill

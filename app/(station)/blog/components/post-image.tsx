@@ -1,4 +1,4 @@
-import Image from "next/image";
+import VoicesImage from "@/app/components/voices-image";
 import { cn } from "@/lib/utils";
 import { pickFallbackTileVariant } from "@/lib/voices/blog";
 import type { MainBlogPost } from "@/sanity.queries";
@@ -89,7 +89,7 @@ export default function PostImage({
   const lqip = asset.metadata?.lqip;
 
   return (
-    <Image
+    <VoicesImage
       src={asset.url}
       alt={post.title}
       fill
