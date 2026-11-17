@@ -140,7 +140,7 @@ async function authedGet<T>(
   // Input is deliberately `unknown`, not `T`: the payload arrives untrusted
   // off the network, and binding both ends would make T resolve to the
   // schema's *input* type — reintroducing optionality for defaulted fields.
-  schema: z.ZodType<T, z.ZodTypeDef, unknown>,
+  schema: z.ZodType<T, unknown>,
 ): Promise<MembershipResult<T>> {
   const token = await getAccessToken();
   if (!token) {
