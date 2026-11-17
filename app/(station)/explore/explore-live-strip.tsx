@@ -15,6 +15,17 @@ import ScheduleDialog from "@/app/components/schedule/dialog";
 import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
 import { useLiveAudio } from "../components/redesign/live-audio-context";
 import StationPlayButton from "../components/redesign/station-play-button";
+import StationVideoButton, {
+  DESKTOP_VIDEO_CLASS,
+} from "../components/redesign/station-video-button";
+
+/**
+ * Only KX has a live video feed (Mixcloud Live). East shows the video icon
+ * but it is never clickable.
+ */
+function hasLiveVideo(station: VoicesLiveStationConfig) {
+  return station.id === "kx" && !station.comingSoon;
+}
 
 /**
  * Shared skin for the three icon buttons on the right of each mobile strip.
@@ -127,6 +138,15 @@ function MobileStationControl({
             "w-[44px] bg-voicesNext-orangeButton text-voicesNext-cream disabled:cursor-not-allowed disabled:bg-[#443f3f]/[0.12] disabled:text-[#443f3f]/40",
             HOVER_DARK,
             playing && "bg-voicesNext-background text-voicesNext-cream",
+          )}
+        />
+        <StationVideoButton
+          label={station.label}
+          available={hasLiveVideo(station)}
+          className={cn(
+            mobileActionClassName,
+            "w-[40px] bg-voicesNext-cream text-[#443f3f] disabled:cursor-not-allowed disabled:bg-[#443f3f]/[0.12] disabled:text-[#443f3f]/40",
+            HOVER_DARK,
           )}
         />
       </div>
@@ -260,6 +280,12 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
           "inline-flex h-[34px] w-[35px] shrink-0 items-center justify-center border-l border-black transition-colors hover:bg-voicesNext-background hover:text-voicesNext-cream focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-voicesNext-orange disabled:cursor-not-allowed disabled:text-voicesNext-secondary",
           playing && "bg-voicesNext-background text-voicesNext-cream",
         )}
+      />
+      <StationVideoButton
+        label={station.label}
+        available={hasLiveVideo(station)}
+        iconSize={15}
+        className={DESKTOP_VIDEO_CLASS}
       />
     </div>
   );

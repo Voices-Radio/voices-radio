@@ -1,4 +1,7 @@
 import { Radio } from "lucide-react";
+import StationVideoButton, {
+  DESKTOP_VIDEO_CLASS,
+} from "./station-video-button";
 
 export function EastComingSoonCard() {
   return (
@@ -77,6 +80,13 @@ export function EastComingSoonStrip() {
       >
         <Radio size={15} strokeWidth={2.2} />
       </div>
+      {/* East has no video yet: the icon shows, but it is never clickable. */}
+      <StationVideoButton
+        label="EAST"
+        available={false}
+        iconSize={15}
+        className={DESKTOP_VIDEO_CLASS}
+      />
     </div>
   );
 }
