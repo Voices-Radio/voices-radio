@@ -58,7 +58,7 @@ async function describeError(
  */
 async function authedGet<T>(
   path: string,
-  schema: z.ZodType<T, z.ZodTypeDef, unknown>,
+  schema: z.ZodType<T, unknown>,
 ): Promise<FavouritesResult<T>> {
   const token = await getAccessToken();
   if (!token) {
@@ -110,7 +110,7 @@ async function authedGet<T>(
  */
 async function authedCall<T>(
   path: string,
-  schema: z.ZodType<T, z.ZodTypeDef, unknown>,
+  schema: z.ZodType<T, unknown>,
   init: RequestInit = {},
 ): Promise<FavouritesResult<T>> {
   try {

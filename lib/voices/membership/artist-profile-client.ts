@@ -19,7 +19,7 @@ const MY_PROFILE_PATH = "/api/artists/presenter/my-profile";
 
 async function artistProfileRequest<T>(
   init: RequestInit,
-  schema: z.ZodType<T, z.ZodTypeDef, unknown>,
+  schema: z.ZodType<T, unknown>,
   path: string = MY_PROFILE_PATH,
 ): Promise<ArtistProfileResult<T>> {
   try {

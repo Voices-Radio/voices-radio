@@ -1,7 +1,7 @@
 "use client";
 
 import { ExternalLink, Pause, Play, X } from "lucide-react";
-import Image from "next/image";
+import VoicesImage from "@/app/components/voices-image";
 import { useCallback, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { formatShowDisplayTitle } from "@/lib/voices/show-title";
@@ -160,7 +160,7 @@ export default function ArchiveMiniPlayer() {
       <div className="mx-auto max-w-[1280px] overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-background shadow-[0_-16px_40px_rgba(0,0,0,0.38)]">
         <div className="grid min-h-[80px] grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-3 bg-voicesNext-surface p-3">
           <div className="relative h-14 w-14 overflow-hidden rounded-voices-xs bg-voicesNext-background">
-            <Image
+            <VoicesImage
               src={activeMedia.artwork.src}
               alt=""
               fill

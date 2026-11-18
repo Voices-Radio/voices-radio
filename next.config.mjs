@@ -73,6 +73,14 @@ const config = {
     serverActions: { bodySizeLimit: "4mb" },
   },
   images: {
+    // AVIF first: ~20-30% smaller than WebP at the same visual quality, and
+    // every current browser accepts it. WebP stays as the fallback.
+    formats: ["image/avif", "image/webp"],
+    // Keep optimised images for 31 days. Without this, Vercel follows the
+    // upstream Cache-Control and re-transforms artwork often, and a cold
+    // transform is a visible ~0.5-2s wait. Source URLs for changed artwork
+    // change too (Sanity asset ids, Mixcloud paths), so nothing goes stale.
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       { hostname: "cdn.sanity.io" },
       { hostname: "thumbnailer.mixcloud.com" },

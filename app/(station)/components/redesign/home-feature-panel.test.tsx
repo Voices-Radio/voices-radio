@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { HomeFeatureItem } from "@/lib/voices/home";
 import HomeFeaturePanel from "./home-feature-panel";
 
@@ -153,6 +153,51 @@ describe("HomeFeaturePanel variable feature list length", () => {
       screen.queryAllByRole("button", { name: /Show featured item/ }),
     ).toHaveLength(0);
     expect(screen.getAllByText("1/12").length).toBeGreaterThan(0);
+  });
+});
+
+describe("HomeFeaturePanel neighbour preloading", () => {
+  const RealImage = window.Image;
+  let requested: string[] = [];
+
+  beforeEach(() => {
+    requested = [];
+    window.Image = class {
+      sizes = "";
+      srcset = "";
+      set src(value: string) {
+        requested.push(value);
+      }
+    } as unknown as typeof window.Image;
+  });
+
+  afterEach(() => {
+    window.Image = RealImage;
+  });
+
+  function withImage(index: number, imageUrl: string) {
+    return { ...buildItem(index), imageUrl };
+  }
+
+  it("fetches the next and previous slides once the visible one loads", async () => {
+    render(
+      <HomeFeaturePanel
+        items={[
+          withImage(1, "/one.jpg"),
+          withImage(2, "/two.jpg"),
+          withImage(3, "/three.jpg"),
+          withImage(4, "/four.jpg"),
+        ]}
+      />,
+    );
+
+    expect(requested).toHaveLength(0);
+    fireEvent.load(screen.getByAltText("Featured show 1"));
+
+    await waitFor(() => expect(requested).toHaveLength(2));
+    expect(requested.join(" ")).toContain("two.jpg");
+    expect(requested.join(" ")).toContain("four.jpg");
+    expect(requested.join(" ")).not.toContain("three.jpg");
   });
 });
 
