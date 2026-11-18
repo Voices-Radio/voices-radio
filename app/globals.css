@@ -292,7 +292,67 @@
   }
 }
 
+/* Placeholder painted on an <img> (via VoicesImage) until its pixels arrive.
+   It sits on the image element itself, so it needs no wrapper and works in
+   the server-rendered HTML before hydration. The class comes off on load,
+   so letterboxed (object-contain) artwork doesn't keep a shimmer behind it. */
+.voices-image-loading {
+  background-color: #313131;
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(248, 239, 224, 0.07) 50%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  animation: voices-image-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes voices-image-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* Page-change bar (NavigationProgress). It eases towards 90% while the next
+   page loads, never reaching the end on its own, then fills and fades out
+   when the route changes. Only transform and opacity animate, so it stays
+   on the compositor. */
+.voices-nav-progress[data-phase="loading"] {
+  animation: voices-nav-trickle 10s cubic-bezier(0.08, 0.7, 0.2, 1) forwards;
+  box-shadow: 0 0 10px rgba(211, 78, 36, 0.7);
+}
+
+.voices-nav-progress[data-phase="finishing"] {
+  transform: scaleX(1);
+  opacity: 0;
+  transition: opacity 250ms ease-out 100ms;
+}
+
+@keyframes voices-nav-trickle {
+  from {
+    transform: scaleX(0.08);
+  }
+
+  to {
+    transform: scaleX(0.9);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .voices-nav-progress[data-phase="loading"] {
+    animation: none;
+    transform: scaleX(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voices-image-loading,
   .voices-on-air-marquee,
   .voices-coming-soon-marquee,
   .voices-east-orbit,

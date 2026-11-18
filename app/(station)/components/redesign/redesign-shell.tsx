@@ -9,6 +9,7 @@ import ArchivePlayerSpacer from "./archive-player-spacer";
 import { FavouritesProvider } from "./favourites-context";
 import { LiveAudioProvider } from "./live-audio-context";
 import { LiveStationsProvider } from "./live-stations-context";
+import NavigationProgress from "./navigation-progress";
 import SaveIntentReplay from "./save-intent-replay";
 import { SessionProvider } from "./session-context";
 import SiteFooter from "./site-footer";
@@ -62,6 +63,9 @@ export default async function RedesignShell({
               into client-only rendering. */}
                 <Suspense fallback={null}>
                   <SaveIntentReplay />
+                </Suspense>
+                <Suspense fallback={null}>
+                  <NavigationProgress />
                 </Suspense>
               </div>
             </LiveAudioProvider>

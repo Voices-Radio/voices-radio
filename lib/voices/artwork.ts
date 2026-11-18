@@ -12,7 +12,12 @@ const MIXCLOUD_DIMENSIONS: Record<ArtworkImageSize, string> = {
   detail: "600x600",
   full: "1000x1000",
 };
-const MIXCLOUD_FEATURE_SIZE = "2400x2400";
+// "0x0" asks Mixcloud's thumbnailer for the original upload, unresized. Any
+// fixed size upscales smaller originals: "2400x2400" turned a 615px upload
+// into a 4.7MB PNG that took Mixcloud 2.2s to render, which Vercel's image
+// optimizer then had to download before it could serve the hero. The
+// optimizer resizes the original to whatever the hero actually needs.
+const MIXCLOUD_FEATURE_SIZE = "0x0";
 
 const SOUNDCLOUD_SUFFIX: Record<ArtworkImageSize, string> = {
   thumbnail: "large",

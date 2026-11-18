@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import VoicesImage from "@/app/components/voices-image";
 import { notFound } from "next/navigation";
 import ExpandableBio from "../../components/redesign/expandable-bio";
 import PageHero from "../../components/redesign/page-hero";
@@ -91,11 +91,14 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
 
       <section className="md:hidden">
         <div className="relative h-[381px] overflow-hidden border border-voicesNext-cream bg-voicesNext-surface">
-          <Image
+          <VoicesImage
             src={artist.imageUrl ?? "/VOICESLOGO_LIGHTBOX.png"}
             alt={artist.imageUrl ? artist.name : "Voices Radio"}
             fill
-            sizes="calc(100vw - 16px)"
+            // Main image on mobile, so it loads first. The md+ size keeps the
+            // hidden desktop download to a thumbnail.
+            sizes="(min-width: 768px) 16px, calc(100vw - 16px)"
+            priority
             className="object-cover object-[50%_25%]"
           />
           <span className="absolute left-[121px] top-[27px] bg-voicesNext-cream px-2 py-[2px] font-outfit text-[11px] font-black uppercase leading-none text-voicesNext-background">
@@ -152,11 +155,13 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
       <section className="mx-auto hidden max-w-[1280px] px-4 py-10 md:block md:px-8">
         <div className="grid grid-cols-[minmax(0,360px)_1fr] gap-8 lg:gap-12">
           <div className="relative aspect-square overflow-hidden rounded-voices-sm border border-voicesNext-border bg-voicesNext-surface">
-            <Image
+            <VoicesImage
               src={artist.imageUrl ?? "/VOICESLOGO_LIGHTBOX.png"}
               alt={artist.imageUrl ? artist.name : "Voices Radio"}
               fill
-              sizes="(min-width: 768px) 360px, 90vw"
+              // Main image on desktop; hidden on mobile, so only a thumbnail.
+              sizes="(min-width: 768px) 360px, 16px"
+              priority
               className="object-cover object-[50%_25%]"
             />
           </div>

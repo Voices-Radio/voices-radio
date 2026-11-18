@@ -1,4 +1,4 @@
-import Image from "next/image";
+import VoicesImage from "@/app/components/voices-image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { VoicesShow } from "@/lib/voices/types";
@@ -64,7 +64,7 @@ export default function ShowCard({
         </div>
 
         <div className="relative min-h-0 flex-1">
-          <Image
+          <VoicesImage
             src={show.artwork.src}
             alt={show.artwork.alt}
             fill

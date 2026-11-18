@@ -1,7 +1,7 @@
 "use client";
 
 import { ExternalLink, Radio, Square, Video } from "lucide-react";
-import Image from "next/image";
+import VoicesImage from "@/app/components/voices-image";
 import { useState, type RefObject } from "react";
 import Spinner from "@/icons/spinner";
 import { cn } from "@/lib/utils";
@@ -170,7 +170,7 @@ export default function LiveStationCard({
             artworkGrey && "grayscale",
           )}
         >
-          <Image
+          <VoicesImage
             src={displayArtwork.src}
             alt={displayArtwork.alt}
             fill
