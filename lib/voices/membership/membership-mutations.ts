@@ -32,7 +32,7 @@ export type MutationResult<T> =
 async function authedMutate<T>(
   path: string,
   // See authedGet: bind only the output type, since the payload is unknown.
-  schema: z.ZodType<T, z.ZodTypeDef, unknown>,
+  schema: z.ZodType<T, unknown>,
   init: RequestInit,
 ): Promise<MutationResult<T>> {
   try {
