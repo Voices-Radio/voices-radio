@@ -122,6 +122,50 @@ describe("ExploreLiveStrip mobile controls", () => {
   });
 });
 
+describe("ExploreLiveStrip watch live video", () => {
+  const MIXCLOUD_LIVE = "https://www.mixcloud.com/live/VoicesRadio/";
+
+  it("links KX video to Mixcloud Live on both mobile and desktop, in a new tab", () => {
+    renderStrip();
+
+    const links = screen.getAllByRole("link", {
+      name: "Watch KX live video on Mixcloud",
+    });
+
+    // One in the mobile strip, one in the desktop strip.
+    expect(links).toHaveLength(2);
+    for (const link of links) {
+      expect(link).toHaveAttribute("href", MIXCLOUD_LIVE);
+      expect(link).toHaveAttribute("target", "_blank");
+      expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    }
+  });
+
+  it("puts the video control directly after the play button on mobile", () => {
+    renderStrip();
+
+    const play = within(mobileControls()).getByRole("button", {
+      name: "Play KX",
+    });
+
+    expect(play.nextElementSibling).toHaveAccessibleName(
+      "Watch KX live video on Mixcloud",
+    );
+  });
+
+  it("never makes East's video control clickable", () => {
+    renderStrip();
+
+    expect(
+      screen.queryByRole("link", { name: /Watch EAST live video/i }),
+    ).toBeNull();
+    const eastVideo = within(mobileControls()).getByRole("button", {
+      name: "EAST live video unavailable",
+    });
+    expect(eastVideo).toBeDisabled();
+  });
+});
+
 describe("ExploreLiveStrip desktop controls", () => {
   it("shows only Next in the schedule context, because the station block already names the show on air", () => {
     renderStrip();
