@@ -14,6 +14,7 @@ import useWeekInfo from "@/hooks/use-week-info";
 import ScheduleDialog from "@/app/components/schedule/dialog";
 import { EastComingSoonStrip } from "../components/redesign/east-coming-soon";
 import { useLiveAudio } from "../components/redesign/live-audio-context";
+import OverflowMarquee from "../components/redesign/overflow-marquee";
 import StationPlayButton from "../components/redesign/station-play-button";
 import StationVideoButton, {
   DESKTOP_VIDEO_CLASS,
@@ -82,12 +83,12 @@ function MobileStationControl({
             />
           </span>
         </div>
-        <p
-          className="mt-1 truncate font-outfit text-[11px] font-medium uppercase leading-none tracking-[0.8px] text-[#443f3f]"
-          title={title}
-        >
-          {title}
-        </p>
+        {/* Long titles scroll; with reduced motion they wrap to 2 lines. */}
+        <OverflowMarquee
+          text={title}
+          className="mt-1 font-outfit text-[11px] font-medium uppercase leading-none tracking-[0.8px] text-[#443f3f]"
+          fallbackClassName="line-clamp-2"
+        />
       </div>
       <div className="flex divide-x divide-voicesNext-background border-l border-voicesNext-background">
         <ScheduleDialog
@@ -260,9 +261,12 @@ function ExploreLiveStation({ station }: { station: VoicesLiveStationConfig }) {
         <span className="font-outfit text-[19px] font-black uppercase leading-none tracking-[1px] text-[#443f3f]">
           {station.label}
         </span>
-        <span className="truncate font-outfit text-[13px] leading-none tracking-[1px] text-[#443f3f]">
-          {error ? "Stream unavailable" : liveMetadata.title}
-        </span>
+        {/* The row is 34px high, so reduced motion keeps one cut line. */}
+        <OverflowMarquee
+          text={error ? "Stream unavailable" : liveMetadata.title}
+          className="font-outfit text-[13px] leading-none tracking-[1px] text-[#443f3f]"
+          fallbackClassName="truncate"
+        />
         <span className="inline-flex items-center gap-2 font-asap text-[10px] uppercase tracking-[1px]">
           {status}
           <span className="h-2 w-2 rounded-full bg-voicesNext-live" />
